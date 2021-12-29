@@ -1,0 +1,7 @@
+name: DiSky
+version: '${version}'
+main: info.itsthesky.disky.DiSky
+api-version: 1.17
+softdepend: [ Skript ]
+authors: [ ItsTheSky ]
+description: The new generation of DiSky, even more powerful and complete!
