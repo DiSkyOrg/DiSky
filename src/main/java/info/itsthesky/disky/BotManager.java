@@ -1,6 +1,9 @@
 package info.itsthesky.disky;
 
 import com.google.common.collect.Sets;
+import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.ErrorHandler;
+import info.itsthesky.disky.core.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Set;

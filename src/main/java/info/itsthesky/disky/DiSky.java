@@ -1,5 +1,6 @@
 package info.itsthesky.disky;
 
+import info.itsthesky.disky.core.ErrorHandler;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.plugin.java.JavaPlugin;
 

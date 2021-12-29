@@ -1,4 +1,4 @@
-package info.itsthesky.disky;
+package info.itsthesky.disky.core;
 
 import org.bukkit.ChatColor;
 

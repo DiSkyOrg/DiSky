@@ -1,8 +1,8 @@
-package info.itsthesky.disky;
+package info.itsthesky.disky.core;
 
+import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.Nullable;
 
 /**
