@@ -19,6 +19,7 @@ dependencies {
     shadow 'com.github.SkriptLang:Skript:2.6-beta3'
 
     implementation 'net.dv8tion:JDA:5.0.0-alpha.3'
+    implementation 'com.github.simplix-softworks:simplixstorage:3.2.4'
 }
 
 def targetJavaVersion = 16

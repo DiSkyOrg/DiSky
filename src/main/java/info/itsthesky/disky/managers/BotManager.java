@@ -1,10 +1,11 @@
-package info.itsthesky.disky;
+package info.itsthesky.disky.managers;
 
 import com.google.common.collect.Sets;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.ErrorHandler;
 import info.itsthesky.disky.core.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -15,7 +16,7 @@ public class BotManager {
 
     private final JavaPlugin plugin;
 
-    BotManager(JavaPlugin plugin) {
+    public BotManager(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -35,10 +36,22 @@ public class BotManager {
         this.bots.forEach(bot -> bot.getInstance().shutdownNow());
     }
 
-    ErrorHandler errorHandler() {
+    public boolean exist(@Nullable String name) {
+        return name != null && bots.stream().anyMatch(bot -> bot.getName().equals(name));
+    }
+
+    public ErrorHandler errorHandler() {
         return message -> plugin
                 .getServer()
                 .getConsoleSender()
                 .sendMessage(Utils.colored("&4[&c!&4] &c" + message));
+    }
+
+    public @Nullable Bot fromName(String name) {
+        return bots
+                .stream()
+                .filter(bot -> bot.getName().equals(name))
+                .findAny()
+                .orElse(null);
     }
 }
