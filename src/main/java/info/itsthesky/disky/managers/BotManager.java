@@ -2,7 +2,7 @@ package info.itsthesky.disky.managers;
 
 import com.google.common.collect.Sets;
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.core.ErrorHandler;
+import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.Utils;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;

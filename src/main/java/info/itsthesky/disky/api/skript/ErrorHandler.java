@@ -1,4 +1,4 @@
-package info.itsthesky.disky.core;
+package info.itsthesky.disky.api.skript;
 
 public interface ErrorHandler {
 

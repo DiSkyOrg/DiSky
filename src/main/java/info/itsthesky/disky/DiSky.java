@@ -1,6 +1,6 @@
 package info.itsthesky.disky;
 
-import info.itsthesky.disky.core.ErrorHandler;
+import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.requests.RestAction;

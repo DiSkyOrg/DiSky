@@ -1,4 +1,4 @@
-package info.itsthesky.disky.api;
+package info.itsthesky.disky.api.skript;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Effect;

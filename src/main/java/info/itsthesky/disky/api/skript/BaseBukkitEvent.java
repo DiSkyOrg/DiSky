@@ -1,4 +1,4 @@
-package info.itsthesky.disky.api;
+package info.itsthesky.disky.api.skript;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
