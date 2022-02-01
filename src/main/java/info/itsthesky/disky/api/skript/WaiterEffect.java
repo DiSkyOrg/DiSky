@@ -22,7 +22,7 @@ import java.util.List;
 @SuppressWarnings({"unchecked", "unused", "raw"})
 public abstract class WaiterEffect<T> extends EasyEffect {
 
-    private Event event;
+    protected Event event;
     private Object localVars;
     private NodeInformation node;
     @Nullable protected Variable<T> changedVariable = null;

@@ -1,0 +1,205 @@
+package info.itsthesky.disky.api;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Just a simple reflection class, just to not depend on Skript 2.2+ (I think it is the only thing I use from it)
+ *
+ * @author Sky
+ */
+public class ReflectionUtils {
+
+    public static Method getMethod(Class<?> clz, String method, Class<?>... parameters) {
+        try {
+            return clz.getDeclaredMethod(method, parameters);
+        } catch (Exception ignored) { }
+        return null;
+    }
+
+    public static Object cast(Object instance, Class<?> classToCastIn) {
+        return classToCastIn.cast(instance);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Object invokeEnum(Class<?> enumClass, String enumValue) {
+        return Enum.valueOf((Class<Enum>) enumClass, enumValue);
+    }
+
+    public static <T> Constructor<T> getConstructor(Class<T> clz, Class<?>...parameters){
+        try {
+            return clz.getConstructor(parameters);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Class<?> getClass(String name) {
+        try {
+            return Class.forName(name);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * @param clazz The class of the method
+     * @param method The method to invoke
+     * @param instance The instance for the method to be invoked from
+     * @param parameters The parameters of the method
+     * @return The result of the method, or null if the method was null or the invocation failed
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T invokeMethod(Class<?> clazz, String method, Object instance, Object... parameters) {
+        try {
+            Class<?>[] parameterTypes = new Class<?>[parameters.length];
+            int x = 0;
+
+            for (Object obj : parameters)
+                parameterTypes[x++] = obj.getClass();
+
+            Method m = clazz.getDeclaredMethod(method, parameterTypes);
+            m.setAccessible(true);
+
+            return (T) m.invoke(instance, parameters);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T invokeMethodEx(Class<?> clazz, String method, Object instance, Object... parameters) throws Exception {
+        Class<?>[] parameterTypes = new Class<?>[parameters.length];
+        int x = 0;
+        for (Object obj : parameters)
+            parameterTypes[x++] = obj.getClass();
+        Method m = clazz.getDeclaredMethod(method, parameterTypes);
+        m.setAccessible(true);
+        return (T) m.invoke(instance, parameters);
+    }
+
+    public static boolean classExist(String clazz) {
+        try {
+            Class.forName(clazz);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    /**
+     * @param clz The class to create the instance of.
+     * @return A instance object of the given class.
+     */
+    public static <T> T newInstance(Class<T> clz) {
+        try {
+            Constructor<T> c = clz.getDeclaredConstructor();
+            c.setAccessible(true);
+            return c.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static <T> T newInstance(Class<T> clz, Object... args) {
+        List<Class<?>> classes = new ArrayList<>();
+        for (Object o : args)
+            classes.add(o.getClass());
+        Class<?>[] argClasses = classes.toArray(new Class<?>[0]);
+
+        try {
+            Constructor<T> c = clz.getDeclaredConstructor(argClasses);
+            c.setAccessible(true);
+            return c.newInstance(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * @param from The class of the field
+     * @param obj The instance of the class - you can use null if the field is static
+     * @param field The field name
+     */
+    public static <T> void setField(Class<T> from, Object obj, String field, Object newValue) {
+        try {
+            Field f = from.getDeclaredField(field);
+            f.setAccessible(true);
+            f.set(obj, newValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getFieldValue(Field field, Object arg) {
+        try {
+            return (T) field.get(arg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static <T> T getFieldValue(Field field) {
+        return getFieldValue(field, null);
+    }
+
+    public static <T> T getFieldValue(Class<?> target, String field) {
+        return getFieldValue(getField(target, field));
+    }
+
+    public static <T> T getFieldValue(Class<?> target, String field, Object instance) {
+        return getFieldValue(getField(target, field), instance);
+    }
+
+    public static void setFieldValue(Field field, Object target, Object value) {
+        try {
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setFieldValue(Field field, Object value) {
+        setFieldValue(field, null, value);
+    }
+
+    /**
+     * @param from The class of the field
+     * @param obj The instance of the class - you can use null if the field is static
+     * @param field The field name
+     * @return The field or null if it couldn't be gotten
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getField(Class<?> from, Object obj, String field) {
+        try {
+            Field f = from.getDeclaredField(field);
+            f.setAccessible(true);
+            return (T) f.get(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Field getField(Class<?> from, String field) {
+        try {
+            Field f = from.getDeclaredField(field);
+            f.setAccessible(true);
+            return f;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}

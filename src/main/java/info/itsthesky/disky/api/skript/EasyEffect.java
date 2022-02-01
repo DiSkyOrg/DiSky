@@ -7,6 +7,9 @@ import ch.njol.skript.lang.Variable;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Simple class that contains some useful methods for variable, expressions and more.
  * @author ItsTheSky
@@ -18,7 +21,7 @@ public abstract class EasyEffect extends Effect {
      * @param expression The expression to validate
      * @return True if the expression is a variable, else false
      */
-    protected boolean validate(Expression<?> expression) {
+    public static boolean validate(Expression<?> expression) {
         return expression instanceof Variable<?>;
     }
 
@@ -29,7 +32,7 @@ public abstract class EasyEffect extends Effect {
      * @param defaultValue The default value
      * @return The parsed value
      */
-    protected <T> T parseSingle(Expression<T> expression, Event e, T defaultValue) {
+    public static <T> T parseSingle(Expression<T> expression, Event e, T defaultValue) {
         if (expression == null)
             return defaultValue;
         final @Nullable T value = expression.getSingle(e);
@@ -43,11 +46,20 @@ public abstract class EasyEffect extends Effect {
      * @param defaultValues The default values
      * @return The parsed values
      */
-    protected <T> T[] parseList(Expression<T> expression, Event e, T[] defaultValues) {
+    public static <T> T[] parseList(Expression<T> expression, Event e, T[] defaultValues) {
         if (expression == null)
             return defaultValues;
         final @Nullable T[] values = expression.getArray(e);
         return values == null || values.length == 0 ? defaultValues : values;
+    }
+
+    /**
+     * Check wether any of the argument array is null.
+     * @param objects The objects to test
+     * @return True if objects contains a null object, else false
+     */
+    public static boolean anyNull(Object... objects) {
+        return Arrays.stream(objects).anyMatch(Objects::isNull);
     }
 
     /**
@@ -56,7 +68,7 @@ public abstract class EasyEffect extends Effect {
      * @param shouldBeList Either the input expression should be a single or list variable
      * @return True if {@link EasyEffect#validate(Expression)} and the expression is a list or not according to the argument, else false.
      */
-    protected boolean validate(Expression<?> expression, boolean shouldBeList) {
+    public static boolean validate(Expression<?> expression, boolean shouldBeList) {
         if (!validate(expression)) {
             Skript.error("Invalid expression, require a variable: " + expression.toString(null, false));
             return false;

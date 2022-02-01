@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Class that will store and manage every loaded bots.
@@ -51,6 +52,19 @@ public class BotManager {
         return bots
                 .stream()
                 .filter(bot -> bot.getName().equals(name))
+                .findAny()
+                .orElse(null);
+    }
+
+    public <T> @Nullable T searchIfAnyPresent(Function<Bot, T> function) {
+        if (findAny() == null)
+            return null;
+        return function.apply(findAny());
+    }
+
+    public @Nullable Bot findAny() {
+        return getBots()
+                .stream()
                 .findAny()
                 .orElse(null);
     }

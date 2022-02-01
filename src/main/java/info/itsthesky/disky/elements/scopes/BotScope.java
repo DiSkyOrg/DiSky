@@ -10,8 +10,10 @@ import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.BaseBukkitEvent;
 import info.itsthesky.disky.api.skript.BaseScope;
+import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.BotOptions;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -48,6 +50,10 @@ public class BotScope extends BaseScope<BotOptions> {
     public static final SectionValidator validator = new SectionValidator()
             .addEntry("token", false)
             .addEntry("intents", true)
+            .addEntry("compression", true)
+            .addEntry("policy", true)
+            .addEntry("auto reconnect", true)
+            .addEntry("force reload", true)
             .addSection("on ready", true)
             .addSection("application", true)
             .addSection("on guild ready", true);
@@ -73,6 +79,9 @@ public class BotScope extends BaseScope<BotOptions> {
     public @Nullable BotOptions parse(@NotNull SectionNode node) {
         if (name == null)
             return null;
+        node.convertToEntries(0);
+        if (!validator.validate(node))
+            return null;
 
         /* Bot's name & initialize options */
         final BotOptions options = new BotOptions();
@@ -83,6 +92,17 @@ public class BotScope extends BaseScope<BotOptions> {
         if (token.isEmpty())
             return error("The token cannot be empty.");
         options.setToken(token);
+
+        final @Nullable boolean forceReload;
+        @Nullable boolean forceReload1;
+        try {
+            forceReload1 = Boolean.parseBoolean(parseEntry(node, "force reload", "false"));
+        } catch (Throwable ex) {
+            forceReload1 = false;
+            Skript.error("Unknown boolean value for 'force reload' entry: " + parseEntry(node, "force reload", "false"));
+        }
+        forceReload = forceReload1;
+        options.setForceReload(forceReload);
 
         final String rawPolicy = parseEntry(node, "policy");
         final @Nullable MemberCachePolicy policy;
@@ -105,11 +125,11 @@ public class BotScope extends BaseScope<BotOptions> {
         final @Nullable Compression compression;
         if (!rawCompression.isEmpty()) {
             try {
-                compression = Compression.valueOf(rawPolicy
+                compression = Compression.valueOf(rawCompression
                         .toUpperCase(Locale.ROOT)
                         .replaceAll(" ", "_"));
             } catch (Exception ex) {
-                return error("Unable to parse gateway compression for input: " + rawPolicy);
+                return error("Unable to parse gateway compression for input: " + rawCompression);
             }
         } else {
             compression = Compression.NONE;
@@ -178,6 +198,14 @@ public class BotScope extends BaseScope<BotOptions> {
     public boolean validate(@Nullable BotOptions parsedEntity) {
         if (parsedEntity == null)
             return false;
+        final String name = parsedEntity.getName();
+        if (DiSky.getManager().exist(name)) {
+            final Bot bot = DiSky.getManager().fromName(name);
+            if (bot.isForceReload())
+                bot.getInstance().shutdownNow();
+            else
+                return true;
+        }
         final JDA jda;
         try {
 

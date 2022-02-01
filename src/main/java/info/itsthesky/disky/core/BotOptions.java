@@ -27,6 +27,7 @@ public class BotOptions {
     private String name;
     private String token;
     private @Nullable BotApplication application;
+    private boolean forceReload;
     private boolean autoReconnect;
     /**
      * Policy, access & cache information
@@ -116,6 +117,14 @@ public class BotOptions {
         this.policy = policy;
     }
 
+    public boolean forceReload() {
+        return forceReload;
+    }
+
+    public void setForceReload(boolean forceReload) {
+        this.forceReload = forceReload;
+    }
+
     public @Nullable BotApplication getApplication() {
         return application;
     }
@@ -141,6 +150,6 @@ public class BotOptions {
     }
 
     public Bot asBot(JDA core) {
-        return new Bot(getName(), core, getApplication());
+        return new Bot(getName(), core, getApplication(), forceReload);
     }
 }

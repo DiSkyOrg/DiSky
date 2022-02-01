@@ -4,7 +4,10 @@ import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.*;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Method;
 
 /**
  * Class that will handle every information about a bot.
@@ -16,11 +19,13 @@ public class Bot {
     private final String name;
     private final JDA instance;
     private final @Nullable BotApplication application;
+    private final boolean forceReload;
 
-    public Bot(String name, JDA instance, @Nullable BotApplication application) {
+    public Bot(String name, JDA instance, @Nullable BotApplication application, boolean forceReload) {
         this.name = name;
         this.application = application;
         this.instance = instance;
+        this.forceReload = forceReload;
     }
 
     public static @Nullable Bot create(BotOptions options) {
@@ -34,11 +39,15 @@ public class Bot {
             return null;
         }
 
-        return new Bot(options.getName(), built, options.getApplication());
+        return new Bot(options.getName(), built, options.getApplication(), options.forceReload());
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean isForceReload() {
+        return forceReload;
     }
 
     public JDA getInstance() {
@@ -47,5 +56,17 @@ public class Bot {
 
     public @Nullable BotApplication getApplication() {
         return application;
+    }
+
+    public MessageChannel findMessageChannel(MessageChannel original) {
+        if (original instanceof TextChannel)
+            return getInstance().getTextChannelById(original.getId());
+        if (original instanceof NewsChannel)
+            return getInstance().getNewsChannelById(original.getId());
+        if (original instanceof ThreadChannel)
+            return getInstance().getThreadChannelById(original.getId());
+        if (original instanceof PrivateChannel)
+            return getInstance().getPrivateChannelById(original.getId());
+        return original;
     }
 }
