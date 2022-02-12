@@ -8,7 +8,7 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.EasyEffect;
+import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +49,8 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {
     protected @Nullable
     T @NotNull [] get(@NotNull Event e) {
         final String id = exprId.getSingle(e);
-        final Bot bot = EasyEffect.parseSingle(exprBot, e, DiSky.getManager().findAny());
-        if (EasyEffect.anyNull(id, bot))
+        final Bot bot = EasyElement.parseSingle(exprBot, e, DiSky.getManager().findAny());
+        if (EasyElement.anyNull(id, bot))
             return (T[]) new Object[0];
         return (T[]) new Object[] {get(id, bot)};
     }

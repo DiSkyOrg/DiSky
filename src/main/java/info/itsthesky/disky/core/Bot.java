@@ -69,4 +69,8 @@ public class Bot {
             return getInstance().getPrivateChannelById(original.getId());
         return original;
     }
+
+	public boolean coreIsEquals(JDA core) {
+        return getInstance().getSelfUser().getId().equals(core.getSelfUser().getId());
+	}
 }

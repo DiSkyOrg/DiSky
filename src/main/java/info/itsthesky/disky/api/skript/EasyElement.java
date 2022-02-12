@@ -1,20 +1,24 @@
 package info.itsthesky.disky.api.skript;
 
+import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Variable;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Simple class that contains some useful methods for variable, expressions and more.
  * @author ItsTheSky
  */
-public abstract class EasyEffect extends Effect {
+public abstract class EasyElement extends Effect {
 
     /**
      * Validate a specific expression, to see if it's a variable or not.
@@ -66,7 +70,7 @@ public abstract class EasyEffect extends Effect {
      * Advanced method, checking if it's a variable and if the type (single or list) is also validate.
      * @param expression   The expression to validate
      * @param shouldBeList Either the input expression should be a single or list variable
-     * @return True if {@link EasyEffect#validate(Expression)} and the expression is a list or not according to the argument, else false.
+     * @return True if {@link EasyElement#validate(Expression)} and the expression is a list or not according to the argument, else false.
      */
     public static boolean validate(Expression<?> expression, boolean shouldBeList) {
         if (!validate(expression)) {
@@ -77,4 +81,25 @@ public abstract class EasyEffect extends Effect {
                 : expression.isSingle();
     }
 
+    public static boolean containsInterfaces(@NotNull Class<?> clazz) {
+        return Stream
+                .of(ScriptLoader.getCurrentEvents())
+                .filter(Objects::nonNull)
+                .anyMatch(c -> Arrays.asList(c.getInterfaces()).contains(clazz));
+    }
+
+    public static boolean eventsMatch(@NotNull Predicate<Class<? extends Event>> predicate) {
+        return Stream.of(ScriptLoader.getCurrentEvents()).anyMatch(predicate);
+    }
+
+    public static boolean containsEvent(@NotNull Class<? extends Event> clazz) {
+        return Arrays.asList(ScriptLoader.getCurrentEvents()).contains(clazz);
+    }
+
+    @SafeVarargs
+    public static <T> boolean equalAny(T base, T... entities) {
+        return Arrays
+                .stream(entities)
+                .anyMatch(o -> o == base);
+    }
 }

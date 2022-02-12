@@ -10,6 +10,8 @@ import ch.njol.util.Kleenean;
 import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.JDAUtils;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +29,7 @@ public class PostMessage extends SpecificBotEffect<Message> {
 
     static {
         Skript.registerEffect(PostMessage.class,
-                "(post|dispatch) [the] [message] %string% (in|to) [the] [channel] %channel%" +
+                "(post|dispatch) [the] [message] %string/embedbuilder/messagebuilder% (in|to) [the] [channel] %channel%" +
                         " [and store (it|the message) (inside|in) %-objects%]");
     }
 
@@ -36,21 +38,20 @@ public class PostMessage extends SpecificBotEffect<Message> {
 
     @Override
     public void runEffect(Event e, Bot bot) {
-        final Object content = exprMessage.getSingle(e);
+        final Object rawContent = exprMessage.getSingle(e);
+        final MessageBuilder content = JDAUtils.constructMessage(rawContent);
         final Object receiver = exprReceiver.getSingle(e);
         if (anyNull(content, receiver)) {
             restart();
             return;
         }
-        // TODO: 30/01/2022 Allow the new type to be parsed (embed, message builder, etc...)
-        final String message = content.toString();
 
         final MessageChannel channel = bot != null ?
                 bot.findMessageChannel((MessageChannel) receiver) : (MessageChannel) receiver;
 
         event = e;
         channel
-                .sendMessage(message)
+                .sendMessage(content.build())
                 .queue(this::restart);
     }
 

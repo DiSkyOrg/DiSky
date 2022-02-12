@@ -1,6 +1,9 @@
 package info.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +17,12 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Get Bot / Bot Named X")
+@Description({"Get a cached bot from DiSky using its unique name.",
+        "If the desired bot does not exist or is not loaded yet, this expression will return none.",
+        "This expression cannot be changed."})
+@Examples({"get bot \"name\"",
+        "bot named \"name\""})
 public class GetBot extends SimpleExpression<Bot> {
 
     static {

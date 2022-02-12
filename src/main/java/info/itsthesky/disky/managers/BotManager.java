@@ -4,10 +4,12 @@ import com.google.common.collect.Sets;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.Utils;
+import net.dv8tion.jda.api.JDA;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -41,6 +43,10 @@ public class BotManager {
         return name != null && bots.stream().anyMatch(bot -> bot.getName().equals(name));
     }
 
+    public void execute(Consumer<Bot> consumer) {
+        bots.forEach(consumer);
+    }
+
     public ErrorHandler errorHandler() {
         return message -> plugin
                 .getServer()
@@ -68,4 +74,13 @@ public class BotManager {
                 .findAny()
                 .orElse(null);
     }
+
+	public final String getJDAName(final JDA core) {
+        return bots
+                .stream()
+                .filter(bot -> bot.coreIsEquals(core))
+                .map(Bot::getName)
+                .findAny()
+                .orElse(null);
+	}
 }

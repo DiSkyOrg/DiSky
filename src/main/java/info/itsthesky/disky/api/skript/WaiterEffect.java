@@ -20,7 +20,7 @@ import java.util.List;
  * @author ItsTheSky
  */
 @SuppressWarnings({"unchecked", "unused", "raw"})
-public abstract class WaiterEffect<T> extends EasyEffect {
+public abstract class WaiterEffect<T> extends EasyElement {
 
     protected Event event;
     private Object localVars;
@@ -47,6 +47,12 @@ public abstract class WaiterEffect<T> extends EasyEffect {
     public abstract void runEffect(Event e);
 
     protected boolean validateVariable(final Expression<?> expr, boolean shouldBeList) {
+        return validateVariable(expr, shouldBeList, false);
+    }
+
+    protected boolean validateVariable(final Expression<?> expr, boolean shouldBeList, boolean allowNotSet) {
+        if (expr == null && allowNotSet)
+            return true;
         final boolean validVariable = validate(expr, shouldBeList);
         if (validVariable)
             setChangedVariable((Variable<T>) expr);
