@@ -83,4 +83,11 @@ public class BotManager {
                 .findAny()
                 .orElse(null);
 	}
+
+	public Bot fromJDA(JDA core) {
+        return bots.stream()
+                .filter(bot -> bot.getInstance().equals(core))
+                .findAny()
+                .orElse(null);
+	}
 }

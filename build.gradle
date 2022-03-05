@@ -18,7 +18,7 @@ dependencies {
     shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
     shadow 'com.github.SkriptLang:Skript:2.6.1'
 
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.5'
+    implementation 'net.dv8tion:JDA:5.0.0-alpha.9'
     implementation 'com.github.simplix-softworks:simplixstorage:3.2.4'
 }
 

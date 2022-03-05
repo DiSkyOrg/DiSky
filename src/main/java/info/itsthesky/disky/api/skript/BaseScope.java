@@ -11,6 +11,9 @@ import ch.njol.skript.util.StringMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represent a scope that work as an event, with possible entries and sections when parsed.
  * @param <T> The object that the scope will parse into.
@@ -24,7 +27,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
 
     public abstract boolean validate(@Nullable T parsedEntity);
 
-    public void init(Literal<?>[] args) {};
+    public void init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult, SectionNode node) {};
 
     public String parseEntry(SectionNode node, String key) {
         return parseEntry(node, key, "");
@@ -66,12 +69,23 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
         return null;
     }
 
+    /**
+     * Nuke a specific {@link SectionNode} in order to delete every triggers present in it.
+     * <br>aka disable the execution of every next trigger of this section node.
+     * @param sectionNode The section node to nuke
+     */
+    public static void nukeSectionNode(SectionNode sectionNode) {
+        List<Node> nodes = new ArrayList<>();
+        for (Node node : sectionNode) nodes.add(node);
+        for (Node n : nodes) sectionNode.remove(n);
+    }
+
     @Override
     public boolean init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult) {
         final Node node = SkriptLogger.getNode();
         if (!(node instanceof SectionNode))
             return false;
-        init(args);
+        init(args, matchedPattern, parseResult, (SectionNode) node);
         final @Nullable T entity = parse((SectionNode) node);
         SkriptLogger.setNode(node);
         return validate(entity);

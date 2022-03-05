@@ -19,8 +19,12 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 						"\telse:",
 						"\t\treply with \"I just received '%event-message%' from %mention tag of event-user%!\"");
 
+		SkriptUtils.registerBotValue(BukkitMessageEvent.class);
+
 		SkriptUtils.registerValue(BukkitMessageEvent.class, Message.class,
 				event -> event.getJDAEvent().getMessage());
+		SkriptUtils.registerValue(BukkitMessageEvent.class, Guild.class,
+				event -> event.getJDAEvent().getGuild());
 		SkriptUtils.registerValue(BukkitMessageEvent.class, Member.class,
 				event -> event.getJDAEvent().getMember());
 		SkriptUtils.registerValue(BukkitMessageEvent.class, User.class,
@@ -42,9 +46,7 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 	}
 
 	public static class BukkitMessageEvent extends SimpleDiSkyEvent<MessageReceivedEvent> implements info.itsthesky.disky.api.events.specific.MessageEvent {
-		public BukkitMessageEvent(MessageEvent event) {
-
-		}
+		public BukkitMessageEvent(MessageEvent event) {}
 
 		@Override
 		public MessageChannel getMessageChannel() {

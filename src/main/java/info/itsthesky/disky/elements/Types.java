@@ -1,5 +1,6 @@
 package info.itsthesky.disky.elements;
 
+import ch.njol.skript.registrations.Converters;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
 import info.itsthesky.disky.core.Bot;
@@ -8,6 +9,19 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 
 public class Types {
+
+    public static class DiSkyConverters {
+
+        static {
+            Converters.registerConverter(Member.class, Role[].class, member -> member.getRoles().toArray(new Role[0]));
+            Converters.registerConverter(Member.class, User.class, Member::getUser);
+
+            Converters.registerConverter(Message.class, String.class, Message::getContentRaw);
+
+            Converters.registerConverter(IMentionable.class, String.class, IMentionable::getAsMention);
+        }
+
+    }
 
     static {
 
@@ -92,5 +106,4 @@ public class Types {
                 member -> "bot " + member.getInstance().getSelfUser().getName() + "#" + member.getInstance().getSelfUser().getDiscriminator(),
                 input -> DiSky.getManager().fromName(input)).register();
     }
-
 }

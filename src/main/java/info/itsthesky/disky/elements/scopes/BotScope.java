@@ -5,6 +5,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.config.validate.SectionValidator;
 import ch.njol.skript.lang.Literal;
+import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.TriggerItem;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
@@ -71,7 +72,7 @@ public class BotScope extends BaseScope<BotOptions> {
     private @Nullable String name;
 
     @Override
-    public void init(Literal<?>[] args) {
+    public void init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, SectionNode node) {
         name = SkriptUtils.verifyVar((Literal<String>) args[0], null, null);
     }
 

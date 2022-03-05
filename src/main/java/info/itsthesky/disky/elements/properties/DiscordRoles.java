@@ -4,7 +4,9 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import info.itsthesky.disky.api.changers.MultipleChangeableSimplePropertyExpression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.util.coll.CollectionUtils;
+import info.itsthesky.disky.api.changers.MultipleChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 @Examples({"add role with id \"000\" to event-member",
         "remove event-role from event-member",
         "reply with \"Amount of roles in the guild: %size of roles of event-guild%\""})
-public class DiscordRoles extends MultipleChangeableSimplePropertyExpression<Object, Role> {
+public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, Role> {
 
     static {
         register(
@@ -58,7 +60,7 @@ public class DiscordRoles extends MultipleChangeableSimplePropertyExpression<Obj
     @Override
     public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
         if (EasyElement.equalAny(mode, Changer.ChangeMode.ADD, Changer.ChangeMode.REMOVE))
-            return new Class[] {Member.class};
+            return CollectionUtils.array(Role.class);
         return new Class[0];
     }
 
