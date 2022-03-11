@@ -1,9 +1,12 @@
 package info.itsthesky.disky.managers;
 
 import com.google.common.collect.Sets;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.Utils;
+import info.itsthesky.disky.elements.commands.CommandListener;
+import info.itsthesky.disky.elements.components.Test;
 import net.dv8tion.jda.api.JDA;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +34,13 @@ public class BotManager {
 
     public void addBot(Bot bot) {
         this.bots.removeIf(b -> b.getName().equals(bot.getName()));
+        configureBot(bot);
         this.bots.add(bot);
+    }
+
+    private static void configureBot(Bot bot) {
+        bot.getInstance().addEventListener(new CommandListener());
+        bot.getInstance().addEventListener(new Test());
     }
 
     public void shutdown() {
@@ -48,10 +57,7 @@ public class BotManager {
     }
 
     public ErrorHandler errorHandler() {
-        return message -> plugin
-                .getServer()
-                .getConsoleSender()
-                .sendMessage(Utils.colored("&4[&c!&4] &c" + message));
+        return new DiSkyErrorHandler();
     }
 
     public @Nullable Bot fromName(String name) {
