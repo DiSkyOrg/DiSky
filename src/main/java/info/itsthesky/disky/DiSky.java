@@ -2,6 +2,8 @@ package info.itsthesky.disky;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import de.leonhard.storage.util.FileUtils;
+import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.elements.BaseBotEffect;
 import info.itsthesky.disky.managers.BotManager;
@@ -9,7 +11,10 @@ import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
 
 public final class DiSky extends JavaPlugin {
 
@@ -19,7 +24,7 @@ public final class DiSky extends JavaPlugin {
     private static BotManager botManager;
     private static ConfigManager configManager;
 
-    @Override
+	@Override
     public void onEnable() {
 
         /*
@@ -29,6 +34,31 @@ public final class DiSky extends JavaPlugin {
         botManager = new BotManager(this);
         configManager = new ConfigManager(this);
         errorHandler = botManager.errorHandler();
+
+        /*
+        Saving & loading emojis
+         */
+
+        final File emojisFile = new File(getDataFolder(), "emojis.json");
+        if (!emojisFile.exists()) {
+            getLogger().info("Saving emoji's file ...");
+            try {
+                InputStream stream = getResource("emojis.json");
+                FileUtils.writeToFile(new File(getDataFolder(), "emojis.json"), stream);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                getLogger().severe("An error occurred while saving emojis file! Emojis will not be available.");
+            }
+            getLogger().info("Success!");
+        }
+        getLogger().info("Loading emoji library ...");
+        try {
+            EmojiStore.loadLocal();
+        } catch (IOException e) {
+            e.printStackTrace();
+            getLogger().severe("An error occurred while loading emojis! They will not be available.");
+        }
+        getLogger().info("Success!");
 
         /*
         Check for Skript & start registration
@@ -56,6 +86,14 @@ public final class DiSky extends JavaPlugin {
          */
         RestAction.setDefaultFailure(throwable -> DiSky.getErrorHandler().exception(throwable));
 
+    }
+
+    public static void debug(String s) {
+        getInstance().debugMessage(s);
+    }
+
+    private void debugMessage(String s) {
+        getLogger().log(Level.CONFIG, s);
     }
 
     @Override

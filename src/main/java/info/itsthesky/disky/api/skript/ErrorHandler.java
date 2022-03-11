@@ -2,10 +2,10 @@ package info.itsthesky.disky.api.skript;
 
 public interface ErrorHandler {
 
-    void exception(String message);
-
-    default void exception(Throwable throwable) {
-        exception(throwable.getMessage());
+    default void exception(String message) {
+        exception(new RuntimeException(message));
     }
+
+    void exception(Throwable throwable);
 
 }

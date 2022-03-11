@@ -1,24 +1,35 @@
 package info.itsthesky.disky.core;
 
 import ch.njol.skript.ScriptLoader;
+import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.lang.util.SimpleLiteral;
+import ch.njol.skript.log.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.elements.effects.EffRetrieveEventValue;
 import info.itsthesky.disky.elements.events.MessageEvent;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
 public final class SkriptUtils {
@@ -30,6 +41,27 @@ public final class SkriptUtils {
 
     public static void sync(Runnable runnable) {
         Bukkit.getScheduler().runTask(DiSky.getInstance(), runnable);
+    }
+
+    public static void stopLog(RetainingLogHandler logger) {
+        //Stop the current one
+        logger.stop();
+        //Using reflection to access the iterator of handlers
+        HandlerList handler = ParserInstance.get().getHandlers();
+        if (handler == null)
+            return;
+        Iterator<LogHandler> it = handler.iterator();
+        //A list containing the last handlers that will be stopped
+        List<LogHandler> toStop = new ArrayList<>();
+        while (it.hasNext()) {
+            LogHandler l = it.next();
+            if (l instanceof ParseLogHandler)
+                toStop.add(l);
+            else //We can only stop the lasts handler, this prevent in case the last is not what we want.
+                break;
+        }
+        toStop.forEach(LogHandler::stop); //Stopping them
+        SkriptLogger.logAll(logger.getLog()); //Sending the errors to Skript logger.
     }
 
     @SuppressWarnings("unchecked")
@@ -85,7 +117,42 @@ public final class SkriptUtils {
         Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), runnable);
     }
 
-    public static <B extends Event, T> void registerValue(Class<B> bukkitClass, Class<T> entityClass, Function<B, T> function, int time) {
+    ////
+    // Registering event-value / retrieved event-value
+    ////
+
+    public static <B extends SimpleDiSkyEvent<? extends GenericMessageEvent>> void registerAuthorValue(Class<B> clazz) {
+        registerAuthorValue(clazz, event -> event.getJDAEvent().getGuild());
+    }
+
+    public static <B extends SimpleDiSkyEvent> void registerAuthorValue(Class<B> bukkitClass,
+                                                                        Function<B, Guild> function) {
+        registerRestValue("author",
+                bukkitClass,
+                event -> function.apply(event).retrieveAuditLogs(),
+                logs -> logs.get(0).getUser());
+    }
+
+    public static <B extends SimpleDiSkyEvent, T, S> void registerRestValue(String codeName,
+                                                                            Class<B> bukkitClass,
+                                                                            Function<B, RestAction<S>> function,
+                                                                            Function<S, T> converter) {
+        final List<EffRetrieveEventValue.RetrieveValueInfo> current =
+                EffRetrieveEventValue.VALUES.getOrDefault(bukkitClass, new ArrayList<>());
+        current.add(new EffRetrieveEventValue.RetrieveValueInfo(bukkitClass, codeName, function, converter));
+        EffRetrieveEventValue.VALUES.put(bukkitClass, current);
+    }
+
+    public static <B extends SimpleDiSkyEvent, T> void registerRestValue(String codeName,
+                                                                         Class<B> bukkitClass,
+                                                                         Function<B, RestAction<T>> function) {
+        registerRestValue(codeName, bukkitClass, function, entity -> entity);
+    }
+
+    public static <B extends Event, T> void registerValue(Class<B> bukkitClass,
+                                                          Class<T> entityClass,
+                                                          Function<B, T> function,
+                                                          int time) {
         EventValues.registerEventValue(bukkitClass, entityClass, new Getter<T, B>() {
             @Override
             public @Nullable T get(B arg) {
@@ -105,4 +172,19 @@ public final class SkriptUtils {
         });
     }
 
+	public static void createRegisteringSpace(Runnable code) {
+        if (Skript.isAcceptRegistrations()) // Already accept it
+            code.run();
+        else {
+            try {
+                Field field = Skript.class.getDeclaredField("acceptRegistrations");
+                field.setAccessible(true);
+                field.set(null, true);
+                code.run();
+                field.setAccessible(false);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+	}
 }

@@ -27,7 +27,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
      * The ending appended to patterns if no custom ending is specified
      */
     public static final String APPENDED_ENDING = "[seen by %-string%]";
-    private Map<Class<?>, Object> valueMap = new HashMap<>();
+    private final Map<Class<?>, Object> valueMap = new HashMap<>();
     private String stringRepresentation;
     private Trigger trigger;
     private EventListener<D> listener;

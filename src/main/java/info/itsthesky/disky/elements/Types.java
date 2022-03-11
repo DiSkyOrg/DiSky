@@ -3,10 +3,18 @@ package info.itsthesky.disky.elements;
 import ch.njol.skript.registrations.Converters;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
+import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
 
 public class Types {
 
@@ -17,8 +25,10 @@ public class Types {
             Converters.registerConverter(Member.class, User.class, Member::getUser);
 
             Converters.registerConverter(Message.class, String.class, Message::getContentRaw);
+            Converters.registerConverter(Emote.class, String.class, Emote::toString);
 
             Converters.registerConverter(IMentionable.class, String.class, IMentionable::getAsMention);
+            Converters.registerConverter(ISnowflake.class, String.class, ISnowflake::getId);
         }
 
     }
@@ -61,6 +71,30 @@ public class Types {
         ).register();
 
         /*
+        Components
+         */
+
+        new DiSkyType<>(ComponentRow.class, "row",
+                row -> "component row with " + row.asComponents(),
+                null).register();
+        new DiSkyType<>(Modal.Builder.class, "modal",
+                modal -> "modal with id " + modal.getId(),
+                null).register();
+        new DiSkyType<>(Button.class, "button",
+                button -> "button with id " + button.getId(),
+                null).register();
+        new DiSkyType<>(SelectMenu.Builder.class, "dropdown",
+                button -> "dropdown with id " + button.getId(),
+                null).register();
+        new DiSkyType<>(TextInput.Builder.class, "textinput",
+                button -> "textinput with id " + button.getId(),
+                null).register();
+        new DiSkyType<>(SlashCommandData.class, "slashcommand",
+                slash -> "slash command data: " + slash.toData(),
+                null).register();
+        DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
+
+        /*
         Guild Entities
          */
 
@@ -79,6 +113,10 @@ public class Types {
         ).register();
         new DiSkyType<>(MessageBuilder.class, "messagebuilder",
                 messageBuilder -> messageBuilder.getStringBuilder().toString(),
+                null
+        ).register();
+        new DiSkyType<>(Emote.class, "emote",
+                Emote::toString,
                 null
         ).register();
         new DiSkyType<>(EmbedBuilder.class, "embedbuilder",
