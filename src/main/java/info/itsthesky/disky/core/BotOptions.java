@@ -1,12 +1,19 @@
-package info.itsthesky.disky;
+package info.itsthesky.disky.core;
 
+import ch.njol.skript.lang.TriggerItem;
+import info.itsthesky.disky.BotApplication;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class that store every option defined by the user before its actual {@link Bot} creation.
@@ -19,6 +26,8 @@ public class BotOptions {
      */
     private String name;
     private String token;
+    private @Nullable BotApplication application;
+    private boolean forceReload;
     private boolean autoReconnect;
     /**
      * Policy, access & cache information
@@ -27,6 +36,11 @@ public class BotOptions {
     private CacheFlag[] flags;
     private Compression compression;
     private MemberCachePolicy policy;
+    /**
+     * Events & triggers
+     */
+    private List<TriggerItem> onReady;
+    private List<TriggerItem> onGuildReady;
 
     public BotOptions() {}
 
@@ -37,6 +51,14 @@ public class BotOptions {
                 .setAutoReconnect(autoReconnect)
                 .setEnabledIntents(Arrays.asList(getIntents()))
                 .setMemberCachePolicy(policy);
+    }
+
+    public void runReady(ReadyEvent event) {
+
+    }
+
+    public void runGuildReady(GuildReadyEvent event) {
+
     }
 
     public String getName() {
@@ -93,5 +115,41 @@ public class BotOptions {
 
     public void setPolicy(MemberCachePolicy policy) {
         this.policy = policy;
+    }
+
+    public boolean forceReload() {
+        return forceReload;
+    }
+
+    public void setForceReload(boolean forceReload) {
+        this.forceReload = forceReload;
+    }
+
+    public @Nullable BotApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(@Nullable BotApplication application) {
+        this.application = application;
+    }
+
+    public List<TriggerItem> getOnReady() {
+        return onReady;
+    }
+
+    public void setOnReady(List<TriggerItem> onReady) {
+        this.onReady = onReady;
+    }
+
+    public List<TriggerItem> getOnGuildReady() {
+        return onGuildReady;
+    }
+
+    public void setOnGuildReady(List<TriggerItem> onGuildReady) {
+        this.onGuildReady = onGuildReady;
+    }
+
+    public Bot asBot(JDA core) {
+        return new Bot(getName(), core, getApplication(), forceReload);
     }
 }
