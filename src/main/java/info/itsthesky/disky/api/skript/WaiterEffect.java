@@ -101,7 +101,7 @@ public abstract class WaiterEffect<T> extends EasyElement {
         try {
             runEffect(e);
         } catch (Throwable ex) {
-            DiSky.getErrorHandler().exception(ex);
+            DiSky.getErrorHandler().exception(event, ex);
         }
 
         return null;

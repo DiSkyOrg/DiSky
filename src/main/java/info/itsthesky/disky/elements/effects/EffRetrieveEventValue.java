@@ -79,7 +79,7 @@ public class EffRetrieveEventValue extends WaiterEffect<Object> {
 				},
 				ex -> {
 					restart();
-					DiSky.getErrorHandler().exception(ex);
+					DiSky.getErrorHandler().exception(e, ex);
 				});
 	}
 

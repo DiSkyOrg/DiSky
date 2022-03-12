@@ -42,12 +42,12 @@ public class EffDeferInteraction extends Effect {
         if (event instanceof GenericComponentInteractionCreateEvent) {
 
             GenericComponentInteractionCreateEvent clickEvent = (GenericComponentInteractionCreateEvent) event;
-            clickEvent.deferEdit().queue(null, ex -> DiSky.getErrorHandler().exception(ex));
+            clickEvent.deferEdit().queue(null, ex -> DiSky.getErrorHandler().exception(e, ex));
 
         } else if (event instanceof ModalInteractionEvent) {
 
             ModalInteractionEvent clickEvent = (ModalInteractionEvent) event;
-            clickEvent.deferEdit().queue(null, ex -> DiSky.getErrorHandler().exception(ex));
+            clickEvent.deferEdit().queue(null, ex -> DiSky.getErrorHandler().exception(e, ex));
 
         }
 

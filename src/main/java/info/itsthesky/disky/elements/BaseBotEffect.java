@@ -45,7 +45,7 @@ public class BaseBotEffect extends WaiterEffect<Object> {
         final @NotNull Bot bot =
                 parseSingle(exprBot, e, DiSky.getManager().findAny());
         if (bot == null) {
-            DiSky.getErrorHandler().exception(new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
+            DiSky.getErrorHandler().exception(e, new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
             restart();
             return;
         }

@@ -60,7 +60,7 @@ public class DestroyEntity extends WaiterEffect {
 		}
 		action.queue(v -> restart(), ex -> {
 			restart();
-			DiSky.getErrorHandler().exception(ex);
+			DiSky.getErrorHandler().exception(e, ex);
 		});
 	}
 

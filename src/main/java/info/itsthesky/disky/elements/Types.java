@@ -9,6 +9,8 @@ import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
@@ -89,10 +91,18 @@ public class Types {
         new DiSkyType<>(TextInput.Builder.class, "textinput",
                 button -> "textinput with id " + button.getId(),
                 null).register();
+        DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
+
+        /*
+        Slash commands
+         */
         new DiSkyType<>(SlashCommandData.class, "slashcommand",
                 slash -> "slash command data: " + slash.toData(),
                 null).register();
-        DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
+        new DiSkyType<>(OptionData.class, "slashoption",
+                slash -> slash.toData().toString(),
+                null).register();
+        DiSkyType.fromEnum(OptionType.class, "optiontype", "optiontype").register();
 
         /*
         Guild Entities

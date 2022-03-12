@@ -6,38 +6,22 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import net.dv8tion.jda.api.events.GenericEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
+public abstract class SimpleGetterExpression<T, E extends Event> extends SimpleExpression<T> {
 
-public abstract class SimpleGetterExpression<T, E extends GenericEvent> extends SimpleExpression<T> {
+	protected abstract String getValue();
 
-	private final Class<T> clazz;
-	private final String value;
-	private final Class<? extends Event> event;
+	protected abstract Class<E> getEvent();
 
-	public SimpleGetterExpression(Class<T> clazz,
-								  String value,
-								  Class<? extends Event> event) {
-		this.clazz = clazz;
-		this.value = value;
-		this.event = event;
-	}
-
-	protected abstract T get(E event);
+	protected abstract T convert(E event);
 
 	@Override
 	@SuppressWarnings("unchecked")
 	protected T @NotNull [] get(@NotNull Event e) {
-		return (T[]) new Object[] {get((E) e)};
-	}
-
-	@Override
-	public @NotNull Class<? extends T> getReturnType() {
-		return clazz;
+		return (T[]) new Object[] {convert((E) e)};
 	}
 
 	@Override
@@ -47,13 +31,13 @@ public abstract class SimpleGetterExpression<T, E extends GenericEvent> extends 
 
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return value;
+		return getValue();
 	}
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
-		if (!EasyElement.containsEvent(event)) {
-			Skript.error(value + " cannot be used in a " + ParserInstance.get().getCurrentEventName());
+		if (getEvent() != null && !EasyElement.containsEvent(getEvent())) {
+			Skript.error(getValue() + " cannot be used in a " + ParserInstance.get().getCurrentEventName());
 			return false;
 		}
 		return true;

@@ -9,6 +9,8 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.*;
 import ch.njol.skript.registrations.EventValues;
+import ch.njol.skript.util.Color;
+import ch.njol.skript.util.ColorRGB;
 import ch.njol.skript.util.Getter;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -186,5 +188,9 @@ public final class SkriptUtils {
                 ex.printStackTrace();
             }
         }
+	}
+
+	public static Color convert(java.awt.Color color) {
+        return new ColorRGB(color.getRed(), color.getGreen(), color.getBlue());
 	}
 }

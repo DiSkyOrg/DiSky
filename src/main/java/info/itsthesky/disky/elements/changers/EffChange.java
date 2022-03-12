@@ -295,7 +295,7 @@ public class EffChange extends Effect {
             return;
         }
         if (bot == null) {
-            DiSky.getErrorHandler().exception("DiSky tried to change \"" + changed.toString(e, false) + "\", but the bot wasn't found.");
+            DiSky.getErrorHandler().exception(e, "DiSky tried to change \"" + changed.toString(e, false) + "\", but the bot wasn't found.");
             return;
         }
 
@@ -307,7 +307,7 @@ public class EffChange extends Effect {
                 changed.change(e, delta, mode);
             }
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(ex);
+            DiSky.getErrorHandler().exception(e, ex);
         } finally {
             currentBot = null;
         }

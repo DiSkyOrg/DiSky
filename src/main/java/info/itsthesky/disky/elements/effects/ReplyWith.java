@@ -82,7 +82,7 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 					.addActionRows(formatted)
 					.setEphemeral(hidden)
 					.queue(v -> restart(), ex -> {
-						DiSky.getErrorHandler().exception(ex);
+						DiSky.getErrorHandler().exception(e, ex);
 						restart();
 					});
 
@@ -91,7 +91,7 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 			final MessageEvent event = (MessageEvent) e;
 			final Object rawMessage = parseSingle(exprMessage, e, null);
 			final MessageBuilder message = JDAUtils.constructMessage(rawMessage);
-			final List<ComponentRow> rows = Arrays.asList(exprComponents.getAll(e));
+			final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
 			final MessageChannel channel = bot.findMessageChannel(event.getMessageChannel());
 			if (anyNull(channel, event, rawMessage, message)) {
 				restart();
@@ -106,7 +106,7 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 			channel.sendMessage(message.build())
 					.setActionRows(formatted)
 					.queue(this::restart, ex -> {
-						DiSky.getErrorHandler().exception(ex);
+						DiSky.getErrorHandler().exception(e, ex);
 						restart();
 					});
 

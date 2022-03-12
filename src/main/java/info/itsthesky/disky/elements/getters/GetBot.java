@@ -49,7 +49,7 @@ public class GetBot extends SimpleExpression<Bot> {
             return new Bot[0];
         final @Nullable Bot bot = DiSky.getManager().fromName(name);
         if (bot == null)
-            DiSky.getErrorHandler().exception(new RuntimeException("Unable to get the bot named " + name + ", its not loaded or not enabled."));
+            DiSky.getErrorHandler().exception(e, new RuntimeException("Unable to get the bot named " + name + ", its not loaded or not enabled."));
         return bot == null ? new Bot[0] : new Bot[] {bot};
     }
 

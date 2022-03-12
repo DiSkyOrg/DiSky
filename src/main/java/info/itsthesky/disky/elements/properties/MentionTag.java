@@ -19,7 +19,7 @@ public class MentionTag extends SimplePropertyExpression<IMentionable, String> {
 		register(MentionTag.class,
 				String.class,
 				"mention [tag]",
-				"channel/role/user/member");
+				"channel/role/user/emote/member");
 	}
 
 	@Override

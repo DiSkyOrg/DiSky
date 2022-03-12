@@ -41,7 +41,7 @@ public class ActionImpl<T> implements Action<T> {
 				if (onThrow != null) {
 					onThrow.accept(e);
 				} else {
-					DiSky.getErrorHandler().exception(e);
+					DiSky.getErrorHandler().exception(null, e);
 				}
 			}
 		});

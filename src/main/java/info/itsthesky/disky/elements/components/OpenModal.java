@@ -49,7 +49,7 @@ public class OpenModal extends WaiterEffect {
 			restart();
 		}, ex -> {
 			restart();
-			DiSky.getErrorHandler().exception(ex);
+			DiSky.getErrorHandler().exception(e, ex);
 		});
 	}
 

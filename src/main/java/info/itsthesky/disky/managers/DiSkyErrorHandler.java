@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +22,7 @@ import java.util.function.Function;
 public class DiSkyErrorHandler implements ErrorHandler {
 	
 	private final HashMap<ErrorResponse, Function<Throwable, String[]>> errors = new HashMap<>();
+	private final HashMap<Event, Throwable> errorsValue = new HashMap<>();
 	private final Function<Throwable, String[]> def;
 
 	public DiSkyErrorHandler() {
@@ -52,11 +56,14 @@ public class DiSkyErrorHandler implements ErrorHandler {
 	}
 	
 	@Override
-	public void exception(Throwable ex) {
+	public void exception(@Nullable Event event, @Nullable Throwable ex) {
+		insertErrorValue(event, ex);
 		send("&4[&c!&4] &c");
 		send("&4[&c!&4] &4DiSky Internal Error (version: "+ DiSky.getInstance().getDescription().getVersion()+")");
 		send("&4[&c!&4] &c");
 		final String[] lines;
+		if (ex == null)
+			ex = new RuntimeException("Unknown exception (nullable message): " + ex);
 		if (ex instanceof ErrorResponseException)
 			lines = errors.getOrDefault(((ErrorResponseException) ex).getErrorResponse(), def).apply(ex);
 		else
@@ -67,7 +74,20 @@ public class DiSkyErrorHandler implements ErrorHandler {
 
 		send("&4[&c!&4] &c");
 	}
-	
+
+	@Override
+	public void insertErrorValue(@Nullable Event event, @Nullable Throwable error) {
+		if (event != null)
+			errorsValue.put(event, error);
+	}
+
+	@Override
+	public @Nullable Throwable getErrorValue(@NotNull Event event) {
+		final Throwable value = errorsValue.getOrDefault(event, null);
+		errorsValue.remove(event);
+		return value;
+	}
+
 	private void send(String message) {
 		Bukkit.getServer().getConsoleSender().sendMessage(Utils.colored(message));
 	}
