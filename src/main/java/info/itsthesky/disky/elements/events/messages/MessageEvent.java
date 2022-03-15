@@ -1,4 +1,4 @@
-package info.itsthesky.disky.elements.events;
+package info.itsthesky.disky.elements.events.messages;
 
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;

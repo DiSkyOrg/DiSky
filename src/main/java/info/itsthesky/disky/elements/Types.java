@@ -126,7 +126,7 @@ public class Types {
                 null
         ).register();
         new DiSkyType<>(Emote.class, "emote",
-                Emote::toString,
+                Emote::getAsMention,
                 null
         ).register();
         new DiSkyType<>(EmbedBuilder.class, "embedbuilder",

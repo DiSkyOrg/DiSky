@@ -6,7 +6,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
-import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Color;
@@ -17,7 +16,6 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.EffRetrieveEventValue;
-import info.itsthesky.disky.elements.events.MessageEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
@@ -30,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
@@ -158,7 +157,11 @@ public final class SkriptUtils {
         EventValues.registerEventValue(bukkitClass, entityClass, new Getter<T, B>() {
             @Override
             public @Nullable T get(B arg) {
-                return function.apply(arg);
+                try {
+                    return function.apply(arg);
+                } catch (Exception ex) {
+                    return null;
+                }
             }
         }, time);
     }
@@ -192,5 +195,12 @@ public final class SkriptUtils {
 
 	public static Color convert(java.awt.Color color) {
         return new ColorRGB(color.getRed(), color.getGreen(), color.getBlue());
+	}
+
+	@SafeVarargs
+    public static Class<? extends Event>[] addEventClasses(Class<? extends Event>... classes) {
+        final List<Class<? extends Event>> current = new ArrayList<>(Arrays.asList(ParserInstance.get().getCurrentEvents()));
+        current.addAll(Arrays.asList(classes));
+        return current.toArray(new Class[0]);
 	}
 }
