@@ -36,10 +36,6 @@ public abstract class SimpleGetterExpression<T, E extends Event> extends SimpleE
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
-		if (getEvent() != null && !EasyElement.containsEvent(getEvent())) {
-			Skript.error(getValue() + " cannot be used in a " + ParserInstance.get().getCurrentEventName());
-			return false;
-		}
-		return true;
+		return getEvent() == null || EasyElement.containsEvent(getEvent());
 	}
 }

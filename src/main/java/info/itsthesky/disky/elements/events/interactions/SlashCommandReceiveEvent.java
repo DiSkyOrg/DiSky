@@ -8,6 +8,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
+import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.core.JDAUtils;
@@ -17,6 +18,8 @@ import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import org.jetbrains.annotations.NotNull;
 
 public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteractionEvent> {
@@ -113,7 +116,7 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 		}
 	}
 
-	public static class BukkitSlashCommandReceiveEvent extends SimpleDiSkyEvent<SlashCommandInteractionEvent> implements InteractionEvent {
+	public static class BukkitSlashCommandReceiveEvent extends SimpleDiSkyEvent<SlashCommandInteractionEvent> implements ModalEvent, InteractionEvent {
 		public BukkitSlashCommandReceiveEvent(SlashCommandReceiveEvent event) {}
 
 		@Override
@@ -121,5 +124,9 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 			return getJDAEvent();
 		}
 
+		@Override
+		public ModalCallbackAction replyModal(@NotNull Modal modal) {
+			return getJDAEvent().replyModal(modal);
+		}
 	}
 }

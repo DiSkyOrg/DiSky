@@ -7,7 +7,6 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.ReactionListener;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.commands.CommandListener;
-import info.itsthesky.disky.elements.components.Test;
 import net.dv8tion.jda.api.JDA;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;

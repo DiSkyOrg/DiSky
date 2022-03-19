@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 public class ReactionRemoveEvent extends DiSkyEvent<MessageReactionRemoveEvent> {
 
 	static {
-		register("Reaction Add", ReactionRemoveEvent.class, BukkitReactionRemoveEvent.class,
+		register("Reaction Remove", ReactionRemoveEvent.class, BukkitReactionRemoveEvent.class,
 				"(reaction|emote)[s] add[ed]")
 				.description("Fired when a message, that can be seen by the bot, receive a reaction.",
 						"This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.");

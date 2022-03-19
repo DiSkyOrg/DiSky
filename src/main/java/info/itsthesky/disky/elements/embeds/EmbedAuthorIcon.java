@@ -10,7 +10,7 @@ public class EmbedAuthorIcon extends EmbedProperty<String> {
 	static {
 		register(EmbedAuthorIcon.class,
 				String.class,
-				"author url");
+				"author icon");
 	}
 
 	@Override

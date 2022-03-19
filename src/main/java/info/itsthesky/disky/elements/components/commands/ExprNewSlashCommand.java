@@ -1,4 +1,4 @@
-package info.itsthesky.disky.elements.components.slash;
+package info.itsthesky.disky.elements.components.commands;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;

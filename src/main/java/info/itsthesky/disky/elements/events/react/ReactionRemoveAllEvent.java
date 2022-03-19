@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.requests.restaction.pagination.AuditLogPaginationActi
 public class ReactionRemoveAllEvent extends DiSkyEvent<MessageReactionRemoveAllEvent> {
 
 	static {
-		register("Reaction Add", ReactionRemoveAllEvent.class, BukkitReactionRemoveAllEvent.class,
+		register("Reaction Remove All", ReactionRemoveAllEvent.class, BukkitReactionRemoveAllEvent.class,
 				"(reaction|emote)[s] (remove[d] all|clear|reset)")
 				.description("Fired when an user remove every reactions from a message/.",
 						"This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.");

@@ -3,13 +3,19 @@ package info.itsthesky.disky.elements.components.properties;
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
+import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.utils.data.SerializableData;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 
@@ -25,8 +31,7 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 	@Override
 	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
 		if (EasyElement.equalAny(mode, Changer.ChangeMode.ADD))
-			return new Class[] {SelectOption.class,
-					OptionData.class};
+			return new Class[] {OptionData.class, SelectOption.class};
 		return new Class[0];
 	}
 
@@ -39,11 +44,11 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 			return;
 
 		if (entity instanceof SlashCommandData) {
-			final OptionData[] options = (OptionData[]) rawValues;
-			((SlashCommandData) entity).addOptions(options);
-		} else {
-			final SelectOption[] options = (SelectOption[]) rawValues;
-			((SelectMenu.Builder) entity).addOptions(options);
+			for (Object value : rawValues)
+				((SlashCommandData) entity).addOptions((OptionData) value);
+		} else if (entity instanceof SelectMenu.Builder) {
+			for (Object value : rawValues)
+				((SelectMenu.Builder) entity).addOptions((SelectOption) value);
 		}
 	}
 

@@ -169,7 +169,6 @@ public class EffChange extends Effect {
         final String what;
         try {
             rs = changed.acceptChange(mode);
-            System.out.println("Changed: " + Arrays.toString(rs));
             final ClassInfo<?> c = Classes.getSuperClassInfo(changed.getReturnType());
             final Changer<?> changer = c.getChanger();
             what = changer == null || !Arrays.equals(changer.acceptChange(mode), rs) ? changed.toString(null, false) : c.getName().withIndefiniteArticle();

@@ -61,6 +61,8 @@ public class DiSkyErrorHandler implements ErrorHandler {
 		insertErrorValue(event, ex);
 		send("&4[&c!&4] &c");
 		send("&4[&c!&4] &4DiSky Internal Error (version: "+ DiSky.getInstance().getDescription().getVersion()+")");
+		if (ex != null)
+			send("&4[&c!&4] &4Error type: &c" + ex.getClass().getSimpleName());
 		send("&4[&c!&4] &c");
 		final String[] lines;
 		if (ex == null)
