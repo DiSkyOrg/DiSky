@@ -3,10 +3,25 @@ package info.itsthesky.disky.elements;
 import ch.njol.skript.registrations.Converters;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
+import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.commands.CommandData;
+import info.itsthesky.disky.elements.commands.CommandObject;
+import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 
 public class Types {
 
@@ -17,8 +32,10 @@ public class Types {
             Converters.registerConverter(Member.class, User.class, Member::getUser);
 
             Converters.registerConverter(Message.class, String.class, Message::getContentRaw);
+            Converters.registerConverter(Emote.class, String.class, Emote::toString);
 
             Converters.registerConverter(IMentionable.class, String.class, IMentionable::getAsMention);
+            Converters.registerConverter(ISnowflake.class, String.class, ISnowflake::getId);
         }
 
     }
@@ -47,6 +64,10 @@ public class Types {
                 channel -> "thread channel named " + channel.getName() + " with id " + channel.getId(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getThreadChannelById(input))
         ).register();
+        new DiSkyType<>(Category.class, "category",
+                channel -> "category named " + channel.getName() + " with id " + channel.getId(),
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getCategoryById(input))
+        ).register();
         new DiSkyType<>(NewsChannel.class, "newschannel",
                 channel -> "news channel named " + channel.getName() + " with id " + channel.getId(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getNewsChannelById(input))
@@ -59,6 +80,48 @@ public class Types {
                 channel -> "private channel of " + channel.getUser().getName() + "#" + channel.getUser().getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getPrivateChannelById(input))
         ).register();
+        new DiSkyType<>(ChannelAction.class, "channelaction",
+                action -> action.getType().name(),
+                null
+        ).register();
+
+        /*
+        Components
+         */
+
+        new DiSkyType<>(ComponentRow.class, "row",
+                row -> "component row with " + row.asComponents(),
+                null).register();
+        new DiSkyType<>(Modal.Builder.class, "modal",
+                modal -> "modal with id " + modal.getId(),
+                null).register();
+        new DiSkyType<>(Button.class, "button",
+                button -> "button with id " + button.getId(),
+                null).register();
+        new DiSkyType<>(SelectMenu.Builder.class, "dropdown",
+                button -> "dropdown with id " + button.getId(),
+                null).register();
+        new DiSkyType<>(SelectOption.class, "selectoption",
+                option -> option.toData().toString(),
+                null).register();
+        new DiSkyType<>(TextInput.Builder.class, "textinput",
+                button -> "textinput with id " + button.getId(),
+                null).register();
+        DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
+
+        /*
+        Slash commands
+         */
+        new DiSkyType<>(SlashCommandData.class, "slashcommand",
+                slash -> "slash command data: " + slash.toData(),
+                null).register();
+        new DiSkyType<>(OptionData.class, "slashoption",
+                slash -> "slash option data: " + slash.toData(),
+                null).register();
+        new DiSkyType<>(Command.Choice.class, "slashchoice",
+                Command.Choice::getName,
+                null).register();
+        DiSkyType.fromEnum(OptionType.class, "optiontype", "optiontype").register();
 
         /*
         Guild Entities
@@ -77,8 +140,16 @@ public class Types {
                 // TODO: 11/02/2022 Make message parsing working
                 null
         ).register();
+        new DiSkyType<>(Message.Attachment.class, "attachment",
+                Message.Attachment::getUrl,
+                null
+        ).register();
         new DiSkyType<>(MessageBuilder.class, "messagebuilder",
                 messageBuilder -> messageBuilder.getStringBuilder().toString(),
+                null
+        ).register();
+        new DiSkyType<>(Emote.class, "emote",
+                Emote::getAsMention,
                 null
         ).register();
         new DiSkyType<>(EmbedBuilder.class, "embedbuilder",
@@ -94,6 +165,9 @@ public class Types {
                 user -> "user " + user.getName() + "#" + user.getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
         ).register();
+        new DiSkyType<>(CommandObject.class, "discordcommand",
+                CommandObject::getName,
+                null).register();
         new DiSkyType<>(Guild.class, "guild",
                 guild -> "guild named " + guild.getName() + " with id " + guild.getId(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildById(input))

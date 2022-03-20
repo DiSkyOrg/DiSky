@@ -1,0 +1,9 @@
+# This is the main configuration file of DiSky.
+# Made for v4, older configuration version won't work.
+
+# In the DiSky error handler, which error code should not be shown in the console?
+# You can take a took at every discord error code here:
+# https://discord.com/developers/docs/topics/opcodes-and-status-codes#json
+ignored-core:
+  - '50006' # Hide empty message error
+

@@ -4,7 +4,6 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +41,7 @@ public class DiSkyType<T> {
         this.isEnum = isEnum;
         this.classInfo = new ClassInfo<>(clazz, codeName)
                 .user(user)
-                .parser(new Parser<>() {
+                .parser(new Parser<T>() {
                     @Override
                     public @NotNull T parse(final @NotNull String input, final @NotNull ParseContext context) {
                         if (parser == null) return null;
@@ -67,16 +66,12 @@ public class DiSkyType<T> {
                     }
 
                     @Override
-                    public @NotNull String toString(@NotNull T entity, int flags) {
-                        try {
-                            return toString.apply(entity);
-                        } catch (Exception ex) {
-                            return entity.toString();
-                        }
+                    public @NotNull String toString(T o, int flags) {
+                        return toVariableNameString(o);
                     }
 
                     @Override
-                    public @NotNull String toVariableNameString(@NotNull T entity) {
+                    public @NotNull String toVariableNameString(T entity) {
                         try {
                             return toString.apply(entity);
                         } catch (Exception ex) {

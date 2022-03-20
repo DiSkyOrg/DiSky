@@ -1,9 +1,10 @@
-package info.itsthesky.disky.elements.events;
+package info.itsthesky.disky.elements.events.messages;
 
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
@@ -49,8 +50,8 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 		public BukkitMessageEvent(MessageEvent event) {}
 
 		@Override
-		public MessageChannel getMessageChannel() {
-			return getJDAEvent().getChannel();
+		public GenericMessageEvent getMessageEvent() {
+			return getJDAEvent();
 		}
 	}
 }

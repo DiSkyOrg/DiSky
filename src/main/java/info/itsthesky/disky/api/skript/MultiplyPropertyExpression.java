@@ -26,7 +26,7 @@ public abstract class MultiplyPropertyExpression<F, T> extends SimpleExpression<
 
     protected abstract String getPropertyName();
 
-    protected abstract T[] convert(F t);
+    protected abstract T[] convert(F f);
 
     @Override
     @SuppressWarnings("unchecked")

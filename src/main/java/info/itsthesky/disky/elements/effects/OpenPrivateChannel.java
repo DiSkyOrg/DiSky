@@ -47,7 +47,7 @@ public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
                         Utils.catchAction(user.openPrivateChannel(),
                                 this::restart,
                                 ex -> {
-                                    DiSky.getErrorHandler().exception(ex);
+                                    DiSky.getErrorHandler().exception(e, ex);
                                     restart();
                                 });
                     });
@@ -55,7 +55,7 @@ public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
             Utils.catchAction(rawUser.openPrivateChannel(),
                     this::restart,
                     ex -> {
-                        DiSky.getErrorHandler().exception(ex);
+                        DiSky.getErrorHandler().exception(e, ex);
                         restart();
                     });
         }

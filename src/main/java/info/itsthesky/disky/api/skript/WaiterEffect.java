@@ -50,6 +50,10 @@ public abstract class WaiterEffect<T> extends EasyElement {
         return validateVariable(expr, shouldBeList, false);
     }
 
+    protected String variableAsString(Event e, boolean debug) {
+        return getChangedVariable() == null ? "none" : getChangedVariable().toString(e, debug);
+    }
+
     protected boolean validateVariable(final Expression<?> expr, boolean shouldBeList, boolean allowNotSet) {
         if (expr == null && allowNotSet)
             return true;
@@ -97,7 +101,7 @@ public abstract class WaiterEffect<T> extends EasyElement {
         try {
             runEffect(e);
         } catch (Throwable ex) {
-            DiSky.getErrorHandler().exception(ex);
+            DiSky.getErrorHandler().exception(event, ex);
         }
 
         return null;

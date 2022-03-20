@@ -35,7 +35,7 @@ public class Bot {
         try {
             built = builder.build();
         } catch (Throwable throwable) {
-            DiSky.getErrorHandler().exception(throwable);
+            DiSky.getErrorHandler().exception(null, throwable);
             return null;
         }
 

@@ -14,7 +14,7 @@ public abstract class SpecificBotEffect<T> extends WaiterEffect<T> {
     public void runEffect(Event e) {
         final Bot bot = getBot();
         if (bot == null) {
-            DiSky.getErrorHandler().exception(new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
+            DiSky.getErrorHandler().exception(e, new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
             restart();
             return;
         }
