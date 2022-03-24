@@ -20,7 +20,7 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
                 DiscordName.class,
                 String.class,
                 "[the] discord name",
-                "channel/user/member/role"
+                "channel/user/member/role/guild"
         );
     }
 
@@ -58,6 +58,8 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
             return ((Member) entity).getUser().getName();
         } else if (entity instanceof User) {
             return ((User) entity).getName();
+        } else if (entity instanceof Guild) {
+            return ((Guild) entity).getName();
         } else {
             return null;
         }
