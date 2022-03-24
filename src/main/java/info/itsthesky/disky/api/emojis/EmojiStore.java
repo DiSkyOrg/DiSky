@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import info.itsthesky.disky.DiSky;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +21,10 @@ public class EmojiStore {
 
 		final EmojiStore store;
 		final File file = new File(DiSky.getInstance().getDataFolder(), "emojis.json");
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
+		try (FileInputStream fis = new FileInputStream(file);
+			 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+			 BufferedReader reader = new BufferedReader(isr)
+		) {
 			store = GSON.fromJson(reader, EmojiStore.class);
 		}
 

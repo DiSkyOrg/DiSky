@@ -61,7 +61,7 @@ public class ExprEmoji extends SimpleExpression<Emote> {
 
             Emote emote;
             try {
-                emote = new Emote(input.toLowerCase(Locale.ROOT), Emojis.ofShortcode(input.toLowerCase(Locale.ROOT)).unicode());
+                emote = new Emote(input.toLowerCase(Locale.ROOT), Emojis.ofShortcode(input.toLowerCase(Locale.ROOT)));
             } catch (NullPointerException ex) {
                 final boolean useID = input.matches("[^0-9]");
                 if (guild == null) {

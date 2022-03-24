@@ -4,21 +4,30 @@ plugins {
 }
 
 group = 'info.itsthesky'
-version = '4.0-alpha1'
+def type = 'alpha'
+def num = '6'
+version = '4.0-' + type + num
 
 repositories {
     mavenCentral()
+    jcenter()
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
     maven { url = 'https://jitpack.io' }
+    maven { url 'https://maven.enginehub.org/repo/' }
     maven { url = 'https://m2.dv8tion.net/releases' }
+
 }
 
 dependencies {
     shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
     shadow 'com.github.SkriptLang:Skript:2.6.1'
 
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.9'
+    // Commits: com.github.dv8fromtheworld:jda
+    // Stable: net.dv8tion:JDA
+    implementation('com.github.Xirado:JDA:36eea2a') {
+        exclude module: "opus-java"
+    }
     implementation 'com.github.simplix-softworks:simplixstorage:3.2.4'
 }
 
@@ -26,7 +35,7 @@ shadowJar {
     archiveName = 'DiSky ' + version + '.jar'
 }
 
-def targetJavaVersion = 16
+def targetJavaVersion = 8
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

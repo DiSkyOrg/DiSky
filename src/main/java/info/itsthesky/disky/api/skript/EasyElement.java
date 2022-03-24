@@ -5,10 +5,12 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Variable;
+import ch.njol.skript.lang.parser.ParserInstance;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -83,17 +85,21 @@ public abstract class EasyElement extends Effect {
 
     public static boolean containsInterfaces(@NotNull Class<?> clazz) {
         return Stream
-                .of(ScriptLoader.getCurrentEvents())
+                .of(getCurrentEvents())
                 .filter(Objects::nonNull)
                 .anyMatch(c -> Arrays.asList(c.getInterfaces()).contains(clazz));
     }
 
     public static boolean eventsMatch(@NotNull Predicate<Class<? extends Event>> predicate) {
-        return Stream.of(ScriptLoader.getCurrentEvents()).anyMatch(predicate);
+        return Stream.of(getCurrentEvents()).anyMatch(predicate);
+    }
+
+    public static Class<? extends Event>[] getCurrentEvents() {
+        return ParserInstance.get().getCurrentEvents();
     }
 
     public static boolean containsEvent(@NotNull Class<? extends Event> clazz) {
-        return Arrays.asList(ScriptLoader.getCurrentEvents()).contains(clazz);
+        return Arrays.asList(getCurrentEvents()).contains(clazz);
     }
 
     @SafeVarargs

@@ -1,8 +1,9 @@
 package info.itsthesky.disky.api.emojis;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,17 +17,18 @@ public class Emote implements IMentionable {
     private final String mention;
     private net.dv8tion.jda.api.entities.Emoji emoji;
 
-    public Emote(String name, String mention) {
+    public Emote(String name, info.itsthesky.disky.api.emojis.Emoji emoji) {
         this.name = name.replaceAll(":", "");
-        this.mention = mention;
+        this.mention = emoji.unicode();
         this.isEmote = false;
+        this.emoji = Emoji.fromUnicode(emoji.unicode());
     }
 
     public static Emote fromReaction(MessageReaction.ReactionEmote emote) {
         if (emote.isEmote()) {
             return new Emote(emote.getEmote());
         } else {
-            return new Emote(Emojis.ofUnicode(emote.getEmoji()).shortcodes().get(0), emote.getEmoji());
+            return new Emote(Emojis.ofUnicode(emote.getEmoji()).shortcodes().get(0), Emojis.ofUnicode(emote.getEmoji()));
         }
     }
 
@@ -58,6 +60,13 @@ public class Emote implements IMentionable {
         if (emote == null)
             return null;
         return new Emote(emote);
+    }
+
+    public RestAction<Void> addReaction(Message message) {
+        if (isEmote)
+            return message.addReaction(getEmote());
+        else
+            return message.addReaction(getEmoji().getName());
     }
 
     private Emote(net.dv8tion.jda.api.entities.Emote emote) {
@@ -131,4 +140,14 @@ public class Emote implements IMentionable {
 	public Emoji asEmoji() {
         return isEmote() ? Emoji.fromEmote(getEmote()) : Emoji.fromUnicode(getAsMention());
 	}
+
+    public boolean isSimilar(Emote other) {
+        if (other.isEmote && isEmote)
+            return getEmote().getName().equals(other.getEmote().getName());
+        else if (!other.isEmote && !isEmote)
+            return getEmoji().getName().equals(other.getEmoji().getName());
+        else
+            return false;
+    }
+
 }
