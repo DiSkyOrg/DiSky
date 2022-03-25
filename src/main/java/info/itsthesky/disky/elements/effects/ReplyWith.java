@@ -66,26 +66,27 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 		exprReference = (Expression<Message>) expressions[2];
 		mentioning = (parseResult.mark & 1) != 1;
 
-		return validateVariable(expressions[2], false, true);
+		return validateVariable(expressions[3], false, true);
 	}
 
 	@Override
 	public void runEffect(Event e, Bot bot) {
+
+		final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
+		final List<ActionRow> formatted = rows
+				.stream()
+				.map(ComponentRow::asActionRow)
+				.collect(Collectors.toList());
+
 		if (isInInteraction) {
 
 			final IReplyCallback event = (IReplyCallback) ((InteractionEvent) e).getInteractionEvent();
 			final Object rawMessage = parseSingle(exprMessage, e, null);
 			final MessageBuilder message = JDAUtils.constructMessage(rawMessage);
-			final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
 			if (anyNull(event, rawMessage, message)) {
 				restart();
 				return;
 			}
-
-			final List<ActionRow> formatted = rows
-					.stream()
-					.map(ComponentRow::asActionRow)
-					.collect(Collectors.toList());
 
 			event.reply(message.build())
 					.addActionRows(formatted)
@@ -100,7 +101,6 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 			final MessageEvent event = (MessageEvent) e;
 			final Object rawMessage = parseSingle(exprMessage, e, null);
 			final MessageBuilder message = JDAUtils.constructMessage(rawMessage);
-			final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
 			final @Nullable Message referenced = parseSingle(exprReference, e, null);
 			final MessageChannel channel = bot.findMessageChannel(event.getMessageChannel());
 			if (anyNull(channel, event, rawMessage, message)) {
@@ -108,16 +108,11 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 				return;
 			}
 
-			final List<ActionRow> formatted = rows
-					.stream()
-					.map(ComponentRow::asActionRow)
-					.collect(Collectors.toList());
-
 			MessageAction action = channel.sendMessage(message.build());
 
 			action = action.setActionRows(formatted);
 			if (referenced != null)
-				action = action.reference(referenced);
+				action = action.reference(referenced).mentionRepliedUser(mentioning);
 
 			action.queue(this::restart, ex -> {
 				DiSky.getErrorHandler().exception(e, ex);

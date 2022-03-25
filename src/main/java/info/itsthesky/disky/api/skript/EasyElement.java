@@ -2,6 +2,7 @@ package info.itsthesky.disky.api.skript;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Variable;
@@ -108,4 +109,8 @@ public abstract class EasyElement extends Effect {
                 .stream(entities)
                 .anyMatch(o -> o == base);
     }
+
+	public static boolean isChangerMode(Changer.ChangeMode mode) {
+        return equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.ADD, Changer.ChangeMode.RESET, Changer.ChangeMode.REMOVE_ALL);
+	}
 }

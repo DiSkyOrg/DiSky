@@ -11,10 +11,17 @@ import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.JDAUtils;
+import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Name("Post Message")
 @Description({"Post a specific message as text, embed or message builder to a channel."})
@@ -30,28 +37,35 @@ public class PostMessage extends SpecificBotEffect<Message> {
     static {
         Skript.registerEffect(PostMessage.class,
                 "(post|dispatch) [the] [message] %string/embedbuilder/messagebuilder% (in|to) [the] [channel] %channel%" +
-                        " [and store (it|the message) (inside|in) %-objects%]");
+                        " [with [the] (component|action)[s] [row] %-rows%] [and store (it|the message) (inside|in) %-objects%]");
     }
 
     private Expression<Object> exprMessage;
     private Expression<Object> exprReceiver;
+    private Expression<ComponentRow> exprComponents;
 
     @Override
     public void runEffect(Event e, Bot bot) {
         final Object rawContent = exprMessage.getSingle(e);
         final MessageBuilder content = JDAUtils.constructMessage(rawContent);
         final Object receiver = exprReceiver.getSingle(e);
+        final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
         if (anyNull(content, receiver)) {
             restart();
             return;
         }
 
+        final List<ActionRow> formatted = rows
+                .stream()
+                .map(ComponentRow::asActionRow)
+                .collect(Collectors.toList());
+
         final MessageChannel channel = bot != null ?
                 bot.findMessageChannel((MessageChannel) receiver) : (MessageChannel) receiver;
 
         event = e;
-        channel
-                .sendMessage(content.build())
+        channel.sendMessage(content.build())
+                .setActionRows(formatted)
                 .queue(this::restart);
     }
 
@@ -59,7 +73,8 @@ public class PostMessage extends SpecificBotEffect<Message> {
     public boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         exprMessage = (Expression<Object>) expressions[0];
         exprReceiver = (Expression<Object>) expressions[1];
-        return expressions[2] == null || validateVariable(expressions[2], false);
+        exprComponents = (Expression<ComponentRow>) expressions[2];
+        return expressions[3] == null || validateVariable(expressions[3], false);
     }
 
     @Override

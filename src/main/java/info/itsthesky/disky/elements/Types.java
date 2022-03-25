@@ -15,6 +15,8 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
@@ -84,6 +86,7 @@ public class Types {
                 action -> action.getType().name(),
                 null
         ).register();
+        DiSkyType.fromEnum(ChannelType.class, "channeltype", "channeltype").register();
 
         /*
         Components
@@ -114,6 +117,12 @@ public class Types {
          */
         new DiSkyType<>(SlashCommandData.class, "slashcommand",
                 slash -> "slash command data: " + slash.toData(),
+                null).register();
+        new DiSkyType<>(SubcommandGroupData.class, "slashcommandgroup",
+                slash -> "sub group data: " + slash.toData(),
+                null).register();
+        new DiSkyType<>(SubcommandData.class, "subslashcommand",
+                slash -> "sub command data: " + slash.toData(),
                 null).register();
         new DiSkyType<>(OptionData.class, "slashoption",
                 slash -> "slash option data: " + slash.toData(),
