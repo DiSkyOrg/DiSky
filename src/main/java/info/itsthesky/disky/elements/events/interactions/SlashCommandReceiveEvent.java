@@ -41,7 +41,7 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 		SkriptUtils.registerValue(BukkitSlashCommandReceiveEvent.class, User.class,
 				event -> event.getJDAEvent().getUser());
 		SkriptUtils.registerValue(BukkitSlashCommandReceiveEvent.class, String.class,
-				event -> event.getJDAEvent().getName());
+				event -> event.getJDAEvent().getCommandPath());
 		SkriptUtils.registerValue(BukkitSlashCommandReceiveEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getMessageChannel());
 
