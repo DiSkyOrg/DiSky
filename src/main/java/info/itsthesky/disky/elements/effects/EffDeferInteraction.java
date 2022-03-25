@@ -9,6 +9,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.skript.WaiterEffect;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,8 @@ public class EffDeferInteraction extends WaiterEffect {
         if (isInInteraction) {
 
             final IReplyCallback event = (IReplyCallback) ((InteractionEvent) e).getInteractionEvent();
-            if (anyNull(event)) {
+            final InteractionHook hook = event.getHook(); //need to store that in a variable that will be used in another class
+            if (anyNull(event, hook)) {
                 restart();
                 return;
             }
