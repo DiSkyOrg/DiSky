@@ -92,18 +92,18 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 
 			if (!hook.isExpired()) {
 				hook.editOriginal(message.build())
-						.queue(v -> restart(), ex -> {
-							DiSky.getErrorHandler().exception(e, ex);
-							restart();
+				    .queue(v -> restart(), ex -> {
+						DiSky.getErrorHandler().exception(e, ex);
+                        restart();
 						});
 			}
 
 			event.reply(message.build())
-					.addActionRows(formatted)
-					.setEphemeral(hidden)
-					.queue(v -> restart(), ex -> {
-						DiSky.getErrorHandler().exception(e, ex);
-						restart();
+				.addActionRows(formatted)
+				.setEphemeral(hidden)
+				.queue(v -> restart(), ex -> {
+					DiSky.getErrorHandler().exception(e, ex);
+					restart();
 					});
 
 		} else {
