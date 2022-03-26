@@ -78,7 +78,7 @@ public class ScopeEmbed extends EffectSection {
             lastEmbed = new EmbedBuilder();
         }
         if (trigger != null)
-            trigger.execute(e);
+            TriggerItem.walk(trigger, e);
         return getNext();
     }
 

@@ -22,10 +22,10 @@ public class RoleCreateEvent extends DiSkyEvent<net.dv8tion.jda.api.events.role.
                 event -> event.getJDAEvent().getGuild());
 
         SkriptUtils.registerValue(RoleCreateEvent.BukkitRoleCreateEvent.class, Role.class,
-                event -> event.getJDAEvent().getRole(), 0);
+                event -> event.getJDAEvent().getRole());
     }
 
-    public static class BukkitRoleCreateEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.role.RoleDeleteEvent> {
+    public static class BukkitRoleCreateEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.role.RoleCreateEvent> {
         public BukkitRoleCreateEvent(RoleCreateEvent event) {
         }
     }

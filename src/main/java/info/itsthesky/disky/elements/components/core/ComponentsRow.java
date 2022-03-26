@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.components.text.Modal;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,20 +51,22 @@ public class ComponentsRow extends MultiplyPropertyExpression<Object, ComponentR
 				Changer.ChangeMode.ADD,
 				Changer.ChangeMode.REMOVE_ALL,
 				Changer.ChangeMode.RESET))
-			return new Class[] {ComponentRow[].class};
+			return new Class[] {ComponentRow[].class, ComponentRow.class};
 		return new Class[0];
 	}
 
 	@Override
 	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
 		final Object entity = getExpr().getSingle(e);
+		if (delta == null)
+			return;
 		final List<ActionRow> rows = Arrays
 				.stream((ComponentRow[]) delta)
 				.map(ComponentRow::asActionRow)
 				.collect(Collectors.toList());
 
 		if (entity instanceof Message) {
-			final List<ActionRow> currents = ((Message) entity).getActionRows();
+			final List<ActionRow> currents = new ArrayList<>(((Message) entity).getActionRows());
 			switch (mode) {
 				case ADD:
 					currents.addAll(rows);
@@ -77,7 +80,7 @@ public class ComponentsRow extends MultiplyPropertyExpression<Object, ComponentR
 					currents.addAll(rows);
 					break;
 			}
-			((Message) entity).editMessage(((Message) entity)).setActionRows(currents).queue();
+			((Message) entity).editMessage((Message) entity).setActionRows(currents).queue();
 		} else if (entity instanceof Modal.Builder) {
 			final List<ActionRow> currents = ((Modal.Builder) entity).getActionRows();
 			switch (mode) {

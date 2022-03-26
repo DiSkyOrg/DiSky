@@ -6,6 +6,7 @@ import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.utils.data.SerializableData;
@@ -24,7 +25,7 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 				PropOptions.class,
 				Object.class,
 				"option[s] [mapping[s]]",
-				"slashcommand/dropdown"
+				"slashcommand/subslashcommand/dropdown"
 		);
 	}
 
@@ -46,6 +47,9 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 		if (entity instanceof SlashCommandData) {
 			for (Object value : rawValues)
 				((SlashCommandData) entity).addOptions((OptionData) value);
+		} if (entity instanceof SubcommandData) {
+			for (Object value : rawValues)
+				((SubcommandData) entity).addOptions((OptionData) value);
 		} else if (entity instanceof SelectMenu.Builder) {
 			for (Object value : rawValues)
 				((SelectMenu.Builder) entity).addOptions((SelectOption) value);

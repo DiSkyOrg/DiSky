@@ -4,6 +4,7 @@ import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.registrations.Classes;
 import com.google.gson.reflect.TypeToken;
+import info.itsthesky.disky.core.SkriptUtils;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class StupidSimplePropertyExpression<F, T> extends SimplePropertyExpression<F, T> {

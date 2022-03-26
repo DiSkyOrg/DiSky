@@ -54,6 +54,7 @@ public class CommandRegistry extends SelfRegisteringSkriptEvent {
         SkriptUtils.registerValue(CommandEvent.class, Member.class, CommandEvent::getMember);
         SkriptUtils.registerValue(CommandEvent.class, Message.class, CommandEvent::getMessage);
         SkriptUtils.registerValue(CommandEvent.class, User.class, CommandEvent::getUser);
+        SkriptUtils.registerValue(CommandEvent.class, Guild.class, CommandEvent::getGuild);
         SkriptUtils.registerValue(CommandEvent.class, MessageChannel.class, CommandEvent::getMessageChannel);
         SkriptUtils.registerValue(CommandEvent.class, GuildChannel.class, CommandEvent::getTxtChannel);
         SkriptUtils.registerValue(CommandEvent.class, String.class, CommandEvent::getPrefix);
