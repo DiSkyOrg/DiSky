@@ -9,9 +9,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.WaiterEffect;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +24,7 @@ public class DestroyEntity extends WaiterEffect {
 	static {
 		Skript.registerEffect(
 				DestroyEntity.class,
-				"destroy %guild/message/role%"
+				"destroy %guild/message/role/channel/thread/category%"
 		);
 	}
 
@@ -52,6 +50,12 @@ public class DestroyEntity extends WaiterEffect {
 			action = ((Role) entity).delete();
 		else if (entity instanceof Message)
 			action = ((Message) entity).delete();
+		else if (entity instanceof Channel)
+			action = ((Channel) entity).delete();
+		else if (entity instanceof ThreadChannel)
+			action = ((ThreadChannel) entity).delete();
+		else if (entity instanceof Category)
+			action = ((Category) entity).delete();
 		else
 			action = null;
 		if (anyNull(action)) {
