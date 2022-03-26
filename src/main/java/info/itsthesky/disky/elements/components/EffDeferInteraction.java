@@ -26,7 +26,8 @@ import org.jetbrains.annotations.Nullable;
 "\nIf you need to wait more than 3 seconds use the and wait pattern",
 "\nAn interaction can only be deferred once!"})
 @Examples({"defer the interaction",
-"\n defer the interaction and wait"})
+"\n defer the interaction and wait",
+"\n defer the interaction and wait silently"})
 public class EffDeferInteraction extends Effect {
 
     static {
