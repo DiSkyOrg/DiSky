@@ -15,11 +15,10 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.elements.effects.EffRetrieveEventValue;
+import info.itsthesky.disky.elements.effects.RetrieveEventValue;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -139,10 +138,10 @@ public final class SkriptUtils {
                                                                             Class<B> bukkitClass,
                                                                             Function<B, RestAction<S>> function,
                                                                             Function<S, T> converter) {
-        final List<EffRetrieveEventValue.RetrieveValueInfo> current =
-                EffRetrieveEventValue.VALUES.getOrDefault(bukkitClass, new ArrayList<>());
-        current.add(new EffRetrieveEventValue.RetrieveValueInfo(bukkitClass, codeName, function, converter));
-        EffRetrieveEventValue.VALUES.put(bukkitClass, current);
+        final List<RetrieveEventValue.RetrieveValueInfo> current =
+                RetrieveEventValue.VALUES.getOrDefault(bukkitClass, new ArrayList<>());
+        current.add(new RetrieveEventValue.RetrieveValueInfo(bukkitClass, codeName, function, converter));
+        RetrieveEventValue.VALUES.put(bukkitClass, current);
     }
 
     public static <B extends SimpleDiSkyEvent, T> void registerRestValue(String codeName,

@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.text.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
+import net.dv8tion.jda.api.utils.AttachmentOption;
 
 public class Types {
 
@@ -171,6 +172,7 @@ public class Types {
         Global Entities
          */
 
+        DiSkyType.fromEnum(AttachmentOption.class, "attachmentoption", "attachmentoption").register();
         DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
         new DiSkyType<>(User.class, "user",
                 user -> "user " + user.getName() + "#" + user.getDiscriminator(),
