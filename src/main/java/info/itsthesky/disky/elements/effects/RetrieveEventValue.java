@@ -1,12 +1,9 @@
 package info.itsthesky.disky.elements.effects;
 
-import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.parser.ParserInstance;
-import ch.njol.skript.log.SkriptLogger;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
@@ -23,14 +20,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
-public class EffRetrieveEventValue extends WaiterEffect<Object> {
+public class RetrieveEventValue extends WaiterEffect<Object> {
 
 	public static final HashMap<Class<? extends SimpleDiSkyEvent>, List<RetrieveValueInfo>> VALUES;
 
 	static {
 		VALUES = new HashMap<>();
 		Skript.registerEffect(
-				EffRetrieveEventValue.class,
+				RetrieveEventValue.class,
 				"retrieve [the] [event[(-| )]]value %string% and store (it|the value) in %objects%"
 		);
 	}
