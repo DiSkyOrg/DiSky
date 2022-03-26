@@ -11,7 +11,7 @@ public class MemberJoinEvent extends DiSkyEvent<GuildMemberJoinEvent> {
     static {
         register("Member Join Event", MemberJoinEvent.class, BukkitMemberJoinEvent.class,
                 "[discord] member join[ed] [guild]")
-                .description("Fired when a member joins a guild")
+                .description("Fired when a member joins a guild.")
                 .examples("on member join:");
 
 
