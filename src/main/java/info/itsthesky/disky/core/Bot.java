@@ -1,5 +1,6 @@
 package info.itsthesky.disky.core;
 
+import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.JDA;
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
 // TODO: 29/12/2021 Maybe use records here, but it's only for Java 14+
 public class Bot {
 
+    private final long startedTime;
     private final String name;
     private final JDA instance;
     private final @Nullable BotApplication application;
@@ -26,6 +28,7 @@ public class Bot {
         this.application = application;
         this.instance = instance;
         this.forceReload = forceReload;
+        this.startedTime = System.currentTimeMillis();
     }
 
     public static @Nullable Bot create(BotOptions options) {
@@ -72,5 +75,9 @@ public class Bot {
 
 	public boolean coreIsEquals(JDA core) {
         return getInstance().getSelfUser().getId().equals(core.getSelfUser().getId());
+	}
+
+	public Timespan getUptime() {
+        return new Timespan(System.currentTimeMillis() - startedTime);
 	}
 }

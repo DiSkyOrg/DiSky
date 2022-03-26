@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.ChatColor;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,15 @@ public final class Utils {
             action.queue(success, error);
         } catch (Throwable ex) {
             error.accept(ex);
+        }
+    }
+
+    public static boolean isURL(String url) {
+        try {
+            final URL url1 = new URL(url);
+            return true;
+        } catch (Exception ex) {
+            return false;
         }
     }
 

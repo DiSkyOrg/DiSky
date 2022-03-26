@@ -10,6 +10,7 @@ import info.itsthesky.disky.elements.commands.CommandObject;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -170,6 +171,7 @@ public class Types {
         Global Entities
          */
 
+        DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
         new DiSkyType<>(User.class, "user",
                 user -> "user " + user.getName() + "#" + user.getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
