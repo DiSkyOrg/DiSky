@@ -11,7 +11,7 @@ public class MemberRoleRemoveEvent extends DiSkyEvent<GuildMemberRoleRemoveEvent
     static {
         register("Role Remove Event", MemberRoleAddEvent.class, BukkitMemberRemoveEvent.class,
                 "[discord] [member] role add")
-                .description("Fired when a member remove roles to another member, it's a log action so event-author returns who made the action" +
+                .description("Fired when a member remove roles from another member, it's a log action so event-author returns who made the action" +
                         "event-roles returns a list of removed roles")
                 .examples("on role add:");
 

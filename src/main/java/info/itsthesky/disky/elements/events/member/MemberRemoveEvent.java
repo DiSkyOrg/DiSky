@@ -11,7 +11,7 @@ public class MemberRemoveEvent extends DiSkyEvent<GuildMemberRemoveEvent> {
     static {
         register("Member Join Event", MemberRemoveEvent.class, BukkitMemberRemoveEvent.class,
                 "[discord] member leave[ed] [guild]")
-                .description("Fired when a member is removed from a guild either by leaving or being kicked. Use the ban/kick event instead to check the exact reason")
+                .description("Fired when a member is removed from a guild either by leaving or being punished. Use the ban/kick event instead to check the exact reason")
                 .examples("on member leave:");
 
 
