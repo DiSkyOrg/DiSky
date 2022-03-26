@@ -82,7 +82,6 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 		if (isInInteraction) {
 
 			final IReplyCallback event = (IReplyCallback) ((InteractionEvent) e).getInteractionEvent();
-			final InteractionHook hook = event.getHook();
 			final Object rawMessage = parseSingle(exprMessage, e, null);
 			final MessageBuilder message = JDAUtils.constructMessage(rawMessage);
 			if (anyNull(event, rawMessage, message)) {
@@ -90,20 +89,12 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 				return;
 			}
 
-			if (!hook.isExpired()) {
-				hook.editOriginal(message.build())
-				    .queue(v -> restart(), ex -> {
-						DiSky.getErrorHandler().exception(e, ex);
-                        restart();
-						});
-			}
-
 			event.reply(message.build())
-				.addActionRows(formatted)
-				.setEphemeral(hidden)
-				.queue(v -> restart(), ex -> {
-					DiSky.getErrorHandler().exception(e, ex);
-					restart();
+					.addActionRows(formatted)
+					.setEphemeral(hidden)
+					.queue(v -> restart(), ex -> {
+						DiSky.getErrorHandler().exception(e, ex);
+						restart();
 					});
 
 		} else {

@@ -2,6 +2,7 @@ package info.itsthesky.disky.managers;
 
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.ErrorHandler;
+import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.events.DiSkyErrorEvent;
 import net.dv8tion.jda.api.entities.Message;
@@ -71,8 +72,10 @@ public class DiSkyErrorHandler implements ErrorHandler {
 			lines = errors.getOrDefault(((ErrorResponseException) ex).getErrorResponse(), def).apply(ex);
 		else
 			lines = def.apply(ex);
-		if (event != null)
-			Bukkit.getPluginManager().callEvent(new DiSkyErrorEvent.BukkitDiSkyErrorEvent(ex, event.getEventName()));
+		if (event != null) {
+			@Nullable Throwable finalEx = ex;
+			SkriptUtils.sync(() -> Bukkit.getPluginManager().callEvent(new DiSkyErrorEvent.BukkitDiSkyErrorEvent(finalEx, event.getEventName())));
+		}
 
 		for (String line : lines)
 			send("&4[&c!&4] &c" + line);

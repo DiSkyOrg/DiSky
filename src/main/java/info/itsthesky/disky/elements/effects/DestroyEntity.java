@@ -24,7 +24,7 @@ public class DestroyEntity extends WaiterEffect {
 	static {
 		Skript.registerEffect(
 				DestroyEntity.class,
-				"destroy %guild/message/role/channel/thread/category%"
+				"destroy %guild/message/role/channel%"
 		);
 	}
 
@@ -52,10 +52,6 @@ public class DestroyEntity extends WaiterEffect {
 			action = ((Message) entity).delete();
 		else if (entity instanceof Channel)
 			action = ((Channel) entity).delete();
-		else if (entity instanceof ThreadChannel)
-			action = ((ThreadChannel) entity).delete();
-		else if (entity instanceof Category)
-			action = ((Category) entity).delete();
 		else
 			action = null;
 		if (anyNull(action)) {

@@ -50,6 +50,7 @@ public class DiSkyErrorEvent extends SelfRegisteringSkriptEvent {
 		private final String eventName;
 
 		public BukkitDiSkyErrorEvent(Throwable error, String eventName) {
+			super(false);
 			this.error = error;
 			this.eventName = eventName;
 		}
