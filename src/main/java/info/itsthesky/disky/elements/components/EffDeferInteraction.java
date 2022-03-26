@@ -25,7 +25,8 @@ import org.jetbrains.annotations.Nullable;
 "\nKeep in mind that replying in an interaction event will automatically defer the interaction, and therefore you don't need to defer it.",
 "\nIf you need to wait more than 3 seconds use the and wait pattern",
 "\nAn interaction can only be deferred once!"})
-@Examples("defer the interaction [and wait]")
+@Examples({"defer the interaction",
+"\n defer the interaction and wait"})
 public class EffDeferInteraction extends Effect {
 
     static {
