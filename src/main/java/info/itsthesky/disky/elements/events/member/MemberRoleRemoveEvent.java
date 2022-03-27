@@ -19,10 +19,10 @@ public class MemberRoleRemoveEvent extends DiSkyEvent<GuildMemberRoleRemoveEvent
         SkriptUtils.registerBotValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class);
 
         SkriptUtils.registerValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class, Role[].class,
-                event -> event.getJDAEvent().getRoles().toArray(new Role[0]));
+                event -> event.getJDAEvent().getRoles().toArray(new Role[0]), 0);
 
         SkriptUtils.registerValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class, Guild.class,
-                event -> event.getJDAEvent().getGuild());
+                event -> event.getJDAEvent().getGuild(), 0);
 
         SkriptUtils.registerValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class, Member.class,
                 event -> event.getJDAEvent().getMember(), 0);
