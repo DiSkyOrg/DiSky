@@ -21,7 +21,7 @@ public class DiscordId extends SimplePropertyExpression<Object, String> {
 		register(DiscordId.class,
 				String.class,
 				"discord id",
-				"channel/role/user/member/button/guild");
+				"channel/role/user/member/dropdown/button/guild");
 	}
 
 	@Override

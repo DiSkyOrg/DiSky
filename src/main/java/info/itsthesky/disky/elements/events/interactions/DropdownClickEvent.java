@@ -38,6 +38,8 @@ public class DropdownClickEvent extends DiSkyEvent<SelectMenuInteractionEvent> {
 				event -> event.getJDAEvent().getUser());
 		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, SelectMenu.Builder.class,
 				event -> event.getJDAEvent().getComponent().createCopy());
+		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, String.class,
+				event -> event.getJDAEvent().getComponent().getId());
 		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getChannel());
 
