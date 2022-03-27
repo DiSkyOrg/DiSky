@@ -8,6 +8,7 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.StringMode;
+import info.itsthesky.disky.core.SkriptUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,6 +89,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
         init(args, matchedPattern, parseResult, (SectionNode) node);
         final @Nullable T entity = parse((SectionNode) node);
         SkriptLogger.setNode(node);
+        SkriptUtils.nukeSectionNode((SectionNode) node);
         return validate(entity);
     }
 

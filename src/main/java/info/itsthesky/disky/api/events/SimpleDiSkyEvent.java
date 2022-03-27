@@ -11,6 +11,12 @@ public class SimpleDiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extend
     private D JDAEvent;
     private Map<Class<?>, Object> valueMap = new HashMap<>();
 
+    public SimpleDiSkyEvent(boolean async) {
+        super(async);
+    }
+
+    public SimpleDiSkyEvent() {super(false);}
+
     public D getJDAEvent() {
         return JDAEvent;
     }

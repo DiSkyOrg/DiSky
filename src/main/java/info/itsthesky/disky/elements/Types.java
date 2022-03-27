@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import net.dv8tion.jda.api.interactions.components.ActionComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
@@ -26,6 +27,8 @@ import net.dv8tion.jda.api.interactions.components.text.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.utils.AttachmentOption;
+
+import java.util.stream.Collectors;
 
 public class Types {
 
@@ -50,38 +53,38 @@ public class Types {
         Channel Entities
          */
         new DiSkyType<>(Channel.class, "channel",
-                channel -> "channel named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 null).register();
         new DiSkyType<>(GuildChannel.class, "guildchannel",
-                channel -> "guild channel named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildChannelById(input))
         ).register();
         new DiSkyType<>(TextChannel.class, "textchannel",
-                channel -> "text channel named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getTextChannelById(input))
         ).register();
         new DiSkyType<>(VoiceChannel.class, "voicechannel",
-                channel -> "voice channel named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getVoiceChannelById(input))
         ).register();
         new DiSkyType<>(ThreadChannel.class, "threadchannel",
-                channel -> "thread channel named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getThreadChannelById(input))
         ).register();
         new DiSkyType<>(Category.class, "category",
-                channel -> "category named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getCategoryById(input))
         ).register();
         new DiSkyType<>(NewsChannel.class, "newschannel",
-                channel -> "news channel named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getNewsChannelById(input))
         ).register();
         new DiSkyType<>(StageChannel.class, "stagechannel",
-                channel -> "stage channel named " + channel.getName() + " with id " + channel.getId(),
+                Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getStageChannelById(input))
         ).register();
         new DiSkyType<>(PrivateChannel.class, "privatechannel",
-                channel -> "private channel of " + channel.getUser().getName() + "#" + channel.getUser().getDiscriminator(),
+                PrivateChannel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getPrivateChannelById(input))
         ).register();
         new DiSkyType<>(ChannelAction.class, "channelaction",
@@ -95,22 +98,22 @@ public class Types {
          */
 
         new DiSkyType<>(ComponentRow.class, "row",
-                row -> "component row with " + row.asComponents(),
+                row -> row.asComponents().stream().map(c -> c.toData().toString()).collect(Collectors.toList()).toString(),
                 null).register();
         new DiSkyType<>(Modal.Builder.class, "modal",
-                modal -> "modal with id " + modal.getId(),
+                Modal.Builder::getId,
                 null).register();
         new DiSkyType<>(Button.class, "button",
-                button -> "button with id " + button.getId(),
+                ActionComponent::getId,
                 null).register();
         new DiSkyType<>(SelectMenu.Builder.class, "dropdown",
-                button -> "dropdown with id " + button.getId(),
+                SelectMenu.Builder::getId,
                 null).register();
         new DiSkyType<>(SelectOption.class, "selectoption",
                 option -> option.toData().toString(),
                 null).register();
         new DiSkyType<>(TextInput.Builder.class, "textinput",
-                button -> "textinput with id " + button.getId(),
+                TextInput.Builder::getId,
                 null).register();
         DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
 
@@ -118,16 +121,16 @@ public class Types {
         Slash commands
          */
         new DiSkyType<>(SlashCommandData.class, "slashcommand",
-                slash -> "slash command data: " + slash.toData(),
+                slash -> slash.toData().toString(),
                 null).register();
         new DiSkyType<>(SubcommandGroupData.class, "slashcommandgroup",
-                slash -> "sub group data: " + slash.toData(),
+                slash -> slash.toData().toString(),
                 null).register();
         new DiSkyType<>(SubcommandData.class, "subslashcommand",
-                slash -> "sub command data: " + slash.toData(),
+                slash -> slash.toData().toString(),
                 null).register();
         new DiSkyType<>(OptionData.class, "slashoption",
-                slash -> "slash option data: " + slash.toData(),
+                slash -> slash.toData().toString(),
                 null).register();
         new DiSkyType<>(Command.Choice.class, "slashchoice",
                 Command.Choice::getName,
@@ -139,7 +142,7 @@ public class Types {
          */
 
         new DiSkyType<>(Role.class, "role",
-                role -> "role named " + role.getName() + " with id " + role.getId(),
+                Role::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getRoleById(input))
         ).register();
 
@@ -175,22 +178,22 @@ public class Types {
         DiSkyType.fromEnum(AttachmentOption.class, "attachmentoption", "attachmentoption").register();
         DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
         new DiSkyType<>(User.class, "user",
-                user -> "user " + user.getName() + "#" + user.getDiscriminator(),
+                user -> user.getName() + "#" + user.getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
         ).register();
         new DiSkyType<>(CommandObject.class, "discordcommand",
                 CommandObject::getName,
                 null).register();
         new DiSkyType<>(Guild.class, "guild",
-                guild -> "guild named " + guild.getName() + " with id " + guild.getId(),
+                Guild::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildById(input))
         ).register();
         // TODO: 30/01/2022 Make the parser of member working
         new DiSkyType<>(Member.class, "member",
-                member -> "member " + member.getUser().getName() + "#" + member.getUser().getDiscriminator() +" in guild " + member.getGuild().getName(),
+                member -> "member " + member.getUser().getName() + "#" + member.getUser().getDiscriminator(),
                 null).register();
         new DiSkyType<>(Bot.class, "bot",
-                member -> "bot " + member.getInstance().getSelfUser().getName() + "#" + member.getInstance().getSelfUser().getDiscriminator(),
+                member -> member.getInstance().getSelfUser().getName() + "#" + member.getInstance().getSelfUser().getDiscriminator(),
                 input -> DiSky.getManager().fromName(input)).register();
     }
 }

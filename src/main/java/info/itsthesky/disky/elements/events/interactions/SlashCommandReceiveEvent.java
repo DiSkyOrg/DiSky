@@ -117,7 +117,9 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 	}
 
 	public static class BukkitSlashCommandReceiveEvent extends SimpleDiSkyEvent<SlashCommandInteractionEvent> implements ModalEvent, InteractionEvent {
-		public BukkitSlashCommandReceiveEvent(SlashCommandReceiveEvent event) {}
+		public BukkitSlashCommandReceiveEvent(SlashCommandReceiveEvent event) {
+			super(true);
+		}
 
 		@Override
 		public GenericInteractionCreateEvent getInteractionEvent() {
