@@ -18,7 +18,7 @@ public class MemberRemoveEvent extends DiSkyEvent<GuildMemberRemoveEvent> {
         SkriptUtils.registerBotValue(MemberRemoveEvent.BukkitMemberRemoveEvent.class);
 
         SkriptUtils.registerValue(MemberRemoveEvent.BukkitMemberRemoveEvent.class, Guild.class,
-                event -> event.getJDAEvent().getGuild());
+                event -> event.getJDAEvent().getGuild(), 0);
 
         SkriptUtils.registerValue(MemberRemoveEvent.BukkitMemberRemoveEvent.class, Member.class,
                 event -> event.getJDAEvent().getMember(), 0);
