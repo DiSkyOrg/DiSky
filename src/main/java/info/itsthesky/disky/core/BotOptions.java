@@ -54,11 +54,19 @@ public class BotOptions {
     }
 
     public void runReady(ReadyEvent event) {
-
+        if (getOnReady().isEmpty())
+            return;
+        final info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent e = new info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent(new info.itsthesky.disky.elements.events.bots.ReadyEvent());
+        e.setJDAEvent(event);
+        TriggerItem.walk(getOnReady().get(0), e);
     }
 
     public void runGuildReady(GuildReadyEvent event) {
-
+        if (getOnGuildReady().isEmpty())
+            return;
+        final info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent e = new info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent(new info.itsthesky.disky.elements.events.bots.GuildReadyEvent());
+        e.setJDAEvent(event);
+        TriggerItem.walk(getOnGuildReady().get(0), e);
     }
 
     public String getName() {

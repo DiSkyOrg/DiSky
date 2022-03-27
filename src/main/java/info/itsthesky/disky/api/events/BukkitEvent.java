@@ -10,6 +10,10 @@ public class BukkitEvent extends org.bukkit.event.Event {
 
     private static final HandlerList handlerList = new HandlerList();
 
+    public BukkitEvent(boolean async) {
+        super(async);
+    }
+
     public static HandlerList getHandlerList() {
         return handlerList;
     }

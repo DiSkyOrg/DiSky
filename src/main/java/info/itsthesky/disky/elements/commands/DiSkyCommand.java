@@ -95,6 +95,7 @@ public class DiSkyCommand extends SkriptEvent {
         private final MessageReceivedEvent jdaEvent;
         public EvtDiSkyCommand(CommandObject command,
                                MessageReceivedEvent e) {
+            super(false);
             this.command = command;
             jdaEvent = e;
         }

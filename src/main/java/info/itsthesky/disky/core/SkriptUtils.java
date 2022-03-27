@@ -2,8 +2,11 @@ package info.itsthesky.disky.core;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
+import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.log.*;
@@ -63,6 +66,12 @@ public final class SkriptUtils {
         }
         toStop.forEach(LogHandler::stop); //Stopping them
         SkriptLogger.logAll(logger.getLog()); //Sending the errors to Skript logger.
+    }
+
+    public static void nukeSectionNode(SectionNode sectionNode) {
+        List<Node> nodes = new ArrayList<>();
+        for (Node node : sectionNode) nodes.add(node);
+        for (Node n : nodes) sectionNode.remove(n);
     }
 
     @SuppressWarnings("unchecked")
@@ -203,4 +212,11 @@ public final class SkriptUtils {
         current.addAll(Arrays.asList(classes));
         return current.toArray(new Class[0]);
 	}
+
+    @SafeVarargs
+    public static List<TriggerItem> loadCode(SectionNode sectionNode, Class<? extends Event>... classes) {
+        if (classes.length > 0)
+            ParserInstance.get().setCurrentEvent("custom section node", classes);
+        return ScriptLoader.loadItems(sectionNode);
+    }
 }

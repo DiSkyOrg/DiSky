@@ -14,7 +14,6 @@ import info.itsthesky.disky.api.skript.BaseScope;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.BotOptions;
 import info.itsthesky.disky.core.SkriptUtils;
-import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -169,8 +168,8 @@ public class BotScope extends BaseScope<BotOptions> {
         }
         options.setIntents(intents.toArray(new GatewayIntent[0]));
 
-        final List<TriggerItem> onReady = node.get("on ready") == null ? new ArrayList<>() : ScriptLoader.loadItems((SectionNode) node.get("on ready"));
-        final List<TriggerItem> onGuildReady = node.get("on guild ready") == null ? new ArrayList<>() : ScriptLoader.loadItems((SectionNode) node.get("on guild ready"));
+        final List<TriggerItem> onReady = node.get("on ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on ready"), info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent.class);
+        final List<TriggerItem> onGuildReady = node.get("on guild ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on guild ready"), info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent.class);
         options.setOnReady(onReady);
         options.setOnGuildReady(onGuildReady);
 
