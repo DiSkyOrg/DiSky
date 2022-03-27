@@ -1,0 +1,35 @@
+package info.itsthesky.disky.elements.events.thread;
+
+import info.itsthesky.disky.api.events.DiSkyEvent;
+import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import info.itsthesky.disky.core.SkriptUtils;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.thread.member.ThreadMemberLeaveEvent;
+
+public class ThreadLeaveEvent extends DiSkyEvent<ThreadMemberLeaveEvent> {
+
+    static {
+        register("Thread Leave Event", ThreadLeaveEvent.class, BukkitThreadLeaveEvent.class,
+                "[discord] thread leave")
+                .description("Fired when a member leaves a thread, either by leaving itself or by a moderator \n can be used to get the thread, the guild and the member.")
+                .examples("on thread leave:");
+
+
+        SkriptUtils.registerBotValue(ThreadLeaveEvent.BukkitThreadLeaveEvent.class);
+
+        SkriptUtils.registerValue(ThreadLeaveEvent.BukkitThreadLeaveEvent.class, Member.class,
+                event -> event.getJDAEvent().getMember(), 0);
+
+        SkriptUtils.registerValue(ThreadLeaveEvent.BukkitThreadLeaveEvent.class, ThreadChannel.class,
+                event -> event.getJDAEvent().getThread(), 0);
+
+        SkriptUtils.registerValue(ThreadLeaveEvent.BukkitThreadLeaveEvent.class, Guild.class,
+                event -> event.getJDAEvent().getGuild(), 0);
+
+    }
+
+    public static class BukkitThreadLeaveEvent extends SimpleDiSkyEvent<ThreadMemberLeaveEvent> {
+        public BukkitThreadLeaveEvent(ThreadMemberLeaveEvent event) {
+        }
+    }
+}
