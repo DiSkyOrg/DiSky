@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 public class ReplyWith extends SpecificBotEffect<Message> {
 
 	static {
+		DEFERRED_EVENTS = new LinkedList<>();
 		Skript.registerEffect(
 				ReplyWith.class,
 				"reply with [hidden] [the] [content] %string/embedbuilder/messagebuilder% [with [the] (component|action)[s] [row] %-rows%] [with reference[d] [message] %-message% [(1¦mentioning)]] [and store (it|the message) in %-objects%]"
@@ -70,6 +72,8 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 		return validateVariable(expressions[3], false, true);
 	}
 
+	public static final LinkedList<Event> DEFERRED_EVENTS;
+
 	@Override
 	public void runEffect(Event e, Bot bot) {
 
@@ -84,8 +88,19 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 			final IReplyCallback event = (IReplyCallback) ((InteractionEvent) e).getInteractionEvent();
 			final Object rawMessage = parseSingle(exprMessage, e, null);
 			final MessageBuilder message = JDAUtils.constructMessage(rawMessage);
-			if (anyNull(event, rawMessage, message)) {
+			if (anyNull(rawMessage, message)) {
 				restart();
+				return;
+			}
+
+			if (!event.getHook().isExpired() && DEFERRED_EVENTS.contains(e)) {
+				event.getHook().editOriginal(message.build())
+						.setActionRows(formatted)
+						.queue(v -> restart(), ex -> {
+							DiSky.getErrorHandler().exception(e, ex);
+							restart();
+						});
+				DEFERRED_EVENTS.remove(e);
 				return;
 			}
 
