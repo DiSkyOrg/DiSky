@@ -11,6 +11,7 @@ import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -180,6 +181,10 @@ public class Types {
         new DiSkyType<>(User.class, "user",
                 user -> user.getName() + "#" + user.getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
+        ).register();
+        new DiSkyType<>(AuditLogEntry.class, "auditlogentry",
+                ISnowflake::getId,
+                null
         ).register();
         new DiSkyType<>(CommandObject.class, "discordcommand",
                 CommandObject::getName,

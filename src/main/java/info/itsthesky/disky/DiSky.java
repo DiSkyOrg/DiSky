@@ -6,6 +6,7 @@ import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.elements.BaseBotEffect;
+import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -75,6 +76,7 @@ public final class DiSky extends JavaPlugin {
         }
         addonInstance = Skript.registerAddon(this);
         try {
+            ConstLogs.register();
             addonInstance.loadClasses("info.itsthesky.disky.elements");
         } catch (IOException e) {
             errorHandler.exception(null, e);
