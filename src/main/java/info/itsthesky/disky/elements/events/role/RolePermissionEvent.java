@@ -13,7 +13,7 @@ public class RolePermissionEvent extends DiSkyEvent<RoleUpdatePermissionsEvent> 
         register("Role Permission Change", RolePermissionEvent.class, BukkitRolePermissionEvent.class,
                 "[discord] [guild] role permission[s] (update|change)")
                 .description("Fired when the permissions of a role changes.")
-                .examples("on role position change:");
+                .examples("on role permissions change:");
 
         SkriptUtils.registerBotValue(BukkitRolePermissionEvent.class);
 
