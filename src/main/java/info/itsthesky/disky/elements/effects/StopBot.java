@@ -15,7 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Shutdown Bot")
 @Description({"Stop and disconnect a loaded bot from DiSky & discord.",
-		"However, if any requests was still remaining, they wil be executed before the actual bot shutdown."})
+		"If any requests was still remaining, they will be executed before the actual bot shutdown",
+		"Using the force pattern will cancel all requests and shutdown the bot instantly."})
 @Examples({"shutdown bot named \"name\"",
 		"stop bot \"name\""})
 public class StopBot extends WaiterEffect {
@@ -23,15 +24,18 @@ public class StopBot extends WaiterEffect {
 	static {
 		Skript.registerEffect(
 				StopBot.class,
-				"(stop|shutdown) [the] [bot] %bot%"
+				"[force] (stop|shutdown) [the] [bot] %bot%"
 		);
 	}
 
 	private Expression<Bot> exprBot;
 
+	boolean force;
+
 	@Override
 	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
 		exprBot = (Expression<Bot>) expressions[0];
+		force = parseResult.expr.contains("force");
 		return true;
 	}
 
@@ -39,7 +43,12 @@ public class StopBot extends WaiterEffect {
 	public void runEffect(Event e) {
 		final Bot bot = parseSingle(exprBot, e, null);
 		if (!anyNull(bot))
-			bot.getInstance().shutdown();
+			if (force) {
+				bot.getInstance().shutdownNow();
+			}
+			else {
+				bot.getInstance().shutdown();
+			}
 		restart();
 	}
 
