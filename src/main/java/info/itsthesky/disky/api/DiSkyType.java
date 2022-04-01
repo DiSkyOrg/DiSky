@@ -130,7 +130,7 @@ public class DiSkyType<T> {
     }
 
     private String parse(String input) {
-        return input.replaceAll("[@{}<>&!]+", "");
+        return input.replaceAll("[@{}<>&!#~]+", "");
     }
 
     // Should never be used outside of the class btw
