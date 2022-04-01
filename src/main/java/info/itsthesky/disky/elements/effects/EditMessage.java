@@ -61,9 +61,15 @@ public class EditMessage extends WaiterEffect {
         }
         final MessageAction action;
         if (keepComponents)
-            action = message.editMessage(builder.build()).setActionRows(message.getActionRows());
+            action = message
+                    .editMessage(builder.build())
+                    .override(true)
+                    .setActionRows(message.getActionRows());
         else
-            action = message.editMessage(builder.build()).setActionRows(formatted);
+            action = message
+                    .editMessage(builder.build())
+                    .override(true)
+                    .setActionRows(formatted);
 
         action.queue(this::restart, ex -> {
             DiSky.getErrorHandler().exception(e, ex);
