@@ -13,6 +13,7 @@ import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -184,6 +185,7 @@ public class Types {
 
         DiSkyType.fromEnum(AttachmentOption.class, "attachmentoption", "attachmentoption").register();
         DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
+        DiSkyType.fromEnum(Permission.class, "permission", "permission").register();
         new DiSkyType<>(User.class, "user",
                 user -> user.getName() + "#" + user.getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
