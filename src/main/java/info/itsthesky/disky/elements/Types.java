@@ -6,6 +6,8 @@ import info.itsthesky.disky.api.DiSkyType;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.elements.commands.CommandData;
+import info.itsthesky.disky.elements.commands.CommandEvent;
+import info.itsthesky.disky.elements.commands.CommandFactory;
 import info.itsthesky.disky.elements.commands.CommandObject;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -152,8 +154,7 @@ public class Types {
          */
         new DiSkyType<>(Message.class, "message",
                 Message::getContentRaw,
-                // TODO: 11/02/2022 Make message parsing working
-                null
+                id -> CommandEvent.lastEvent.getMessageChannel().getHistory().getMessageById(id)
         ).register();
         new DiSkyType<>(Message.Attachment.class, "attachment",
                 Message.Attachment::getUrl,
@@ -193,10 +194,14 @@ public class Types {
                 Guild::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildById(input))
         ).register();
-        // TODO: 30/01/2022 Make the parser of member working
         new DiSkyType<>(Member.class, "member",
-                member -> "member " + member.getUser().getName() + "#" + member.getUser().getDiscriminator(),
-                null).register();
+                member -> member.getUser().getName() + "#" + member.getUser().getDiscriminator(),
+                id -> {
+                    final CommandEvent event = CommandEvent.lastEvent;
+                    if (event.getJDAEvent().isFromGuild())
+                        return CommandEvent.lastEvent.getGuild().getMemberById(id);
+                    return null;
+                }).register();
         new DiSkyType<>(Bot.class, "bot",
                 member -> member.getInstance().getSelfUser().getName() + "#" + member.getInstance().getSelfUser().getDiscriminator(),
                 input -> DiSky.getManager().fromName(input)).register();
