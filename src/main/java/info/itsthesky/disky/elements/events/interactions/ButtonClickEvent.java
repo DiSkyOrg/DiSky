@@ -34,8 +34,8 @@ public class ButtonClickEvent extends DiSkyEvent<ButtonInteractionEvent> {
 				event -> event.getJDAEvent().getMember());
 		SkriptUtils.registerValue(BukkitButtonClickEvent.class, User.class,
 				event -> event.getJDAEvent().getUser());
-		SkriptUtils.registerValue(BukkitButtonClickEvent.class, Button.class,
-				event -> event.getJDAEvent().getButton());
+		SkriptUtils.registerValue(BukkitButtonClickEvent.class, String.class,
+				event -> event.getJDAEvent().getButton().getId());
 		SkriptUtils.registerValue(BukkitButtonClickEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getChannel());
 
