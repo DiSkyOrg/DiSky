@@ -31,6 +31,8 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.utils.AttachmentOption;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class Types {
@@ -46,6 +48,9 @@ public class Types {
 
             Converters.registerConverter(IMentionable.class, String.class, IMentionable::getAsMention);
             Converters.registerConverter(ISnowflake.class, String.class, ISnowflake::getId);
+
+            Converters.registerConverter(Button.class, ComponentRow.class, btn -> new ComponentRow(null, null, Collections.singletonList(btn)));
+            Converters.registerConverter(SelectMenu.class, ComponentRow.class, menu -> new ComponentRow(menu, null, new ArrayList<>()));
         }
 
     }
