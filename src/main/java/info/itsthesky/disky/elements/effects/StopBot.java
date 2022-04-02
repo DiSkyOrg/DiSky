@@ -43,17 +43,15 @@ public class StopBot extends WaiterEffect {
 	public void runEffect(Event e) {
 		final Bot bot = parseSingle(exprBot, e, null);
 		if (!anyNull(bot))
-			if (force) {
+			if (force)
 				bot.getInstance().shutdownNow();
-			}
-			else {
+			else
 				bot.getInstance().shutdown();
-			}
 		restart();
 	}
 
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "shutdown bot " + exprBot.toString(e, debug);
+		return (force ? "force " : "") "shutdown bot " + exprBot.toString(e, debug);
 	}
 }
