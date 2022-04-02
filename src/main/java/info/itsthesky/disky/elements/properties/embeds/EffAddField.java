@@ -1,4 +1,4 @@
-package info.itsthesky.disky.elements.embeds;
+package info.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Effect;

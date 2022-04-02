@@ -11,7 +11,7 @@ public class ExprPlaceholder extends SimpleChangeableProperty<Object, String> {
 		register(
 				ExprPlaceholder.class,
 				String.class,
-				"place[( |-)]holder",
+				"[discord] place[( |-)]holder",
 				"dropdown/textinput"
 		);
 	}

@@ -1,16 +1,16 @@
-package info.itsthesky.disky.elements.embeds;
+package info.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.classes.Changer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.jetbrains.annotations.NotNull;
 
-public class EmbedThumbnail extends EmbedProperty<String> {
+public class EmbedDescription extends EmbedProperty<String> {
 
 	static {
-		register(EmbedThumbnail.class,
+		register(EmbedDescription.class,
 				String.class,
-				"thumbnail");
+				"description");
 	}
 
 	@Override
@@ -20,12 +20,12 @@ public class EmbedThumbnail extends EmbedProperty<String> {
 
 	@Override
 	public void set(EmbedBuilder builder, String value) {
-		builder.setThumbnail(value);
+		builder.setDescription(value);
 	}
 
 	@Override
 	protected String convert(MessageEmbed embed) {
-		return embed.getThumbnail().getUrl();
+		return embed.getDescription();
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package info.itsthesky.disky.elements.embeds;
+package info.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
@@ -36,6 +36,8 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 	public void change(@NotNull Event e, @Nullable Object[] delta, Changer.@NotNull ChangeMode mode) {
 		final EmbedBuilder builder = EasyElement.parseSingle(getExpr(), e, null);
 		if (builder == null)
+			return;
+		if (delta == null || delta[0] == null)
 			return;
 		final T entity = (T) delta[0];
 		set(builder, entity);

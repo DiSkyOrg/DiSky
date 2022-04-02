@@ -1,8 +1,7 @@
-package info.itsthesky.disky.elements.embeds;
+package info.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.util.Color;
-import ch.njol.skript.util.ColorRGB;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
