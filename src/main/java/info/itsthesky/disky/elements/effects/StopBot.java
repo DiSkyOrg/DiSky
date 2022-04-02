@@ -52,6 +52,6 @@ public class StopBot extends WaiterEffect {
 
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return (force ? "force " : "") "shutdown bot " + exprBot.toString(e, debug);
+		return (force ? "force " : "") + "shutdown bot " + exprBot.toString(e, debug);
 	}
 }
