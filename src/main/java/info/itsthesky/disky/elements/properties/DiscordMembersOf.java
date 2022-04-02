@@ -22,7 +22,7 @@ public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member>
         register(
                 DiscordMembersOf.class,
                 Member.class,
-                "member[s] [list]",
+                "discord member[s] [list]",
                 "guildchannel/guild"
         );
     }
