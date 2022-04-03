@@ -58,4 +58,8 @@ public final class Utils {
         }
         return values;
 	}
+
+    public static boolean isBetween(Number value, Number min, Number max) {
+        return value.doubleValue() >= min.doubleValue() && value.doubleValue() <= max.doubleValue();
+    }
 }
