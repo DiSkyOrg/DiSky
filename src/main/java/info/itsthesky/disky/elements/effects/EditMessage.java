@@ -17,6 +17,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,21 +27,25 @@ public class EditMessage extends WaiterEffect {
     static {
         Skript.registerEffect(
                 EditMessage.class,
-                "edit [the] [message] %message% (with|to show) %string/embedbuilder/messagebuilder% [with [the] (component|action)[s] [row] %-rows%] [(1¦[and] keep component[s])]"
+                "edit [the] [message] %message% (with|to show) %string/embedbuilder/messagebuilder% [with [the] (component|action)[s] [row] %-rows%] [with file[s] %-strings%] [(2¦[and] clear [the] file[s])] [(1¦[and] keep component[s])]"
         );
     }
 
     private Expression<Message> exprMessage;
     private Expression<Object> exprNew;
     private Expression<ComponentRow> exprComponents;
+    private Expression<String> exprFiles;
     private boolean keepComponents;
+    private boolean clearFiles;
 
     @Override
     public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         exprMessage = (Expression<Message>) expressions[0];
         exprNew = (Expression<Object>) expressions[1];
         exprComponents = (Expression<ComponentRow>) expressions[2];
-        keepComponents = parseResult.mark == 1;
+        exprFiles = (Expression<String>) expressions[3];
+        keepComponents = (parseResult.mark & 1) != 0;
+        clearFiles = (parseResult.mark & 2) != 0;
         return true;
     }
 
@@ -48,6 +53,7 @@ public class EditMessage extends WaiterEffect {
     public void runEffect(Event e) {
         final Message message = parseSingle(exprMessage, e, null);
         final MessageBuilder builder = JDAUtils.constructMessage(parseSingle(exprNew, e, null));
+        final String[] files = EasyElement.parseList(exprFiles, e, new String[0]);
 
         final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
         final List<ActionRow> formatted = rows
@@ -59,19 +65,28 @@ public class EditMessage extends WaiterEffect {
             restart();
             return;
         }
-        final MessageAction action;
+        MessageAction action;
         if (keepComponents)
             action = message
                     .editMessage(builder.build())
-                    .override(true)
                     .setActionRows(message.getActionRows());
         else
             action = message
                     .editMessage(builder.build())
-                    .override(true)
                     .setActionRows(formatted);
 
-        action.queue(this::restart, ex -> {
+        if (files.length > 0 && !clearFiles)
+            for (String path : files) {
+                final File file = new File(path);
+                if (!file.exists())
+                    continue;
+                action = action.addFile(file);
+            }
+
+        if (clearFiles)
+            action = action.clearFiles();
+
+        action.override(true).queue(this::restart, ex -> {
             DiSky.getErrorHandler().exception(e, ex);
             restart();
         });
