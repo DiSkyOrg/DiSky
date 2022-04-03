@@ -12,7 +12,7 @@ public class UserDiscriminatorEvent extends DiSkyEvent<UserUpdateDiscriminatorEv
         register("User Discriminator Event", UserDiscriminatorEvent.class, BukkitUserDiscriminatorEvent.class,
                 "[discord] user discriminator (change|update)")
                 .description("Fired when a user changes its discriminator.")
-                .examples("on user discriminator:");
+                .examples("on user discriminator change:");
 
 
         SkriptUtils.registerBotValue(UserDiscriminatorEvent.BukkitUserDiscriminatorEvent.class);
