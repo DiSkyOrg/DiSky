@@ -190,6 +190,22 @@ public class Types {
                 user -> user.getName() + "#" + user.getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
         ).register();
+        new DiSkyType<>(User.Profile.class, "userprofile",
+                User.Profile::toString,
+                null
+        ).register();
+        new DiSkyType<>(Activity.class, "activity",
+                Activity::getName,
+                null
+        ).register();
+        new DiSkyType<>(Guild.Ban.class, "ban",
+                Guild.Ban::getReason,
+                null
+        ).register();
+        new DiSkyType<>(Invite.class, "invite",
+                Invite::getUrl,
+                null
+        ).register();
         new DiSkyType<>(AuditLogEntry.class, "auditlogentry",
                 ISnowflake::getId,
                 null

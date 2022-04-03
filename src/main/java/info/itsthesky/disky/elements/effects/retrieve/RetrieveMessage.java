@@ -12,7 +12,7 @@ public class RetrieveMessage extends BaseRetrieveEffect<Message, BaseGuildMessag
         register(
                 RetrieveMessage.class,
                 "message",
-                "textchannel/channel/thread"
+                "channel"
         );
     }
 

@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.components.Component;
 
+import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,34 @@ public final class JDAUtils {
 		if (input instanceof EmbedBuilder)
 			builder.setEmbeds(((EmbedBuilder) input).build());
 		return builder;
+	}
+
+	public static Icon parseIcon(String value) {
+		final InputStream iconStream;
+		if (Utils.isURL(value)) {
+			try {
+				iconStream = new URL(value).openStream();
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+				return null;
+			}
+		} else {
+			final File iconFile = new File(value);
+			if (iconFile == null || !iconFile.exists())
+				return null;
+			try {
+				iconStream = new FileInputStream(iconFile);
+			} catch (FileNotFoundException ex) {
+				ex.printStackTrace();
+				return null;
+			}
+		}
+		try {
+			return Icon.from(iconStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static Component[] convert(ComponentRow[] rows) {
