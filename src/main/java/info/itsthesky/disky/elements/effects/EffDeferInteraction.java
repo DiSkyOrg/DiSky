@@ -64,7 +64,6 @@ public class EffDeferInteraction extends WaiterEffect {
         } else {
             if (event instanceof GenericComponentInteractionCreateEvent)
                 ((ComponentInteraction) event).deferEdit().queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
-            restart();
         }
     }
 
