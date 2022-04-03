@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import net.dv8tion.jda.api.interactions.components.text.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
+import net.dv8tion.jda.api.requests.restaction.RoleAction;
 import net.dv8tion.jda.api.utils.AttachmentOption;
 
 import java.util.ArrayList;
@@ -98,6 +99,10 @@ public class Types {
         ).register();
         new DiSkyType<>(ChannelAction.class, "channelaction",
                 action -> action.getType().name(),
+                null
+        ).register();
+        new DiSkyType<>(RoleAction.class, "roleaction",
+                action -> "role action",
                 null
         ).register();
         DiSkyType.fromEnum(ChannelType.class, "channeltype", "channeltype").register();

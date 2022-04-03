@@ -22,7 +22,7 @@ public class BotMemberIsInThread extends EasyPropertyCondition<Object> {
         register(
                 BotMemberIsInThread.class,
                 PropertyCondition.PropertyType.BE,
-                "in [the] thread %thread%",
+                "in [the] thread %threadchannel%",
                 "member/bot"
         );
     }
