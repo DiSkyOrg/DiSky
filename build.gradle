@@ -5,7 +5,7 @@ plugins {
 
 group = 'info.itsthesky'
 def type = 'alpha'
-def num = '12'
+def num = '13'
 version = '4.0-' + type + num
 
 repositories {
