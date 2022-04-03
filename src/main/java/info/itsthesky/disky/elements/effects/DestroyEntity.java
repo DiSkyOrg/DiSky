@@ -24,7 +24,7 @@ public class DestroyEntity extends WaiterEffect {
 	static {
 		Skript.registerEffect(
 				DestroyEntity.class,
-				"destroy %guild/message/role/channel%"
+				"destroy %guild/message/role/channel/emote%"
 		);
 	}
 
@@ -52,6 +52,8 @@ public class DestroyEntity extends WaiterEffect {
 			action = ((Message) entity).delete();
 		else if (entity instanceof Channel)
 			action = ((Channel) entity).delete();
+		else if (entity instanceof info.itsthesky.disky.api.emojis.Emote && ((info.itsthesky.disky.api.emojis.Emote) entity).isEmote())
+			action = ((info.itsthesky.disky.api.emojis.Emote) entity).getEmote().delete();
 		else
 			action = null;
 		if (anyNull(action)) {
