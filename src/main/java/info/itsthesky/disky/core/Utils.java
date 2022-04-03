@@ -1,8 +1,10 @@
 package info.itsthesky.disky.core;
 
+import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.ChatColor;
+import org.bukkit.event.Event;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +30,10 @@ public final class Utils {
         } catch (Throwable ex) {
             error.accept(ex);
         }
+    }
+
+    public static <T> void catchAction(RestAction<T> action, Event event) {
+        catchAction(action, (v) -> {}, ex -> DiSky.getErrorHandler().exception(event, ex));
     }
 
     public static boolean isURL(String url) {

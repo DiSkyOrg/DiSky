@@ -113,4 +113,8 @@ public abstract class EasyElement extends Effect {
 	public static boolean isChangerMode(Changer.ChangeMode mode) {
         return equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.ADD, Changer.ChangeMode.RESET, Changer.ChangeMode.REMOVE_ALL);
 	}
+
+    public static boolean isValid(Object[] delta) {
+        return delta != null && delta.length != 0 && delta[0] != null;
+    }
 }
