@@ -80,4 +80,12 @@ public class Bot {
 	public Timespan getUptime() {
         return new Timespan(System.currentTimeMillis() - startedTime);
 	}
+
+    public void shutdown(boolean force) {
+        if (force)
+            getInstance().shutdownNow();
+        else
+            getInstance().shutdown();
+        DiSky.getManager().removeBot(this);
+    }
 }

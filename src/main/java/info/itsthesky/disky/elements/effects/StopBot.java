@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
@@ -43,10 +44,7 @@ public class StopBot extends WaiterEffect {
 	public void runEffect(Event e) {
 		final Bot bot = parseSingle(exprBot, e, null);
 		if (!anyNull(bot))
-			if (force)
-				bot.getInstance().shutdownNow();
-			else
-				bot.getInstance().shutdown();
+			bot.shutdown(force);
 		restart();
 	}
 

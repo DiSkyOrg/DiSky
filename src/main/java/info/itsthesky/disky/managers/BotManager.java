@@ -11,9 +11,11 @@ import net.dv8tion.jda.api.JDA;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Class that will store and manage every loaded bots.
@@ -97,4 +99,12 @@ public class BotManager {
                 .findAny()
                 .orElse(null);
 	}
+
+    public void removeBot(Bot bot) {
+        final Set<Bot> set = new HashSet<>(bots).stream()
+                .filter(bot1 -> !bot1.getName().equalsIgnoreCase(bot.getName()))
+                .collect(Collectors.toSet());
+        bots.clear();
+        bots.addAll(set);
+    }
 }
