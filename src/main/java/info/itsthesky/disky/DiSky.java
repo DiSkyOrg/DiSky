@@ -5,7 +5,6 @@ import ch.njol.skript.SkriptAddon;
 import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.skript.ErrorHandler;
-import info.itsthesky.disky.elements.BaseBotEffect;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.ConfigManager;
@@ -24,6 +23,7 @@ public final class DiSky extends JavaPlugin {
     private static ErrorHandler errorHandler;
     private static BotManager botManager;
     private static ConfigManager configManager;
+    private static boolean skImageInstalled;
 
 	@Override
     public void onEnable() {
@@ -35,6 +35,7 @@ public final class DiSky extends JavaPlugin {
         botManager = new BotManager(this);
         configManager = new ConfigManager(this);
         errorHandler = botManager.errorHandler();
+        skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage");
 
         /*
         Saving & loading emojis
@@ -64,6 +65,9 @@ public final class DiSky extends JavaPlugin {
         /*
         Check for Skript & start registration
          */
+
+        if (skImageInstalled)
+            getLogger().info("SkImage has been found! Enabling images syntax.");
         if (!getServer().getPluginManager().isPluginEnabled("Skript")) {
             errorHandler.exception(null, new RuntimeException("Skript is not found, cannot start DiSky."));
             getServer().getPluginManager().disablePlugin(this);
@@ -101,6 +105,10 @@ public final class DiSky extends JavaPlugin {
     @Override
     public void onDisable() {
         botManager.shutdown();
+    }
+
+    public static boolean isSkImageInstalled() {
+        return skImageInstalled;
     }
 
     public static DiSky getInstance() {

@@ -7,11 +7,15 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import ch.njol.util.NonNullPair;
+import ch.njol.util.Pair;
 import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.JDAUtils;
+import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -23,6 +27,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,17 +51,18 @@ import java.util.stream.Collectors;
 public class PostMessage extends SpecificBotEffect<Message> {
 
     static {
+        final String types = DiSky.isSkImageInstalled() ? "strings/images" : "strings";
         Skript.registerEffect(PostMessage.class,
                 "(post|dispatch) [the] [message] %string/embedbuilder/messagebuilder% (in|to) [the] [channel] %channel%" +
-                        " [with [the] (component|action)[s] [row] %-rows%] [with [the] file[s] %-strings% [with [the] option[s] %-attachmentoptions%]] [and store (it|the message) (inside|in) %-objects%]",
-                "upload [the] [file[s]] %strings% [with [the] option[s] %-attachmentoptions%]] (in|to) [the] [channel] %channel% [with [the] (component|action)[s] [row] %-rows%] [and store (it|the message) (inside|in) %-objects%]");
+                        " [with [the] (component|action)[s] [row] %-rows%] [with [the] file[s] %-"+ types +"% [with [the] option[s] %-attachmentoptions%]] [and store (it|the message) (inside|in) %-objects%]",
+                "upload [the] [file[s]] %"+ types +"% [with [the] option[s] %-attachmentoptions%]] (in|to) [the] [channel] %channel% [with [the] (component|action)[s] [row] %-rows%] [and store (it|the message) (inside|in) %-objects%]");
     }
 
     private Expression<Object> exprMessage;
     private Expression<Object> exprReceiver;
     private Expression<ComponentRow> exprComponents;
 
-    private Expression<String> exprFiles;
+    private Expression<Object> exprFiles;
     private Expression<AttachmentOption> exprOptions;
 
     private boolean isOnlyUpload;
@@ -65,7 +72,7 @@ public class PostMessage extends SpecificBotEffect<Message> {
         isOnlyUpload = i == 1;
         if (isOnlyUpload) {
             exprMessage = null;
-            exprFiles = (Expression<String>) expressions[0];
+            exprFiles = (Expression<Object>) expressions[0];
             exprOptions = (Expression<AttachmentOption>) expressions[1];
             exprReceiver = (Expression<Object>) expressions[2];
             exprComponents = (Expression<ComponentRow>) expressions[3];
@@ -74,7 +81,7 @@ public class PostMessage extends SpecificBotEffect<Message> {
             exprMessage = (Expression<Object>) expressions[0];
             exprReceiver = (Expression<Object>) expressions[1];
             exprComponents = (Expression<ComponentRow>) expressions[2];
-            exprFiles = (Expression<String>) expressions[3];
+            exprFiles = (Expression<Object>) expressions[3];
             exprOptions = (Expression<AttachmentOption>) expressions[4];
             return expressions[5] == null || validateVariable(expressions[5], false);
         }
@@ -86,9 +93,18 @@ public class PostMessage extends SpecificBotEffect<Message> {
         final @Nullable MessageBuilder content = JDAUtils.constructMessage(rawContent);
         final Object receiver = exprReceiver.getSingle(e);
         final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
-        final String[] files = EasyElement.parseList(exprFiles, e, new String[0]);
+        final Object[] rawFiles = EasyElement.parseList(exprFiles, e, new String[0]);
         final AttachmentOption[] options = EasyElement.parseList(exprOptions, e, new AttachmentOption[0]);
         if (anyNull(receiver) || (!isOnlyUpload && content == null)) {
+            restart();
+            return;
+        }
+
+        final List<NonNullPair<InputStream, String>> files;
+        try {
+            files = Utils.parseFiles(rawFiles);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
             restart();
             return;
         }
@@ -100,32 +116,26 @@ public class PostMessage extends SpecificBotEffect<Message> {
 
         final MessageChannel channel = bot != null ?
                 bot.findMessageChannel((MessageChannel) receiver) : (MessageChannel) receiver;
+        if (channel == null) {
+            restart();
+            return;
+        }
 
         MessageAction action;
         if (isOnlyUpload) {
-            if (files.length <= 0) {
+            if (files.isEmpty()) {
                 restart();
                 return;
             }
-            final String first = files[0];
-            final File file = new File(first);
-            if (!file.exists()) {
-                Skript.error("File doesn't exist: " + file.getAbsolutePath());
-                restart();
-                return;
-            }
-            action = channel.sendFile(file, options);
+            final NonNullPair<InputStream, String> pair = files.get(0);
+            action = channel.sendFile(pair.getFirst(), pair.getSecond(), options);
         } else
             action = channel.sendMessage(content.build());
-        event = e;
+
+        super.event = e;
         action = action.setActionRows(formatted);
-        if (files.length > 0)
-            for (String path : files) {
-                final File file = new File(path);
-                if (!file.exists())
-                    continue;
-                action = action.addFile(file, options);
-            }
+        for (NonNullPair<InputStream, String> pair : files)
+            action = action.addFile(pair.getFirst(), pair.getSecond(), options);
         action.queue(this::restart);
     }
 
