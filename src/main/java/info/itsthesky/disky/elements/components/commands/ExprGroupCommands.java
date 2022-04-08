@@ -42,6 +42,9 @@ public class ExprGroupCommands extends MultiplyPropertyExpression<Object, Subcom
 		final List<SubcommandData> news = new ArrayList<>(Arrays.asList(datas));
 		final List<SubcommandData> current = new ArrayList<>(Arrays.asList(convert(group)));
 
+		if(!current.isEmpty())
+			current.clear(); //the whole thing iterates twice, this fixes the bug where one subcommand tries to register twice
+
 		switch (mode) {
 			case ADD:
 				current.addAll(news);
@@ -60,7 +63,7 @@ public class ExprGroupCommands extends MultiplyPropertyExpression<Object, Subcom
 			if (group instanceof SubcommandGroupData)
 				((SubcommandGroupData) group).addSubcommands(current);
 			else
-				((SlashCommandData) group).addSubcommands(current);
+				((SlashCommandData) group).addSubcommands(current); //.getSubcommands method returns an empty array, so can't check it here
 		} catch (Exception ex) {
 			DiSky.getErrorHandler().exception(e, ex);
 		}
