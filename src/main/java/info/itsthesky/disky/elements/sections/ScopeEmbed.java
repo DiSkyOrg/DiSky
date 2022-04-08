@@ -1,4 +1,4 @@
-package info.itsthesky.disky.elements.properties.embeds;
+package info.itsthesky.disky.elements.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
@@ -6,10 +6,14 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.Trigger;
+import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.EmbedManager;
+import info.itsthesky.disky.api.skript.WorkingEffectSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +45,7 @@ import java.util.List;
         "\t\t\tset footer icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
         "\t\t\tset timestamp of embed to now\n" +
         "\t\treply with last embed")
-public class ScopeEmbed extends EffectSection {
+public class ScopeEmbed extends WorkingEffectSection {
 
     public static EmbedBuilder lastEmbed;
     private Expression<String> exprID;
@@ -64,7 +68,7 @@ public class ScopeEmbed extends EffectSection {
         if (!hasSection())
             return false;
         if (sectionNode != null)
-            trigger = loadCode(sectionNode, "make embed", ParserInstance.get().getCurrentEvents());
+            trigger = loadWorkingCode(sectionNode, "make embed", ParserInstance.get().getCurrentEvents());
         return true;
     }
 
