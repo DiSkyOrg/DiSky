@@ -1,12 +1,12 @@
 package info.itsthesky.disky.elements.effects.retrieve;
 
 import info.itsthesky.disky.api.skript.BaseRetrieveEffect;
-import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 
-public class RetrieveMessage extends BaseRetrieveEffect<Message, BaseGuildMessageChannel> {
+public class RetrieveMessage extends BaseRetrieveEffect<Message, MessageChannel> {
 
     static {
         register(
@@ -17,7 +17,7 @@ public class RetrieveMessage extends BaseRetrieveEffect<Message, BaseGuildMessag
     }
 
     @Override
-    protected RestAction<Message> retrieve(@NotNull String input, @NotNull BaseGuildMessageChannel entity) {
+    protected RestAction<Message> retrieve(@NotNull String input, @NotNull MessageChannel entity) {
         return entity.retrieveMessageById(input);
     }
 
