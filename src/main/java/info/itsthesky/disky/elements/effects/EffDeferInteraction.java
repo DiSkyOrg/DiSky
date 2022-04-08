@@ -12,7 +12,9 @@ import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.NodeInformation;
 import info.itsthesky.disky.api.skript.WaiterEffect;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
@@ -64,6 +66,8 @@ public class EffDeferInteraction extends WaiterEffect {
         } else {
             if (event instanceof GenericComponentInteractionCreateEvent)
                 ((ComponentInteraction) event).deferEdit().queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
+            if (event instanceof ModalInteractionEvent)
+                ((ModalInteractionEvent) event).deferEdit().queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
         }
     }
 
