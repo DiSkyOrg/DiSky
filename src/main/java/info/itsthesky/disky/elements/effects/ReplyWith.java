@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import ch.njol.util.NonNullPair;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.MessageEvent;
@@ -14,18 +15,23 @@ import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.JDAUtils;
+import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookMessageUpdateAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import net.dv8tion.jda.api.utils.AttachmentOption;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,9 +47,14 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 
 	static {
 		DEFERRED_EVENTS = new LinkedList<>();
+		final String types = DiSky.isSkImageInstalled() ? "strings/images" : "strings";
 		Skript.registerEffect(
 				ReplyWith.class,
-				"reply with [hidden] [the] [content] %string/embedbuilder/messagebuilder% [with [the] (component|action)[s] [row] %-rows%] [with reference[d] [message] %-message% [(1¦mentioning)]] [and store (it|the message) in %-objects%]"
+				"reply with [hidden] [the] [content] %string/embedbuilder/messagebuilder% " +
+						"[with [the] (component|action)[s] [row] %-rows%] " +
+						"[with reference[d] [message] %-message% [(1¦mentioning)]] " +
+						"[with [the] file[s] %-"+ types +"% [with [the] option[s] %-attachmentoptions%]]" +
+						"[and store (it|the message) in %-objects%]"
 		);
 	}
 
@@ -51,6 +62,9 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 	private Expression<ComponentRow> exprComponents;
 	private boolean isInInteraction;
 	private boolean hidden;
+
+	private Expression<Object> exprFiles;
+	private Expression<AttachmentOption> exprOptions;
 
 	private boolean mentioning;
 	private Expression<Message> exprReference;
@@ -68,8 +82,10 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 
 		exprReference = (Expression<Message>) expressions[2];
 		mentioning = (parseResult.mark & 1) != 1;
+		exprFiles = (Expression<Object>) expressions[3];
+		exprOptions = (Expression<AttachmentOption>) expressions[4];
 
-		return validateVariable(expressions[3], false, true);
+		return validateVariable(expressions[5], false, true);
 	}
 
 	public static final LinkedList<Event> DEFERRED_EVENTS;
@@ -77,11 +93,23 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 	@Override
 	public void runEffect(Event e, Bot bot) {
 
+		final Object[] rawFiles = EasyElement.parseList(exprFiles, e, new String[0]);
+		final AttachmentOption[] options = EasyElement.parseList(exprOptions, e, new AttachmentOption[0]);
+
 		final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
 		final List<ActionRow> formatted = rows
 				.stream()
 				.map(ComponentRow::asActionRow)
 				.collect(Collectors.toList());
+
+		final List<NonNullPair<InputStream, String>> files;
+		try {
+			files = Utils.parseFiles(rawFiles);
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+			restart();
+			return;
+		}
 
 		if (isInInteraction) {
 
@@ -94,20 +122,26 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 			}
 
 			if (!event.getHook().isExpired() && DEFERRED_EVENTS.contains(e)) {
-				event.getHook().editOriginal(message.build())
-						.setActionRows(formatted)
-						.queue(v -> restart(), ex -> {
-							DiSky.getErrorHandler().exception(e, ex);
-							restart();
-						});
+				WebhookMessageUpdateAction<Message> action = event.getHook().editOriginal(message.build());
+				action = action.setActionRows(formatted);
+				for (NonNullPair<InputStream, String> file : files)
+					action = action.addFile(file.getFirst(), file.getSecond(), options);
+				action.queue(v -> restart(), ex -> {
+					DiSky.getErrorHandler().exception(e, ex);
+					restart();
+				});
 				DEFERRED_EVENTS.remove(e);
 				return;
 			}
 
-			event.reply(message.build())
+			ReplyCallbackAction reply = event.reply(message.build())
 					.addActionRows(formatted)
-					.setEphemeral(hidden)
-					.queue(v -> restart(), ex -> {
+					.setEphemeral(hidden);
+
+			for (NonNullPair<InputStream, String> file : files)
+				reply = reply.addFile(file.getFirst(), file.getSecond(), options);
+
+			reply.queue(v -> restart(), ex -> {
 						DiSky.getErrorHandler().exception(e, ex);
 						restart();
 					});
@@ -129,6 +163,8 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 			action = action.setActionRows(formatted);
 			if (referenced != null)
 				action = action.reference(referenced).mentionRepliedUser(mentioning);
+			for (NonNullPair<InputStream, String> file : files)
+				action = action.addFile(file.getFirst(), file.getSecond(), options);
 
 			action.queue(this::restart, ex -> {
 				DiSky.getErrorHandler().exception(e, ex);
