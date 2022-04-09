@@ -24,13 +24,13 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Defer Interaction")
 @Description({"Only usable in interaction event, currently button click/dropdown update/modal event!",
-"\nThis will force the interaction to be acknowledge, you have 3 seconds to do so, the effect will send a success message to Discord or hold the interaction to send a message later.",
-"\nKeep in mind that replying in an interaction event will automatically defer the interaction, and therefore you don't need to defer it.",
-"\nIf you need to wait more than 3 seconds use the and wait pattern",
-"\nAn interaction can only be deferred once!"})
+"This will force the interaction to be acknowledge, you have 3 seconds to do so, the effect will send a success message to Discord or hold the interaction to send a message later.",
+"Keep in mind that replying in an interaction event will automatically defer the interaction, and therefore you don't need to defer it.",
+"If you need to wait more than 3 seconds use the and wait pattern",
+"An interaction can only be deferred once!"})
 @Examples({"defer the interaction",
-"\n defer the interaction and wait",
-"\n defer the interaction and wait silently"})
+"defer the interaction and wait",
+"defer the interaction and wait silently"})
 public class EffDeferInteraction extends WaiterEffect {
 
     static {
