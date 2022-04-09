@@ -11,7 +11,7 @@ public class GuildSplashEvent extends DiSkyEvent<GuildUpdateSplashEvent> {
     static {
         register("Guild Splash Event", GuildSplashEvent.class, BukkitGuildSplashEvent.class,
                 "[discord] guild splash (change|update)")
-                .description("Fired when a banner of a guild changes \n can be used to get the old/new banner, the author and the guild.")
+                .description("Fired when a banner of a guild changes can be used to get the old/new banner, the author and the guild.")
                 .examples("on guild splash change:");
 
 
