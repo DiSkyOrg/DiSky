@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 @Name("Embed / Role Color")
 @Description({"Get or change the color of an embed builder or a role.",
 		"The color input must come from Skript, and will be converted by DiSky."})
-@Examples({"set color of embed to red",
-		"set color of role with id \"000\" to lime"})
+@Examples({"set embed color of embed to red",
+		"set role color of role with id \"000\" to lime"})
 public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 
 	static {
