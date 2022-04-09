@@ -33,7 +33,7 @@ import java.util.List;
         "\t\t\tset author of the embed to \"Author name (Can point to URL)\"\n" +
         "\t\t\tset author icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
         "\t\t\tset author url of embed to \"https://www.youtube.com/watch?v=i33DB6R8YUY\"\n" +
-        "\t\t\tset colour of the embed to orange\n" +
+        "\t\t\tset embed color of the embed to orange\n" +
         "\t\t\tadd inline field named \"Field Name\" with value \"Colour sets %nl%< that\" to fields of embed\n" +
         "\t\t\tadd inline field named \"Field Name\" with value \"Color is a java Color%nl%Not a string\" to fields of embed\n" +
         "\t\t\tadd inline field named \"Field Name\" with value \"Field value\" to fields of embed\n" +
