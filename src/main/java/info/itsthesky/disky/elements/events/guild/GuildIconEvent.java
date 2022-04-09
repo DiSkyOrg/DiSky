@@ -11,7 +11,7 @@ public class GuildIconEvent extends DiSkyEvent<GuildUpdateIconEvent> {
     static {
         register("Guild Icon Event", GuildIconEvent.class, BukkitGuildIconEvent.class,
                 "[discord] guild icon (change|update)")
-                .description("Fired when the icon of a guild changes \n can be used to get the old/new icon, the author and the guild.")
+                .description("Fired when the icon of a guild changes can be used to get the old/new icon, the author and the guild.")
                 .examples("on guild icon change:");
 
 
