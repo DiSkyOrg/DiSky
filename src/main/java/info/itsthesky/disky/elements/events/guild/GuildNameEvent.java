@@ -10,9 +10,9 @@ public class GuildNameEvent extends DiSkyEvent<GuildUpdateNameEvent> {
 
     static {
         register("Guild Name Event", GuildNameEvent.class, BukkitGuildNameEvent.class,
-                "[discord] guild name (update|change))")
-                .description("Fired when the name of a guild is changed \n can be used to get the old/new name.")
-                .examples("on guild name:");
+                "[discord] guild name (update|change)")
+                .description("Fired when the name of a guild is changed can be used to get the old/new name.")
+                .examples("on guild name change:");
 
 
         SkriptUtils.registerBotValue(GuildNameEvent.BukkitGuildNameEvent.class);
