@@ -7,9 +7,9 @@ import net.dv8tion.jda.api.entities.Invite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Name("Invite URL")
+@Name("Invite Code")
 @Description("Represent the plain Discord URL that people have to click on in order to join the invite's guild.")
-@Examples("reply with invite url of event-invite")
+@Examples("reply with invite code of event-invite")
 public class InviteURL extends InviteProperty<String> {
 
     static {
