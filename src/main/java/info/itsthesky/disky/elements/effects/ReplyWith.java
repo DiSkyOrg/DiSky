@@ -126,7 +126,7 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 				action = action.setActionRows(formatted);
 				for (NonNullPair<InputStream, String> file : files)
 					action = action.addFile(file.getFirst(), file.getSecond(), options);
-				action.queue(v -> restart(), ex -> {
+				action.queue(this::restart, ex -> {
 					DiSky.getErrorHandler().exception(e, ex);
 					restart();
 				});
@@ -141,10 +141,13 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 			for (NonNullPair<InputStream, String> file : files)
 				reply = reply.addFile(file.getFirst(), file.getSecond(), options);
 
-			reply.queue(v -> restart(), ex -> {
-						DiSky.getErrorHandler().exception(e, ex);
-						restart();
-					});
+			reply.queue(v -> v.retrieveOriginal().queue(this::restart, ex -> {
+				DiSky.getErrorHandler().exception(e, ex);
+				restart();
+			}), ex -> {
+				DiSky.getErrorHandler().exception(e, ex);
+				restart();
+			});
 
 		} else {
 
