@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Invite Code")
-@Description("Represent the plain Discord URL that people have to click on in order to join the invite's guild.")
+@Description("Represent the unique invite code used in the Discord URL.")
 @Examples("reply with invite code of event-invite")
 public class InviteCode extends InviteProperty<String> {
 
