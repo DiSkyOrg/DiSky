@@ -13,13 +13,14 @@ import org.jetbrains.annotations.NotNull;
 @Description({"This represent the current name of any discord entity that can hold one.",
         "You can change name of every entity except member and user by defining a new text.",
         "Check for 'nickname of member' if you want to check / change custom member's name."})
+@Examples("discord name of event-guild")
 public class DiscordName extends SimplePropertyExpression<Object, String> {
 
     static {
         register(
                 DiscordName.class,
                 String.class,
-                "[the] discord name",
+                "discord name",
                 "channel/user/member/role/guild"
         );
     }
