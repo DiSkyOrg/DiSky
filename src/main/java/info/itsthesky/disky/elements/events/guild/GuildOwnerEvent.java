@@ -11,7 +11,7 @@ public class GuildOwnerEvent extends DiSkyEvent<GuildUpdateOwnerEvent> {
     static {
         register("Guild Owner Event", GuildOwnerEvent.class, BukkitGuildOwnerEvent.class,
                 "[discord] guild owner (change|update)")
-                .description("Fired when a owner of a guild changes \n can be used to get the old/new owner, the author and the guild.")
+                .description("Fired when a owner of a guild changes can be used to get the old/new owner, the author and the guild.")
                 .examples("on guild owner change:");
 
 
