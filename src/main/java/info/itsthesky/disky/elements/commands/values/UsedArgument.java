@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Used Argument")
-@Description({"Return the plain formatter of the discord command's argument\n",
-        "You should however use (arg-1) for example which will return the argument value directly." +
-                "This is intended to be for test purpose only, and therefore only return a String formatted containing every used arguments."})
+@Description({"Return the plain formatter of the discord command's argument",
+        "You should however use (arg-1) for example which will return the argument value directly.",
+        "This is intended to be for test purpose only, and therefore only return a String formatted containing every used arguments."})
 public class UsedArgument extends SimpleExpression<String> {
 
     static {
