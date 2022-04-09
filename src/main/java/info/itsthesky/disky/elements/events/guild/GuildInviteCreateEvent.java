@@ -9,9 +9,9 @@ public class GuildInviteCreateEvent extends DiSkyEvent<net.dv8tion.jda.api.event
 
     static {
         register("Invite Create Event", GuildInviteCreateEvent.class, BukkitInviteCreateEvent.class,
-                "[discord] guild invite create)")
-                .description("Fired when a invite is created in a guild \n can be used to get the invite property, the author and the guild.")
-                .examples("guild invite create:");
+                "[discord] guild invite create")
+                .description("Fired when a invite is created in a guild can be used to get the invite property, the author and the guild.")
+                .examples("on guild invite create:");
 
 
         SkriptUtils.registerBotValue(GuildInviteCreateEvent.BukkitInviteCreateEvent.class);
