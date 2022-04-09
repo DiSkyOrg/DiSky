@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class GetCategory extends BaseGetterExpression<Category> {
 
     static {
-        register(GetThread.class,
+        register(GetCategory.class,
                 Category.class,
                 "category");
     }

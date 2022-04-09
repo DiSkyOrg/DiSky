@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class GetVoiceChannel extends BaseGetterExpression<VoiceChannel> {
 
     static {
-        register(GetThread.class,
+        register(GetVoiceChannel.class,
                 VoiceChannel.class,
                 "voice channel");
     }
