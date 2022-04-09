@@ -11,8 +11,7 @@ public class MemberRoleAddEvent extends DiSkyEvent<GuildMemberRoleAddEvent> {
     static {
         register("Role Add Event", MemberRoleAddEvent.class, BukkitMemberRoleAddEvent.class,
                 "[discord] [member] role add")
-                .description("Fired when a member add roles to another member, it's a log action so event-author returns who made the action" +
-                        "event-roles returns a list of added roles")
+                .description("Fired when a member add roles to another member, it's a log action so event-author returns who made the action, event-roles returns a list of added roles")
                 .examples("on role add:");
 
 
