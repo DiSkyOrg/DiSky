@@ -28,7 +28,7 @@ public class CreateThread extends WaiterEffect<ThreadChannel> {
     static {
         Skript.registerEffect(
                 CreateThread.class,
-                "(make|create) [the] [new] [private] thread (named|with name) %string% in [the] [channel] %channel/textchannel% [(with|using) [the] [message] [as reference] %-message%] [(with|using) [the] [bot] %-bot%] and store (it|the role) in %object%"
+                "(make|create) [the] [new] [private] thread (named|with name) %string% in [the] [channel] %channel/textchannel% [(with|using) [the] [message] [as reference] %-message%] [(with|using) [the] [bot] %-bot%] and store (it|the thread) in %object%"
         );
     }
 
