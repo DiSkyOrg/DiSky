@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("Create Thread")
 @Description({"Create a new thread in a text channel with a base name.",
         "The bot used in that effect will automatically join the thread, so you don't have to make it join yourself.",
-        "If you create a private thread, then you cannot specify a message. ",
+        "If you create a private thread, then you cannot specify a message.",
         "Else, the Thread will be created based on the specified message.",
         "Creating private thread need the guild to be level 2 or more, else it'll throw an exception."})
 public class CreateThread extends WaiterEffect<ThreadChannel> {
