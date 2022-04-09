@@ -13,7 +13,7 @@ public class MemberAcceptScreenEvent extends DiSkyEvent<GuildMemberUpdatePending
         register("Member Accept Screen Event", MemberAcceptScreenEvent.class, BukkitMemberUpdatePendingEvent.class,
                 "[discord] [guild] member screen accept")
                 .description("Fired when a member has agreed to membership screen requeriments\nit can be useful for adding roles since the member is not available if they haven't accepted it yet.")
-                .examples("on member nickname change:");
+                .examples("on member screen accept:");
 
 
         SkriptUtils.registerBotValue(MemberAcceptScreenEvent.BukkitMemberUpdatePendingEvent.class);
