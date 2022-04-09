@@ -203,6 +203,8 @@ public final class SkriptUtils {
 	}
 
 	public static Color convert(java.awt.Color color) {
+        if (color == null)
+            return null;
         return new ColorRGB(color.getRed(), color.getGreen(), color.getBlue());
 	}
 

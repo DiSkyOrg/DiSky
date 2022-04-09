@@ -9,7 +9,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.elements.sections.ScopeEmbed;
+import info.itsthesky.disky.elements.sections.EmbedSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class ExprLastEmbed extends SimpleExpression<EmbedBuilder> {
     @Nullable
     @Override
     protected EmbedBuilder[] get(@NotNull Event e) {
-        return new EmbedBuilder[]{ScopeEmbed.lastEmbed};
+        return new EmbedBuilder[]{EmbedSection.lastEmbed};
     }
 
     @Override
