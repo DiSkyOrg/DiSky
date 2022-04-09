@@ -7,7 +7,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.elements.sections.ScopeEmbed;
+import info.itsthesky.disky.elements.sections.EmbedSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.bukkit.event.Event;
@@ -27,7 +27,7 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
-		useScope = ParserInstance.get().isCurrentSection(ScopeEmbed.class);
+		useScope = ParserInstance.get().isCurrentSection(EmbedSection.class);
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
 
@@ -43,7 +43,7 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 		final T entity = (T) delta[0];
 		set(builder, entity);
 		if (useScope)
-			set(ScopeEmbed.lastEmbed, entity);
+			set(EmbedSection.lastEmbed, entity);
 	}
 
 	public abstract void set(EmbedBuilder builder, T value);

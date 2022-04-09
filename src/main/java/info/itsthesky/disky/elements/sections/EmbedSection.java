@@ -45,13 +45,13 @@ import java.util.List;
         "\t\t\tset footer icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
         "\t\t\tset timestamp of embed to now\n" +
         "\t\treply with last embed")
-public class ScopeEmbed extends WorkingEffectSection {
+public class EmbedSection extends WorkingEffectSection {
 
     public static EmbedBuilder lastEmbed;
     private Expression<String> exprID;
 
     static {
-        Skript.registerSection(ScopeEmbed.class, "make [new] [discord] [message] embed [using [the] [template] [(named|with name|with id)] %-string%]");
+        Skript.registerSection(EmbedSection.class, "make [new] [discord] [message] embed [using [the] [template] [(named|with name|with id)] %-string%]");
     }
 
     @Nullable
