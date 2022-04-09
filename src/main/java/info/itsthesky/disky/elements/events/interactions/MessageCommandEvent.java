@@ -1,9 +1,12 @@
 package info.itsthesky.disky.elements.events.interactions;
 
+import ch.njol.skript.Skript;
+import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
+import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -47,6 +50,38 @@ public class MessageCommandEvent extends DiSkyEvent<MessageContextInteractionEve
 
 		SkriptUtils.registerValue(BukkitMessageCommandEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
+	}
+
+	public static class TargetUser extends SimpleGetterExpression<Message, BukkitMessageCommandEvent> {
+
+		static {
+			Skript.registerExpression(
+					TargetUser.class,
+					Message.class,
+					ExpressionType.COMBINED,
+					"[the] target message"
+			);
+		}
+
+		@Override
+		protected String getValue() {
+			return "target message";
+		}
+
+		@Override
+		protected Class<BukkitMessageCommandEvent> getEvent() {
+			return BukkitMessageCommandEvent.class;
+		}
+
+		@Override
+		protected Message convert(BukkitMessageCommandEvent event) {
+			return event.getJDAEvent().getTarget();
+		}
+
+		@Override
+		public @NotNull Class<? extends Message> getReturnType() {
+			return Message.class;
+		}
 	}
 
 	public static class BukkitMessageCommandEvent extends SimpleDiSkyEvent<MessageContextInteractionEvent> implements ModalEvent, InteractionEvent {
