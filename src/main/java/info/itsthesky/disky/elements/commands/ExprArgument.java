@@ -27,7 +27,7 @@ import java.util.List;
  * edited minorly for Vixio by Blitz, and then edited by ItstheSky for DiSky implementation
  */
 @Name("Discord Command Argument")
-@Description("Works same as Skript's command rgument. You can specify the argument number or the argument type (in case there's only one user or member for example) to get the selected value.")
+@Description("Works same as Skript's command argument. You can specify the argument number or the argument type (in case there's only one user or member for example) to get the selected value.")
 
 public class ExprArgument extends SimpleExpression<Object> {
 
