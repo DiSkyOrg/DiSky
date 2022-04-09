@@ -11,14 +11,14 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Message Text Channel")
 @Description("Get the text channel were the message was sent. Can be null if it's in PM or not in guild!")
-@Examples("channel of event-message")
+@Examples("text-channel of event-message")
 public class MessageChannel extends SimplePropertyExpression<Message, TextChannel> {
 
     static {
         register(
                 MessageChannel.class,
                 TextChannel.class,
-                "[discord] [message] [text]( |-)channel",
+                "[discord] [message] text[( |-)]channel",
                 "message"
         );
     }
