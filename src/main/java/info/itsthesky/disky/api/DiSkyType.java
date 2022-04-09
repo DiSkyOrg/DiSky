@@ -44,7 +44,8 @@ public class DiSkyType<T> {
                 .parser(new Parser<T>() {
                     @Override
                     public @NotNull T parse(final @NotNull String input, final @NotNull ParseContext context) {
-                        if (parser == null) return null;
+                        if (parser == null)
+                            return null;
                         if (isEnum) {
                             try {
                                 return parser.apply(input);

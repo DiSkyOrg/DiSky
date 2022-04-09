@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
@@ -148,6 +149,9 @@ public class Types {
                 null).register();
         new DiSkyType<>(Command.Choice.class, "slashchoice",
                 Command.Choice::getName,
+                null).register();
+        new DiSkyType<>(CommandPrivilege.class, "restriction",
+                CommandPrivilege::getId,
                 null).register();
         DiSkyType.fromEnum(OptionType.class, "optiontype", "optiontype").register();
 

@@ -7,6 +7,7 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.lang.parser.ParserInstance;
+import info.itsthesky.disky.DiSky;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +45,10 @@ public abstract class EasyElement extends Effect {
             return defaultValue;
         final @Nullable T value = expression.getSingle(e);
         return value == null ? defaultValue : value;
+    }
+
+    public static void exception(Event event, Throwable throwable) {
+        DiSky.getErrorHandler().exception(event, throwable);
     }
 
     /**
