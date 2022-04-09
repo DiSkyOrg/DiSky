@@ -19,7 +19,7 @@ public class GuildOf extends SimplePropertyExpression<Object, Guild> {
         register(
                 GuildOf.class,
                 Guild.class,
-                "",
+                "guild",
                 "channel/role/member/message"
         );
     }
