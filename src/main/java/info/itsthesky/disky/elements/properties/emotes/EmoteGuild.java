@@ -21,7 +21,7 @@ public class EmoteGuild extends SimplePropertyExpression<Emote, Guild> {
         register(
                 EmoteGuild.class,
                 Guild.class,
-                "[the] emo(te|ji) guild",
+                "emo(te|ji) guild",
                 "emote"
         );
     }
