@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.Invite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Name("Invite Code")
+@Name("Invite URL")
 @Description("Represent the unique invite code used in the Discord URL.")
 @Examples("reply with invite url of event-invite")
 public class InviteCode extends InviteProperty<String> {
