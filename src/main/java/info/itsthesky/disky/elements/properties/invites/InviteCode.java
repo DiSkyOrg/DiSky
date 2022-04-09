@@ -14,7 +14,7 @@ public class InviteCode extends InviteProperty<String> {
 
     static {
         register(
-                InviteURL.class,
+                InviteCode.class,
                 String.class,
                 "code"
         );
