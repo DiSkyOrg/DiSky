@@ -55,7 +55,7 @@ public class PostMessage extends SpecificBotEffect<Message> {
         Skript.registerEffect(PostMessage.class,
                 "(post|dispatch) [the] [message] %string/embedbuilder/messagebuilder% (in|to) [the] [channel] %channel%" +
                         " [with [the] (component|action)[s] [row] %-rows%] [with [the] file[s] %-"+ types +"% [with [the] option[s] %-attachmentoptions%]] [and store (it|the message) (inside|in) %-objects%]",
-                "upload [the] [file[s]] %"+ types +"% [with [the] option[s] %-attachmentoptions%]] (in|to) [the] [channel] %channel% [with [the] (component|action)[s] [row] %-rows%] [and store (it|the message) (inside|in) %-objects%]");
+                "upload [the] [file[s]] %"+ types +"% [with [the] option[s] %-attachmentoptions%] (in|to) [the] [channel] %channel% [with [the] (component|action)[s] [row] %-rows%] [and store (it|the message) (inside|in) %-objects%]");
     }
 
     private Expression<Object> exprMessage;
