@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("Invite URL")
 @Description("Represent the unique invite code used in the Discord URL.")
 @Examples("reply with invite url of event-invite")
-public class InviteCode extends InviteProperty<String> {
+public class InviteURL extends InviteProperty<String> {
 
     static {
         register(
