@@ -11,7 +11,7 @@ public class UserActivityOrderEvent extends DiSkyEvent<net.dv8tion.jda.api.event
     static {
         register("User Activity Order Event", UserActivityOrderEvent.class, BukkitUserActivityOrderEvent.class,
                 "[discord] user activity [order] (change|update)")
-                .description("Fired when a user in a guild changes its activity \n ex: by playing something different \n can be used to get the old/new activities.")
+                .description("Fired when a user in a guild changes its activity. Ex: by playing something different can be used to get the old/new activities.")
                 .examples("on user activity change:");
 
 
