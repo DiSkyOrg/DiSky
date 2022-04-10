@@ -32,7 +32,7 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 				AvatarURL.class,
 				String.class,
 				"avatar [url]",
-				"guild/member/user/member/bot"
+				"guild/user/member/bot"
 		);
 	}
 
