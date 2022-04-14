@@ -11,7 +11,7 @@ public class MemberNicknameEvent extends DiSkyEvent<GuildMemberUpdateNicknameEve
     static {
         register("Member Nickname Event", MemberNicknameEvent.class, BukkitMemberUpdateNicknameEvent.class,
                 "[discord] [guild] member nickname (change|update)")
-                .description("Fired when a member change its nickname.")
+                .description("Fired when a member changes their nickname.")
                 .examples("on member nickname change:");
 
 
