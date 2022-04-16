@@ -19,18 +19,17 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Name("Embed / Role Color")
-@Description({"Get or change the color of an embed builder or a role.",
+@Name("Embed Color")
+@Description({"Get or change the color of an embed builder.",
 		"The color input must come from Skript, and will be converted by DiSky."})
-@Examples({"set color of embed to red",
-		"set color of role with id \"000\" to lime"})
+@Examples({"set color of embed to red"})
 public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 
 	static {
 		register(ColorOf.class,
 				Color.class,
-				"(embed|role|discord) colo[u]r",
-				"embedbuilder/role");
+				"(embed|discord) colo[u]r",
+				"embedbuilder");
 	}
 
 	private boolean wasInScope;
