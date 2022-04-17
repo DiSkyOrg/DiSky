@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.StageChannel;
 import org.jetbrains.annotations.NotNull;
 
 @Name("Get Stage Channel")
-@Description({"Get a news channel from a guild using its unique ID.",
+@Description({"Get a stage channel from a guild using its unique ID.",
         "Channels are global on discord, means different channels cannot have the same ID.",
         "This expression cannot be changed."})
 @Examples("stage channel with id \"000\"")

@@ -14,7 +14,7 @@ public class ReactionRemoveAllEvent extends DiSkyEvent<MessageReactionRemoveAllE
 	static {
 		register("Reaction Remove All", ReactionRemoveAllEvent.class, BukkitReactionRemoveAllEvent.class,
 				"(reaction|emote)[s] (remove[d] all|clear|reset)")
-				.description("Fired when an user remove every reactions from a message/.",
+				.description("Fired when an user remove every reactions from a message.",
 						"This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.");
 
 		SkriptUtils.registerBotValue(BukkitReactionRemoveAllEvent.class);

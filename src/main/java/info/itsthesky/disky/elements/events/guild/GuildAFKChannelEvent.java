@@ -10,8 +10,8 @@ public class GuildAFKChannelEvent extends DiSkyEvent<GuildUpdateAfkChannelEvent>
 
     static {
         register("Guild AFK Channel Event", GuildAFKChannelEvent.class, BukkitGuildAFKChannelEvent.class,
-                "[discord] guild afk channel (change|update))")
-                .description("Fired when a afk channel of a guild changes \n can be used to get the old/new channel, the author and the guild.")
+                "[discord] guild afk channel (change|update)")
+                .description("Fired when a afk channel of a guild changes can be used to get the old/new channel, the author and the guild.")
                 .examples("on guild afk channel change:");
 
 

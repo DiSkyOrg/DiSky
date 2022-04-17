@@ -9,7 +9,7 @@ public class GuildReadyEvent extends DiSkyEvent<net.dv8tion.jda.api.events.guild
 
 	static {
 		register("Guild Ready Event", GuildReadyEvent.class, BukkitGuildReadyEvent.class,
-				"guild (ready|guild load[ed])")
+				"guild (ready|load[ed])")
 				.description("Fired when a guild is fully loaded.");
 
 		SkriptUtils.registerBotValue(BukkitGuildReadyEvent.class);

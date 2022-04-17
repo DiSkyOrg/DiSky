@@ -8,10 +8,10 @@ import net.dv8tion.jda.api.entities.*;
 public class GuildBanEvent extends DiSkyEvent<net.dv8tion.jda.api.events.guild.GuildBanEvent> {
 
     static {
-        register("Guild Unban Event", GuildBanEvent.class, BukkitGuildBanEvent.class,
-                "[discord] guild [user] ban)")
-                .description("Fired when a user is banned from a guild. \n A member doesn't exist here because the member is not in the guild anymore! \n can be used to get the banned user, the author and the guild.")
-                .examples("on guild unban:");
+        register("Guild Ban Event", GuildBanEvent.class, BukkitGuildBanEvent.class,
+                "[discord] guild [user] ban")
+                .description("Fired when a user is banned from a guild. A member doesn't exist here because the member is not in the guild anymore! Can be used to get the banned user, the author and the guild.")
+                .examples("on guild ban:");
 
 
         SkriptUtils.registerBotValue(GuildBanEvent.BukkitGuildBanEvent.class);

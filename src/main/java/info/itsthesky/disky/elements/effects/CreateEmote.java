@@ -32,7 +32,7 @@ public class CreateEmote extends SpecificBotEffect<Emote> {
     static {
         Skript.registerEffect(
                 CreateEmote.class,
-                "(make|create) [the] [new] emote (named|with name) %string% with [the] (url|path) %string% in [the] [guild] %guild% and store (it|the role) in %object%"
+                "(make|create) [the] [new] emote (named|with name) %string% with [the] (url|path) %string% in [the] [guild] %guild% and store (it|the emote) in %object%"
         );
     }
 

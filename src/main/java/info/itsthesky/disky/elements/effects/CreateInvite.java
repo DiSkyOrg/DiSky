@@ -20,7 +20,7 @@ public class CreateInvite extends SpecificBotEffect<Invite> {
     static {
         Skript.registerEffect(
                 CreateInvite.class,
-                "(make|create) [the] [new] invite in [the] [(guild|channel)] %guild/channel% [with max us(e|age)[s] %-number%] [with max (time|age) %-number%] and store (it|the channel) in %object%"
+                "(make|create) [the] [new] invite in [the] [(guild|channel)] %guild/channel% [with max us(e|age)[s] %-number%] [with max (time|age) %-number%] and store (it|the invite) in %object%"
         );
     }
 

@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
         "post \"Hello World\" to {_channel}",
         "# Upload a file without message",
         "upload \"plugins/Skript/scripts/test.sk\" to event-channel and store it in {_msg}",
-        "# Upload a file with a message ",
+        "# Upload a file with a message",
         "post \"Here's my file :D\" to event-channel with files \"plugins/Skript/scripts/test.sk\" and store it in {_msg}",
 })
 public class PostMessage extends SpecificBotEffect<Message> {

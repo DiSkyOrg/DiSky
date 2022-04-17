@@ -9,8 +9,8 @@ public class GuildUnbanEvent extends DiSkyEvent<net.dv8tion.jda.api.events.guild
 
     static {
         register("Guild Unban Event", GuildUnbanEvent.class, BukkitGuildUnbanEvent.class,
-                "[discord] guild [user] unban)")
-                .description("Fired when a user is unbanned \n can be used to get the unbanned user, the author and the guild.")
+                "[discord] guild [user] unban")
+                .description("Fired when a user is unbanned can be used to get the unbanned user, the author and the guild.")
                 .examples("on guild unban:");
 
 

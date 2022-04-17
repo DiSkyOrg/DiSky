@@ -10,8 +10,8 @@ public class GuildInviteDeleteEvent extends DiSkyEvent<net.dv8tion.jda.api.event
     static {
         register("Invite Delete Event", GuildInviteDeleteEvent.class, BukkitInviteDeleteEvent.class,
                 "[discord] guild invite delete")
-                .description("Fired when a invite is deleted from a guild \n can be used to get the invite property, the author and the guild.")
-                .examples("guild invite create:");
+                .description("Fired when a invite is deleted from a guild can be used to get the invite property, the author and the guild.")
+                .examples("on guild invite delete:");
 
 
         SkriptUtils.registerBotValue(GuildInviteDeleteEvent.BukkitInviteDeleteEvent.class);

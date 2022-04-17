@@ -11,7 +11,7 @@ public class ThreadLeaveEvent extends DiSkyEvent<ThreadMemberLeaveEvent> {
     static {
         register("Thread Leave Event", ThreadLeaveEvent.class, BukkitThreadLeaveEvent.class,
                 "[discord] thread leave")
-                .description("Fired when a member leaves a thread, either by leaving itself or by a moderator \n can be used to get the thread, the guild and the member.")
+                .description("Fired when a member leaves a thread, either by leaving itself or by a moderator can be used to get the thread, the guild and the member.")
                 .examples("on thread leave:");
 
 

@@ -9,14 +9,14 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Invite Code")
 @Description("Represent the unique invite code used in the Discord URL.")
-@Examples("reply with invite url of event-invite")
+@Examples("reply with invite code of event-invite")
 public class InviteCode extends InviteProperty<String> {
 
     static {
         register(
                 InviteCode.class,
                 String.class,
-                "url"
+                "code"
         );
     }
 
@@ -27,6 +27,6 @@ public class InviteCode extends InviteProperty<String> {
 
     @Override
     public @Nullable String convert(Invite invite) {
-        return invite.getUrl();
+        return invite.getCode();
     }
 }

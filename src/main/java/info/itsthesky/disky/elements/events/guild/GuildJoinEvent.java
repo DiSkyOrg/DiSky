@@ -9,7 +9,7 @@ public class GuildJoinEvent extends DiSkyEvent<net.dv8tion.jda.api.events.guild.
 
     static {
         register("Guild Join Event", GuildJoinEvent.class, BukkitGuildJoinEvent.class,
-                "[discord] bot join guild)")
+                "[discord] bot join guild")
                 .description("Fired when the bot joins in a guild.")
                 .examples("on bot join guild:");
 

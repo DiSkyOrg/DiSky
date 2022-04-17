@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 @Description({"Get a news channel from a guild using its unique ID.",
         "Channels are global on discord, means different channels cannot have the same ID.",
         "This expression cannot be changed."})
-@Examples("channel with id \"000\"")
+@Examples("news channel with id \"000\"")
 public class GetNewsChannel extends BaseGetterExpression<NewsChannel> {
 
     static {
