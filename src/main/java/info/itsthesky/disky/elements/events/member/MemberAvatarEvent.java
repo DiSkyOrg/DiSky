@@ -11,7 +11,7 @@ public class MemberAvatarEvent extends DiSkyEvent<GuildMemberUpdateAvatarEvent> 
     static {
         register("Member Avatar Event", MemberJoinEvent.class, BukkitMemberUpdateAvatarEvent.class,
                 "[discord] [guild] member avatar (change|update)")
-                .description("Fired when a member change its avatar.")
+                .description("Fired when a member changes their avatar.")
                 .examples("on member avatar change:");
 
 

@@ -11,37 +11,25 @@ public class MemberVoiceLeaveEvent extends DiSkyEvent<GuildVoiceLeaveEvent> {
     static {
         register("Member Voice Leave Event", MemberVoiceLeaveEvent.class, BukkitMemberVoiceLeaveEvent.class,
                 "[discord] [member] voice [channel] leave")
-                .description("Fired when a member leave a voice or stage channel")
+                .description("Fired when a member leaves a voice or a stage channel")
                 .examples("on voice channel leave:");
 
         SkriptUtils.registerBotValue(BukkitMemberVoiceLeaveEvent.class);
 
         SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, AudioChannel.class,
-                event -> event.getJDAEvent().getChannelJoined(), 1);
-        SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, AudioChannel.class,
-                event -> event.getJDAEvent().getChannelJoined(), 0);
-        SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, AudioChannel.class,
-                event -> event.getJDAEvent().getChannelLeft(), -1);
+                event -> event.getJDAEvent().getChannelLeft());
 
         SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, VoiceChannel.class,
-                event -> event.getJDAEvent().getChannelJoined() instanceof VoiceChannel ? (VoiceChannel) event.getJDAEvent().getChannelJoined() : null, 1);
-        SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, VoiceChannel.class,
-                event -> event.getJDAEvent().getChannelJoined() instanceof VoiceChannel ? (VoiceChannel) event.getJDAEvent().getChannelJoined() : null, 0);
-        SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, VoiceChannel.class,
-                event -> event.getJDAEvent().getChannelJoined() instanceof VoiceChannel ? (VoiceChannel) event.getJDAEvent().getChannelLeft() : null, -1);
+                event -> event.getJDAEvent().getChannelLeft() instanceof VoiceChannel ? (VoiceChannel) event.getJDAEvent().getChannelLeft() : null);
 
         SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, StageChannel.class,
-                event -> event.getJDAEvent().getChannelJoined() instanceof StageChannel ? (StageChannel) event.getJDAEvent().getChannelJoined() : null, 1);
-        SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, StageChannel.class,
-                event -> event.getJDAEvent().getChannelJoined() instanceof StageChannel ? (StageChannel) event.getJDAEvent().getChannelJoined() : null, 0);
-        SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, StageChannel.class,
-                event -> event.getJDAEvent().getChannelJoined() instanceof StageChannel ? (StageChannel) event.getJDAEvent().getChannelLeft() : null, -1);
+                event -> event.getJDAEvent().getChannelLeft() instanceof StageChannel ? (StageChannel) event.getJDAEvent().getChannelLeft() : null);
 
         SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, Guild.class,
-                event -> event.getJDAEvent().getGuild(), 0);
+                event -> event.getJDAEvent().getGuild());
 
         SkriptUtils.registerValue(BukkitMemberVoiceLeaveEvent.class, Member.class,
-                event -> event.getJDAEvent().getMember(), 0);
+                event -> event.getJDAEvent().getMember());
     }
 
     public static class BukkitMemberVoiceLeaveEvent extends SimpleDiSkyEvent<GuildVoiceLeaveEvent> {

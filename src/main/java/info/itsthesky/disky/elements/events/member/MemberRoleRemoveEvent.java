@@ -9,11 +9,11 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 public class MemberRoleRemoveEvent extends DiSkyEvent<GuildMemberRoleRemoveEvent> {
 
     static {
-        register("Role Remove Event", MemberRoleAddEvent.class, BukkitMemberRemoveEvent.class,
-                "[discord] [member] role add")
-                .description("Fired when a member remove roles from another member, it's a log action so event-author returns who made the action" +
+        register("Role Remove Event", MemberRoleRemoveEvent.class, BukkitMemberRemoveEvent.class,
+                "[discord] [member] role remove[d]")
+                .description("Fired when a member removes roles from another member, it's a log action so event-author returns who made the action" +
                         "event-roles returns a list of removed roles")
-                .examples("on role add:");
+                .examples("on role remove:");
 
 
         SkriptUtils.registerBotValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class);
