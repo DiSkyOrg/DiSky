@@ -20,7 +20,7 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
         register(
                 DiscordName.class,
                 String.class,
-                "discord name",
+                "[the] discord name",
                 "channel/user/member/role/guild"
         );
     }
