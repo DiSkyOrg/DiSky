@@ -12,6 +12,7 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 				AvatarURL.class,
 				String.class,
 				"avatar [url]",
-				"guild/member/user/bot"
+				"guild/user/member/bot"
 		);
 	}
 
@@ -109,6 +110,8 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 			return ((Guild) entity).getIconUrl();
 		if (entity instanceof User)
 			return ((User) entity).getEffectiveAvatarUrl();
+		if (entity instanceof Member)
+			return ((Member) entity).getEffectiveAvatarUrl();
 		return null;
 	}
 

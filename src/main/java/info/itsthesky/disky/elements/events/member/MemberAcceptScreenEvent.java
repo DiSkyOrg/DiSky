@@ -33,7 +33,7 @@ public class MemberAcceptScreenEvent extends DiSkyEvent<GuildMemberUpdatePending
     }
 
     public static class BukkitMemberUpdatePendingEvent extends SimpleDiSkyEvent<GuildMemberUpdatePendingEvent> {
-        public BukkitMemberUpdatePendingEvent(MemberNicknameEvent event) {
+        public BukkitMemberUpdatePendingEvent(MemberAcceptScreenEvent event) {
         }
     }
 }

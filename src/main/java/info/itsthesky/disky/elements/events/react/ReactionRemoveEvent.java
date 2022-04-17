@@ -12,8 +12,8 @@ public class ReactionRemoveEvent extends DiSkyEvent<MessageReactionRemoveEvent> 
 
 	static {
 		register("Reaction Remove", ReactionRemoveEvent.class, BukkitReactionRemoveEvent.class,
-				"(reaction|emote)[s] add[ed]")
-				.description("Fired when a message, that can be seen by the bot, receive a reaction.",
+				"(reaction|emote)[s] remove[d]")
+				.description("Fired when an user remove a reaction from a specific message.",
 						"This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.");
 
 		SkriptUtils.registerBotValue(BukkitReactionRemoveEvent.class);
