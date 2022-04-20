@@ -13,7 +13,7 @@ public class MemberBoostEvent extends DiSkyEvent<GuildMemberUpdateBoostTimeEvent
     static {
         register("Member Boost Event", MemberBoostEvent.class, BukkitMemberBoostEvent.class,
                 "[discord] [guild] member boost (change|update)")
-                .description("Fired when a member starts or stop boosting a guild \n can be used to get the old/new boosting time and the guild.")
+                .description("Fired when a member starts or stops boosting a guild can be used to get the old/new boosting time and the guild.")
                 .examples("member boost change:");
 
 

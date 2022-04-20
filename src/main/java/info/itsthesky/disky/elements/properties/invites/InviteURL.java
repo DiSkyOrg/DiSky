@@ -16,7 +16,7 @@ public class InviteURL extends InviteProperty<String> {
         register(
                 InviteURL.class,
                 String.class,
-                "code"
+                "url"
         );
     }
 
@@ -27,6 +27,6 @@ public class InviteURL extends InviteProperty<String> {
 
     @Override
     public @Nullable String convert(Invite invite) {
-        return invite.getCode();
+        return invite.getUrl();
     }
 }

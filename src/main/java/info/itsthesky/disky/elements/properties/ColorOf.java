@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("Embed Color")
 @Description({"Get or change the color of an embed builder.",
 		"The color input must come from Skript, and will be converted by DiSky."})
-@Examples({"set color of embed to red"})
+@Examples({"set embed color of embed to red"})
 public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 
 	static {

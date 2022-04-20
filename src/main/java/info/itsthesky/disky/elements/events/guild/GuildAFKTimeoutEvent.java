@@ -11,7 +11,7 @@ public class GuildAFKTimeoutEvent extends DiSkyEvent<GuildUpdateAfkTimeoutEvent>
     static {
         register("Guild AFK Timeout Event", GuildAFKTimeoutEvent.class, BukkitAFKTimeoutEvent.class,
                 "[discord] guild afk timeout (change|update)")
-                .description("Fired when a afk timeout of a guild changes \n can be used to get the old/new timeout value, the author and the guild.")
+                .description("Fired when a afk timeout of a guild changes can be used to get the old/new timeout value, the author and the guild.")
                 .examples("on guild afk timeout change:");
 
 

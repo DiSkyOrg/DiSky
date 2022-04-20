@@ -11,7 +11,7 @@ public class GuildBannerEvent extends DiSkyEvent<GuildUpdateBannerEvent> {
     static {
         register("Guild Banner Event", GuildBannerEvent.class, BukkitGuildBannerEvent.class,
                 "[discord] guild banner (change|update)")
-                .description("Fired when a banner of a guild changes \n can be used to get the old/new banner, the author and the guild.")
+                .description("Fired when a banner of a guild changes can be used to get the old/new banner, the author and the guild.")
                 .examples("on guild banner change:");
 
 

@@ -14,7 +14,7 @@ import java.util.Locale;
         "- Medium",
         "- High",
         "- Very High"})
-@Examples("reply with mention tag of everyone role of event-guild")
+@Examples("reply with verification level of event-guild")
 public class GuildVerificationLevel extends GuildProperty<String> {
 
     static {

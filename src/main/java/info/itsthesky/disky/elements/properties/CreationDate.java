@@ -28,7 +28,7 @@ public class CreationDate extends SimplePropertyExpression<ISnowflake, Date> {
         register(
                 CreationDate.class,
                 Date.class,
-                "[the] creat(ion|ed) date",
+                "creat(ion|ed) date",
                 "guild/member/user/role/channel"
         );
     }

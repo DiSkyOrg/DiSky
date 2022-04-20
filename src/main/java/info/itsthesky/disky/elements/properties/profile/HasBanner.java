@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Name("Profile Has Banner")
 @Description({"Check if the specified profile have a custom banner set or not.",
-        "Useful to manage either its banner ULR of color accent."})
+        "Useful to manage either its banner URL of color accent."})
 public class HasBanner extends PropertyCondition<User.Profile> {
 
     static {

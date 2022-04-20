@@ -11,7 +11,7 @@ public class ThreadJoinEvent extends DiSkyEvent<ThreadMemberJoinEvent> {
     static {
         register("Thread Join Event", ThreadJoinEvent.class, BukkitThreadJoinEvent.class,
                 "[discord] thread join")
-                .description("Fired when a member joins a tread, either by joining itself or by a moderator \n can be used to get the thread, the guild and the member.")
+                .description("Fired when a member joins a tread, either by joining itself or by a moderator can be used to get the thread, the guild and the member.")
                 .examples("on thread join:");
 
 

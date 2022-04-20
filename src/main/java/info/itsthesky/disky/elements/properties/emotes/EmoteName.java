@@ -27,7 +27,7 @@ public class EmoteName extends ChangeableSimplePropertyExpression<Emote, String>
         register(
                 EmoteName.class,
                 String.class,
-                "[the] emo(te|ji) name",
+                "emo(te|ji) name",
                 "emote"
         );
     }

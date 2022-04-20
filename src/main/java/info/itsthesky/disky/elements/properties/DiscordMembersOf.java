@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Discord Members of Guild / Channel")
 @Description({"Returns a list of members.",
-"\nFor Message text-related channel & category, it returns members with permission to view the channel",
-"\nFor Audio Channels it returns the currently connected members of the channel."})
+"For Message text-related channel & category, it returns members with permission to view the channel",
+"For Audio Channels it returns the currently connected members of the channel."})
 @Examples({"members of event-channel",
         "members of voice channel with id \"0000\""})
 public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member> {
