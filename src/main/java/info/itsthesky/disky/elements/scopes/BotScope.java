@@ -117,7 +117,7 @@ public class BotScope extends BaseScope<BotOptions> {
                 return error("Unable to parse member cache policy for input: " + rawPolicy);
             }
         } else {
-            policy = MemberCachePolicy.ALL;
+            policy = MemberCachePolicy.DEFAULT;
         }
         options.setPolicy(policy);
 

@@ -61,6 +61,17 @@ public class Bot {
         return application;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T findSimilarEntity(T original) {
+        if (original instanceof Guild)
+            return (T) getInstance().getGuildById(((Guild) original).getId());
+        if (original instanceof User)
+            return (T) getInstance().getUserById(((User) original).getId());
+        if (original instanceof Role)
+            return (T) getInstance().getRoleById(((Role) original).getId());
+        return original;
+    }
+
     public MessageChannel findMessageChannel(MessageChannel original) {
         if (original instanceof TextChannel)
             return getInstance().getTextChannelById(original.getId());

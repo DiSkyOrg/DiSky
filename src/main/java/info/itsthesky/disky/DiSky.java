@@ -4,16 +4,19 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.api.emojis.EmojiStore;
+import info.itsthesky.disky.api.modules.ModuleManager;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 public final class DiSky extends JavaPlugin {
@@ -24,6 +27,7 @@ public final class DiSky extends JavaPlugin {
     private static BotManager botManager;
     private static ConfigManager configManager;
     private static boolean skImageInstalled;
+    private static ModuleManager moduleManager;
 
 	@Override
     public void onEnable() {
@@ -79,12 +83,16 @@ public final class DiSky extends JavaPlugin {
             return;
         }
         addonInstance = Skript.registerAddon(this);
+        moduleManager = new ModuleManager(new File(getDataFolder(), "modules"), this, addonInstance);
         try {
             ConstLogs.register();
             addonInstance.loadClasses("info.itsthesky.disky.elements");
+            moduleManager.loadModules();
         } catch (IOException e) {
             errorHandler.exception(null, e);
             return;
+        } catch (ClassNotFoundException | InvalidConfigurationException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
         }
 
         /*
