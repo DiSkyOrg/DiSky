@@ -78,6 +78,10 @@ public class Types {
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getVoiceChannelById(input))
         ).register();
+        new DiSkyType<>(AudioChannel.class, "audiochannel",
+                Channel::getName,
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getVoiceChannelById(input))
+        ).register();
         new DiSkyType<>(ThreadChannel.class, "threadchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getThreadChannelById(input))
