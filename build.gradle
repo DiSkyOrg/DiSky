@@ -4,8 +4,8 @@ plugins {
 }
 
 group = 'info.itsthesky'
-def type = 'alpha'
-def num = '16'
+def type = 'beta'
+def num = '1'
 version = '4.0-' + type + num
 
 repositories {
