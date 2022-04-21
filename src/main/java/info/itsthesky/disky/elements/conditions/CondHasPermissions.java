@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 @Name("Member Has Permissions")
 @Description("Check if a member has permissions in an optional channel.")
 @Examples({"if event-member has discord permission administrator: # global permission",
-"    # </> Do things ...",
 "if event-member has discord permission send message in event-channel: # channel specific permission"})
 public class CondHasPermissions extends EasyPropertyCondition<Member> {
 
