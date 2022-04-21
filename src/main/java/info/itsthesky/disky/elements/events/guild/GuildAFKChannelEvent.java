@@ -14,7 +14,6 @@ public class GuildAFKChannelEvent extends DiSkyEvent<GuildUpdateAfkChannelEvent>
                 .description("Fired when a afk channel of a guild changes can be used to get the old/new channel, the author and the guild.")
                 .examples("on guild afk channel change:");
 
-
         SkriptUtils.registerBotValue(GuildAFKChannelEvent.BukkitGuildAFKChannelEvent.class);
 
         SkriptUtils.registerAuthorValue(GuildAFKChannelEvent.BukkitGuildAFKChannelEvent.class, e -> e.getJDAEvent().getGuild());
