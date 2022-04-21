@@ -3,6 +3,7 @@ package info.itsthesky.disky.elements.properties;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import net.dv8tion.jda.api.entities.*;
