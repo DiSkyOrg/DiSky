@@ -13,7 +13,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
@@ -62,18 +65,33 @@ public class ModuleManager {
         final File[] modulesFile = this.moduleFolder.listFiles();
         for (final File moduleFile : modulesFile) {
             getLogger().warning("Loading module from file '"+moduleFile.getPath()+"'...");
-            final DiSkyModule module = loadModule(moduleFile);
+            final DiSkyModule module;
+            try {
+                module = loadModule(moduleFile);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                getLogger().severe("Unable to initialize module '"+moduleFile.getPath()+"'! Maybe a wrong Java version?");
+                return;
+            }
             getLogger().info("Successfully loaded module '"+module.getName()+"' v"+module.getVersion()+" by '"+module.getAuthor()+"'! Enabling ...");
             try {
                 module.init(this.instance, this.addon);
             } catch (Exception ex) {
-                getLogger().severe("Failed to enable module '"+module.getName()+"' v"+module.getVersion()+" by '"+module.getAuthor()+"':");
                 ex.printStackTrace();
+                getLogger().severe("Failed to enable module '"+module.getName()+"' v"+module.getVersion()+" by '"+module.getAuthor()+"':");
                 continue;
             }
             modules.put(module.getName(), module);
             getLogger().info("Successfully enabled module '"+module.getName()+"'!");
         }
+    }
+
+    public List<DiSkyModule> getModules() {
+        return new ArrayList<>(modules.values());
+    }
+
+    public HashMap<String, DiSkyModule> getModulesMap() {
+        return modules;
     }
 
     private Logger getLogger() {
