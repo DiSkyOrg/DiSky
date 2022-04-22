@@ -5,3 +5,7 @@ api-version: 1.13
 softdepend: [ Skript ]
 authors: [ ItsTheSky ]
 description: The new generation of DiSky, even more powerful and complete!
+commands:
+    disky:
+        description: The main DiSky command
+        permission: disky.admin

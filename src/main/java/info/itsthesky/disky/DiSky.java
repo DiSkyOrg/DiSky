@@ -4,8 +4,10 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.api.emojis.EmojiStore;
+import info.itsthesky.disky.api.generator.DocBuilder;
 import info.itsthesky.disky.api.modules.ModuleManager;
 import info.itsthesky.disky.api.skript.ErrorHandler;
+import info.itsthesky.disky.core.DiSkyCommand;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.ConfigManager;
@@ -28,6 +30,7 @@ public final class DiSky extends JavaPlugin {
     private static ConfigManager configManager;
     private static boolean skImageInstalled;
     private static ModuleManager moduleManager;
+    private static DocBuilder builder;
 
 	@Override
     public void onEnable() {
@@ -37,9 +40,12 @@ public final class DiSky extends JavaPlugin {
          */
         instance = this;
         botManager = new BotManager(this);
+        builder = new DocBuilder(this);
         configManager = new ConfigManager(this);
         errorHandler = botManager.errorHandler();
         skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage");
+
+        getCommand("disky").setExecutor(new DiSkyCommand());
 
         /*
         Saving & loading emojis
@@ -123,12 +129,20 @@ public final class DiSky extends JavaPlugin {
         return instance;
     }
 
+    public static DocBuilder getDocBuilder() {
+        return builder;
+    }
+
     public static ErrorHandler getErrorHandler() {
         return errorHandler;
     }
 
     public static SkriptAddon getAddonInstance() {
         return addonInstance;
+    }
+
+    public static ModuleManager getModuleManager() {
+        return moduleManager;
     }
 
     public static ConfigManager getConfigManager() {
