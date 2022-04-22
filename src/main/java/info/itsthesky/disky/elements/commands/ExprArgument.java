@@ -35,10 +35,10 @@ public class ExprArgument extends SimpleExpression<Object> {
 
     static {
         Skript.registerExpression(ExprArgument.class, Object.class, ExpressionType.SIMPLE,
-                "[the] last arg[ument][s]",
-                "[the] arg[ument][s](-| )<(\\d+)>", "[][the] <(\\d*1)st|(\\d*2)nd|(\\d*3)rd|(\\d*[4-90])th> arg[ument][s]",
-                "[the] arg[ument][s]",
-                "[the] %*classinfo%( |-)arg[ument][( |-)<\\d+>]", "[][the] arg[ument]( |-)%*classinfo%[( |-)<\\d+>]");
+                "[][the] last arg[ument][s]",
+                "[][the] arg[ument][s](-| )<(\\d+)>", "[][the] <(\\d*1)st|(\\d*2)nd|(\\d*3)rd|(\\d*[4-90])th> arg[ument][s]",
+                "[][the] arg[ument][s]",
+                "[][the] %*classinfo%( |-)arg[ument][( |-)<\\d+>]", "[][the] arg[ument]( |-)%*classinfo%[( |-)<\\d+>]");
     }
 
     @SuppressWarnings("null")
