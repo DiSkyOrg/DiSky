@@ -19,7 +19,7 @@ public class DiSkyErrorEvent extends SelfRegisteringSkriptEvent {
 				DiSkyErrorEvent.class, BukkitDiSkyErrorEvent.class,
 				"disky (error|exception)"
 		).description("Fired when any DiSky error occur.",
-				"Since DiSky exception are pet-event only, this regroup every exception occurred in every events.");
+				"Since DiSky exception are per-event only, this regroup every exception occurred in every events.");
 
 		SkriptUtils.registerValue(BukkitDiSkyErrorEvent.class, String.class,
 				event -> event.getErrorMessage());

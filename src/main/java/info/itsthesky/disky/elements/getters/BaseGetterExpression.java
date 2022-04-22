@@ -30,7 +30,7 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {
         Skript.registerExpression(clazz,
                 type,
                 ExpressionType.COMBINED,
-                codeName + " (with|from) [the] "+property+" %string% "+ (allowBot ? " [(with|using) [the] bot [(named|with name)] %-bot%]" : ""));
+                codeName + " (with|from) [the] "+property+" %string% "+ (allowBot ? "[(with|using) [the] bot [(named|with name)] %-bot%]" : ""));
     }
 
     private Expression<String> exprId;
