@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Ban Member")
-@Description({"Bans a member from guild."})
+@Description({"Bans a member from a guild."})
 @Examples({"ban event-member because of \"being lame\" and delete 10 days' worth of messages"})
 
 public class BanMember extends SpecificBotEffect {
@@ -24,7 +24,7 @@ public class BanMember extends SpecificBotEffect {
     static {
         Skript.registerEffect(
                 BanMember.class,
-                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %number% day[s]['][s] [[worth ]of messages]]"
+                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %number% day[s] [worth ]of messages]"
         );
     }
 

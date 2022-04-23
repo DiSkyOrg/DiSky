@@ -10,60 +10,57 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.Channel;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Name("Send typing")
-@Description({"Sends the typing status to discord. This is what is used to make the message \"X is typing...\" appear.",
-        "Typing status lasts for 10 seconds."})
-@Examples({"show typing status in event-channel"})
-public class SendTyping extends SpecificBotEffect {
+@Name("Unban User")
+@Description({"Unbans a user from a guild."})
+@Examples({"unban event-user in guild with id \"818182471140114432\""})
+
+public class UnbanMember extends SpecificBotEffect {
 
     static {
         Skript.registerEffect(
-                SendTyping.class,
-                "[discord] (send|show) typing [status] (in|to) [[text[ |-]]channel] %channel%"
+                UnbanMember.class,
+                "[discord] un[-| ]ban [the] [discord] [user] %user% (from|in) [guild] %guild%"
         );
     }
 
-    private Expression<Channel> exprChannel;
+    private Expression<User> exprUser;
+    private Expression<Guild> exprGuild;
 
     @Override
     public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
-        exprChannel = (Expression<Channel>) expr[0];
+        exprUser = (Expression<User>) expr[0];
+        exprGuild = (Expression<Guild>) expr[1];
         return true;
     }
 
     @Override
     public void runEffect(Event e, Bot bot) {
-        final Channel channel = parseSingle(exprChannel, e, null);
+        final User user = parseSingle(exprUser, e, null);
+        final Guild guild = parseSingle(exprGuild, e, null);
 
-        if (bot == null || channel == null) {
+        if (user == null || guild == null || bot == null) {
             restart();
             return;
         }
 
-        final MessageChannel textchannel = bot != null ?
-                bot.findMessageChannel((MessageChannel) channel) : (MessageChannel) channel;
-        if (textchannel == null) {
-            restart();
-            return;
-        }
-
-        textchannel.sendTyping().queue(
-                v -> restart(),
+        guild.unban(user).queue(
+                s -> restart(),
                 ex -> {
                     DiSky.getErrorHandler().exception(e, ex);
                     restart();
                 }
         );
+
     }
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "Sent typing to " + exprChannel.toString(e, debug);
+        return "unbanned " + exprUser.toString(e, debug) + " from guild " + exprGuild.toString(e, debug);
     }
 }
