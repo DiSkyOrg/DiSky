@@ -11,9 +11,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Channel;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +25,7 @@ public class SendTyping extends SpecificBotEffect {
     static {
         Skript.registerEffect(
                 SendTyping.class,
-                "[disky] (send|show) typing [status] (in|to) [[text[ |-]]channel] %channel%"
+                "[discord] (send|show) typing [status] (in|to) [[text[ |-]]channel] %channel%"
         );
     }
 
