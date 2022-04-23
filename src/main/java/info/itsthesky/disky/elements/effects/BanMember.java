@@ -24,7 +24,7 @@ public class BanMember extends SpecificBotEffect {
     static {
         Skript.registerEffect(
                 BanMember.class,
-                "[discord] ban [the] [discord] [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %number% day[s] [worth ]of messages]"
+                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %number% day[s] [worth ]of messages]"
         );
     }
 
