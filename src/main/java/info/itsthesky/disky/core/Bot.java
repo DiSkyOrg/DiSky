@@ -99,4 +99,8 @@ public class Bot {
             getInstance().shutdown();
         DiSky.getManager().removeBot(this);
     }
+
+    public String getDiscordName() {
+        return getInstance().getSelfUser().getName() + "#" + getInstance().getSelfUser().getDiscriminator();
+    }
 }
