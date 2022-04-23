@@ -16,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Mute Member")
-@Description({"Mute a member in voice chat.",
-        "You can either mute a member, unmute, or toggle it."})
+@Description({"Mute or unmute a member in their guild."})
 @Examples({"voice mute event-member",
         "unmute member event-member"})
 
@@ -26,8 +25,8 @@ public class MuteMember extends SpecificBotEffect {
     static {
         Skript.registerEffect(
                 MuteMember.class,
-                "[voice] mute [the] discord [member] %member%",
-                "[voice] un[ |-]mute [the] discord [member] %member%"
+                "[voice] mute [the] [discord] [member] %member%",
+                "[voice] un[ |-]mute [the] [discord] [member] %member%"
         );
     }
 
