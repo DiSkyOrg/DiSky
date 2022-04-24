@@ -18,13 +18,13 @@ public class UserActivityOrderEvent extends DiSkyEvent<net.dv8tion.jda.api.event
         SkriptUtils.registerBotValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class);
 
         SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, Activity[].class,
-                event -> event.getJDAEvent().getOldValue().toArray(new Activity[0]), 0);
+                event -> event.getJDAEvent().getOldValue().toArray(new Activity[0]), -1);
 
         SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, Activity[].class,
                 event -> event.getJDAEvent().getNewValue().toArray(new Activity[0]), 0);
 
         SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, Activity[].class,
-                event -> event.getJDAEvent().getNewValue().toArray(new Activity[0]), 0);
+                event -> event.getJDAEvent().getNewValue().toArray(new Activity[0]), 1);
 
         SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, User.class,
                 event -> event.getJDAEvent().getUser(), 0);
