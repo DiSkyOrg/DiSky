@@ -38,7 +38,7 @@ public class PermissionsOf extends SimpleExpression<Permission> {
 
     @Override
     public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
-        return EasyElement.equalAny(mode, Changer.ChangeMode.ADD, Changer.ChangeMode.REMOVE) ? new Class[]{Permission.class} : new Class[0];
+        return EasyElement.equalAny(mode, Changer.ChangeMode.ADD, Changer.ChangeMode.REMOVE) ? new Class[]{Permission.class, Permission[].class} : new Class[0];
     }
 
     @Override
