@@ -25,7 +25,7 @@ public class MemberRemoveEvent extends DiSkyEvent<GuildMemberRemoveEvent> {
     }
 
     public static class BukkitMemberRemoveEvent extends SimpleDiSkyEvent<GuildMemberRemoveEvent> {
-        public BukkitMemberRemoveEvent(MemberJoinEvent event) {
+        public BukkitMemberRemoveEvent(MemberRemoveEvent event) {
         }
     }
 }
