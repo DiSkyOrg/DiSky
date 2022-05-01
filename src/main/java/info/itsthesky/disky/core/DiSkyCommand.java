@@ -1,14 +1,15 @@
 package info.itsthesky.disky.core;
 
+import ch.njol.skript.Skript;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.modules.DiSkyModule;
+import net.dv8tion.jda.api.JDAInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Locale;
 
 public class DiSkyCommand implements CommandExecutor {
@@ -21,6 +22,7 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored("&b/disky docs <include time> &7- &9Generate the full documentation of DiSky, including or not event-value's time."));
             sender.sendMessage(Utils.colored("&b/disky modules &7- &9Show the list of modules."));
             sender.sendMessage(Utils.colored("&b/disky bots &7- &9Show the list of loaded bots."));
+            sender.sendMessage(Utils.colored("&b/disky debug &7- &9Show the debug information."));
             sender.sendMessage(Utils.colored("&b/disky reload <module name> &7- &4&lBETA &9Reload a specific module."));
             sender.sendMessage(Utils.colored(""));
             return true;
@@ -29,22 +31,33 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Documentation &b------"));
             long before = System.currentTimeMillis();
             DiSky.getDocBuilder().generate(includeTime);
-            sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2"+( System.currentTimeMillis() - before )+"ms! &b------"));
+            sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2" + (System.currentTimeMillis() - before) + "ms! &b------"));
+            return true;
+        } else if (args[0].equalsIgnoreCase("debug")) {
+            sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Debug &b------"));
+            sender.sendMessage(Utils.colored(""));
+            sender.sendMessage(Utils.colored("&6DiSky Version: &e" + DiSky.getInstance().getDescription().getVersion()));
+            sender.sendMessage(Utils.colored("&6JDA Version: &e" + JDAInfo.VERSION));
+            sender.sendMessage(Utils.colored("&6Skript Version: &e" + Skript.getVersion()));
+            sender.sendMessage(Utils.colored("&6JDA Commit: &e" + JDAInfo.COMMIT_HASH));
+            sender.sendMessage(Utils.colored(""));
             return true;
         } else if (args[0].equalsIgnoreCase("modules")) {
             sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Modules (" + DiSky.getModuleManager().getModules().size() + ") &b------"));
+            sender.sendMessage(Utils.colored(""));
             for (DiSkyModule module : DiSky.getModuleManager().getModules())
                 sender.sendMessage(Utils.colored("  &7- &b" + module.getName() + " &3made by &b" + module.getAuthor() + " &3version &b" + module.getVersion()));
             sender.sendMessage(Utils.colored(""));
             return true;
         } else if (args[0].equalsIgnoreCase("bots")) {
             sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Bots (" + DiSky.getManager().getBots().size() + ") &b------"));
+            sender.sendMessage(Utils.colored(""));
             for (Bot bot : DiSky.getManager().getBots())
-                sender.sendMessage(Utils.colored("  &7- &b" + bot.getName() + " &3loaded as &b" + bot.getDiscordName() + ", &ping:&b " + bot.getInstance().getGatewayPing() + "ms"));
+                sender.sendMessage(Utils.colored("  &7- &b" + bot.getName() + " &3loaded as &b" + bot.getDiscordName() + "&3, ping:&b " + bot.getInstance().getGatewayPing() + "ms"));
             sender.sendMessage(Utils.colored(""));
             return true;
         } else if (args[0].equalsIgnoreCase("reload")) {
-            final @Nullable String moduleName = args.length > 1 ? args[1] : null;
+            final @Nullable String moduleName = args.length > 1 ? args[1].toLowerCase(Locale.ROOT) : null;
             if (moduleName == null) {
                 sender.sendMessage(Utils.colored("&cYou must specify a module name!"));
                 return false;

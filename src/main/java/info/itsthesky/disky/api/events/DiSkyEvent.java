@@ -116,6 +116,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
 
     @Override
     public void afterParse(@NotNull Config config) {
+
         ScriptLoader.setCurrentEvent(originalName, originalEvents);
     }
 
@@ -137,17 +138,10 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 event = eventWorkaround;
 
                 event.setJDAEvent(JDAEvent);
-                SkriptUtils.async(() -> {
-                    //for (Value value : getValues()) {
-                        //valueMap.put(value.clazz, value.getter.get(JDAEvent));
-                    //}
-                    //event.setValueMap(valueMap);
-                    SkriptUtils.sync(() -> {
-                        if (getTrigger() != null) {
-                            getTrigger().execute(event);
-                        }
-                    });
-
+                SkriptUtils.sync(() -> {
+                    if (getTrigger() != null) {
+                        getTrigger().execute(event);
+                    }
                 });
 
             }
@@ -165,7 +159,8 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
 
     @Override
     public void unregisterAll() {
-        unregister(trigger);
+        if (trigger != null)
+            unregister(trigger);
     }
 
     @Override
@@ -182,7 +177,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     }
 
     /**
-     * Used to check whether or not the event is valid for the trigger to run.
+     * Used to check whether the event is valid for the trigger to run.
      *
      * @param event The JDA event to be checked
      */

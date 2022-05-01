@@ -30,7 +30,7 @@ public class EventListener<T> extends ListenerAdapter {
     public static void addListener(EventListener<?> listener) {
         removeListener(listener);
         listeners.add(listener);
-        DiSky.getManager().execute(bot -> bot.getInstance().addEventListener(listener));
+        DiSky.getManager().registerGlobalListener(listener);
     }
 
     public static void removeListener(EventListener<?> listener) {
