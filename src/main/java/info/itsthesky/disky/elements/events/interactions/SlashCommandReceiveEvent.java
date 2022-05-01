@@ -28,7 +28,7 @@ public class SlashCommandReceiveEvent extends DiSkyEvent<SlashCommandInteraction
 		register("Slash Command", SlashCommandReceiveEvent.class, BukkitSlashCommandReceiveEvent.class,
 				"slash command [receive[d]]")
 				.description("Fired when a user execute a specific slash command.",
-						"Use 'event-string' to get the command name. Don't forget to either reply to the interaction. Defer doesn't work here.",
+						"Use 'event-string' to get the command name. Don't forget to either reply or defer the interaction, You can only defer using the wait pattern  e.g: 'defer the interaction and wait [silently].",
 						"Modal can be shown in this interaction.",
 						"You can get value of arguments using 'argument \"name\" as string' for example.");
 
