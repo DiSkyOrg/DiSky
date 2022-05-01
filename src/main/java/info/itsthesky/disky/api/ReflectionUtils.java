@@ -1,9 +1,14 @@
 package info.itsthesky.disky.api;
 
+import ch.njol.skript.Skript;
+import ch.njol.skript.lang.SyntaxElementInfo;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -201,5 +206,19 @@ public class ReflectionUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void setFinalCollection(Class<?> clazz, String fieldName, Collection collection) {
+        try {
+            final Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            if (!(field.get(null) instanceof Collection))
+                return;
+            ((Collection) field.get(null)).clear();
+            ((Collection) field.get(null)).addAll(collection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -99,6 +99,18 @@ public class DocBuilder {
         return addon != null && addon == DiSky.getAddonInstance();
     }
 
+    public static boolean isFromModule(SyntaxElementInfo<?> info, DiSkyModule module) {
+        final String modulePackage = module.getClass().getPackage().getName();
+        final String elementPackage = info.getElementClass().getPackage().getName();
+        return elementPackage.contains(modulePackage);
+    }
+
+    public static boolean isFromModule(ClassInfo<?> info, DiSkyModule module) {
+        final String modulePackage = module.getClass().getPackage().getName();
+        final String elementPackage = info.getC().getPackage().getName();
+        return elementPackage.contains(modulePackage);
+    }
+
     private Class<?> getElementClass(Object element) {
         if (element instanceof SkriptEventInfo<?>)
             return ((SkriptEventInfo<?>) element).getElementClass();

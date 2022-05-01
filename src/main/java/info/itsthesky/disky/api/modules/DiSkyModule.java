@@ -2,14 +2,19 @@ package info.itsthesky.disky.api.modules;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import ch.njol.skript.classes.ClassInfo;
 import ch.njol.util.coll.iterator.EnumerationIterable;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
+import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -20,12 +25,17 @@ public abstract class DiSkyModule {
     private final String version;
     private final String author;
     private final File moduleJar;
+    private final ModuleManager manager;
+    private final List<ClassInfo<?>> registeredClasses = new ArrayList<>();
+
+    private URLClassLoader loader;
 
     public DiSkyModule(String name, String author, String version, File moduleJar) {
         this.name = name;
         this.author = author;
         this.version = version;
         this.moduleJar = moduleJar;
+        this.manager = DiSky.getModuleManager();
     }
 
     public abstract void init(final DiSky instance, final SkriptAddon addon);
@@ -42,12 +52,41 @@ public abstract class DiSkyModule {
         return version;
     }
 
+    public File getModuleJar() {
+        return moduleJar;
+    }
+
     protected <T> void registerType(Class<T> clazz, String codeName, Function<T, String> toString) {
-        new DiSkyType<>(clazz, codeName, toString, null).register();
+        final DiSkyType<T> type = new DiSkyType<>(clazz, codeName, toString, null);
+        type.register();
+        registeredClasses.add(type.getClassInfo());
     }
 
     protected <T extends Enum<T>> void registerType(Class<T> clazz, String codeName) {
-        DiSkyType.fromEnum(clazz, codeName, codeName).register();
+        final DiSkyType<T> type = DiSkyType.fromEnum(clazz, codeName, codeName);
+        type.register();
+        registeredClasses.add(type.getClassInfo());
+    }
+
+    public List<ClassInfo<?>> getRegisteredClasses() {
+        return registeredClasses;
+    }
+
+    public void reload() throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvalidConfigurationException {
+        manager.reload(this);
+    }
+
+    public URLClassLoader getLoader() {
+        return loader;
+    }
+
+    public DiSkyModule setLoader(URLClassLoader loader) {
+        this.loader = loader;
+        return this;
+    }
+
+    public void disable() {
+        manager.disable(this);
     }
 
     protected void loadClasses(String basePackage, String... subPackages) throws IOException {
@@ -71,11 +110,14 @@ public abstract class DiSkyModule {
                         try {
                             final URL[] urls = {new URL("jar:file:"+moduleJar.getAbsolutePath()+"!/")};
                             final URLClassLoader loader = new URLClassLoader(urls, this.getClass().getClassLoader());
-                            Class.forName(c, true, loader);
-                        } catch (final ClassNotFoundException ex) {
+                            final Class<?> clazz = Class.forName(c, true, loader);
+                            clazz.getDeclaredMethod("load").invoke(null);
+                        } catch (ClassNotFoundException ex) {
                             Skript.exception(ex, "Cannot load class " + c + " from " + this);
                         } catch (final ExceptionInInitializerError err) {
                             Skript.exception(err.getCause(), this + "'s class " + c + " generated an exception while loading");
+                        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ignored) {
+
                         }
                     }
                 }
