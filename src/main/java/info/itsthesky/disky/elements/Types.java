@@ -28,7 +28,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
-import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;

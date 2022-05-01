@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
-import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

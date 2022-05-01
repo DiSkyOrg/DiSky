@@ -25,7 +25,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation('com.github.Xirado:JDA:36eea2a') {
+    implementation('com.github.dv8fromtheworld:JDA:5.0.0-alpha.11') {
         exclude module: "opus-java"
     }
     implementation 'com.github.simplix-softworks:simplixstorage:3.2.4'

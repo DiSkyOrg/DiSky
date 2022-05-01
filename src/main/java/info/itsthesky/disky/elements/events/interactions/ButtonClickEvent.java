@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import org.jetbrains.annotations.NotNull;
 

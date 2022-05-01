@@ -12,7 +12,7 @@ import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

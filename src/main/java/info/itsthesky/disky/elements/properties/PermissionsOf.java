@@ -57,13 +57,13 @@ public class PermissionsOf extends SimpleExpression<Permission> {
                 if (holder instanceof Role && channel == null)
                     ((Role) holder).getManager().givePermissions(perms).queue();
                 if (channel != null)
-                    ((GuildChannel) channel).getPermissionContainer().createPermissionOverride(holder).setAllow(perms).queue();
+                    ((GuildChannel) channel).getPermissionContainer().upsertPermissionOverride(holder).setAllowed(perms).queue();
                 break;
             case REMOVE:
                 if (holder instanceof Role && channel == null)
                     ((Role) holder).getManager().revokePermissions(perms).queue();
                 if (channel != null)
-                    ((GuildChannel) channel).getPermissionContainer().createPermissionOverride(holder).setDeny(perms).queue();
+                    ((GuildChannel) channel).getPermissionContainer().upsertPermissionOverride(holder).setDenied(perms).queue();
                 break;
         }
     }

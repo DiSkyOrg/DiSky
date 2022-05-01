@@ -5,7 +5,7 @@ import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 

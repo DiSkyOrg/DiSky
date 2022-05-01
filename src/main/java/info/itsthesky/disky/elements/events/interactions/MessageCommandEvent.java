@@ -11,7 +11,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.text.Modal;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import org.jetbrains.annotations.NotNull;
 
