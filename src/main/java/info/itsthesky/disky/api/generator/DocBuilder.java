@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.modules.DiSkyModule;
+import info.itsthesky.disky.elements.effects.RetrieveEventValue;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -311,6 +312,7 @@ public class DocBuilder {
         private final @Nullable String[] examples;
         private final @Nullable String[] requiredPlugins;
         private final @Nullable String[] eventValues;
+        private final @Nullable String[] retrieveValues;
         private final boolean cancellable;
 
         public EventDocElement(SkriptEventInfo<?> info, boolean inculdeTimes) {
@@ -323,18 +325,10 @@ public class DocBuilder {
             requiredPlugins = info.getRequiredPlugins();
             eventValues = parseValues(info, inculdeTimes);
             cancellable = parseCancellable(info);
-        }
-
-        public EventDocElement(@Nullable String id, @Nullable String name, String[] description, String[] patterns, String[] examples, String since, String[] requiredPlugins, String[] eventValues, boolean cancellable) {
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.patterns = patterns;
-            this.examples = examples;
-            this.since = since;
-            this.requiredPlugins = requiredPlugins;
-            this.eventValues = eventValues;
-            this.cancellable = cancellable;
+            retrieveValues = RetrieveEventValue.VALUES.getOrDefault(info.getElementClass(), new ArrayList<>())
+                    .stream()
+                    .map(RetrieveEventValue.RetrieveValueInfo::getCodeName)
+                    .toArray(String[]::new);
         }
 
         public @Nullable String getId() {
@@ -367,6 +361,10 @@ public class DocBuilder {
 
         public String[] getEventValues() {
             return eventValues;
+        }
+
+        public String[] getRetrieveValues() {
+            return retrieveValues;
         }
 
         public boolean isCancellable() {
