@@ -3,10 +3,20 @@ package info.itsthesky.disky.api.modules;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.classes.ClassInfo;
+import ch.njol.skript.registrations.EventValues;
+import ch.njol.skript.util.Getter;
+import ch.njol.util.NonNullPair;
 import ch.njol.util.coll.iterator.EnumerationIterable;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
+import info.itsthesky.disky.api.events.EventValue;
+import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.SkriptUtils;
+import net.dv8tion.jda.api.JDA;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +36,9 @@ public abstract class DiSkyModule {
     private final String author;
     private final File moduleJar;
     private final ModuleManager manager;
+
     private final List<ClassInfo<?>> registeredClasses = new ArrayList<>();
+    private final List<NonNullPair<Class<? extends Event>, Class<?>>> registeredEventValues = new ArrayList<>();
 
     private URLClassLoader loader;
 
@@ -54,6 +66,25 @@ public abstract class DiSkyModule {
 
     public File getModuleJar() {
         return moduleJar;
+    }
+
+    public <B extends Event, T> void registerValue(Class<B> bukkitClass,
+                                                          Class<T> entityClass,
+                                                          Function<B, T> function,
+                                                          int time) {
+        registeredEventValues.add(new NonNullPair<>(bukkitClass, entityClass));
+        SkriptUtils.registerValue(bukkitClass, entityClass, function, time);
+    }
+
+    public <B extends Event, T> void registerValue(Class<B> bukkitClass, Class<T> entityClass, Function<B, T> function) {
+        registerValue(bukkitClass, entityClass, function, 0);
+    }
+
+    public <E extends net.dv8tion.jda.api.events.Event, B extends SimpleDiSkyEvent<E>> void registerBotValue(Class<B> bukkitClass) {
+        registerValue(bukkitClass, Bot.class, e -> {
+            final JDA jda = e.getJDAEvent().getJDA();
+            return DiSky.getManager().fromJDA(jda);
+        });
     }
 
     protected <T> void registerType(Class<T> clazz, String codeName, Function<T, String> toString) {

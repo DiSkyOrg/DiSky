@@ -5,6 +5,7 @@ import ch.njol.skript.SkriptAddon;
 import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.generator.DocBuilder;
+import info.itsthesky.disky.api.modules.DiSkyModule;
 import info.itsthesky.disky.api.modules.ModuleManager;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
@@ -32,7 +33,16 @@ public final class DiSky extends JavaPlugin {
     private static ModuleManager moduleManager;
     private static DocBuilder builder;
 
-	@Override
+    public static DiSkyModule getModule(String moduleName) {
+        return getModuleManager()
+                .getModules()
+                .stream()
+                .filter(module -> module.getName().equalsIgnoreCase(moduleName))
+                .findAny()
+                .orElse(null);
+    }
+
+    @Override
     public void onEnable() {
 
         /*

@@ -325,7 +325,7 @@ public class DocBuilder {
             requiredPlugins = info.getRequiredPlugins();
             eventValues = parseValues(info, inculdeTimes);
             cancellable = parseCancellable(info);
-            retrieveValues = RetrieveEventValue.VALUES.getOrDefault(info.getElementClass(), new ArrayList<>())
+            retrieveValues = RetrieveEventValue.VALUES.getOrDefault(info.events[0], new ArrayList<>())
                     .stream()
                     .map(RetrieveEventValue.RetrieveValueInfo::getCodeName)
                     .toArray(String[]::new);

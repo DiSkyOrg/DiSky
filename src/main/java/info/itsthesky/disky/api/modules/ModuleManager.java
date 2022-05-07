@@ -88,10 +88,14 @@ public class ModuleManager {
 
         getLogger().info("Enabling module " + module.getName() + "...");
         ReflectionUtils.setField(Skript.class, null, "acceptRegistrations", true);
-        module.init(instance, addon);
+        try {
+            module.init(instance, addon);
+        } catch (Exception ex) {
+
+        }
         ReflectionUtils.setField(Skript.class, null, "acceptRegistrations", false);
+
         Classes.onRegistrationsStop();
-        Converters.createMissingConverters();
 
         modules.put(module.getName(), module);
         getLogger().info("Module " + module.getName() + " reloaded (version "+module.getVersion()+").");
@@ -100,83 +104,64 @@ public class ModuleManager {
     public void disable(DiSkyModule module) {
         getLogger().info("Disabling module " + module.getName() + "...");
         // Removing every syntax registered by the module
-        final List<SyntaxElementInfo<?>> infos = new ArrayList<>();
-
-        infos.addAll(Skript.getEffects());
-        infos.addAll(Skript.getSections());
-        infos.addAll(Skript.getEvents());
-        infos.addAll(Skript.getConditions());
-        final List<SyntaxElementInfo<?>> expressions = new ArrayList<>();
-        Skript.getExpressions().forEachRemaining(expressions::add);
-        infos.addAll(expressions);
-
-        for (SyntaxElementInfo<?> info : infos)
-            if (DocBuilder.isFromModule(info, module))
-                unregisterSyntax(info);
-
-        getLogger().info("Unregistering all classes from module " + module.getName() + "...");
-        final List<ClassInfo<?>> removedClasses = unregisterClasses(module);
-        getLogger().info("Success, removed "+removedClasses.size()+" classes. ("+removedClasses+")");
-        Classes.onRegistrationsStop();
-
+        unregisterSyntaxes(module);
+        unregisterClasses(module);
         modules.remove(module.getName());
 
-        try {
-            module.getLoader().close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            getLogger().severe("Error while closing classloader!");
-            return;
-        }
         getLogger().info("Module " + module.getName() + " disabled.");
     }
 
     @SuppressWarnings("unchecked")
     private List<ClassInfo<?>> unregisterClasses(DiSkyModule module) {
         final List<ClassInfo<?>> removedClasses = new ArrayList<>();
-        for (ClassInfo<?> info : new ArrayList<>(module.getRegisteredClasses()))
-            try {
-                final Field tempClassInfos = Classes.class.getDeclaredField("tempClassInfos");
-                tempClassInfos.setAccessible(true);
+        (new Exception()).printStackTrace();
+        try {
+            final Field tempClassInfos = Classes.class.getDeclaredField("tempClassInfos");
+            tempClassInfos.setAccessible(true);
+            final Field classInfos = Classes.class.getDeclaredField("classInfos");
+            classInfos.setAccessible(true);
+            final Field superClassInfos = Classes.class.getDeclaredField("superClassInfos");
+            superClassInfos.setAccessible(true);
+            final Field classInfosByCodeName = Classes.class.getDeclaredField("classInfosByCodeName");
+            classInfosByCodeName.setAccessible(true);
+            final Field exactClassInfos = Classes.class.getDeclaredField("exactClassInfos");
+            exactClassInfos.setAccessible(true);
+
+            for (ClassInfo<?> info : new ArrayList<>(module.getRegisteredClasses())) {
+
                 ((List<ClassInfo<?>>) tempClassInfos.get(null)).remove(info);
 
-                final Field classInfos = Classes.class.getDeclaredField("classInfos");
-                classInfos.setAccessible(true);
                 final ClassInfo<?>[] current = (ClassInfo<?>[]) classInfos.get(null);
                 final List<ClassInfo<?>> changedArray = new ArrayList<>(Arrays.asList(current));
                 changedArray.removeIf(c -> c.getCodeName().equals(info.getCodeName()));
                 classInfos.set(null, changedArray.toArray(new ClassInfo[0]));
 
-                final Field superClassInfos = Classes.class.getDeclaredField("superClassInfos");
-                superClassInfos.setAccessible(true);
                 ((HashMap<Class<?>, ClassInfo<?>>) superClassInfos.get(null)).remove(info.getC());
 
-                final Field classInfosByCodeName = Classes.class.getDeclaredField("classInfosByCodeName");
-                classInfosByCodeName.setAccessible(true);
                 ((HashMap<String, ClassInfo<?>>) classInfosByCodeName.get(null)).remove(info.getCodeName());
 
-                final Field exactClassInfos = Classes.class.getDeclaredField("exactClassInfos");
-                exactClassInfos.setAccessible(true);
                 ((HashMap<Class<?>, ClassInfo<?>>) exactClassInfos.get(null)).remove(info.getC());
 
                 removedClasses.add(info);
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return removedClasses;
     }
 
-    private void unregisterSyntax(SyntaxElementInfo<?> info) {
+    private void unregisterSyntaxes(DiSkyModule module) {
         final Collection<SyntaxElementInfo<?>> effects = Skript
-                .getEffects().stream().filter(i -> i != info).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> conditions = Skript.getConditions().stream()
-                .filter(i -> i != info).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> sections = Skript.getSections().stream()
-                .filter(i -> i != info).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> events = Skript.getEvents().stream()
-                .filter(i -> i != info).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> expressions = StreamSupport.stream(((Iterable<ExpressionInfo<?, ?>>) Skript::getExpressions).spliterator(), false)
-                .filter(i -> i != info).collect(Collectors.toList());
+                .getEffects().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
+        final Collection<SyntaxElementInfo<?>> conditions = Skript
+                .getConditions().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
+        final Collection<SyntaxElementInfo<?>> sections = Skript
+                .getSections().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
+        final Collection<SyntaxElementInfo<?>> events = Skript
+                .getEvents().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
+        final Collection<SyntaxElementInfo<?>> expressions = ((List<ExpressionInfo<?, ?>>) ReflectionUtils.getField(Skript.class, null, "expressions"))
+                .stream()
+                .filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
 
         ReflectionUtils.setFinalCollection(Skript.class, "effects", effects);
         ReflectionUtils.setFinalCollection(Skript.class, "conditions", conditions);

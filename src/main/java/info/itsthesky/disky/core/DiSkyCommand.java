@@ -83,7 +83,7 @@ public class DiSkyCommand implements CommandExecutor {
 
                 sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2"+( System.currentTimeMillis() - before )+"ms! &b------"));
             } else {
-                final @Nullable DiSkyModule module = DiSky.getModuleManager().getModulesMap().getOrDefault(moduleName, null);
+                final @Nullable DiSkyModule module = DiSky.getModule(moduleName);
 
                 if (module == null) {
                     sender.sendMessage(Utils.colored("&cNo module by that name found."));
