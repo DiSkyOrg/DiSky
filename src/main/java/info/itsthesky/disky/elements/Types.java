@@ -234,6 +234,8 @@ public class Types {
                 member -> member.getUser().getName() + "#" + member.getUser().getDiscriminator(),
                 id -> {
                     final CommandEvent event = CommandEvent.lastEvent;
+                    if (event == null)
+                        return null;
                     if (event.getJDAEvent().isFromGuild())
                         return CommandEvent.lastEvent.getGuild().getMemberById(id);
                     return null;
