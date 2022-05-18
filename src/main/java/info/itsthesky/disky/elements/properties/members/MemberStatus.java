@@ -3,13 +3,11 @@ package info.itsthesky.disky.elements.properties.members;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.util.Date;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
-import java.util.TimeZone;
 
 @Name("Member Status")
 @Description({"Represent the member's online status.",
