@@ -1,6 +1,9 @@
 package info.itsthesky.disky.elements.events.interactions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
@@ -50,6 +53,10 @@ public class UserCommandEvent extends DiSkyEvent<UserContextInteractionEvent> {
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
 	}
 
+	@Name("Target User")
+	@Description({"Represent the target user in a user command event.",
+			"It basically represent the user that was clicked on."})
+	@Examples({"target user"})
 	public static class TargetUser extends SimpleGetterExpression<User, BukkitUserCommandEvent> {
 
 		static {

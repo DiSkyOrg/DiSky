@@ -1,6 +1,9 @@
 package info.itsthesky.disky.elements.events.interactions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
@@ -56,6 +59,9 @@ public class DropdownClickEvent extends DiSkyEvent<SelectMenuInteractionEvent> {
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
 	}
 
+	@Name("Selected Values")
+	@Description("The list of the selected values' IDs, in the current dropdown update event.")
+	@Examples("selected values")
 	public static class SelectedValues extends MultipleGetterExpression<String, BukkitDropdownClickEvent> {
 
 		static {

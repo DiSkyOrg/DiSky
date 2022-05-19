@@ -1,6 +1,9 @@
 package info.itsthesky.disky.elements.events.interactions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.sections.SecLoop;
 import ch.njol.skript.sections.SecWhile;
@@ -109,6 +112,9 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 		}
 	}
 
+	@Name("Current Argument")
+	@Description("The current argument being completed.")
+	@Examples("current argument")
 	public static class CurrentArgument extends SimpleGetterExpression<String, BukkitSlashCompletionEvent> {
 
 		static {
@@ -141,6 +147,14 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 		}
 	}
 
+	@Name("Slash Command Argument")
+	@Description({"Represents a slash command argument.",
+			"The name is the ID used when defining the slash command.",
+			"Specify the type, so that Skript can parse it correctly. (if it's a number, operation wil be allowed for example)",
+			"The type should be the same used when defining the argument in the command."})
+	@Examples({"# I'm doing /ban time:30 user:*user id*, so:",
+			"set {_time} to argument \"time\" as integer",
+			"set {_user} to argument \"user\" as user"})
 	public static class ArgValue extends SimpleGetterExpression<Object, BukkitSlashCompletionEvent> {
 
 		static {

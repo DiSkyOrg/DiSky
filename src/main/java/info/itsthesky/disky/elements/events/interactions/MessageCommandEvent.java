@@ -1,6 +1,9 @@
 package info.itsthesky.disky.elements.events.interactions;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
@@ -52,11 +55,15 @@ public class MessageCommandEvent extends DiSkyEvent<MessageContextInteractionEve
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
 	}
 
-	public static class TargetUser extends SimpleGetterExpression<Message, BukkitMessageCommandEvent> {
+	@Name("Target Message")
+	@Description({"Represent the target message in a message command event.",
+			"It basically represent the message that was clicked on."})
+	@Examples({"target message"})
+	public static class TargetMessage extends SimpleGetterExpression<Message, BukkitMessageCommandEvent> {
 
 		static {
 			Skript.registerExpression(
-					TargetUser.class,
+					TargetMessage.class,
 					Message.class,
 					ExpressionType.COMBINED,
 					"[the] target message"
