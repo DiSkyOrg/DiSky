@@ -221,4 +221,19 @@ public class ReflectionUtils {
             e.printStackTrace();
         }
     }
+
+    public static Class<?> getCurrentClass() {
+        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+        for (int i=1; i<stElements.length; i++) {
+            StackTraceElement ste = stElements[i];
+            if (!ste.getClassName().equals(ReflectionUtils.class.getName()) && i > 2 && ste.getClassName().indexOf("java.lang.Thread")!=0) {
+                try {
+                    return Class.forName(ste.getClassName());
+                } catch (ClassNotFoundException e) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
 }

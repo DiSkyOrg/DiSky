@@ -16,6 +16,9 @@ import ch.njol.skript.util.ColorRGB;
 import ch.njol.skript.util.Getter;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.ReflectionUtils;
+import info.itsthesky.disky.api.events.EventValue;
+import info.itsthesky.disky.api.events.ExprEventValues;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
@@ -35,6 +38,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 public final class SkriptUtils {
 
@@ -159,10 +163,19 @@ public final class SkriptUtils {
         registerRestValue(codeName, bukkitClass, function, entity -> entity);
     }
 
+    public static <B extends Event, T> void registerValues(Class<B> bukkitClass,
+                                                           Class<T> entityClass,
+                                                           String name,
+                                                           Function<B, T[]> function) {
+        ExprEventValues.registerEventValue(bukkitClass, new EventValue<>(entityClass, name, function));
+    }
+
     public static <B extends Event, T> void registerValue(Class<B> bukkitClass,
                                                           Class<T> entityClass,
                                                           Function<B, T> function,
                                                           int time) {
+        if (entityClass.isArray())
+            Logger.getLogger("DiSky").severe("Class "+ ReflectionUtils.getCurrentClass().getName() + " still use the single value registration while providing an array value.");
         EventValues.registerEventValue(bukkitClass, entityClass, new Getter<T, B>() {
             @Override
             public @Nullable T get(B arg) {

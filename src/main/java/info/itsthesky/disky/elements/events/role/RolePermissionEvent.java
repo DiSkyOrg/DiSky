@@ -19,14 +19,8 @@ public class RolePermissionEvent extends DiSkyEvent<RoleUpdatePermissionsEvent> 
 
         SkriptUtils.registerAuthorValue(BukkitRolePermissionEvent.class, e -> e.getJDAEvent().getGuild());
 
-        SkriptUtils.registerValue(BukkitRolePermissionEvent.class, Permission[].class,
-                event -> event.getJDAEvent().getNewPermissions().toArray(new Permission[0]), 1);
-
-        SkriptUtils.registerValue(BukkitRolePermissionEvent.class, Permission[].class,
-                event -> event.getJDAEvent().getOldPermissions().toArray(new Permission[0]), -1);
-
-        SkriptUtils.registerValue(BukkitRolePermissionEvent.class, Permission[].class,
-                event -> event.getJDAEvent().getNewPermissions().toArray(new Permission[0]), 0);
+        SkriptUtils.registerValues(BukkitRolePermissionEvent.class, Permission.class,
+                "permissions", event -> event.getJDAEvent().getNewPermissions().toArray(new Permission[0]));
 
         SkriptUtils.registerValue(BukkitRolePermissionEvent.class, Guild.class,
                 event -> event.getJDAEvent().getGuild());

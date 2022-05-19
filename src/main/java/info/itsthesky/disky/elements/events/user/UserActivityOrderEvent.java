@@ -3,6 +3,8 @@ package info.itsthesky.disky.elements.events.user;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.elements.events.role.RolePermissionEvent;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.User;
 
@@ -17,14 +19,8 @@ public class UserActivityOrderEvent extends DiSkyEvent<net.dv8tion.jda.api.event
 
         SkriptUtils.registerBotValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class);
 
-        SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, Activity[].class,
-                event -> event.getJDAEvent().getOldValue().toArray(new Activity[0]), -1);
-
-        SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, Activity[].class,
-                event -> event.getJDAEvent().getNewValue().toArray(new Activity[0]), 0);
-
-        SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, Activity[].class,
-                event -> event.getJDAEvent().getNewValue().toArray(new Activity[0]), 1);
+        SkriptUtils.registerValues(BukkitUserActivityOrderEvent.class, Activity.class,
+                "permissions", event -> event.getJDAEvent().getNewValue().toArray(new Activity[0]));
 
         SkriptUtils.registerValue(UserActivityOrderEvent.BukkitUserActivityOrderEvent.class, User.class,
                 event -> event.getJDAEvent().getUser(), 0);

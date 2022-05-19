@@ -3,7 +3,9 @@ package info.itsthesky.disky.elements.events.member;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 
 public class MemberRoleRemoveEvent extends DiSkyEvent<GuildMemberRoleRemoveEvent> {
@@ -17,8 +19,8 @@ public class MemberRoleRemoveEvent extends DiSkyEvent<GuildMemberRoleRemoveEvent
 
         SkriptUtils.registerBotValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class);
 
-        SkriptUtils.registerValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class, Role[].class,
-                event -> event.getJDAEvent().getRoles().toArray(new Role[0]), 0);
+        SkriptUtils.registerValues(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class, Role.class,
+                "roles", e -> e.getJDAEvent().getRoles().toArray(new Role[0]));
 
         SkriptUtils.registerValue(MemberRoleRemoveEvent.BukkitMemberRemoveEvent.class, Guild.class,
                 event -> event.getJDAEvent().getGuild(), 0);

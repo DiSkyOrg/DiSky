@@ -17,8 +17,8 @@ public class MemberRoleAddEvent extends DiSkyEvent<GuildMemberRoleAddEvent> {
 
         SkriptUtils.registerBotValue(MemberRoleAddEvent.BukkitMemberRoleAddEvent.class);
 
-        SkriptUtils.registerValue(MemberRoleAddEvent.BukkitMemberRoleAddEvent.class, Role[].class,
-                event -> event.getJDAEvent().getRoles().toArray(new Role[0]));
+        SkriptUtils.registerValues(MemberRoleAddEvent.BukkitMemberRoleAddEvent.class, Role.class,
+                "roles", e -> e.getJDAEvent().getRoles().toArray(new Role[0]));
 
         SkriptUtils.registerValue(MemberRoleAddEvent.BukkitMemberRoleAddEvent.class, Guild.class,
                 event -> event.getJDAEvent().getGuild());
