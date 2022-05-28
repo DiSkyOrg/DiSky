@@ -23,13 +23,13 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewRestriction extends SimpleExpression<CommandPrivilege> {
 
     static {
-        Skript.registerExpression(
+        /*Skript.registerExpression(
                 ExprNewRestriction.class,
                 CommandPrivilege.class,
                 ExpressionType.COMBINED,
                 "[a] [new] (1¦enabled|2¦disabled) user [slash] [command] restriction with [the] id %string%",
                 "[a] [new] (1¦enabled|2¦disabled) role [slash] [command] restriction with [the] id %string%"
-        );
+        );*/
     }
 
     private boolean isRole;

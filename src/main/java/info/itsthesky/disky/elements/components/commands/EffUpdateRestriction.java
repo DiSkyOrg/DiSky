@@ -27,10 +27,10 @@ import java.util.LinkedList;
 public class EffUpdateRestriction extends WaiterEffect {
 
     static {
-        Skript.registerEffect(
+        /* Skript.registerEffect(
                 EffUpdateRestriction.class,
                 "update [the] restriction[s] of [command] %string% (in|of) [the] [guild] %guild% (as|with) %restrictions%"
-        );
+        ); */
     }
 
     private Expression<String> exprCommand;
