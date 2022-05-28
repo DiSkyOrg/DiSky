@@ -1,8 +1,6 @@
 package info.itsthesky.disky.elements.properties.guilds;
 
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
-import jdk.jfr.Name;
+import ch.njol.skript.doc.*;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.NewsChannel;
 
