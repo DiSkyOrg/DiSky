@@ -7,6 +7,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Variable;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
         "If you create a private thread, then you cannot specify a message.",
         "Else, the Thread will be created based on the specified message.",
         "Creating private thread need the guild to be level 2 or more, else it'll throw an exception."})
-public class CreateThread extends WaiterEffect<ThreadChannel> {
+public class CreateThread extends SpecificBotEffect<ThreadChannel> {
 
     static {
         Skript.registerEffect(
@@ -35,12 +36,11 @@ public class CreateThread extends WaiterEffect<ThreadChannel> {
     private Expression<String> exprName;
     private Expression<Message> exprMessage;
     private Expression<BaseGuildMessageChannel> exprChannel;
-    private Expression<Bot> exprBot;
     private boolean isPrivate = false;
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "create new role named " + exprName.toString(e, debug) + " using bot " + exprBot.toString(e, debug);
+        return "create new role named " + exprName.toString(e, debug);
     }
 
     @Override
@@ -54,9 +54,8 @@ public class CreateThread extends WaiterEffect<ThreadChannel> {
     }
 
     @Override
-    public void runEffect(Event e) {
+    public void runEffect(Event e, Bot bot) {
         final String name = exprName.getSingle(e);
-        final Bot bot = exprBot.getSingle(e);
         final @Nullable Message message = parseSingle(exprMessage, e, null);
         BaseGuildMessageChannel channel = exprChannel.getSingle(e);
         if (name == null || bot == null || channel == null) {
