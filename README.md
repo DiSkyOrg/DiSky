@@ -19,7 +19,7 @@ It provides more than **400+** different syntax, such as:
 
 * :new: [**Wiki**](https://disky.tech/wiki/)
 * [Discord Server](https://forum.itsthesky.info/discord)
-* [Documentation](https://disky.tech/v4/docs/)
+* [Documentation](https://disky.tech/docs/)
 
 ## Small Example
 
