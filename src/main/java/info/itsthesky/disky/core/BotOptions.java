@@ -49,6 +49,7 @@ public class BotOptions {
                 .createDefault(getToken())
                 .setCompression(compression)
                 .setAutoReconnect(autoReconnect)
+                .disableCache(Arrays.asList(getFlags()))
                 .setEnabledIntents(Arrays.asList(getIntents()))
                 .setMemberCachePolicy(policy);
     }

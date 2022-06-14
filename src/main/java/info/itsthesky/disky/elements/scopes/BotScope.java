@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +51,7 @@ public class BotScope extends BaseScope<BotOptions> {
     public static final SectionValidator validator = new SectionValidator()
             .addEntry("token", false)
             .addEntry("intents", true)
+            .addEntry("cache flags", true) // actually it's without these
             .addEntry("compression", true)
             .addEntry("policy", true)
             .addEntry("auto reconnect", true)
@@ -167,6 +169,20 @@ public class BotScope extends BaseScope<BotOptions> {
             }
         }
         options.setIntents(intents.toArray(new GatewayIntent[0]));
+
+        final String inputFlag = parseEntry(node, "cache flags", "");
+        final String[] unparsedFlags = inputFlag.split(listPattern);
+
+        final List<CacheFlag> flags;
+        flags = new ArrayList<>();
+        for (String flag : unparsedFlags) {
+            try {
+                flags.add(CacheFlag.valueOf(flag.toUpperCase(Locale.ROOT).replaceAll(" ", "_")));
+            } catch (Exception ex) {
+                return error("Unknown cache flag: " + flag);
+            }
+        }
+        options.setFlags(flags.toArray(new CacheFlag[0]));
 
         final List<TriggerItem> onReady = node.get("on ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on ready"), info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent.class);
         final List<TriggerItem> onGuildReady = node.get("on guild ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on guild ready"), info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent.class);
