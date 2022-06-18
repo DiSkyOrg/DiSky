@@ -37,9 +37,12 @@ public class ColorFromHex extends SimpleExpression<Color> {
 
     @Override
     protected Color @NotNull [] get(@NotNull Event e) {
-        final String hex = EasyElement.parseSingle(exprHex, e, null);
+        String hex = EasyElement.parseSingle(exprHex, e, null);
         if (hex == null)
             return new Color[0];
+        if (!hex.startsWith("#"))
+            hex = "#" + hex;
+
         final java.awt.Color awtColor;
         try {
             awtColor = java.awt.Color.decode(hex);
