@@ -17,7 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Color from Hex")
-@Description("Get a color from a hexadecimal string.")
+@Description({"Get a color from a hexadecimal string.",
+"Do not include the # in the string."})
 @Examples("set embed color of embed to hex \"ff0000\"")
 public class ColorFromHex extends SimpleExpression<Color> {
 
@@ -39,7 +40,13 @@ public class ColorFromHex extends SimpleExpression<Color> {
         final String hex = EasyElement.parseSingle(exprHex, e, null);
         if (hex == null)
             return new Color[0];
-        final java.awt.Color awtColor = java.awt.Color.decode(hex);
+        final java.awt.Color awtColor;
+        try {
+            awtColor = java.awt.Color.decode(hex);
+        } catch (NumberFormatException ex) {
+            Skript.error("The hex string provided ("+hex+") is not a valid hexadecimal number.");
+            return new Color[0];
+        }
         return new Color[] {
             new ColorRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue())
         };
