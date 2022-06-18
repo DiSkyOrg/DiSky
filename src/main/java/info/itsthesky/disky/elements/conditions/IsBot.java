@@ -10,11 +10,11 @@ import net.dv8tion.jda.api.entities.User;
 @Description("Check either the provided user is a discord bot or not.")
 @Examples({"event-user is a discord bot",
 "event-member is not a discord bot"})
-public class CondIsBot extends PropertyCondition<User> {
+public class IsBot extends PropertyCondition<User> {
 
 	static {
 		register(
-				CondIsBot.class,
+				IsBot.class,
 				PropertyType.BE,
 				"[a] discord bot",
 				"users"

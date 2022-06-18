@@ -20,11 +20,11 @@ import org.jetbrains.annotations.Nullable;
 "This condition work with every event where a message is sent / received."})
 @Examples({"if event is from guild:",
 "if message come from private message:"})
-public class CondMessageOrigin extends Condition {
+public class MessageOrigin extends Condition {
 
 	static {
 		Skript.registerCondition(
-				CondMessageOrigin.class,
+				MessageOrigin.class,
 				"[the] (message|event) (is coming|come from|is from) guild [channel]",
 				"[the] (message|event) (is coming|come from|is from) (dm|(private|direct) message) [channel]"
 		);

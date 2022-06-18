@@ -17,11 +17,11 @@ import org.jetbrains.annotations.NotNull;
 @Name("Member Has Role")
 @Description("Check if a member has a specific role.")
 @Examples({"if event-member has discord role with id \"000\":"})
-public class CondHasRole extends EasyPropertyCondition<Member> {
+public class HasRole extends EasyPropertyCondition<Member> {
 
     static {
         register(
-                CondHasRole.class,
+                HasRole.class,
                 PropertyCondition.PropertyType.HAVE,
                 "discord [role] %role%",
                 "member"

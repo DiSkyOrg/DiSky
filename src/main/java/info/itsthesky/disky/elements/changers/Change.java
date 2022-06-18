@@ -56,7 +56,7 @@ import java.util.logging.Level;
  * @author Peter Güttinger
  * edited minorly for DiSky
  */
-public class EffChange extends Effect {
+public class Change extends Effect {
 
     public static Bot currentBot;
     private static boolean parsing;
@@ -80,7 +80,7 @@ public class EffChange extends Effect {
 
     static {
         Skript.registerEffect(
-                EffChange.class,
+                Change.class,
                 patterns.getPatterns()
         );
     }

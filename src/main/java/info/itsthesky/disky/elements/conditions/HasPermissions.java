@@ -12,7 +12,6 @@ import info.itsthesky.disky.api.skript.PropertyCondition;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,11 +20,11 @@ import org.jetbrains.annotations.Nullable;
 @Description("Check if a member has permissions in an optional channel.")
 @Examples({"if event-member has discord permission administrator: # global permission",
 "if event-member has discord permission send message in event-channel: # channel specific permission"})
-public class CondHasPermissions extends EasyPropertyCondition<Member> {
+public class HasPermissions extends EasyPropertyCondition<Member> {
 
     static {
         register(
-                CondHasPermissions.class,
+                HasPermissions.class,
                 PropertyCondition.PropertyType.HAVE,
                 "discord permission[s] %permissions% [in [the] [channel] %-guildchannel%]",
                 "member"

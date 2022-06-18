@@ -10,9 +10,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.api.skript.NodeInformation;
 import info.itsthesky.disky.api.skript.WaiterEffect;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
@@ -31,11 +29,11 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"defer the interaction",
 "defer the interaction and wait",
 "defer the interaction and wait silently"})
-public class EffDeferInteraction extends WaiterEffect {
+public class DeferInteraction extends WaiterEffect {
 
     static {
         Skript.registerEffect(
-                EffDeferInteraction.class,
+                DeferInteraction.class,
                 "(acknowledge|defer) [the] interaction [and wait [(1¦silently)]]"
         );
     }
