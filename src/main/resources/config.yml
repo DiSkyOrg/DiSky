@@ -7,3 +7,12 @@
 ignored-core:
   - '50006' # Hide empty message error
 
+# Debug is disabled by default.
+# If an admin or a developer wants to debug the bot, enable this option.
+# Debug messages will be sent to the console, and the bot will be restarted.
+debug: false
+
+# Enable or not the 'token of %bot' expression.
+# It's mainly to avoid others people that have access to Skript to get the token.
+# Restart needed to take effect.
+token-of-bot-expression: true

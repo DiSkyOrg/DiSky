@@ -11,7 +11,7 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
-import info.itsthesky.disky.managers.ConfigManager;
+import info.itsthesky.disky.managers.Configuration;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +28,7 @@ public final class DiSky extends JavaPlugin {
     private static SkriptAddon addonInstance;
     private static ErrorHandler errorHandler;
     private static BotManager botManager;
-    private static ConfigManager configManager;
+    private static Configuration configuration;
     private static boolean skImageInstalled;
     private static ModuleManager moduleManager;
     private static DocBuilder builder;
@@ -51,11 +51,11 @@ public final class DiSky extends JavaPlugin {
         instance = this;
         botManager = new BotManager(this);
         builder = new DocBuilder(this);
-        configManager = new ConfigManager(this);
         errorHandler = botManager.errorHandler();
         skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage");
 
         getCommand("disky").setExecutor(new DiSkyCommand());
+        configuration = Configuration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 
         /*
         Saving & loading emojis
@@ -123,7 +123,8 @@ public final class DiSky extends JavaPlugin {
     }
 
     private void debugMessage(String s) {
-        getLogger().log(Level.INFO, s);
+        if (getConfiguration().getOrSetDefault("debug", false))
+            getLogger().info("[DiSky DEBUG] " + s);
     }
 
     @Override
@@ -155,8 +156,8 @@ public final class DiSky extends JavaPlugin {
         return moduleManager;
     }
 
-    public static ConfigManager getConfigManager() {
-        return configManager;
+    public static Configuration getConfiguration() {
+        return configuration;
     }
 
     public static BotManager getManager() {
