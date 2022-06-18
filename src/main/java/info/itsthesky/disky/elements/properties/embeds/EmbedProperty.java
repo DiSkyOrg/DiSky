@@ -1,5 +1,6 @@
 package info.itsthesky.disky.elements.properties.embeds;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
@@ -50,8 +51,10 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 
 	@Override
 	public @Nullable T convert(EmbedBuilder builder) {
-		if (builder.isEmpty())
+		if (builder.isEmpty()) {
+			Skript.error("You are trying to get a property of an empty embed builder. This is not possible.");
 			return null;
+		}
 		return convert(builder.build());
 	}
 

@@ -1,5 +1,6 @@
 package info.itsthesky.disky.elements.properties.embeds;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -20,8 +21,14 @@ public class EmbedFooterIcon extends EmbedProperty<String> {
 
 	@Override
 	public void set(EmbedBuilder builder, String value) {
-		if (builder.isEmpty())
+		if (builder.isEmpty()) {
+			Skript.error("You are trying to change a composed (author or footer) property of an empty embed. This is not possible.");
 			return;
+		}
+		if (builder.build().getFooter() == null) {
+			Skript.error("You are trying to set the footer of an embed that DO NOT have a footer yet.");
+			return;
+		}
 		builder.setFooter(builder.build().getFooter().getText(), value);
 	}
 
