@@ -6,7 +6,7 @@
 
 DiSky is a **[Skript]()** addon, which allows you to create, manage and edit **Discord**'s bots.
 
-It provides more than **400+** different syntax, such as:
+It provides more than **400** different syntax, such as:
 
 * Creating entities (roles, channels, categories, etc.)
 * Editing existing entities
@@ -20,6 +20,18 @@ It provides more than **400+** different syntax, such as:
 * :new: [**Wiki**](https://disky.tech/wiki/)
 * [Discord Server](https://forum.itsthesky.info/discord)
 * [Documentation](https://disky.tech/docs/)
+
+## Requirements
+
+* Skript **2.6.0** or higher
+* Spigot/Paper/Any fork of them **1.13.0** or higher
+
+> **Note:** Event if DiSky is only based on Skript, some features require Bukkit's or Spigot's API. The 1.13+ version is a more recommended version than a requirement.
+
+## Incompatibilities
+
+* DiscordSRV *(it uses an older version of JDA that DiSky is not based on)*
+* any other JDA-compiled plugin, that doesn't have JDA 5 as JDA version.
 
 ## Small Example
 

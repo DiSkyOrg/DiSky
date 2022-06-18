@@ -33,14 +33,20 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 		SkriptUtils.registerValue(BukkitMessageEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getChannel());
 
+		for (int i = 0; i < 10; i++) {
+			final ChannelType type = ChannelType.values()[i];
+		}
+
 		SkriptUtils.registerValue(BukkitMessageEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageEvent.class, TextChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getTextChannel() : null);
+				event -> event.getJDAEvent().isFromType(ChannelType.TEXT) ? event.getJDAEvent().getTextChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageEvent.class, NewsChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getNewsChannel() : null);
+				event -> event.getJDAEvent().isFromType(ChannelType.NEWS) ? event.getJDAEvent().getNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageEvent.class, ThreadChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getThreadChannel() : null);
+				event -> event.getJDAEvent().isFromType(ChannelType.GUILD_PUBLIC_THREAD) || event.getJDAEvent().isFromType(ChannelType.GUILD_PRIVATE_THREAD) ? event.getJDAEvent().getThreadChannel() : null);
+		SkriptUtils.registerValue(BukkitMessageEvent.class, VoiceChannel.class,
+				event -> event.getJDAEvent().isFromType(ChannelType.VOICE) ? event.getJDAEvent().getVoiceChannel() : null);
 
 		SkriptUtils.registerValue(BukkitMessageEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);

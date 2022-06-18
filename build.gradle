@@ -4,13 +4,13 @@ plugins {
 }
 
 group = 'info.itsthesky'
-def type = 'beta'
-def num = '4'
-version = '4.0-' + type + num
+def patch = '0'
+def minor = '0'
+def major = '4'
+version = major + '.' + minor + '.' + patch
 
 repositories {
     mavenCentral()
-    jcenter()
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
     maven { url = 'https://jitpack.io' }
