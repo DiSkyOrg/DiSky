@@ -21,6 +21,18 @@ public final class Utils {
         return ChatColor.translateAlternateColorCodes('&', input);
     }
 
+    public static String formatBytes(long input) {
+        if (input < 1024) {
+            return input + " B";
+        } else if (input < 1024 * 1024) {
+            return (input / 1024) + " KB";
+        } else if (input < 1024 * 1024 * 1024) {
+            return (input / 1024 / 1024) + " MB";
+        } else {
+            return (input / 1024 / 1024 / 1024) + " GB";
+        }
+    }
+
     public static boolean equalsAnyIgnoreCase(String toMatch, String... potentialMatches) {
         return Arrays.asList(potentialMatches).contains(toMatch);
     }
