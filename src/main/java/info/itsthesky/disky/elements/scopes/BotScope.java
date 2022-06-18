@@ -51,7 +51,7 @@ public class BotScope extends BaseScope<BotOptions> {
     public static final SectionValidator validator = new SectionValidator()
             .addEntry("token", false)
             .addEntry("intents", true)
-            .addEntry("cache flags", true) // actually it's without these
+            .addEntry("cache flags", true)
             .addEntry("compression", true)
             .addEntry("policy", true)
             .addEntry("auto reconnect", true)
@@ -169,17 +169,18 @@ public class BotScope extends BaseScope<BotOptions> {
             }
         }
         options.setIntents(intents.toArray(new GatewayIntent[0]));
+        final List<CacheFlag> flags = new ArrayList<>();
 
         final String inputFlag = parseEntry(node, "cache flags", "");
-        final String[] unparsedFlags = inputFlag.split(listPattern);
+        if (!inputFlag.isEmpty()) {
+            final String[] unparsedFlags = inputFlag.split(listPattern);
 
-        final List<CacheFlag> flags;
-        flags = new ArrayList<>();
-        for (String flag : unparsedFlags) {
-            try {
-                flags.add(CacheFlag.valueOf(flag.toUpperCase(Locale.ROOT).replaceAll(" ", "_")));
-            } catch (Exception ex) {
-                return error("Unknown cache flag: " + flag);
+            for (String flag : unparsedFlags) {
+                try {
+                    flags.add(CacheFlag.valueOf(flag.toUpperCase(Locale.ROOT).replaceAll(" ", "_")));
+                } catch (Exception ex) {
+                    return error("Unknown cache flag: " + flag);
+                }
             }
         }
         options.setFlags(flags.toArray(new CacheFlag[0]));
