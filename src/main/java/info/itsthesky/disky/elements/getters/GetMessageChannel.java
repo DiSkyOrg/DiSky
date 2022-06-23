@@ -2,9 +2,9 @@ package info.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import info.itsthesky.disky.core.Bot;
-import jdk.jfr.Name;
 import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.GuildMessageChannel;
