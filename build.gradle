@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'info.itsthesky'
-def patch = '0'
+def patch = '1'
 def minor = '0'
 def major = '4'
 version = major + '.' + minor + '.' + patch
