@@ -34,6 +34,6 @@ public class MessageMentionedRoles extends MultiplyPropertyExpression<Message, R
 
     @Override
     protected Role[] convert(Message message) {
-        return message.getMentionedRoles().toArray(new Role[0]);
+        return message.getMentions().getRoles().toArray(new Role[0]);
     }
 }

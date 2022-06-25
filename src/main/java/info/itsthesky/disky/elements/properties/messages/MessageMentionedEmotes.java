@@ -35,6 +35,6 @@ public class MessageMentionedEmotes extends MultiplyPropertyExpression<Message, 
 
     @Override
     protected Emote[] convert(Message message) {
-        return message.getEmotes().toArray(new Emote[0]);
+        return message.getMentions().getEmotes().toArray(new Emote[0]);
     }
 }

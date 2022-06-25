@@ -34,6 +34,6 @@ public class MessageMentionedMembers extends MultiplyPropertyExpression<Message,
 
     @Override
     protected Member[] convert(Message message) {
-        return message.getMentionedMembers().toArray(new Member[0]);
+        return message.getMentions().getMembers().toArray(new Member[0]);
     }
 }
