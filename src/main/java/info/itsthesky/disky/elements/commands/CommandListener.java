@@ -43,7 +43,7 @@ public class CommandListener extends ListenerAdapter {
                     String usedCommand = null;
                     String rawPrefix = prefix.getSingle(event);
                     boolean mentions = false;
-                    List<User> mentionedUsers = e.getMessage().getMentionedUsers();
+                    List<User> mentionedUsers = e.getMessage().getMentions().getUsers();
                     if (!mentionedUsers.isEmpty()) {
                         if (rawPrefix.contains(mentionedUsers.get(0).getId())) {
                             rawPrefix = rawPrefix.replaceFirst("!", "");

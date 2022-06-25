@@ -45,8 +45,6 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 				event -> event.getJDAEvent().isFromType(ChannelType.NEWS) ? event.getJDAEvent().getNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageEvent.class, ThreadChannel.class,
 				event -> event.getJDAEvent().isFromType(ChannelType.GUILD_PUBLIC_THREAD) || event.getJDAEvent().isFromType(ChannelType.GUILD_PRIVATE_THREAD) ? event.getJDAEvent().getThreadChannel() : null);
-		SkriptUtils.registerValue(BukkitMessageEvent.class, VoiceChannel.class,
-				event -> event.getJDAEvent().isFromType(ChannelType.VOICE) ? event.getJDAEvent().getVoiceChannel() : null);
 
 		SkriptUtils.registerValue(BukkitMessageEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);

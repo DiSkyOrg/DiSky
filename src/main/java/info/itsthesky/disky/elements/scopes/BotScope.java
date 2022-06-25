@@ -36,7 +36,7 @@ public class BotScope extends BaseScope<BotOptions> {
 
     public static final GatewayIntent[] defaults = new GatewayIntent[] {
             GatewayIntent.GUILD_BANS,
-            GatewayIntent.GUILD_EMOJIS,
+            GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
             GatewayIntent.GUILD_WEBHOOKS,
             GatewayIntent.GUILD_INVITES,
             GatewayIntent.GUILD_VOICE_STATES,
