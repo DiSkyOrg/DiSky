@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
 
 @Name("Message Text Channels")
 @Description("Get every mentioned text channels in a message.")
-@Examples("mentioned channels of event-message")
+@Examples("mentioned text channels of event-message")
 public class MessageMentionedChannels extends MultiplyPropertyExpression<Message, TextChannel> {
 
     static {
         register(
                 MessageMentionedChannels.class,
                 TextChannel.class,
-                "[discord] [message] mentioned [text] channels",
+                "[discord] [message] mentioned text channels",
                 "message"
         );
     }
@@ -34,6 +34,6 @@ public class MessageMentionedChannels extends MultiplyPropertyExpression<Message
 
     @Override
     protected TextChannel[] convert(Message t) {
-        return t.getMentionedChannels().toArray(new TextChannel[0]);
+        return t.getMentions().getChannels().toArray(new TextChannel[0]);
     }
 }
