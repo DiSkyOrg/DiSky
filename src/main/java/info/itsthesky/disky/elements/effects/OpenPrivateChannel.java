@@ -1,6 +1,9 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
@@ -14,6 +17,14 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Open Private Channel")
+@Description({"Opens a private channel with a specific user.",
+        "The opened channel can be null and an exception can be thrown if the user does not accept message."})
+@Examples({"open private channel of event-user and store it in {_channel}",
+        "if {_channel} is not set:",
+        "\treply with \"Please enable your private messages!\"",
+        "else:",
+        "\tpost \"Hello world!\" to {_channel}"})
 public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
 
     static {
@@ -52,12 +63,10 @@ public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
                                 });
                     });
         } else {
-            Utils.catchAction(rawUser.openPrivateChannel(),
-                    this::restart,
-                    ex -> {
-                        DiSky.getErrorHandler().exception(e, ex);
-                        restart();
-                    });
+            rawUser.openPrivateChannel().queue(this::restart, ex -> {
+                DiSky.getErrorHandler().exception(e, ex);
+                restart();
+            });
         }
 
     }
