@@ -7,6 +7,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 
 public class ModalSendEvent extends DiSkyEvent<ModalInteractionEvent> {
 
