@@ -4,9 +4,9 @@ plugins {
 }
 
 group = 'info.itsthesky'
-def patch = '1'
-def minor = '0'
 def major = '4'
+def minor = '1'
+def patch = '0'
 version = major + '.' + minor + '.' + patch
 
 repositories {
@@ -14,7 +14,7 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
     maven { url = 'https://jitpack.io' }
-    maven { url 'https://maven.enginehub.org/repo/' }
+    maven { url = 'https://maven.enginehub.org/repo/' }
     maven { url = 'https://m2.dv8tion.net/releases' }
 
 }
@@ -25,9 +25,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation('com.github.dv8fromtheworld:jda:b0ba362') {
-        exclude module: "opus-java"
-    }
+    implementation 'com.github.Xirado:JDA:86969df'
     implementation 'com.github.simplix-softworks:simplixstorage:3.2.4'
 }
 
