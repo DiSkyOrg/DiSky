@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 @Description({"Represent the roles that a guild or a member currently have.",
         "Can be changed, SET and ADD ChangeMode can be used when passing a member.",
         "To modify guild's roles, check delete and create role effects."})
-@Examples({"add role with id \"000\" to event-member",
-        "remove event-role from event-member",
+@Examples({"add role with id \"000\" to roles of event-member",
+        "remove event-role from roles of event-member",
         "reply with \"Amount of roles in the guild: %size of roles of event-guild%\""})
 public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, Role> {
 
