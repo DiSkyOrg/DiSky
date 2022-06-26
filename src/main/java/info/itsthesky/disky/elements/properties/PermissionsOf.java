@@ -2,6 +2,10 @@ package info.itsthesky.disky.elements.properties;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,6 +20,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
+@Name("Discord Permissions Of")
+@Description({"Get or change the permissions of a specific member or role in an optional channel."})
+@Examples({
+        "add (manage server) to permissions of event-member in event-channel",
+        "remove (administrator) from permissions of event-role"
+})
+@Since("4.0.0")
 public class PermissionsOf extends SimpleExpression<Permission> {
 
     static {
