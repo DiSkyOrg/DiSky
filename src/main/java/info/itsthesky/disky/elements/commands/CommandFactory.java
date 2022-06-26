@@ -260,20 +260,14 @@ public class CommandFactory {
             return null;
         }
 
-        RetainingLogHandler errors = SkriptLogger.startRetainingLog();
         CommandObject commandObject;
         CommandFactory.currentArguments = currentArguments;
-        try {
-            commandObject = new CommandObject(
-                    node.getConfig().getFile(), command, pattern.toString(), currentArguments,
-                    prefixes, aliases, description, usage, roles, places, bots, ScriptLoader.loadItems(trigger),
-                    perms, permMessage, category,
-                    cooldownGuild, cooldownMessage
-            );
-        } finally {
-            errors.stop();
-        }
-
+        commandObject = new CommandObject(
+                node.getConfig().getFile(), command, pattern.toString(), currentArguments,
+                prefixes, aliases, description, usage, roles, places, bots, SkriptUtils.loadCode(trigger, CommandEvent.class),
+                perms, permMessage, category,
+                cooldownGuild, cooldownMessage
+        );
         this.commandMap.put(new CommandData(command, commandObject), commandObject);
         return commandObject;
 
