@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
+import info.itsthesky.disky.api.emojis.Emote;
 import net.dv8tion.jda.api.entities.*;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
                 DiscordName.class,
                 String.class,
                 "[the] discord name",
-                "channel/user/member/role/guild"
+                "channel/user/member/emote/role/guild"
         );
     }
 
@@ -63,6 +64,8 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
             return ((User) entity).getName();
         } else if (entity instanceof Guild) {
             return ((Guild) entity).getName();
+        } else if (entity instanceof Emote) {
+            return ((Emote) entity).getName();
         } else {
             return null;
         }
