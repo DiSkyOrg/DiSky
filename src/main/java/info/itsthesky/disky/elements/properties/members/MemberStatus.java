@@ -24,7 +24,7 @@ public class MemberStatus extends MemberProperty<String> {
         register(
                 MemberStatus.class,
                 String.class,
-                "[member] online[( |-)]status"
+                "member online[( |-)]status"
         );
     }
 
