@@ -29,7 +29,7 @@ public class ThreadLeaveEvent extends DiSkyEvent<ThreadMemberLeaveEvent> {
     }
 
     public static class BukkitThreadLeaveEvent extends SimpleDiSkyEvent<ThreadMemberLeaveEvent> {
-        public BukkitThreadLeaveEvent(ThreadMemberLeaveEvent event) {
+        public BukkitThreadLeaveEvent(ThreadLeaveEvent event) {
         }
     }
 }
