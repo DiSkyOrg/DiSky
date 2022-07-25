@@ -5,8 +5,8 @@ plugins {
 
 group = 'info.itsthesky'
 def major = '4'
-def minor = '1'
-def patch = '1'
+def minor = '2'
+def patch = '0'
 version = major + '.' + minor + '.' + patch
 
 repositories {
@@ -26,7 +26,6 @@ dependencies {
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
     implementation 'com.github.Xirado:JDA:86969df'
-    implementation 'com.github.simplix-softworks:simplixstorage:3.2.4'
 }
 
 shadowJar {
