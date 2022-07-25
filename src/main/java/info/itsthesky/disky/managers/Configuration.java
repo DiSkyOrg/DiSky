@@ -36,8 +36,6 @@ public class Configuration extends YamlConfiguration {
 
 		try {
 			config.load(file);
-		} catch (FileNotFoundException ignored) {
-
 		} catch (IOException | InvalidConfigurationException ex) {
 			Bukkit.getLogger().log(Level.SEVERE, "Cannot load " + file, ex);
 		}
