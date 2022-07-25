@@ -41,7 +41,7 @@ public class MuteMember extends SpecificBotEffect {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final Member member = parseSingle(exprMember, e, null);
 
         if (member == null || bot == null) {

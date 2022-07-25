@@ -61,7 +61,7 @@ public abstract class BaseRetrieveEffect<T, E> extends SpecificBotEffect<T> {
     protected abstract RestAction<T> retrieve(@NotNull String input, @NotNull E entity);
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final @Nullable String input = parseSingle(exprInput, e, null);
         E entity = exprEntity.getSingle(e);
 

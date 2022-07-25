@@ -37,7 +37,7 @@ public class UnregisterCommand extends SpecificBotEffect {
 
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final String[] ids = parseList(exprIds, e, new String[0]);
         final Object entity = parseSingle(exprEntity, e, null);
         if (ids.length == 0 || entity == null) {

@@ -38,7 +38,7 @@ public class SendTyping extends SpecificBotEffect {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final Channel channel = parseSingle(exprChannel, e, null);
 
         if (bot == null || channel == null) {

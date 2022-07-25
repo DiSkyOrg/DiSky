@@ -33,6 +33,15 @@ public final class Utils {
         }
     }
 
+    public static byte[] readBytesFromStream(InputStream is) throws IOException {
+        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        final byte[] data = new byte[16384];
+        int len;
+        while ((len = is.read(data, 0, data.length)) != -1)
+            buffer.write(data, 0, len);
+        return buffer.toByteArray();
+    }
+
     public static boolean equalsAnyIgnoreCase(String toMatch, String... potentialMatches) {
         return Arrays.asList(potentialMatches).contains(toMatch);
     }

@@ -46,7 +46,7 @@ public abstract class BaseMultipleRetrieveEffect<T extends List, E> extends Spec
     protected abstract RestAction<T> retrieve(@NotNull E entity);
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         E entity = exprEntity.getSingle(e);
 
         if (entity == null) {

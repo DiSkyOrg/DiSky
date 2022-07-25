@@ -54,7 +54,7 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final String name = exprName.getSingle(e);
         final @Nullable Message message = parseSingle(exprMessage, e, null);
         BaseGuildMessageChannel channel = exprChannel.getSingle(e);

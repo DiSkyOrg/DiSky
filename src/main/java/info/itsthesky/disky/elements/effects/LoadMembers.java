@@ -45,7 +45,7 @@ public class LoadMembers extends SpecificBotEffect<List<Member>> {
 	}
 
 	@Override
-	public void runEffect(Event e, Bot bot) {
+	public void runEffect(@NotNull Event e, Bot bot) {
 		final Guild initialGuild = parseSingle(exprGuild, e, null);
 		if (initialGuild == null) {
 			restart();

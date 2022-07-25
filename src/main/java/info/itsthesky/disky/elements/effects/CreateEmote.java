@@ -56,7 +56,7 @@ public class CreateEmote extends SpecificBotEffect<Emote> {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final String name = exprName.getSingle(e);
         final String url = exprURL.getSingle(e);
         Guild guild = exprGuild.getSingle(e);

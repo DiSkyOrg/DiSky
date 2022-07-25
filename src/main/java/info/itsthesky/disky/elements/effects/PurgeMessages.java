@@ -37,7 +37,7 @@ public class PurgeMessages extends SpecificBotEffect {
     private Expression<Message> exprMessages;
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final Message[] messages = parseList(exprMessages, e, new Message[0]);
         if (messages.length <= 0)
             return;

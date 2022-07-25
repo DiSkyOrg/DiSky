@@ -43,7 +43,7 @@ public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final User rawUser = parseSingle(exprUser, e, null);
         if (anyNull(rawUser, bot)) {
             restart();

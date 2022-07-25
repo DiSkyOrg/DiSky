@@ -54,7 +54,7 @@ public class TimeOutMember extends SpecificBotEffect {
 	}
 
 	@Override
-	public void runEffect(Event e, Bot bot) {
+	public void runEffect(@NotNull Event e, Bot bot) {
 		final Member member = parseSingle(exprMember, e, null);
 		if (matchedPattern == 2 && !anyNull(member)) {
 			Utils.catchAction(member.removeTimeout(),

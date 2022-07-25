@@ -43,7 +43,7 @@ public class RetrieveMessages extends SpecificBotEffect<List<Message>> {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final Number number = parseSingle(exprAmount, e, null);
         final MessageChannel channel = parseSingle(exprChannel, e, null);
         if (anyNull(number, channel)) {

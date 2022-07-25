@@ -51,7 +51,7 @@ public class SuppressReaction extends SpecificBotEffect {
 	}
 
 	@Override
-	public void runEffect(Event e, Bot bot) {
+	public void runEffect(@NotNull Event e, Bot bot) {
 		final Emote[] emotes = parseList(exprEmote, e, null);
 		final User user = parseSingle(exprUser, e, null);
 		final Message message = parseSingle(exprMessage, e, null);

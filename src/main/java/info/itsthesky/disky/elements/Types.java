@@ -193,8 +193,10 @@ public class Types {
         Global Entities
          */
 
+        if (!DiSky.getConfiguration().getOrSetDefault("fix-skript-online-status", false))
+            DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
+
         DiSkyType.fromEnum(AttachmentOption.class, "attachmentoption", "attachmentoption").register();
-        DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
         DiSkyType.fromEnum(Permission.class, "permission", "permission").register();
         new DiSkyType<>(User.class, "user",
                 user -> user.getName() + "#" + user.getDiscriminator(),
