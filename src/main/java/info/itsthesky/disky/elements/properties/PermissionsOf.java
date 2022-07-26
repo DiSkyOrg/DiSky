@@ -38,12 +38,12 @@ public class PermissionsOf extends SimpleExpression<Permission> {
 
 
     private Expression<IPermissionHolder> exprHolder;
-    private Expression<MessageChannel> exprChannel;
+    private Expression<GuildChannel> exprChannel;
 
     @Override
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
         exprHolder = (Expression<IPermissionHolder>) exprs[0];
-        exprChannel = (Expression<MessageChannel>) exprs[1];
+        exprChannel = (Expression<GuildChannel>) exprs[1];
         return true;
     }
 
@@ -57,7 +57,7 @@ public class PermissionsOf extends SimpleExpression<Permission> {
         if (!EasyElement.isValid(delta))
             return;
         final IPermissionHolder holder = EasyElement.parseSingle(exprHolder, e, null);
-        final @Nullable MessageChannel channel = EasyElement.parseSingle(exprChannel, e, null);
+        final @Nullable GuildChannel channel = EasyElement.parseSingle(exprChannel, e, null);
         final Permission[] perms = (Permission[]) delta;
         if (EasyElement.anyNull(holder, perms))
             return;
@@ -82,7 +82,7 @@ public class PermissionsOf extends SimpleExpression<Permission> {
     @Override
     protected Permission @NotNull [] get(@NotNull Event e) {
         final IPermissionHolder holder = EasyElement.parseSingle(exprHolder, e, null);
-        final @Nullable MessageChannel channel = EasyElement.parseSingle(exprChannel, e, null);
+        final @Nullable GuildChannel channel = EasyElement.parseSingle(exprChannel, e, null);
         if (EasyElement.anyNull(holder))
             return new Permission[0];
         if (channel != null && !(channel instanceof GuildChannel))
