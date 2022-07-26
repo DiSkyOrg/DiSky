@@ -24,7 +24,7 @@ public class ActivityEmote extends SimplePropertyExpression<Activity, Emote> {
 
     @Override
     public @Nullable Emote convert(@NotNull Activity activity) {
-        return activity.getEmoji() == null ? null : Emote.fromActivityEmoji(activity.getEmoji());
+        return activity.getEmoji() == null ? null : Emote.fromUnion(activity.getEmoji());
     }
 
     @Override

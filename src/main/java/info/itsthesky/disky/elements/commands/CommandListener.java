@@ -29,10 +29,10 @@ public class CommandListener extends ListenerAdapter {
                 if (prefix == null) return;
                 for (String alias : command.getUsableAliases()) {
                     Message message = e.getMessage();
-                    TextChannel textChannel = null;
+                    GuildMessageChannel textChannel = null;
                     Guild guild = null;
                     if (message.isFromGuild() && e.isFromType(ChannelType.TEXT)) {
-                        textChannel = e.getTextChannel();
+                        textChannel = e.getChannel().asGuildMessageChannel();
                         guild = e.getGuild();
                     }
                     CommandEvent event = new CommandEvent(e,

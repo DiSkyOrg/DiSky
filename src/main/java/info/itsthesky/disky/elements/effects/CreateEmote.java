@@ -73,7 +73,7 @@ public class CreateEmote extends SpecificBotEffect<Emote> {
             restart();
             return;
         }
-        guild.createEmote(name, icon).queue(emote -> restart(Emote.fromJDA(emote)), ex -> {
+        guild.createEmoji(name, icon).queue(emote -> restart(Emote.fromJDA(emote)), ex -> {
             DiSky.getErrorHandler().exception(e, ex);
             restart();
         });

@@ -41,7 +41,7 @@ public class BotChangers {
         register(Message.class, (entity, bot) ->
                 bot.getInstance()
                         .getGuildById(entity.getGuild().getId())
-                        .getTextChannelById(entity.getTextChannel().getId())
+                        .getTextChannelById(entity.getChannel().asGuildMessageChannel().getId())
                         .getHistory()
                         .getMessageById(entity.getId())
         );

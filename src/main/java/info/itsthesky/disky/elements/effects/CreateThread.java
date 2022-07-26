@@ -8,10 +8,9 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Variable;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
@@ -35,7 +34,7 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
 
     private Expression<String> exprName;
     private Expression<Message> exprMessage;
-    private Expression<BaseGuildMessageChannel> exprChannel;
+    private Expression<StandardGuildMessageChannel> exprChannel;
     private boolean isPrivate = false;
 
     @Override
@@ -46,7 +45,7 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
     @Override
     public boolean initEffect(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         exprName = (Expression<String>) exprs[0];
-        exprChannel = (Expression<BaseGuildMessageChannel>) exprs[1];
+        exprChannel = (Expression<StandardGuildMessageChannel>) exprs[1];
         exprMessage = (Expression<Message>) exprs[2];
         setChangedVariable((Variable<ThreadChannel>) exprs[4]);
         isPrivate = parseResult.expr.contains("private thread");
@@ -57,7 +56,7 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
     public void runEffect(@NotNull Event e, Bot bot) {
         final String name = exprName.getSingle(e);
         final @Nullable Message message = parseSingle(exprMessage, e, null);
-        BaseGuildMessageChannel channel = exprChannel.getSingle(e);
+        StandardGuildMessageChannel channel = exprChannel.getSingle(e);
         if (name == null || bot == null || channel == null) {
             restart();
             return;

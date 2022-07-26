@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.properties.channels;
 
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
-import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
+import net.dv8tion.jda.api.entities.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import org.bukkit.event.Event;
@@ -28,7 +28,7 @@ public class ChannelTopic extends ActionProperty<GuildChannel, ChannelAction, St
 
     @Override
     public void change(GuildChannel role, String value) {
-        ((BaseGuildMessageChannel) role).getManager().setTopic(value).queue();
+        ((StandardGuildMessageChannel) role).getManager().setTopic(value).queue();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ChannelTopic extends ActionProperty<GuildChannel, ChannelAction, St
 
     @Override
     public String get(GuildChannel role) {
-        return ((BaseGuildMessageChannel) role).getTopic();
+        return ((StandardGuildMessageChannel) role).getTopic();
     }
 
     @Override

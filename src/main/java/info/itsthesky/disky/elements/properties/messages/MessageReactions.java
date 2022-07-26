@@ -39,8 +39,8 @@ public class MessageReactions extends MultiplyPropertyExpression<Message, Emote>
         return original
                 .getReactions()
                 .stream()
-                .map(MessageReaction::getReactionEmote)
-                .map(em -> Emote.fromJDA(em.getEmote()))
+                .map(MessageReaction::getEmoji)
+                .map(Emote::new)
                 .toArray(Emote[]::new);
     }
 }

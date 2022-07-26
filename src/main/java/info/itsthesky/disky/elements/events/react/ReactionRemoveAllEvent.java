@@ -33,14 +33,14 @@ public class ReactionRemoveAllEvent extends DiSkyEvent<MessageReactionRemoveAllE
 		SkriptUtils.registerValue(BukkitReactionRemoveAllEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitReactionRemoveAllEvent.class, TextChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getTextChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asTextChannel() : null);
 		SkriptUtils.registerValue(BukkitReactionRemoveAllEvent.class, NewsChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getNewsChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitReactionRemoveAllEvent.class, ThreadChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getThreadChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asThreadChannel() : null);
 
 		SkriptUtils.registerValue(BukkitReactionRemoveAllEvent.class, PrivateChannel.class,
-				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
+				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
 	}
 
 	public static class BukkitReactionRemoveAllEvent extends SimpleDiSkyEvent<MessageReactionRemoveAllEvent> implements info.itsthesky.disky.api.events.specific.MessageEvent {

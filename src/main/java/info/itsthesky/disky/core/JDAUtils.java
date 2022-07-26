@@ -96,7 +96,7 @@ public final class JDAUtils {
 			case USER:
 				return option.getAsUser();
 			case CHANNEL:
-				return option.getAsMessageChannel();
+				return option.getAsChannel().asGuildMessageChannel();
 			case NUMBER:
 				return option.getAsDouble();
 			case INTEGER:
@@ -110,7 +110,7 @@ public final class JDAUtils {
 			case MENTIONABLE:
 				return option.getAsMentionable();
 			default:
-				return Object.class;
+				return new Object();
 		}
 	}
 }

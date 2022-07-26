@@ -25,7 +25,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'com.github.Xirado:JDA:86969df'
+    implementation 'com.github.dv8fromtheworld:jda:PR2162-SNAPSHOT'
 }
 
 shadowJar {

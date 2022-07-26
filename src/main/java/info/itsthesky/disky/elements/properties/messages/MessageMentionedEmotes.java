@@ -3,8 +3,8 @@ package info.itsthesky.disky.elements.properties.messages;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class MessageMentionedEmotes extends MultiplyPropertyExpression<Message, Emote> {
 
     static {
-                register(
+        register(
                 MessageMentionedEmotes.class,
                 Emote.class,
                 "[discord] [message] mentioned emote[s]",
@@ -35,6 +35,9 @@ public class MessageMentionedEmotes extends MultiplyPropertyExpression<Message, 
 
     @Override
     protected Emote[] convert(Message message) {
-        return message.getMentions().getEmotes().toArray(new Emote[0]);
+        return message.getMentions().getCustomEmojis()
+                .stream()
+                .map(Emote::new)
+                .toArray(Emote[]::new);
     }
 }

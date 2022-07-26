@@ -22,7 +22,7 @@ public class ReactionListener extends ListenerAdapter {
 		if (info == null)
 			return;
 
-		final Emote reactedEmote = Emote.fromReaction(event.getReactionEmote());
+		final Emote reactedEmote = Emote.fromUnion(event.getEmoji());
 		if (!reactedEmote.isSimilar(info.getEmote()))
 			return;
 		if (!info.canUserExecute(event.getUserIdLong()))
