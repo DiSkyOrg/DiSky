@@ -1,6 +1,5 @@
 package info.itsthesky.disky.api.skript;
 
-import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Effect;
@@ -12,7 +11,6 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
