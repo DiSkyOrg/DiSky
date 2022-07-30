@@ -6,12 +6,12 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unchecked"})
 public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {

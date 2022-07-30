@@ -62,7 +62,7 @@ public class ExprNewButton extends SimpleExpression<Button> {
         Button button = (content == null ? Button.of(style, idOrURL, "") : Button.of(style, idOrURL, content));
 
         if (emoji != null && content != null)
-            button = Button.of(style, idOrURL, content).withEmoji(emoji.asEmoji());
+            button = Button.of(style, idOrURL, content).withEmoji(emoji.getEmoji());
 
         if (!isEnabled)
             button = button.asDisabled();

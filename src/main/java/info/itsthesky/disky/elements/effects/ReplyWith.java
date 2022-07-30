@@ -91,7 +91,7 @@ public class ReplyWith extends SpecificBotEffect<Message> {
 	public static final LinkedList<Event> DEFERRED_EVENTS;
 
 	@Override
-	public void runEffect(Event e, Bot bot) {
+	public void runEffect(@NotNull Event e, Bot bot) {
 
 		final Object[] rawFiles = EasyElement.parseList(exprFiles, e, new String[0]);
 		final AttachmentOption[] options = EasyElement.parseList(exprOptions, e, new AttachmentOption[0]);

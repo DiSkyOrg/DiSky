@@ -12,6 +12,13 @@ ignored-core:
 # Debug messages will be sent to the console, and the bot will be restarted.
 debug: false
 
+# Because of a Skript parsing issue, the 'online' enumeration value for the bot's status override '%players% is online' condition.
+# If you never use this condition, or never experienced an issue like that, do not touch this.
+# This will force DiSky to use TEXT and not ENUMERATION for the status, aka:
+# 'set online status of bot "name" to ONLINE' will be '... to "online"'
+# More info on the wiki: https://docs.disky.me/basic-stuff/presence-and-status
+fix-skript-online-status: false
+
 # Enable or not the 'token of %bot' expression.
 # It's mainly to avoid others people that have access to Skript to get the token.
 # Restart needed to take effect.

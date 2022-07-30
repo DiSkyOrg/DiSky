@@ -44,14 +44,14 @@ public class ButtonClickEvent extends DiSkyEvent<ButtonInteractionEvent> {
 		SkriptUtils.registerValue(BukkitButtonClickEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitButtonClickEvent.class, TextChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getTextChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asTextChannel() : null);
 		SkriptUtils.registerValue(BukkitButtonClickEvent.class, NewsChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getNewsChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitButtonClickEvent.class, ThreadChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getThreadChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asThreadChannel() : null);
 
 		SkriptUtils.registerValue(BukkitButtonClickEvent.class, PrivateChannel.class,
-				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
+				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
 	}
 
 	public static class BukkitButtonClickEvent extends SimpleDiSkyEvent<ButtonInteractionEvent> implements ModalEvent, InteractionEvent {

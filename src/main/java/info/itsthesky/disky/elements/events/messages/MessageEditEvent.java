@@ -33,14 +33,14 @@ public class MessageEditEvent extends DiSkyEvent<MessageUpdateEvent> {
 		SkriptUtils.registerValue(BukkitMessageEditEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageEditEvent.class, TextChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getTextChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asTextChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageEditEvent.class, NewsChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getNewsChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageEditEvent.class, ThreadChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getThreadChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asThreadChannel() : null);
 
 		SkriptUtils.registerValue(BukkitMessageEditEvent.class, PrivateChannel.class,
-				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
+				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
 	}
 
 	public static class BukkitMessageEditEvent extends SimpleDiSkyEvent<MessageUpdateEvent> implements info.itsthesky.disky.api.events.specific.MessageEvent {

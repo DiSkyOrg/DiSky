@@ -18,12 +18,13 @@ import org.jetbrains.annotations.Nullable;
 public class EmoteGuild extends SimplePropertyExpression<Emote, Guild> {
 
     static {
+        /*
         register(
                 EmoteGuild.class,
                 Guild.class,
                 "[the] emo(te|ji) guild",
                 "emote"
-        );
+        );*/
     }
 
     @Override

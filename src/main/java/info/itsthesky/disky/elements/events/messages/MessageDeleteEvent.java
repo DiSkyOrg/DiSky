@@ -5,6 +5,7 @@ import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.managers.MessageManager;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 
 public class MessageDeleteEvent extends DiSkyEvent<net.dv8tion.jda.api.events.message.MessageDeleteEvent> {
@@ -31,14 +32,14 @@ public class MessageDeleteEvent extends DiSkyEvent<net.dv8tion.jda.api.events.me
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, TextChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getTextChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asTextChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, NewsChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getNewsChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, ThreadChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getThreadChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asThreadChannel() : null);
 
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, PrivateChannel.class,
-				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
+				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
 	}
 
 	public static class BukkitMessageDeleteEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.message.MessageDeleteEvent> implements info.itsthesky.disky.api.events.specific.MessageEvent {

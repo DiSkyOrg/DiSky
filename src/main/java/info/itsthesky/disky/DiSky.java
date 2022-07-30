@@ -2,13 +2,13 @@ package info.itsthesky.disky;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.generator.DocBuilder;
 import info.itsthesky.disky.api.modules.DiSkyModule;
 import info.itsthesky.disky.api.modules.ModuleManager;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
+import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.Configuration;
@@ -20,7 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
+import java.nio.file.Files;
+import java.util.Objects;
 
 public final class DiSky extends JavaPlugin {
 
@@ -55,7 +56,20 @@ public final class DiSky extends JavaPlugin {
         skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage");
 
         getCommand("disky").setExecutor(new DiSkyCommand());
-        configuration = Configuration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+
+        /*
+         * Loading the configuration
+         */
+        final File configFile = new File(getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            try {
+                Files.write(configFile.toPath(), Utils.readBytesFromStream(Objects.requireNonNull(getResource("config.yml"))));
+            } catch (IOException ex) {
+                getLogger().severe("Cannot create config file");
+                ex.printStackTrace();
+            }
+        }
+        configuration = Configuration.loadConfiguration(configFile);
 
         /*
         Saving & loading emojis
@@ -66,8 +80,13 @@ public final class DiSky extends JavaPlugin {
             getLogger().info("Saving emoji's file ...");
             try {
                 InputStream stream = getResource("emojis.json");
-                FileUtils.writeToFile(new File(getDataFolder(), "emojis.json"), stream);
-            } catch (RuntimeException e) {
+                if (stream == null) {
+                    getLogger().severe("Could not find emoji's file of the JAR, this should never happens :c");
+                    getServer().getPluginManager().disablePlugin(this);
+                    return;
+                }
+                Files.write(emojisFile.toPath(), Utils.readBytesFromStream(stream));
+            } catch (RuntimeException | IOException e) {
                 e.printStackTrace();
                 getLogger().severe("An error occurred while saving emojis file! Emojis will not be available.");
             }

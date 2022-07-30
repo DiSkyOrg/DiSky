@@ -11,9 +11,6 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.api.skript.EasyElement;
-import net.dv8tion.jda.api.entities.Emoji;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +62,7 @@ public class ExprNewDropdownOption extends SimpleExpression<SelectOption> {
         if (desc != null)
             option = option.withDescription(desc);
         if (emote != null)
-            option = option.withEmoji(emote.asEmoji());
+            option = option.withEmoji(emote.getEmoji());
 
         return new SelectOption[] {option};
     }

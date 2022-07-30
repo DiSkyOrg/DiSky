@@ -32,7 +32,7 @@ public class MessageChannel extends SimplePropertyExpression<Message, TextChanne
     @Override
     public @Nullable TextChannel convert(Message original) {
         if (original.isFromGuild())
-            return original.getTextChannel();
+            return original.getChannel().asTextChannel();
         return null;
     }
 

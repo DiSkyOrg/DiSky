@@ -52,7 +52,7 @@ public class DestroyEntity extends WaiterEffect {
 			action = ((Message) entity).delete();
 		else if (entity instanceof Channel)
 			action = ((Channel) entity).delete();
-		else if (entity instanceof info.itsthesky.disky.api.emojis.Emote && ((info.itsthesky.disky.api.emojis.Emote) entity).isEmote())
+		else if (entity instanceof info.itsthesky.disky.api.emojis.Emote && ((info.itsthesky.disky.api.emojis.Emote) entity).isCustom())
 			action = ((info.itsthesky.disky.api.emojis.Emote) entity).getEmote().delete();
 		else
 			action = null;

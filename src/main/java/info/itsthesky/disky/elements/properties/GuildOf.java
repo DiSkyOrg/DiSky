@@ -33,8 +33,8 @@ public class GuildOf extends SimplePropertyExpression<Object, Guild> {
     public @Nullable Guild convert(Object entity) {
         if (entity instanceof Role)
             return ((Role) entity).getGuild();
-        if (entity instanceof BaseGuildMessageChannel)
-            return ((BaseGuildMessageChannel) entity).getGuild();
+        if (entity instanceof StandardGuildMessageChannel)
+            return ((StandardGuildMessageChannel) entity).getGuild();
         if (entity instanceof Member)
             return ((Member) entity).getGuild();
         return null;

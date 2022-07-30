@@ -4,13 +4,12 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.Examples;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import info.itsthesky.disky.api.emojis.Emote;
 import net.dv8tion.jda.api.entities.*;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Name("Name of Discord Entity")
 @Description({"This represent the current name of any discord entity that can hold one.",

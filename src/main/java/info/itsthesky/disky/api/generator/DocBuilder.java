@@ -8,7 +8,6 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.Classes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.leonhard.storage.util.FileUtils;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.modules.DiSkyModule;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
@@ -17,8 +16,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -64,7 +65,12 @@ public class DocBuilder {
 
         final DocDocument doc = new DocDocument(effects, conditions, sections, types, events, expressions);
         final String json = gson.toJson(doc);
-        FileUtils.write(new File(getInstance().getDataFolder(), "doc.json"), Collections.singletonList(json));
+        try {
+            Files.write(new File(getInstance().getDataFolder(), "doc.json").toPath(), json.getBytes());
+        } catch (IOException e) {
+            getInstance().getLogger().severe("Could not write documentation to file!");
+            e.printStackTrace();
+        }
         getInstance().getLogger().info("Successfully generated documentation!");
     }
 

@@ -8,8 +8,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import ch.njol.util.NonNullPair;
-import ch.njol.util.Pair;
-import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
@@ -25,6 +23,7 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.AttachmentOption;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -88,7 +87,7 @@ public class PostMessage extends SpecificBotEffect<Message> {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final @Nullable Object rawContent = EasyElement.parseSingle(exprMessage, e, null);
         final @Nullable MessageBuilder content = JDAUtils.constructMessage(rawContent);
         final Object receiver = exprReceiver.getSingle(e);

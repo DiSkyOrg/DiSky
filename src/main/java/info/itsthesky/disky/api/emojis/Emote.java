@@ -1,79 +1,42 @@
 package info.itsthesky.disky.api.emojis;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Emoji;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.IMentionable;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.emoji.*;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 public class Emote implements IMentionable {
-    private final String name;
-    private net.dv8tion.jda.api.entities.Emote emote;
-    private final boolean isEmote;
-    private final String mention;
-    private net.dv8tion.jda.api.entities.Emoji emoji;
 
-    public Emote(String name, info.itsthesky.disky.api.emojis.Emoji emoji) {
-        this.name = name.replaceAll(":", "");
-        this.mention = emoji.unicode();
-        this.isEmote = false;
-        this.emoji = Emoji.fromUnicode(emoji.unicode());
-    }
+    private final RichCustomEmoji customEmoji;
+    private final UnicodeEmoji unicodeEmoji;
 
-    public static Emote fromReaction(MessageReaction.ReactionEmote emote) {
-        if (emote.isEmote()) {
-            return new Emote(emote.getEmote());
-        } else {
-            return new Emote(Emojis.ofUnicode(emote.getEmoji()).shortcodes().get(0), Emojis.ofUnicode(emote.getEmoji()));
-        }
-    }
+    private final Emoji emoji;
 
-    public static Emote[] convert(Collection<net.dv8tion.jda.api.entities.Emote> originals) {
-        final List<Emote> e = new ArrayList<>();
-        for (net.dv8tion.jda.api.entities.Emote em : originals)
-            e.add(new Emote(em));
-        return e.toArray(new Emote[0]);
-    }
-
-    public Emote(net.dv8tion.jda.api.entities.Emoji emoji) {
+    public Emote(Emoji emoji) {
         this.emoji = emoji;
-        this.mention = emoji.getName();
-        this.name = emoji.getId();
-        this.isEmote = false;
+        this.customEmoji = emoji.getType().equals(Emoji.Type.CUSTOM) ? (RichCustomEmoji) emoji : null;
+        this.unicodeEmoji = emoji.getType().equals(Emoji.Type.UNICODE) ? (UnicodeEmoji) emoji : null;
     }
 
-    public static Emote fromActivityEmoji(net.dv8tion.jda.api.entities.Activity.Emoji emoji) {
-        final Emoji temp;
-        if (emoji.isEmote()) {
-            temp = Emoji.fromEmote(emoji.getName(), emoji.getIdLong(), emoji.isAnimated());
+    public static Emote fromUnion(EmojiUnion emote) {
+        if (emote.getType().equals(Emoji.Type.CUSTOM)) {
+            return new Emote(emote.asCustom());
         } else {
-            temp = Emoji.fromUnicode(emoji.getAsCodepoints());
+            return new Emote(Emoji.fromUnicode(emote.getName()));
         }
-        return new Emote(temp);
     }
 
-    public static Emote fromJDA(net.dv8tion.jda.api.entities.Emote emote) {
+    public static Emote fromJDA(CustomEmoji emote) {
         if (emote == null)
             return null;
         return new Emote(emote);
     }
 
     public RestAction<Void> addReaction(Message message) {
-        if (isEmote)
-            return message.addReaction(getEmote());
-        else
-            return message.addReaction(getEmoji().getName());
-    }
-
-    private Emote(net.dv8tion.jda.api.entities.Emote emote) {
-        this.name = emote.getName();
-        this.emote = emote;
-        this.isEmote = true;
-        this.mention = emote.getAsMention();
+        return message.addReaction(getEmote());
     }
 
     @Override
@@ -81,24 +44,16 @@ public class Emote implements IMentionable {
         return getName();
     }
 
-    public Guild getGuild() {
-        return isEmote ? emote.getGuild() : null;
+    public UnicodeEmoji getUnicodeEmoji() {
+        return unicodeEmoji;
     }
 
-    public net.dv8tion.jda.api.entities.Emote getEmote() {
-        return isEmote ? emote : null;
-    }
-
-    public List<Role> getRoles() {
-        return isEmote ? emote.getRoles() : null;
+    public RichCustomEmoji getEmote() {
+        return customEmoji;
     }
 
     public String getName() {
-        return isEmote ? emote.getName() : name;
-    }
-
-    public JDA getJDA() {
-        return isEmote ? emote.getJDA() : null;
+        return emoji.getName();
     }
 
     @NotNull
@@ -107,12 +62,8 @@ public class Emote implements IMentionable {
         return getID();
     }
 
-    public boolean isEmote() {
-        return isEmote;
-    }
-
-    public String getMention() {
-        return mention;
+    public boolean isCustom() {
+        return emoji.getType().equals(Emoji.Type.CUSTOM);
     }
 
     public Emoji getEmoji() {
@@ -120,16 +71,20 @@ public class Emote implements IMentionable {
     }
 
     public boolean isAnimated() {
-        return isEmote && emote.isAnimated();
+        return customEmoji != null && customEmoji.isAnimated();
     }
 
     public String getID() {
-        return isEmote ? emote.getId() : name;
+        return isCustom() ? customEmoji.getId() : unicodeEmoji.getName();
+    }
+
+    public Guild getGuild() {
+        return isCustom() ? customEmoji.getGuild() : null;
     }
 
     @Override
     public @NotNull String getAsMention() {
-        return isEmote ? emote.getAsMention() : mention;
+        return emoji.getAsReactionCode();
     }
 
     @Override
@@ -137,14 +92,10 @@ public class Emote implements IMentionable {
         return Long.parseLong(getID());
     }
 
-	public Emoji asEmoji() {
-        return isEmote() ? Emoji.fromEmote(getEmote()) : Emoji.fromUnicode(getAsMention());
-	}
-
     public boolean isSimilar(Emote other) {
-        if (other.isEmote && isEmote)
+        if (other.isCustom() && isCustom())
             return getEmote().getName().equals(other.getEmote().getName());
-        else if (!other.isEmote && !isEmote)
+        else if (!other.isCustom() && !isCustom())
             return getEmoji().getName().equals(other.getEmoji().getName());
         else
             return false;

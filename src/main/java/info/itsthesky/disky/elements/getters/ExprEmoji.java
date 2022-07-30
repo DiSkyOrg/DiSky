@@ -10,10 +10,10 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.emojis.Emoji;
 import info.itsthesky.disky.api.emojis.Emojis;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import org.bukkit.event.Event;
@@ -60,9 +60,10 @@ public class ExprEmoji extends SimpleExpression<Emote> {
         for (String input : emotes) {
 
             Emote emote;
-            try {
-                emote = new Emote(input.toLowerCase(Locale.ROOT), Emojis.ofShortcode(input.toLowerCase(Locale.ROOT)));
-            } catch (NullPointerException ex) {
+            final Emoji emoji = Emojis.ofShortcode(input.toLowerCase(Locale.ROOT));
+            if (emoji != null) {
+                emote = new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(emoji.unicode()));
+            } else {
                 final boolean useID = input.matches("[^0-9]");
                 if (guild == null) {
 
@@ -103,7 +104,7 @@ public class ExprEmoji extends SimpleExpression<Emote> {
 
     public Emote getFromGuild(String input, Guild guild, boolean useID) {
         return Emote.fromJDA(guild
-                .getEmotes()
+                .getEmojis()
                 .stream()
                 .filter(e -> useID ? e.getId().equalsIgnoreCase(input) : e.getName().equalsIgnoreCase(input))
                 .findAny()

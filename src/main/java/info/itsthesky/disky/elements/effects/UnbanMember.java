@@ -40,7 +40,7 @@ public class UnbanMember extends SpecificBotEffect {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         final User user = parseSingle(exprUser, e, null);
         final Guild guild = parseSingle(exprGuild, e, null);
 

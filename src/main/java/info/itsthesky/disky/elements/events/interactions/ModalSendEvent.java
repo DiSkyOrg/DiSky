@@ -5,6 +5,7 @@ import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
@@ -34,14 +35,14 @@ public class ModalSendEvent extends DiSkyEvent<ModalInteractionEvent> {
 		SkriptUtils.registerValue(BukkitModalSendEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitModalSendEvent.class, TextChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getTextChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? ((MessageChannelUnion) event.getJDAEvent().getChannel()).asTextChannel() : null);
 		SkriptUtils.registerValue(BukkitModalSendEvent.class, NewsChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getNewsChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? ((MessageChannelUnion) event.getJDAEvent().getChannel()).asNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitModalSendEvent.class, ThreadChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getThreadChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? ((MessageChannelUnion) event.getJDAEvent().getChannel()).asThreadChannel() : null);
 
 		SkriptUtils.registerValue(BukkitModalSendEvent.class, PrivateChannel.class,
-				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
+				event -> !event.getJDAEvent().isFromGuild() ? ((MessageChannelUnion) event.getJDAEvent().getChannel()).asPrivateChannel() : null);
 	}
 
 	public static class BukkitModalSendEvent extends SimpleDiSkyEvent<ModalInteractionEvent> implements InteractionEvent {

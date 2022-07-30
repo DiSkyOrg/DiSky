@@ -51,7 +51,7 @@ public class SuppressReaction extends SpecificBotEffect {
 	}
 
 	@Override
-	public void runEffect(Event e, Bot bot) {
+	public void runEffect(@NotNull Event e, Bot bot) {
 		final Emote[] emotes = parseList(exprEmote, e, null);
 		final User user = parseSingle(exprUser, e, null);
 		final Message message = parseSingle(exprMessage, e, null);
@@ -64,15 +64,9 @@ public class SuppressReaction extends SpecificBotEffect {
 
 		for (Emote emote : emotes) {
 			if (user == null)
-				if (emote.isEmote())
-					actions.add(message.removeReaction(emote.getEmote()));
-				else
-					actions.add(message.removeReaction(emote.getEmoji().getName()));
+				actions.add(message.removeReaction(emote.getEmoji()));
 			else
-				if (emote.isEmote())
-					actions.add(message.removeReaction(emote.getEmote(), user));
-				else
-					actions.add(message.removeReaction(emote.getEmoji().getName(), user));
+				actions.add(message.removeReaction(emote.getEmoji(), user));
 		}
 
 		RestAction.allOf(actions).queue(this::restart, ex -> {

@@ -31,19 +31,19 @@ public class ReactionRemoveEvent extends DiSkyEvent<MessageReactionRemoveEvent> 
 		SkriptUtils.registerValue(BukkitReactionRemoveEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getChannel());
 		SkriptUtils.registerValue(BukkitReactionRemoveEvent.class, Emote.class,
-				event -> Emote.fromReaction(event.getJDAEvent().getReactionEmote()));
+				event -> Emote.fromUnion(event.getJDAEvent().getEmoji()));
 
 		SkriptUtils.registerValue(BukkitReactionRemoveEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitReactionRemoveEvent.class, TextChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getTextChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asTextChannel() : null);
 		SkriptUtils.registerValue(BukkitReactionRemoveEvent.class, NewsChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getNewsChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asNewsChannel() : null);
 		SkriptUtils.registerValue(BukkitReactionRemoveEvent.class, ThreadChannel.class,
-				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getThreadChannel() : null);
+				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asThreadChannel() : null);
 
 		SkriptUtils.registerValue(BukkitReactionRemoveEvent.class, PrivateChannel.class,
-				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getPrivateChannel() : null);
+				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
 	}
 
 	public static class BukkitReactionRemoveEvent extends SimpleDiSkyEvent<MessageReactionRemoveEvent> implements info.itsthesky.disky.api.events.specific.MessageEvent {

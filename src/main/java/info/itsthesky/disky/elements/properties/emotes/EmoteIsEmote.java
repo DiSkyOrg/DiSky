@@ -17,7 +17,7 @@ public class EmoteIsEmote extends PropertyCondition<Emote> {
 
     @Override
     public boolean check(@NotNull Emote emote) {
-        return isNegated() != emote.isEmote();
+        return isNegated() != emote.isCustom();
     }
 
     @Override

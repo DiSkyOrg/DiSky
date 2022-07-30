@@ -39,7 +39,7 @@ public class EmoteName extends ChangeableSimplePropertyExpression<Emote, String>
 
     @Override
     public @Nullable String convert(Emote emote) {
-        return emote.isEmote() ? emote.getEmote().getName() : null;
+        return emote.isCustom() ? emote.getEmote().getName() : null;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class EmoteName extends ChangeableSimplePropertyExpression<Emote, String>
         final @Nullable String newName = (String) delta[0];
         if (newName == null)
             throw new UnsupportedOperationException();
-        if (!emote.isEmote())
+        if (!emote.isCustom())
             return;
 
         emote.getEmote().getManager().setName(newName).queue(null);

@@ -1,10 +1,10 @@
 package info.itsthesky.disky.api.skript;
 
-import de.leonhard.storage.shaded.jetbrains.annotations.NotNull;
-import de.leonhard.storage.shaded.jetbrains.annotations.Nullable;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SpecificBotEffect<T> extends WaiterEffect<T> {
 

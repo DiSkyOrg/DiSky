@@ -45,7 +45,7 @@ public class CreateInvite extends SpecificBotEffect<Invite> {
     }
 
     @Override
-    public void runEffect(Event e, Bot bot) {
+    public void runEffect(@NotNull Event e, Bot bot) {
         Object entity = exprEntity.getSingle(e);
 
         Number maxUses = parseSingle(exprMaxUses, e, null);

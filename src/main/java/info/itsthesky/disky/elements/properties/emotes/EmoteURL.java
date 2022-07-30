@@ -32,7 +32,7 @@ public class EmoteURL extends SimplePropertyExpression<Emote, String> {
 
     @Override
     public @Nullable String convert(Emote emote) {
-        return emote.isEmote() ? emote.getEmote().getImageUrl() : null;
+        return emote.isCustom() ? emote.getEmote().getImageUrl() : null;
     }
 
     @Override

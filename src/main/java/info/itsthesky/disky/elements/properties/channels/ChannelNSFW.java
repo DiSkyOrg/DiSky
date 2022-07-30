@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.properties.channels;
 
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
-import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
+import net.dv8tion.jda.api.entities.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import org.bukkit.event.Event;
@@ -28,7 +28,7 @@ public class ChannelNSFW extends ActionProperty<GuildChannel, ChannelAction, Boo
 
     @Override
     public void change(GuildChannel role, Boolean value) {
-        ((BaseGuildMessageChannel) role).getManager().setNSFW(value).queue();
+        ((StandardGuildMessageChannel) role).getManager().setNSFW(value).queue();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ChannelNSFW extends ActionProperty<GuildChannel, ChannelAction, Boo
 
     @Override
     public Boolean get(GuildChannel role) {
-        return ((BaseGuildMessageChannel) role).isNSFW();
+        return ((StandardGuildMessageChannel) role).isNSFW();
     }
 
     @Override
