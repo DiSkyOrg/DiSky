@@ -60,7 +60,6 @@ public class DeferInteraction extends WaiterEffect {
 
         if (shouldwait) {
             ((IReplyCallback) event).deferReply(isEphemeral).queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
-            ReplyWith.DEFERRED_EVENTS.add(e);
         } else {
             if (event instanceof GenericComponentInteractionCreateEvent)
                 ((ComponentInteraction) event).deferEdit().queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));

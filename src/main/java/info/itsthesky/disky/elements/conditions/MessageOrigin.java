@@ -34,8 +34,7 @@ public class MessageOrigin extends Condition {
 
 	@Override
 	public boolean check(@NotNull Event e) {
-		final GenericMessageEvent event = ((MessageEvent) e).getMessageEvent();
-		return checkFromGuild == event.isFromGuild();
+		return checkFromGuild == ((MessageEvent) e).isFromGuild();
 	}
 
 	@Override

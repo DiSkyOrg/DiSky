@@ -11,11 +11,16 @@ import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.BaseBukkitEvent;
 import info.itsthesky.disky.api.skript.BaseScope;
+import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.BotOptions;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.elements.events.bots.BotStopEvent.BukkitShutdownEvent;
+import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;
+import info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -58,7 +63,8 @@ public class BotScope extends BaseScope<BotOptions> {
             .addEntry("force reload", true)
             .addSection("on ready", true)
             .addSection("application", true)
-            .addSection("on guild ready", true);
+            .addSection("on guild ready", true)
+            .addSection("on shutdown", true);
 
     private static final SectionValidator appValidator = new SectionValidator()
             .addEntry("application id", false)
@@ -74,7 +80,7 @@ public class BotScope extends BaseScope<BotOptions> {
 
     @Override
     public void init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, SectionNode node) {
-        name = SkriptUtils.verifyVar((Literal<String>) args[0], null, null);
+        name = EasyElement.parseSingle((Literal<String>) args[0], null);
     }
 
     @Override
@@ -134,7 +140,7 @@ public class BotScope extends BaseScope<BotOptions> {
                 return error("Unable to parse gateway compression for input: " + rawCompression);
             }
         } else {
-            compression = Compression.NONE;
+            compression = Compression.ZLIB;
         }
         options.setCompression(compression);
 
@@ -185,10 +191,12 @@ public class BotScope extends BaseScope<BotOptions> {
         }
         options.setFlags(flags.toArray(new CacheFlag[0]));
 
-        final List<TriggerItem> onReady = node.get("on ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on ready"), info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent.class);
-        final List<TriggerItem> onGuildReady = node.get("on guild ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on guild ready"), info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent.class);
+        final List<TriggerItem> onReady = node.get("on ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on ready"), BukkitReadyEvent.class);
+        final List<TriggerItem> onGuildReady = node.get("on guild ready") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on guild ready"), BukkitGuildReadyEvent.class);
+        final List<TriggerItem> onBotShutdown = node.get("on shutdown") == null ? new ArrayList<>() : SkriptUtils.loadCode((SectionNode) node.get("on shutdown"), BukkitShutdownEvent.class);
         options.setOnReady(onReady);
         options.setOnGuildReady(onGuildReady);
+        options.setOnShutdown(onBotShutdown);
 
         final SectionNode appNode = (SectionNode) node.get("application");
         final @Nullable BotApplication app = buildApp(appNode, name);
@@ -241,7 +249,7 @@ public class BotScope extends BaseScope<BotOptions> {
             ex.printStackTrace();
             return false;
         }
-        DiSky.getManager().addBot(parsedEntity.asBot(jda));
+        DiSky.getManager().addBot(parsedEntity.asBot(jda, parsedEntity));
         return true;
     }
 

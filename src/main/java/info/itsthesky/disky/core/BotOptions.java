@@ -2,9 +2,13 @@ package info.itsthesky.disky.core;
 
 import ch.njol.skript.lang.TriggerItem;
 import info.itsthesky.disky.BotApplication;
+import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;
+import info.itsthesky.disky.elements.events.bots.BotStopEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
@@ -41,6 +45,7 @@ public class BotOptions {
      */
     private List<TriggerItem> onReady;
     private List<TriggerItem> onGuildReady;
+    private List<TriggerItem> onShutdown;
 
     public BotOptions() {}
 
@@ -65,13 +70,25 @@ public class BotOptions {
     public void runGuildReady(GuildReadyEvent event) {
         if (getOnGuildReady().isEmpty())
             return;
-        final info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent e = new info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent(new info.itsthesky.disky.elements.events.bots.GuildReadyEvent());
+        final BukkitGuildReadyEvent e = new BukkitGuildReadyEvent(new info.itsthesky.disky.elements.events.bots.GuildReadyEvent());
+        e.setJDAEvent(event);
+        TriggerItem.walk(getOnGuildReady().get(0), e);
+    }
+
+    public void runShutdown(ShutdownEvent event) {
+        if (getOnShutdown().isEmpty())
+            return;
+        final BotStopEvent.BukkitShutdownEvent e = new BotStopEvent.BukkitShutdownEvent(new BotStopEvent());
         e.setJDAEvent(event);
         TriggerItem.walk(getOnGuildReady().get(0), e);
     }
 
     public String getName() {
         return name;
+    }
+
+    public List<TriggerItem> getOnShutdown() {
+        return onShutdown;
     }
 
     public void setName(String name) {
@@ -158,7 +175,11 @@ public class BotOptions {
         this.onGuildReady = onGuildReady;
     }
 
-    public Bot asBot(JDA core) {
-        return new Bot(getName(), core, getApplication(), forceReload);
+    public void setOnShutdown(List<TriggerItem> onShutdown) {
+        this.onShutdown = onShutdown;
+    }
+
+    public Bot asBot(JDA core, BotOptions options) {
+        return new Bot(getName(), core, options, getApplication(), forceReload);
     }
 }

@@ -1,99 +1,88 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.api.skript.WaiterEffect;
-import info.itsthesky.disky.core.JDAUtils;
-import info.itsthesky.disky.elements.components.core.ComponentRow;
-import net.dv8tion.jda.api.MessageBuilder;
+import info.itsthesky.disky.api.skript.SpecificBotEffect;
+import info.itsthesky.disky.core.Bot;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+@Name("Edit Message")
+@Description({"Edit a specific message/interaction hook to show a new rich or simple message.",
+"The interaction hook will only be editable for the next 15 minutes once it's sent!"})
+@Examples(
+		"# We are in a slash command event!\n" +
+				"reply with hidden \"Wanna see a magic trick? ...\" and store it in {_msg}\n" +
+				"wait a second\n" +
+				"# The variable does not contains a 'real' message, it contains the interaction hook." +
+				"edit {_msg} to show \"Abracadabra!\""
+)
+@Since("4.4.0")
+public class EditMessage extends SpecificBotEffect {
 
-public class EditMessage extends WaiterEffect {
+	static {
+		Skript.registerEffect(
+				EditMessage.class,
+				"edit [the] [message] %message/interactionhook% (with|to show) %string/messagecreatebuilder/embedbuilder%"
+		);
+	}
 
-    static {
-        Skript.registerEffect(
-                EditMessage.class,
-                "edit [the] [message] %message% (with|to show) %string/embedbuilder/messagebuilder% [with [the] (component|action)[s] [row] %-rows%] [with file[s] %-strings%] [(2¦[and] clear [the] file[s])] [(1¦[and] keep component[s])]"
-        );
-    }
+	private Expression<Object> exprTarget;
+	private Expression<Object> exprMessage;
 
-    private Expression<Message> exprMessage;
-    private Expression<Object> exprNew;
-    private Expression<ComponentRow> exprComponents;
-    private Expression<String> exprFiles;
-    private boolean keepComponents;
-    private boolean clearFiles;
+	@Override
+	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
+		final Object target = parseSingle(exprTarget, e);
+		final Object message = parseSingle(exprMessage, e);
 
-    @Override
-    public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
-        exprMessage = (Expression<Message>) expressions[0];
-        exprNew = (Expression<Object>) expressions[1];
-        exprComponents = (Expression<ComponentRow>) expressions[2];
-        exprFiles = (Expression<String>) expressions[3];
-        keepComponents = (parseResult.mark & 1) != 0;
-        clearFiles = (parseResult.mark & 2) != 0;
-        return true;
-    }
+		if (message == null || target == null) {
+			restart();
+			return;
+		}
 
-    @Override
-    public void runEffect(Event e) {
-        final Message message = parseSingle(exprMessage, e, null);
-        final MessageBuilder builder = JDAUtils.constructMessage(parseSingle(exprNew, e, null));
-        final String[] files = EasyElement.parseList(exprFiles, e, new String[0]);
+		final MessageCreateBuilder builder;
+		if (message instanceof MessageCreateBuilder)
+			builder = (MessageCreateBuilder) message;
+		else if (message instanceof EmbedBuilder)
+			builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+		else
+			builder = new MessageCreateBuilder().setContent((String) message);
+		final MessageEditBuilder editBuilder = new MessageEditBuilder().applyCreateData(builder.build());
 
-        final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
-        final List<ActionRow> formatted = rows
-                .stream()
-                .map(ComponentRow::asActionRow)
-                .collect(Collectors.toList());
+		if (target instanceof Message)
+			((Message) target).editMessage(editBuilder.build()).queue(this::restart, ex -> {
+				DiSky.getErrorHandler().exception(e, ex);
+				restart();
+			});
+		else
+			((InteractionHook) target).editOriginal(editBuilder.build()).queue(this::restart, ex -> {
+				DiSky.getErrorHandler().exception(e, ex);
+				restart();
+			});
+	}
 
-        if (anyNull(message, builder)) {
-            restart();
-            return;
-        }
-        MessageAction action;
-        if (keepComponents)
-            action = message
-                    .editMessage(builder.build())
-                    .setActionRows(message.getActionRows());
-        else
-            action = message
-                    .editMessage(builder.build())
-                    .setActionRows(formatted);
+	@Override
+	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		exprTarget = (Expression<Object>) expressions[0];
+		exprMessage = (Expression<Object>) expressions[1];
+		return true;
+	}
 
-        if (files.length > 0 && !clearFiles)
-            for (String path : files) {
-                final File file = new File(path);
-                if (!file.exists())
-                    continue;
-                action = action.addFile(file);
-            }
-
-        if (clearFiles)
-            action = action.clearFiles();
-
-        action.override(true).queue(this::restart, ex -> {
-            DiSky.getErrorHandler().exception(e, ex);
-            restart();
-        });
-    }
-
-    @Override
-    public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "edit " + exprMessage.toString(e, debug) + " with " + exprNew.toString(e, debug) + (keepComponents ? " and keep components" : "");
-    }
+	@Override
+	public @NotNull String toString(@Nullable Event e, boolean debug) {
+		return "edit the message/hook " + exprTarget.toString(e, debug) + " with " + exprMessage.toString(e, debug);
+	}
 }

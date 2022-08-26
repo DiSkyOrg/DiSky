@@ -13,6 +13,7 @@ import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.Configuration;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.internal.handle.ChannelUpdateHandler;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 

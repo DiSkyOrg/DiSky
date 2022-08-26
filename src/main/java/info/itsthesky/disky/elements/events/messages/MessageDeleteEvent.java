@@ -46,8 +46,13 @@ public class MessageDeleteEvent extends DiSkyEvent<net.dv8tion.jda.api.events.me
 		public BukkitMessageDeleteEvent(MessageDeleteEvent event) {}
 
 		@Override
-		public GenericMessageEvent getMessageEvent() {
-			return getJDAEvent();
+		public MessageChannel getMessageChannel() {
+			return getJDAEvent().getChannel();
+		}
+
+		@Override
+		public boolean isFromGuild() {
+			return getJDAEvent().isFromGuild();
 		}
 	}
 }

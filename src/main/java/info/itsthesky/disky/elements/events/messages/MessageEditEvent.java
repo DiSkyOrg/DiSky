@@ -47,8 +47,13 @@ public class MessageEditEvent extends DiSkyEvent<MessageUpdateEvent> {
 		public BukkitMessageEditEvent(MessageEditEvent event) {}
 
 		@Override
-		public GenericMessageEvent getMessageEvent() {
-			return getJDAEvent();
+		public MessageChannel getMessageChannel() {
+			return getJDAEvent().getChannel();
+		}
+
+		@Override
+		public boolean isFromGuild() {
+			return getJDAEvent().isFromGuild();
 		}
 	}
 }

@@ -9,9 +9,12 @@ import info.itsthesky.disky.core.ReactionListener;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.commands.CommandListener;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.events.ShutdownEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -54,7 +57,10 @@ public class BotManager {
 
     public void shutdown() {
         // TODO: 29/12/2021 Make the shutdown better, it's blocking the thread currently but else it throw an error since Bukkit disable the class before the bot is offline.
-        this.bots.forEach(bot -> bot.getInstance().shutdownNow());
+        this.bots.forEach(bot -> {
+            bot.getOptions().runShutdown(new ShutdownEvent(bot.getInstance(), OffsetDateTime.now(), 0));
+            bot.getInstance().shutdownNow();
+        });
     }
 
     public boolean exist(@Nullable String name) {

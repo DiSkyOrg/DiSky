@@ -1,6 +1,8 @@
 package info.itsthesky.disky.api.events.specific;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 
 /**
@@ -8,10 +10,8 @@ import net.dv8tion.jda.api.events.message.GenericMessageEvent;
  */
 public interface MessageEvent {
 
-    GenericMessageEvent getMessageEvent();
+    MessageChannel getMessageChannel();
 
-    default MessageChannel getMessageChannel() {
-        return getMessageEvent().getChannel();
-    };
+    boolean isFromGuild();
 
 }

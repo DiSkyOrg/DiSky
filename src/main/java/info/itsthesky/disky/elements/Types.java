@@ -5,17 +5,15 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.elements.commands.CommandData;
 import info.itsthesky.disky.elements.commands.CommandEvent;
-import info.itsthesky.disky.elements.commands.CommandFactory;
 import info.itsthesky.disky.elements.commands.CommandObject;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -23,15 +21,15 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
+import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
-import net.dv8tion.jda.api.interactions.components.Modal;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
-import net.dv8tion.jda.api.utils.AttachmentOption;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,6 +63,8 @@ public class Types {
         new DiSkyType<>(Channel.class, "channel",
                 Channel::getName,
                 null).register();
+        new DiSkyType<>(InteractionHook.class, "interactionhook",
+                null, null).register();
         new DiSkyType<>(GuildChannel.class, "guildchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildChannelById(input))
@@ -172,9 +172,8 @@ public class Types {
                 Message.Attachment::getUrl,
                 null
         ).register();
-        new DiSkyType<>(MessageBuilder.class, "messagebuilder",
-                messageBuilder -> messageBuilder.getStringBuilder().toString(),
-                null
+        new DiSkyType<>(MessageCreateBuilder.class, "messagecreatebuilder",
+                MessageCreateBuilder::getContent, null
         ).register();
         new DiSkyType<>(Emote.class, "emote",
                 Emote::getAsMention,
@@ -192,7 +191,6 @@ public class Types {
         if (!DiSky.getConfiguration().getOrSetDefault("fix-skript-online-status", false))
             DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
 
-        DiSkyType.fromEnum(AttachmentOption.class, "attachmentoption", "attachmentoption").register();
         DiSkyType.fromEnum(Permission.class, "permission", "permission").register();
         new DiSkyType<>(User.class, "user",
                 user -> user.getName() + "#" + user.getDiscriminator(),

@@ -47,8 +47,13 @@ public class ReactionRemoveAllEvent extends DiSkyEvent<MessageReactionRemoveAllE
 		public BukkitReactionRemoveAllEvent(ReactionRemoveAllEvent event) {}
 
 		@Override
-		public GenericMessageEvent getMessageEvent() {
-			return getJDAEvent();
+		public MessageChannel getMessageChannel() {
+			return getJDAEvent().getChannel();
+		}
+
+		@Override
+		public boolean isFromGuild() {
+			return getJDAEvent().isFromGuild();
 		}
 	}
 

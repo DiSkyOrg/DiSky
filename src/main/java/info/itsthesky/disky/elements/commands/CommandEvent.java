@@ -94,13 +94,13 @@ public class CommandEvent extends Event implements Cancellable, MessageEvent {
         return channel;
     }
 
-    @Override
-    public GenericMessageEvent getMessageEvent() {
-        throw new UnsupportedOperationException();
-    }
-
     public MessageChannel getMessageChannel() {
         return messagechannel;
+    }
+
+    @Override
+    public boolean isFromGuild() {
+        return guild != null;
     }
 
     public String getPrefix() {

@@ -45,6 +45,10 @@ public abstract class EasyElement extends Effect {
         return value == null ? defaultValue : value;
     }
 
+    public static <T> T parseSingle(Expression<T> expression, Event e) {
+        return parseSingle(expression, e, null);
+    }
+
     public static void exception(Event event, Throwable throwable) {
         DiSky.getErrorHandler().exception(event, throwable);
     }
@@ -88,10 +92,11 @@ public abstract class EasyElement extends Effect {
     }
 
     public static boolean containsInterfaces(@NotNull Class<?> clazz) {
-        return Stream
-                .of(getCurrentEvents())
-                .filter(Objects::nonNull)
-                .anyMatch(c -> Arrays.asList(c.getInterfaces()).contains(clazz));
+        for (Class<?> c : getCurrentEvents())
+            for (Class<?> i : c.getInterfaces())
+                if (clazz.isAssignableFrom(i))
+                    return true;
+        return false;
     }
 
     public static boolean eventsMatch(@NotNull Predicate<Class<? extends Event>> predicate) {

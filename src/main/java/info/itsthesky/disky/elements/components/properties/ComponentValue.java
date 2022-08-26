@@ -46,7 +46,8 @@ public class ComponentValue extends SimpleExpression<Object> {
 		if (isSingle())
 			return new String[] { mapping.getAsString() };
 		else
-			return mapping.getAsStringList().toArray(new String[0]);
+			return new Object[0];
+			//return mapping.getAsStringList().toArray(new String[0]);
 
 	}
 

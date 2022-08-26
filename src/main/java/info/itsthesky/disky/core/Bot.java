@@ -22,13 +22,15 @@ public class Bot {
     private final JDA instance;
     private final @Nullable BotApplication application;
     private final boolean forceReload;
+    private final BotOptions options;
 
-    public Bot(String name, JDA instance, @Nullable BotApplication application, boolean forceReload) {
+    public Bot(String name, JDA instance, BotOptions options, @Nullable BotApplication application, boolean forceReload) {
         this.name = name;
         this.application = application;
         this.instance = instance;
         this.forceReload = forceReload;
         this.startedTime = System.currentTimeMillis();
+        this.options = options;
     }
 
     public static @Nullable Bot create(BotOptions options) {
@@ -42,7 +44,7 @@ public class Bot {
             return null;
         }
 
-        return new Bot(options.getName(), built, options.getApplication(), options.forceReload());
+        return new Bot(options.getName(), built, options, options.getApplication(), options.forceReload());
     }
 
     public String getName() {
@@ -102,5 +104,9 @@ public class Bot {
 
     public String getDiscordName() {
         return getInstance().getSelfUser().getName() + "#" + getInstance().getSelfUser().getDiscriminator();
+    }
+
+    public BotOptions getOptions() {
+        return options;
     }
 }

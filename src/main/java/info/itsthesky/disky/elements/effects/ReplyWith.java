@@ -4,182 +4,110 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.Variable;
 import ch.njol.util.Kleenean;
-import ch.njol.util.NonNullPair;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.MessageEvent;
-import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.core.JDAUtils;
-import info.itsthesky.disky.core.Utils;
-import info.itsthesky.disky.elements.components.core.ComponentRow;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageUpdateAction;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
-import net.dv8tion.jda.api.utils.AttachmentOption;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-@Name("Reply With / To Message")
-@Description({"Reply with a specific text, embed or message builder.",
-		"A reference message can be provided, and therefore the mention optional part can be implemented.",
-		"This effect will only work with events that implement 'message event' (aka every channel-related events)"})
-@Examples({"reply with \"Hello world\"",
-		"reply with \"yo guys :p\" and store the message in {_msg}"})
-public class ReplyWith extends SpecificBotEffect<Message> {
+@Name("Reply With")
+@Description({"Reply with a specific message to the channel where a message-event was triggered.",
+		"It can also be used to acknowledge & reply to an interaction, such as button click or slash command.",
+		"In interaction only, you can use the keyword 'hidden' to reply with an ephemeral message (only the executor can see it).",
+		"Therefore, the value stored in the variable, if specified, will be an interaction hook, and not a compete message."})
+@Examples({"reply with \"Hello world!\"",
+		"reply with hidden \"Hello ...\" and store it in {_msg}\n" +
+				"wait a second",
+		"edit {_msg} to show \"... world!\""})
+@Since("4.4.0")
+public class ReplyWith extends SpecificBotEffect<Object> {
 
 	static {
-		DEFERRED_EVENTS = new LinkedList<>();
-		final String types = DiSky.isSkImageInstalled() ? "strings/images" : "strings";
 		Skript.registerEffect(
 				ReplyWith.class,
-				"reply with [hidden] [the] [content] %string/embedbuilder/messagebuilder% " +
-						"[with [the] (component|action)[s] [row] %-rows%] " +
-						"[with reference[d] [message] %-message% [(1¦mentioning)]] " +
-						"[with [the] file[s] %-"+ types +"% [with [the] option[s] %-attachmentoptions%]]" +
-						"[and store (it|the message) in %-objects%]"
+				"reply with [hidden] %string/messagecreatebuilder/embedbuilder% [and store (it|the message) in %-objects%]"
 		);
 	}
 
 	private Expression<Object> exprMessage;
-	private Expression<ComponentRow> exprComponents;
-	private boolean isInInteraction;
 	private boolean hidden;
-
-	private Expression<Object> exprFiles;
-	private Expression<AttachmentOption> exprOptions;
-
-	private boolean mentioning;
-	private Expression<Message> exprReference;
 
 	@Override
 	public boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
-		if (!containsInterfaces(MessageEvent.class) && !containsInterfaces(InteractionEvent.class)) {
-			Skript.error("The reply effect can only be used in message / interaction events.");
+		if (!containsInterfaces(MessageEvent.class)) {
+			Skript.error("The effect reply effect can only be used in a message event.");
 			return false;
 		}
-		isInInteraction = EasyElement.containsInterfaces(InteractionEvent.class);
-		hidden = parseResult.expr.contains("with hidden");
+
+		hidden = parseResult.expr.startsWith("reply with hidden");
 		exprMessage = (Expression<Object>) expressions[0];
-		exprComponents = (Expression<ComponentRow>) expressions[1];
+		setChangedVariable((Variable<Object>) expressions[1]);
 
-		exprReference = (Expression<Message>) expressions[2];
-		mentioning = (parseResult.mark & 1) != 1;
-		exprFiles = (Expression<Object>) expressions[3];
-		exprOptions = (Expression<AttachmentOption>) expressions[4];
-
-		return validateVariable(expressions[5], false, true);
+		return true;
 	}
 
-	public static final LinkedList<Event> DEFERRED_EVENTS;
-
 	@Override
-	public void runEffect(@NotNull Event e, Bot bot) {
-
-		final Object[] rawFiles = EasyElement.parseList(exprFiles, e, new String[0]);
-		final AttachmentOption[] options = EasyElement.parseList(exprOptions, e, new AttachmentOption[0]);
-
-		final List<ComponentRow> rows = Arrays.asList(parseList(exprComponents, e, new ComponentRow[0]));
-		final List<ActionRow> formatted = rows
-				.stream()
-				.map(ComponentRow::asActionRow)
-				.collect(Collectors.toList());
-
-		final List<NonNullPair<InputStream, String>> files;
-		try {
-			files = Utils.parseFiles(rawFiles);
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
+	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
+		final Object message = parseSingle(exprMessage, e);
+		if (message == null) {
 			restart();
 			return;
 		}
 
-		if (isInInteraction) {
+		final MessageCreateBuilder builder;
+		if (message instanceof MessageCreateBuilder)
+			builder = (MessageCreateBuilder) message;
+		else if (message instanceof EmbedBuilder)
+			builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+		else
+			builder = new MessageCreateBuilder().setContent((String) message);
 
-			final IReplyCallback event = (IReplyCallback) ((InteractionEvent) e).getInteractionEvent();
-			final Object rawMessage = parseSingle(exprMessage, e, null);
-			final MessageBuilder message = JDAUtils.constructMessage(rawMessage);
-			if (anyNull(rawMessage, message)) {
+		if (e instanceof InteractionEvent) {
+			final InteractionEvent event = (InteractionEvent) e;
+			if (!(event.getInteractionEvent().getInteraction() instanceof IReplyCallback)) {
+				Skript.error("You are trying to reply to an interaction that is not a reply callback.");
 				restart();
 				return;
 			}
 
-			if (!event.getHook().isExpired() && DEFERRED_EVENTS.contains(e)) {
-				WebhookMessageUpdateAction<Message> action = event.getHook().editOriginal(message.build());
-				action = action.setActionRows(formatted);
-				for (NonNullPair<InputStream, String> file : files)
-					action = action.addFile(file.getFirst(), file.getSecond(), options);
-				action.queue(this::restart, ex -> {
-					DiSky.getErrorHandler().exception(e, ex);
-					restart();
-				});
-				DEFERRED_EVENTS.remove(e);
+			if (event.getInteractionEvent().getInteraction().isAcknowledged()) {
+				Skript.error("You are trying to reply or defer an interaction that has already been acknowledged!");
+				restart();
 				return;
 			}
 
-			ReplyCallbackAction reply = event.reply(message.build())
-					.addActionRows(formatted)
-					.setEphemeral(hidden);
-
-			for (NonNullPair<InputStream, String> file : files)
-				reply = reply.addFile(file.getFirst(), file.getSecond(), options);
-
-			reply.queue(v -> v.retrieveOriginal().queue(this::restart, ex -> {
-				DiSky.getErrorHandler().exception(e, ex);
-				restart();
-			}), ex -> {
+			final IReplyCallback callback = (IReplyCallback) event.getInteractionEvent().getInteraction();
+			callback.reply(builder.build()).setEphemeral(hidden).queue(hook -> {
+				if (hidden) restart(hook);
+				else restart(hook);
+			}, ex -> {
 				DiSky.getErrorHandler().exception(e, ex);
 				restart();
 			});
 
 		} else {
-
 			final MessageEvent event = (MessageEvent) e;
-			final Object rawMessage = parseSingle(exprMessage, e, null);
-			final MessageBuilder message = JDAUtils.constructMessage(rawMessage);
-			final @Nullable Message referenced = parseSingle(exprReference, e, null);
-			final MessageChannel channel = bot.findMessageChannel(event.getMessageChannel());
-			if (anyNull(channel, event, rawMessage, message)) {
-				restart();
-				return;
-			}
-
-			MessageAction action = channel.sendMessage(message.build());
-
-			action = action.setActionRows(formatted);
-			if (referenced != null)
-				action = action.reference(referenced).mentionRepliedUser(mentioning);
-			for (NonNullPair<InputStream, String> file : files)
-				action = action.addFile(file.getFirst(), file.getSecond(), options);
-
-			action.queue(this::restart, ex -> {
+			event.getMessageChannel().sendMessage(builder.build()).queue(this::restart, ex -> {
 				DiSky.getErrorHandler().exception(e, ex);
 				restart();
 			});
-
 		}
 	}
 
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "reply with " + exprMessage.toString(e, debug) + (getChangedVariable() == null ? "" :
-				" and store the message in " + variableAsString(e, debug));
+		return null;
 	}
+
 }

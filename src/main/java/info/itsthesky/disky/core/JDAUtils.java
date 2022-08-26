@@ -1,13 +1,13 @@
 package info.itsthesky.disky.core;
 
 import info.itsthesky.disky.elements.components.core.ComponentRow;
-import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.components.Component;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 
 import java.io.*;
 import java.net.URL;
@@ -16,14 +16,27 @@ import java.util.List;
 
 public final class JDAUtils {
 
-	public static MessageBuilder constructMessage(Object input) {
+	public static MessageCreateBuilder constructCreateMessage(Object input) {
 		if (input == null)
 			return null;
-		final MessageBuilder builder = new MessageBuilder();
-		if (input instanceof MessageBuilder)
-			return (MessageBuilder) input;
+		final MessageCreateBuilder builder = new MessageCreateBuilder();
+		if (input instanceof MessageCreateBuilder)
+			return (MessageCreateBuilder) input;
 		if (input instanceof String)
-			builder.append((String) input);
+			builder.addContent((String) input);
+		if (input instanceof EmbedBuilder)
+			builder.setEmbeds(((EmbedBuilder) input).build());
+		return builder;
+	}
+
+	public static MessageEditBuilder constructEditMessage(Object input) {
+		if (input == null)
+			return null;
+		final MessageEditBuilder builder = new MessageEditBuilder();
+		if (input instanceof MessageEditBuilder)
+			return (MessageEditBuilder) input;
+		if (input instanceof String)
+			builder.setContent((String) input);
 		if (input instanceof EmbedBuilder)
 			builder.setEmbeds(((EmbedBuilder) input).build());
 		return builder;

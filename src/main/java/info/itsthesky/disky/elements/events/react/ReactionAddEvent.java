@@ -50,8 +50,13 @@ public class ReactionAddEvent extends DiSkyEvent<MessageReactionAddEvent> {
 		public BukkitReactionAddEvent(ReactionAddEvent event) {}
 
 		@Override
-		public GenericMessageEvent getMessageEvent() {
-			return getJDAEvent();
+		public MessageChannel getMessageChannel() {
+			return getJDAEvent().getChannel();
+		}
+
+		@Override
+		public boolean isFromGuild() {
+			return getJDAEvent().isFromGuild();
 		}
 	}
 	
