@@ -46,7 +46,7 @@ public class ArchiveUnarchiveThread extends SpecificBotEffect {
 		final ThreadChannel thread = parseSingle(exprThread, e);
 		if (thread == null) return;
 		final ThreadChannelManager manager = thread.getManager();
-		manager.setArchived(archived).queue();
+		manager.setArchived(archived).queue(this::restart, null);
 	}
 
 	@Override

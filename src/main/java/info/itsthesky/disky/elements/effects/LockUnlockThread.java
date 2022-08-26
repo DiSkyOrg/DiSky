@@ -46,7 +46,7 @@ public class LockUnlockThread extends SpecificBotEffect {
 		final ThreadChannel thread = parseSingle(exprThread, e);
 		if (thread == null) return;
 		final ThreadChannelManager manager = thread.getManager();
-		manager.setLocked(lock).queue();
+		manager.setLocked(lock).queue(this::restart, null);
 	}
 
 	@Override
