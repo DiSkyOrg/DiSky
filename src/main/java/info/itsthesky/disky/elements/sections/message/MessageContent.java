@@ -2,6 +2,8 @@ package info.itsthesky.disky.elements.sections.message;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -12,6 +14,9 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Message Builder Content")
+@Description({"Text content of a message builder",
+		"See also: 'Create (rich) Message'"})
 public class MessageContent extends SimplePropertyExpression<MessageCreateBuilder, String> {
 
 	static {

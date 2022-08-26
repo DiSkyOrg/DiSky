@@ -2,6 +2,8 @@ package info.itsthesky.disky.elements.sections.message;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
@@ -23,6 +25,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Name("Message Builder Embeds")
+@Description({"Embeds of a message builder",
+		"See also: 'Create (rich) Message'"})
 public class MessageEmbeds extends MultiplyPropertyExpression<MessageCreateBuilder, EmbedBuilder> {
 
 	static {

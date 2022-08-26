@@ -1,6 +1,8 @@
 package info.itsthesky.disky.elements.sections.components;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
@@ -11,6 +13,9 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+@Name("Row Builder Components")
+@Description({"Components of a row builder",
+		"See also: 'Create (rich) Message'"})
 public class RowComponents extends MultiplyPropertyExpression<ComponentRow, Object> {
 
 	static {

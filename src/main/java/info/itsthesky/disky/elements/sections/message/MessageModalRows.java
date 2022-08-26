@@ -1,10 +1,8 @@
 package info.itsthesky.disky.elements.sections.message;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.util.Kleenean;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
@@ -21,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
+@Name("Message Builder Component Rows")
+@Description({"Component rows of a message builder",
+		"See also: 'Creator Components Row'"})
 public class MessageModalRows extends MultiplyPropertyExpression<Object, Object> {
 
 	static {

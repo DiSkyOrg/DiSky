@@ -2,6 +2,8 @@ package info.itsthesky.disky.elements.sections.message;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
@@ -22,6 +24,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Name("Message Builder Attachments")
+@Description({"Attachments of a message builder",
+		"Supports SkImage's images if the addon is installed.",
+		"See also: 'Create (rich) Message'"})
 public class MessageAttachments extends MultiplyPropertyExpression<MessageCreateBuilder, Object> {
 
 	static {
