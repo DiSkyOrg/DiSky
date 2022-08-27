@@ -26,8 +26,6 @@ public abstract class ReturningSection<T> extends Section {
 		for (int i = 0; i < patterns.length; i++)
 			patterns[i] += " and store (it|the result) in %-objects%";
 
-		System.out.println(expression.getSimpleName());
-
 		Skript.registerSection(sectionClass, patterns);
 		Skript.registerExpression(expression, returnType, ExpressionType.SIMPLE, "[the] [last] "+expression.getSimpleName()+" [builder]");
 	}
