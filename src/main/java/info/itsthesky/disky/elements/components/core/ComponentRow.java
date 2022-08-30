@@ -29,26 +29,6 @@ public class ComponentRow {
 		buttons = new ArrayList<>();
 	}
 
-	public static List<ComponentRow> from(List<ActionRow> rows) {
-		final List<ComponentRow> news = new ArrayList<>();
-		for (ActionRow row : rows)
-		{
-			switch (row.getType()) {
-				case BUTTON:
-					news.add(new ComponentRow(null, null, row.getButtons()));
-					break;
-				case SELECT_MENU:
-					news.add(new ComponentRow(row.getComponents().stream()
-							.filter(item -> item.getType().equals(Component.Type.SELECT_MENU))
-							.map(item -> ((SelectMenu) item))
-							.findAny()
-							.orElse(null), null, null));
-					break;
-			}
-		}
-		return news;
-	}
-
 	public TextInput getInput() {
 		return input;
 	}

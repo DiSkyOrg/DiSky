@@ -123,6 +123,6 @@ public abstract class EasyElement extends Effect {
 	}
 
     public static boolean isValid(Object[] delta) {
-        return delta != null && delta.length != 0 && delta[0] != null;
+        return delta != null && delta.length > 0 && delta[0] != null;
     }
 }
