@@ -15,6 +15,7 @@ import info.itsthesky.disky.api.events.specific.MessageEvent;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
@@ -25,8 +26,10 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Reply with a specific message to the channel where a message-event was triggered.",
 		"It can also be used to acknowledge & reply to an interaction, such as button click or slash command.",
 		"In interaction only, you can use the keyword 'hidden' to reply with an ephemeral message (only the executor can see it).",
-		"Therefore, the value stored in the variable, if specified, will be an interaction hook, and not a compete message."})
+		"Therefore, the value stored in the variable, if specified, will be an interaction hook, and not a compete message.",
+		"You can also provide a message as reference. The replied message be linked with the provided one."})
 @Examples({"reply with \"Hello world!\"",
+		"reply with last embed with reference event-message",
 		"reply with hidden \"Hello ...\" and store it in {_msg}\n" +
 				"wait a second",
 		"edit {_msg} to show \"... world!\""})
@@ -36,11 +39,12 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 	static {
 		Skript.registerEffect(
 				ReplyWith.class,
-				"reply with [hidden] %string/messagecreatebuilder/embedbuilder% [and store (it|the message) in %-objects%]"
+				"reply with [hidden] %string/messagecreatebuilder/embedbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]"
 		);
 	}
 
 	private Expression<Object> exprMessage;
+	private Expression<Message> exprReference;
 	private boolean hidden;
 
 	@Override
@@ -52,7 +56,8 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 
 		hidden = parseResult.expr.startsWith("reply with hidden");
 		exprMessage = (Expression<Object>) expressions[0];
-		setChangedVariable((Variable<Object>) expressions[1]);
+		exprReference = (Expression<Message>) expressions[1];
+		setChangedVariable((Variable<Object>) expressions[2]);
 
 		return true;
 	}
@@ -60,6 +65,7 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 	@Override
 	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
 		final Object message = parseSingle(exprMessage, e);
+		final Message reference = parseSingle(exprReference, e);
 		if (message == null) {
 			restart();
 			return;
@@ -98,7 +104,7 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 
 		} else {
 			final MessageEvent event = (MessageEvent) e;
-			event.getMessageChannel().sendMessage(builder.build()).queue(this::restart, ex -> {
+			event.getMessageChannel().sendMessage(builder.build()).setMessageReference(reference).queue(this::restart, ex -> {
 				DiSky.getErrorHandler().exception(e, ex);
 				restart();
 			});
