@@ -57,6 +57,8 @@ public final class DiSky extends JavaPlugin {
         skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage");
 
         getCommand("disky").setExecutor(new DiSkyCommand());
+        if (!getDataFolder().exists())
+            getDataFolder().mkdirs();
 
         /*
          * Loading the configuration
