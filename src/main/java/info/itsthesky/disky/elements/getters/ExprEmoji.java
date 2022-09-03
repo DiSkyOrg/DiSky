@@ -16,6 +16,8 @@ import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
+import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,63 +54,47 @@ public class ExprEmoji extends SimpleExpression<Emote> {
         String[] emotes = name.getAll(e);
         Guild guild = this.guild == null ? null : this.guild.getSingle(e);
         if (emotes.length == 0) return new Emote[0];
-        return convert(guild, emotes).toArray(new Emote[0]);
+
+        final List<Emote> parsed = new ArrayList<>();
+        for (String input : emotes)
+            parsed.add(parse(guild, input));
+
+        return parsed.toArray(new Emote[0]);
     }
 
-    public List<Emote> convert(@Nullable Guild guild, String... emotes) {
-        List<Emote> emojis = new ArrayList<>();
-        for (String input : emotes) {
+    public Emote parse(@Nullable Guild guild, String input) {
 
-            Emote emote;
-            final Emoji emoji = Emojis.ofShortcode(input.toLowerCase(Locale.ROOT));
-            if (emoji != null) {
-                emote = new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(emoji.unicode()));
-            } else {
-                final boolean useID = input.matches("[^0-9]");
-                if (guild == null) {
-
-                    emote = DiSky
-                            .getManager()
-                            .getBots()
-                            .stream()
-                            .map(Bot::getInstance)
-                            .map(JDA::getGuilds)
-                            .map(guilds -> {
-                                for (Guild guild1 : guilds) {
-                                    if (getFromGuild(input, guild1, useID) == null)
-                                        continue;
-                                    return getFromGuild(input, guild1, useID);
-                                }
-                                return null;
-                            })
-                            .filter(Objects::nonNull)
-                            .findFirst()
-                            .orElse(null);
-
-                } else {
-
-                    emote = getFromGuild(input, guild, useID);
-
-                }
-            }
-
-            if (emote == null)
-            {
-                Skript.warning("Cannot found the emote named " + input);
-                continue;
-            }
-            emojis.add(emote);
+        /* Trying to get it from the specified guild, if set */
+        if (guild != null) {
+            DiSky.debug("Trying to get emote from guild " + guild.getName() + " ...");
+            final RichCustomEmoji richCustomEmoji = getFromGuild(guild, input);
+            if (richCustomEmoji != null)
+                return new Emote(richCustomEmoji);
         }
-        return emojis;
+
+        /* Trying named emoji first */
+        DiSky.debug("Trying to get named emoji " + input + " ...");
+        Emoji namedEmoji = Emojis.ofShortcode(input);
+        if (namedEmoji != null)
+            return new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(namedEmoji.unicode()));
+
+        /* Trying unicode through the internal API */
+        DiSky.debug("Trying to get unicode emoji " + input + " from internal API ...");
+        Emoji internalUnicodeEmoji = Emojis.ofUnicode(input);
+        if (internalUnicodeEmoji != null)
+            return new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(internalUnicodeEmoji.unicode()));
+
+        DiSky.debug("Trying to get unicode emoji " + input + " from JDA's API ...");
+        UnicodeEmoji unicodeEmoji = net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(input);
+        return new Emote(unicodeEmoji);
     }
 
-    public Emote getFromGuild(String input, Guild guild, boolean useID) {
-        return Emote.fromJDA(guild
-                .getEmojis()
-                .stream()
-                .filter(e -> useID ? e.getId().equalsIgnoreCase(input) : e.getName().equalsIgnoreCase(input))
-                .findAny()
-                .orElse(null));
+    public @Nullable RichCustomEmoji getFromGuild(Guild guild, String input) {
+        for (RichCustomEmoji richCustomEmoji : guild.getEmojis())
+            if (richCustomEmoji.getName().equalsIgnoreCase(input))
+                return richCustomEmoji;
+
+        return null;
     }
 
     @Override
