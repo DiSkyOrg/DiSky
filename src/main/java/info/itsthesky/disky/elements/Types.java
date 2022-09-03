@@ -106,7 +106,14 @@ public class Types {
                 action -> "role action",
                 null
         ).register();
-        DiSkyType.fromEnum(ChannelType.class, "channeltype", "channeltype").register();
+        new DiSkyType<>(ChannelType.class, "channeltype",
+                type -> type.name().toLowerCase().replace("_", " "),
+                input -> {
+                    if (input.equalsIgnoreCase("text"))
+                        return null;
+                    return input.equalsIgnoreCase("chat") ? ChannelType.TEXT : ChannelType.valueOf(input.toUpperCase());
+                }
+        ).register();
 
         /*
         Components
