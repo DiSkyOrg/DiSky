@@ -36,7 +36,7 @@ public class Emote implements IMentionable {
     }
 
     public RestAction<Void> addReaction(Message message) {
-        return message.addReaction(getEmote());
+        return message.addReaction(getEmoji());
     }
 
     @Override
