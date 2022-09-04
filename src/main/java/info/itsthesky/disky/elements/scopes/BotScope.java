@@ -50,7 +50,8 @@ public class BotScope extends BaseScope<BotOptions> {
             GatewayIntent.DIRECT_MESSAGES,
             GatewayIntent.GUILD_MESSAGES,
             GatewayIntent.GUILD_MEMBERS,
-            GatewayIntent.GUILD_PRESENCES
+            GatewayIntent.GUILD_PRESENCES,
+            GatewayIntent.MESSAGE_CONTENT
     };
 
     public static final SectionValidator validator = new SectionValidator()
