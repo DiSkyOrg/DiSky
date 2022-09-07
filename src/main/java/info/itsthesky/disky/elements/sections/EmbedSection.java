@@ -6,14 +6,10 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.Trigger;
-import ch.njol.skript.lang.TriggerItem;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.EmbedManager;
-import info.itsthesky.disky.api.skript.WorkingEffectSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +41,7 @@ import java.util.List;
         "\t\t\tset footer icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
         "\t\t\tset timestamp of embed to now\n" +
         "\t\treply with last embed")
-public class EmbedSection extends WorkingEffectSection {
+public class EmbedSection extends Section {
 
     public static EmbedBuilder lastEmbed;
     private Expression<String> exprID;
@@ -53,9 +49,6 @@ public class EmbedSection extends WorkingEffectSection {
     static {
         Skript.registerSection(EmbedSection.class, "make [new] [discord] [message] embed [using [the] [template] [(named|with name|with id)] %-string%]");
     }
-
-    @Nullable
-    private Trigger trigger;
 
     @Override
     public boolean init(Expression<?>[] exprs,
@@ -65,10 +58,7 @@ public class EmbedSection extends WorkingEffectSection {
                         @Nullable SectionNode sectionNode,
                         @Nullable List<TriggerItem> triggerItems) {
         exprID = (Expression<String>) exprs[0];
-        if (!hasSection())
-            return false;
-        if (sectionNode != null)
-            trigger = loadWorkingCode(sectionNode, "make embed", ParserInstance.get().getCurrentEvents());
+        loadOptionalCode(sectionNode);
         return true;
     }
 
@@ -81,9 +71,7 @@ public class EmbedSection extends WorkingEffectSection {
         } else {
             lastEmbed = new EmbedBuilder();
         }
-        if (trigger != null)
-            TriggerItem.walk(trigger, e);
-        return getNext();
+        return walk(e, true);
     }
 
     @Override

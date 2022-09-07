@@ -9,7 +9,7 @@ import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.StringMode;
 import info.itsthesky.disky.core.SkriptUtils;
-import info.itsthesky.disky.elements.scopes.BotScope;
+import info.itsthesky.disky.structures.scope.BotScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

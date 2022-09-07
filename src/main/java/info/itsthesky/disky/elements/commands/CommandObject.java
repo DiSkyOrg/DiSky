@@ -1,5 +1,6 @@
 package info.itsthesky.disky.elements.commands;
 
+import ch.njol.skript.config.Config;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
@@ -12,6 +13,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.ChannelType;
+import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class CommandObject {
 
     private final List<Argument<?>> arguments;
 
-    public CommandObject(File script, String name, String pattern, List<Argument<?>> arguments, List<Expression<String>> prefixes,
+    public CommandObject(String name, String pattern, List<Argument<?>> arguments, List<Expression<String>> prefixes,
                          List<String> aliases, Expression<String> description, Expression<String> usage, List<String> roles,
                          List<ChannelType> executableIn, List<String> bots, List<TriggerItem> items,
                          List<String> perms, String permMessage, String category,
@@ -62,7 +64,7 @@ public class CommandObject {
         this.permMessage = permMessage;
         this.category = category;
 
-        trigger = new Trigger(script, "discord command " + name, new SimpleEvent(), items);
+        trigger = new Trigger(null, "discord command " + name, new SimpleEvent(), items);
 
     }
 
@@ -168,7 +170,7 @@ public class CommandObject {
         return perms;
     }
 
-    public File getScript() {
+    public Script getScript() {
         return trigger.getScript();
     }
 

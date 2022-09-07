@@ -129,15 +129,6 @@ public class CommandFactory {
 
         command = matcher.group(2);
 
-        for (CommandData storage : this.commandMap.keySet()) {
-            CommandObject commandObject = storage.getCommand();
-            if (commandObject.getName().equalsIgnoreCase(command)) {
-                if (commandObject.getScript().equals(node.getConfig().getFile())) {
-                    Skript.error("A discord command with the name \"" + command + "\" is already defined in " + commandObject.getScript().getName());
-                }
-            }
-        }
-
         String arguments = matcher.group(4);
         if (arguments == null) {
             arguments = "";
@@ -263,7 +254,7 @@ public class CommandFactory {
         CommandObject commandObject;
         CommandFactory.currentArguments = currentArguments;
         commandObject = new CommandObject(
-                node.getConfig().getFile(), command, pattern.toString(), currentArguments,
+                command, pattern.toString(), currentArguments,
                 prefixes, aliases, description, usage, roles, places, bots, SkriptUtils.loadCode(trigger, CommandEvent.class),
                 perms, permMessage, category,
                 cooldownGuild, cooldownMessage

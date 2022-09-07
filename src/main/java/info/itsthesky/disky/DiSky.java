@@ -12,6 +12,7 @@ import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.Configuration;
+import info.itsthesky.disky.structures.StructureLoader;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.internal.handle.ChannelUpdateHandler;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -73,6 +74,11 @@ public final class DiSky extends JavaPlugin {
             }
         }
         configuration = Configuration.loadConfiguration(configFile);
+
+        /*
+        2.6.4/2.7's Structure API check
+         */
+        StructureLoader.get().load();
 
         /*
         Saving & loading emojis

@@ -16,12 +16,12 @@ repositories {
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://maven.enginehub.org/repo/' }
     maven { url = 'https://m2.dv8tion.net/releases' }
-
+    maven { url = 'https://repo.skriptlang.org/releases' }
 }
 
 dependencies {
     shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
-    shadow 'com.github.SkriptLang:Skript:2.6.1'
+    shadow 'com.github.SkriptLang:Skript:structure-api-SNAPSHOT'
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
@@ -55,6 +55,10 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 1, 'minutes'
 }
 
 compileJava.options.encoding = 'UTF-8'

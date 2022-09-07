@@ -1,5 +1,6 @@
 package info.itsthesky.disky.core;
 
+import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;

@@ -1,4 +1,4 @@
-package info.itsthesky.disky.elements.scopes;
+package info.itsthesky.disky.structures.scope;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
@@ -20,7 +20,6 @@ import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildRead
 import info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -71,7 +70,7 @@ public class BotScope extends BaseScope<BotOptions> {
             .addEntry("application id", false)
             .addEntry("application secret", false);
 
-    static {
+    public static void register() {
         Skript.registerEvent("Bot Creation Scope",
                 BotScope.class, BotScopeEvent.class,
                 "define [the] [new] bot (with name|named) %string%");
