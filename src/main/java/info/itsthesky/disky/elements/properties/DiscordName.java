@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.*;
 import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
                 DiscordName.class,
                 String.class,
                 "[the] discord name",
-                "channel/user/member/emote/role/guild"
+                "channel/user/member/sticker/emote/role/guild"
         );
     }
 
@@ -69,6 +70,8 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
             return ((Guild) entity).getName();
         } else if (entity instanceof Emote) {
             return ((Emote) entity).getName();
+        } else if (entity instanceof Sticker) {
+            return ((Sticker) entity).getName();
         } else {
             return null;
         }

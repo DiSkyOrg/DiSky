@@ -10,12 +10,15 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Variable;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.events.specific.MessageEvent;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +36,7 @@ public class PostMessage extends SpecificBotEffect<Message> {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/embedbuilder% (in|to) [the] %channel% [and store (it|the message) in %-objects%]"
+				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder% (in|to) [the] %channel% [and store (it|the message) in %-objects%]"
 		);
 	}
 
@@ -57,24 +60,36 @@ public class PostMessage extends SpecificBotEffect<Message> {
 			return;
 		}
 
-		final MessageCreateBuilder builder;
-		if (message instanceof MessageCreateBuilder)
-			builder = (MessageCreateBuilder) message;
-		else if (message instanceof EmbedBuilder)
-			builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
-		else
-			builder = new MessageCreateBuilder().setContent((String) message);
-
 		if (!MessageChannel.class.isAssignableFrom(channel.getClass())) {
 			Skript.error("The specified channel must be a message channel.");
 			restart();
 			return;
 		}
 
-		((MessageChannel) channel).sendMessage(builder.build()).queue(this::restart, ex -> {
-			DiSky.getErrorHandler().exception(e, ex);
-			restart();
-		});
+		if (message instanceof Sticker) {
+			final MessageChannel messageChannel = (MessageChannel) channel;
+			if (!(messageChannel instanceof GuildMessageChannel)) {
+				Skript.error("You can't reply with a sticker in a guild channel!");
+				return;
+			}
+			((GuildMessageChannel) messageChannel).sendStickers((Sticker) message).queue(this::restart, ex -> {
+				DiSky.getErrorHandler().exception(e, ex);
+				restart();
+			});
+		} else {
+			final MessageCreateBuilder builder;
+			if (message instanceof MessageCreateBuilder)
+				builder = (MessageCreateBuilder) message;
+			else if (message instanceof EmbedBuilder)
+				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+			else
+				builder = new MessageCreateBuilder().setContent((String) message);
+
+			((MessageChannel) channel).sendMessage(builder.build()).queue(this::restart, ex -> {
+				DiSky.getErrorHandler().exception(e, ex);
+				restart();
+			});
+		}
 	}
 
 	@Override

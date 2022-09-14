@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.entities.channel.*;
 import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -188,6 +189,10 @@ public class Types {
         ).register();
         new DiSkyType<>(Emote.class, "emote",
                 Emote::getAsMention,
+                null
+        ).register();
+        new DiSkyType<>(Sticker.class, "sticker",
+                Sticker::getName,
                 null
         ).register();
         new DiSkyType<>(EmbedBuilder.class, "embedbuilder",

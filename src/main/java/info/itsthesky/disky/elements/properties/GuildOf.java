@@ -9,6 +9,9 @@ import net.dv8tion.jda.api.entities.channel.*;
 import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.sticker.GuildSticker;
+import net.dv8tion.jda.api.entities.sticker.RichSticker;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +27,7 @@ public class GuildOf extends SimplePropertyExpression<Object, Guild> {
                 GuildOf.class,
                 Guild.class,
                 "guild",
-                "channel/role/member/message"
+                "channel/role/sticker/member/message"
         );
     }
 
@@ -41,6 +44,8 @@ public class GuildOf extends SimplePropertyExpression<Object, Guild> {
             return ((StandardGuildMessageChannel) entity).getGuild();
         if (entity instanceof Member)
             return ((Member) entity).getGuild();
+        if (entity instanceof RichSticker)
+            return ((RichSticker) entity).getTags().equals(Sticker.Type.GUILD) ? ((GuildSticker) entity).getGuild() : null;
         return null;
     }
 

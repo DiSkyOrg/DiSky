@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 				AvatarURL.class,
 				String.class,
 				"avatar [url]",
-				"guild/user/member/bot"
+				"guild/user/sticker/member/bot"
 		);
 	}
 
@@ -112,6 +113,8 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 			return ((User) entity).getEffectiveAvatarUrl();
 		if (entity instanceof Member)
 			return ((Member) entity).getEffectiveAvatarUrl();
+		if (entity instanceof Sticker)
+			return ((Sticker) entity).getIconUrl();
 		return null;
 	}
 

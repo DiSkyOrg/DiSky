@@ -16,6 +16,8 @@ import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
@@ -39,7 +41,7 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 	static {
 		Skript.registerEffect(
 				ReplyWith.class,
-				"reply with [hidden] %string/messagecreatebuilder/embedbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]"
+				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]"
 		);
 	}
 
@@ -71,43 +73,55 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 			return;
 		}
 
-		final MessageCreateBuilder builder;
-		if (message instanceof MessageCreateBuilder)
-			builder = (MessageCreateBuilder) message;
-		else if (message instanceof EmbedBuilder)
-			builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
-		else
-			builder = new MessageCreateBuilder().setContent((String) message);
-
-		if (e instanceof InteractionEvent) {
-			final InteractionEvent event = (InteractionEvent) e;
-			if (!(event.getInteractionEvent().getInteraction() instanceof IReplyCallback)) {
-				Skript.error("You are trying to reply to an interaction that is not a reply callback.");
-				restart();
-				return;
-			}
-
-			if (event.getInteractionEvent().getInteraction().isAcknowledged()) {
-				Skript.error("You are trying to reply or defer an interaction that has already been acknowledged!");
-				restart();
-				return;
-			}
-
-			final IReplyCallback callback = (IReplyCallback) event.getInteractionEvent().getInteraction();
-			callback.reply(builder.build()).setEphemeral(hidden).queue(hook -> {
-				if (hidden) restart(hook);
-				else restart(hook);
-			}, ex -> {
-				DiSky.getErrorHandler().exception(e, ex);
-				restart();
-			});
-
-		} else {
+		if (message instanceof Sticker) {
 			final MessageEvent event = (MessageEvent) e;
-			event.getMessageChannel().sendMessage(builder.build()).setMessageReference(reference).queue(this::restart, ex -> {
+			if (!(event.getMessageChannel() instanceof GuildMessageChannel)) {
+				Skript.error("You can't reply with a sticker in a guild channel!");
+				return;
+			}
+			((GuildMessageChannel) event.getMessageChannel()).sendStickers((Sticker) message).setMessageReference(reference).queue(this::restart, ex -> {
 				DiSky.getErrorHandler().exception(e, ex);
 				restart();
 			});
+		} else {
+			final MessageCreateBuilder builder;
+			if (message instanceof MessageCreateBuilder)
+				builder = (MessageCreateBuilder) message;
+			else if (message instanceof EmbedBuilder)
+				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+			else
+				builder = new MessageCreateBuilder().setContent((String) message);
+
+			if (e instanceof InteractionEvent) {
+				final InteractionEvent event = (InteractionEvent) e;
+				if (!(event.getInteractionEvent().getInteraction() instanceof IReplyCallback)) {
+					Skript.error("You are trying to reply to an interaction that is not a reply callback.");
+					restart();
+					return;
+				}
+
+				if (event.getInteractionEvent().getInteraction().isAcknowledged()) {
+					Skript.error("You are trying to reply or defer an interaction that has already been acknowledged!");
+					restart();
+					return;
+				}
+
+				final IReplyCallback callback = (IReplyCallback) event.getInteractionEvent().getInteraction();
+				callback.reply(builder.build()).setEphemeral(hidden).queue(hook -> {
+					if (hidden) restart(hook);
+					else restart(hook);
+				}, ex -> {
+					DiSky.getErrorHandler().exception(e, ex);
+					restart();
+				});
+
+			} else {
+				final MessageEvent event = (MessageEvent) e;
+				event.getMessageChannel().sendMessage(builder.build()).setMessageReference(reference).queue(this::restart, ex -> {
+					DiSky.getErrorHandler().exception(e, ex);
+					restart();
+				});
+			}
 		}
 	}
 
