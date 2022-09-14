@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
@@ -14,6 +15,8 @@ import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.TimeUnit;
 
 @Name("Ban Member")
 @Description({"Bans a member from a guild."})
@@ -24,19 +27,19 @@ public class BanMember extends SpecificBotEffect {
     static {
         Skript.registerEffect(
                 BanMember.class,
-                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %number% day[s] [worth ]of messages]"
+                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %timespan% [worth ]of messages]"
         );
     }
 
     private Expression<Member> exprMember;
     private Expression<String> exprReason;
-    private Expression<Integer> exprDays;
+    private Expression<Timespan> exprDays;
 
     @Override
     public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         exprMember = (Expression<Member>) expr[0];
         exprReason = (Expression<String>) expr[1];
-        exprDays = (Expression<Integer>) expr[2];
+        exprDays = (Expression<Timespan>) expr[2];
         return true;
     }
 
@@ -44,14 +47,14 @@ public class BanMember extends SpecificBotEffect {
     public void runEffect(@NotNull Event e, Bot bot) {
         final Member member = parseSingle(exprMember, e, null);
         final @Nullable String reason = parseSingle(exprReason, e, null);
-        final Integer days = parseSingle(exprDays, e, 0);
+        final Timespan timespan = parseSingle(exprDays, e, null);
 
         if (member == null || bot == null) {
             restart();
             return;
         }
 
-        member.ban(days, reason).queue(
+        member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).queue(
                 v -> restart(),
                 ex -> {
                     DiSky.getErrorHandler().exception(e, ex);
