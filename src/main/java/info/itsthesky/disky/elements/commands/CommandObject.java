@@ -1,10 +1,7 @@
 package info.itsthesky.disky.elements.commands;
 
-import ch.njol.skript.config.Config;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
-import ch.njol.skript.lang.util.SimpleEvent;
 import ch.njol.skript.log.ParseLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.Timespan;
@@ -13,9 +10,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import org.skriptlang.skript.lang.script.Script;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +29,8 @@ public class CommandObject {
     private final String permMessage;
     private final Timespan cooldownGuild;
     private final String cooldownMessage;
+    private final List<TriggerItem> items;
     private final List<String> bots;
-
-    private final Trigger trigger;
 
     private final List<Argument<?>> arguments;
 
@@ -63,9 +57,7 @@ public class CommandObject {
         this.arguments = arguments;
         this.permMessage = permMessage;
         this.category = category;
-
-        trigger = new Trigger(null, "discord command " + name, new SimpleEvent(), items);
-
+        this.items = items;
     }
 
     public boolean execute(CommandEvent event) {
@@ -101,7 +93,11 @@ public class CommandObject {
                 }
             }
 
-            SkriptUtils.sync(() -> trigger.execute(event));
+            SkriptUtils.sync(() -> {
+                if (items.isEmpty())
+                    return;
+                TriggerItem.walk(items.get(0), event);
+            });
 
         } finally {
             log.stop();
@@ -155,10 +151,6 @@ public class CommandObject {
         return usableAliases;
     }
 
-    public Trigger getTrigger() {
-        return trigger;
-    }
-
     public List<ChannelType> getExecutableIn() {
         return executableIn;
     }
@@ -168,10 +160,6 @@ public class CommandObject {
     }
     public List<String> getPerms() {
         return perms;
-    }
-
-    public Script getScript() {
-        return trigger.getScript();
     }
 
 }
