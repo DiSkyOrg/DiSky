@@ -6,6 +6,15 @@ import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.*;
+import net.dv8tion.jda.api.entities.channel.attribute.*;
+import net.dv8tion.jda.api.entities.channel.middleman.*;
+import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;

@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.Channel;
+import net.dv8tion.jda.api.entities.channel.Channel;
 
 @Name("Get Channel")
 @Description({"A generic expression to get any channel from its ID.",

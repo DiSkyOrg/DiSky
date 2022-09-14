@@ -1,8 +1,8 @@
 package info.itsthesky.disky.elements.properties.channels;
 
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
-import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 
 public class ChannelThreads extends MultiplyPropertyExpression<GuildChannel, ThreadChannel> {
 

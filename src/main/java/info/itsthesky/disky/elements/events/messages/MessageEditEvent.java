@@ -5,7 +5,13 @@ import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.managers.MessageManager;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.entities.channel.*;
+import net.dv8tion.jda.api.entities.channel.attribute.*;
+import net.dv8tion.jda.api.entities.channel.middleman.*;
+import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 
 public class MessageEditEvent extends DiSkyEvent<MessageUpdateEvent> {

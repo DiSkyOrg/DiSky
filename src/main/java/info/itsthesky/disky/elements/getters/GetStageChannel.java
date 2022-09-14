@@ -4,7 +4,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.StageChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import org.jetbrains.annotations.NotNull;
 
 @Name("Get Stage Channel")

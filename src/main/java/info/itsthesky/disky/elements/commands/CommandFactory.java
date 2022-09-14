@@ -16,7 +16,7 @@ import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import org.bukkit.event.Event;
 
 import java.lang.reflect.InvocationTargetException;

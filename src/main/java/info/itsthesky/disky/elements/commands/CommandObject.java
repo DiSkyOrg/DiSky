@@ -12,7 +12,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;

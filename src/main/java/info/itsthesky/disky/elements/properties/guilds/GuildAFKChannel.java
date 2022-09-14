@@ -9,7 +9,7 @@ import info.itsthesky.disky.api.changers.ChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

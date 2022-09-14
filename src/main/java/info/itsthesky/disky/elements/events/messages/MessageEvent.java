@@ -3,8 +3,17 @@ package info.itsthesky.disky.elements.events.messages;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
@@ -32,10 +41,6 @@ public class MessageEvent extends DiSkyEvent<MessageReceivedEvent> {
 				event -> event.getJDAEvent().getAuthor());
 		SkriptUtils.registerValue(BukkitMessageEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getChannel());
-
-		for (int i = 0; i < 10; i++) {
-			final ChannelType type = ChannelType.values()[i];
-		}
 
 		SkriptUtils.registerValue(BukkitMessageEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);

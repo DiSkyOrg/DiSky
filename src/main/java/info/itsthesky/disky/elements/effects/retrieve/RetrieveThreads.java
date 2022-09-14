@@ -4,7 +4,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.BaseMultipleRetrieveEffect;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 

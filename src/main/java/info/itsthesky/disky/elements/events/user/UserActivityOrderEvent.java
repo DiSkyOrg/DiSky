@@ -6,6 +6,10 @@ import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.events.role.RolePermissionEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.*;
+import net.dv8tion.jda.api.entities.channel.attribute.*;
+import net.dv8tion.jda.api.entities.channel.middleman.*;
+import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.entities.User;
 
 public class UserActivityOrderEvent extends DiSkyEvent<net.dv8tion.jda.api.events.user.update.UserUpdateActivityOrderEvent> {

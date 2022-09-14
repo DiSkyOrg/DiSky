@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 @Name("Voice Channel Members")
 @Description("The list of members that are connected to this actual voice channel.")

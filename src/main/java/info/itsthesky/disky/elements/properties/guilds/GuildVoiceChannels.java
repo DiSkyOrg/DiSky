@@ -4,7 +4,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 @Name("Guild Voice Channels")
 @Description("Gets all voice channels of a guild.")

@@ -1,6 +1,6 @@
 package info.itsthesky.disky.elements.properties.members;
 
-import net.dv8tion.jda.api.entities.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

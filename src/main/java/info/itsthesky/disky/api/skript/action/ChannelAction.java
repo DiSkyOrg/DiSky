@@ -3,7 +3,7 @@ package info.itsthesky.disky.api.skript.action;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.bukkit.event.Event;
 
 public abstract class ChannelAction<T> extends AbstractNewAction<T, TextChannel> {

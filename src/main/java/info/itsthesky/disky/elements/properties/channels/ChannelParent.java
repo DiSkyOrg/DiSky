@@ -2,9 +2,9 @@ package info.itsthesky.disky.elements.properties.channels;
 
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
-import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.ICategorizableChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

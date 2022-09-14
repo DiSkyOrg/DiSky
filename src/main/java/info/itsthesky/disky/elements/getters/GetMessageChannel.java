@@ -5,9 +5,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.AudioChannel;
-import net.dv8tion.jda.api.entities.StandardGuildMessageChannel;
-import net.dv8tion.jda.api.entities.GuildMessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.jetbrains.annotations.NotNull;
 
 @Name("Get Message Channel")

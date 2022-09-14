@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.IMemberContainer;
+import net.dv8tion.jda.api.entities.channel.attribute.IMemberContainer;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

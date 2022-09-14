@@ -4,7 +4,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import org.jetbrains.annotations.NotNull;
 
 @Name("Get News Channel")

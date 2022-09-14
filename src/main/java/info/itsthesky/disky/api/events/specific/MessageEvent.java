@@ -1,7 +1,7 @@
 package info.itsthesky.disky.api.events.specific;
 
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageType;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 

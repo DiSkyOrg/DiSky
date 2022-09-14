@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.properties.guilds;
 
 import ch.njol.skript.doc.*;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 
 @Name("All Guild Guild Channels")
 @Description("Get every guild channel in the guild, including text, voice, stage, news, and thread channels.")

@@ -10,7 +10,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

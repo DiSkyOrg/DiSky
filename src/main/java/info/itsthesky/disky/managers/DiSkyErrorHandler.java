@@ -6,7 +6,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.events.DiSkyErrorEvent;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.requests.ErrorResponse;

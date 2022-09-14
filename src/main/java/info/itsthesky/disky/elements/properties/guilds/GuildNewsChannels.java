@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.properties.guilds;
 
 import ch.njol.skript.doc.*;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.NewsChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 
 @Name("Guild News Channels")
 @Description("Gets all news channels of a guild.")

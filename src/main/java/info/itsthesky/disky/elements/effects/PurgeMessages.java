@@ -10,7 +10,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

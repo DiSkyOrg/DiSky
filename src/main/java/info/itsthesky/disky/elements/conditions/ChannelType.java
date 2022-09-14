@@ -6,7 +6,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
-import net.dv8tion.jda.api.entities.Channel;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,12 +21,12 @@ public class ChannelType extends Condition {
 	}
 
 	private Expression<Channel> exprChannel;
-	private Expression<net.dv8tion.jda.api.entities.ChannelType> exprType;
+	private Expression<net.dv8tion.jda.api.entities.channel.ChannelType> exprType;
 
 	@Override
 	public boolean check(@NotNull Event e) {
 		final Channel channel = EasyElement.parseSingle(exprChannel, e, null);
-		final net.dv8tion.jda.api.entities.ChannelType type = EasyElement.parseSingle(exprType, e, null);
+		final net.dv8tion.jda.api.entities.channel.ChannelType type = EasyElement.parseSingle(exprType, e, null);
 		if (EasyElement.anyNull(channel, type))
 			return false;
 		return channel.getType().equals(type);
@@ -40,7 +40,7 @@ public class ChannelType extends Condition {
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
 		exprChannel = (Expression<Channel>) exprs[0];
-		exprType = (Expression<net.dv8tion.jda.api.entities.ChannelType>) exprs[1];
+		exprType = (Expression<net.dv8tion.jda.api.entities.channel.ChannelType>) exprs[1];
 		return true;
 	}
 }

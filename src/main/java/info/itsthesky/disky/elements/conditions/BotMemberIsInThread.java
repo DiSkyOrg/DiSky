@@ -9,7 +9,7 @@ import info.itsthesky.disky.api.skript.EasyPropertyCondition;
 import info.itsthesky.disky.api.skript.PropertyCondition;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 

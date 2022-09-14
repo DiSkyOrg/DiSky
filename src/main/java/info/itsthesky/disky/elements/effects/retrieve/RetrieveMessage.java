@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.effects.retrieve;
 
 import info.itsthesky.disky.api.skript.BaseRetrieveEffect;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 
