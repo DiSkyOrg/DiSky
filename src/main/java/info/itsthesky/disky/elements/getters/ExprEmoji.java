@@ -9,23 +9,19 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.emojis.Emoji;
 import info.itsthesky.disky.api.emojis.Emojis;
 import info.itsthesky.disky.api.emojis.Emote;
-import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
-import net.dv8tion.jda.api.entities.emoji.UnicodeEmoji;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Name("Emoji / Emote")
 @Description({
@@ -46,6 +42,10 @@ public class ExprEmoji extends SimpleExpression<Emote> {
                 "(emoji|emote|reaction)[s] %strings% [(from|in) %-guild%]");
     }
 
+    private static final Pattern COMPLEX_CUSTOM = Pattern.compile("^(?:<a?:[a-zA-Z0-9_]+:)?([0-9]+)>?$");
+    private static final Pattern SIMPLE_CUSTOM = Pattern.compile("^([0-9]+)$");
+    private static final Pattern NAMED = Pattern.compile("^:([a-zA-Z0-9_]+):$");
+
     private Expression<String> name;
     private Expression<Guild> guild;
 
@@ -64,29 +64,64 @@ public class ExprEmoji extends SimpleExpression<Emote> {
 
     public Emote parse(@Nullable Guild guild, String input) {
 
-        /* Trying to get it from the specified guild, if set */
-        if (guild != null) {
-            DiSky.debug("Trying to get emote from guild " + guild.getName() + " ...");
-            final RichCustomEmoji richCustomEmoji = getFromGuild(guild, input);
-            if (richCustomEmoji != null)
-                return new Emote(richCustomEmoji);
+        final Matcher complexCustom = COMPLEX_CUSTOM.matcher(input);
+        if (complexCustom.matches()) {
+            final String id = complexCustom.group(1);
+            if (guild == null) {
+                Skript.warning("You must specify a guild when retrieving an emote by its ID!");
+                return null;
+            }
+            final RichCustomEmoji emote = guild.getEmojiById(id);
+            if (emote == null) {
+                Skript.warning("The emote with ID '" + id + "' doesn't exist in the guild '" + guild.getName() + "'!");
+                return null;
+            }
+            return new Emote(emote);
         }
 
-        /* Trying named emoji first */
-        DiSky.debug("Trying to get named emoji " + input + " ...");
-        Emoji namedEmoji = Emojis.ofShortcode(input);
-        if (namedEmoji != null)
-            return new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(namedEmoji.unicode()));
+        final Matcher simpleCustom = SIMPLE_CUSTOM.matcher(input);
+        if (simpleCustom.matches()) {
+            final String id = simpleCustom.group(1);
+            if (guild == null) {
+                Skript.warning("You must specify a guild when retrieving an emote by its ID!");
+                return null;
+            }
+            final RichCustomEmoji emote = guild.getEmojiById(id);
+            if (emote == null) {
+                Skript.warning("The emote with ID '" + id + "' doesn't exist in the guild '" + guild.getName() + "'!");
+                return null;
+            }
+            return new Emote(emote);
+        }
 
-        /* Trying unicode through the internal API */
-        DiSky.debug("Trying to get unicode emoji " + input + " from internal API ...");
-        Emoji internalUnicodeEmoji = Emojis.ofUnicode(input);
-        if (internalUnicodeEmoji != null)
-            return new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(internalUnicodeEmoji.unicode()));
+        final String name;
 
-        DiSky.debug("Trying to get unicode emoji " + input + " from JDA's API ...");
-        UnicodeEmoji unicodeEmoji = net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(input);
-        return new Emote(unicodeEmoji);
+        final Matcher named = NAMED.matcher(input);
+        if (named.matches())
+            name = named.group(1);
+        else
+            name = input;
+
+        if (guild == null) {
+            final Emoji emoji = Emojis.ofShortcode(name);
+            if (emoji == null) {
+                final Emoji unicodeEmoji = Emojis.ofUnicode(name);
+                if (unicodeEmoji == null) {
+                    Skript.warning("The emoji '" + name + "' doesn't exist!");
+                    return null;
+                }
+                return new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(unicodeEmoji.unicode()));
+            }
+            return new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(emoji.unicode()));
+        } else {
+            final RichCustomEmoji emote = guild.getEmojisByName(name, true).stream().findFirst().orElse(null);
+            if (emote == null) {
+                Skript.warning("The emote with name '" + name + "' doesn't exist in the guild '" + guild.getName() + "'!");
+                return null;
+            }
+            return new Emote(emote);
+        }
+
     }
 
     public @Nullable RichCustomEmoji getFromGuild(Guild guild, String input) {
