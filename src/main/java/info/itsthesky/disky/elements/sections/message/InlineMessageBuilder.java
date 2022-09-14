@@ -30,9 +30,11 @@ import java.util.List;
 @Name("Inline Rich Message Builder")
 @Description({"Create a new rich message in one line only.",
 "WARNING: This could slow a lot the Skript's parsing time if used too many times!",
-"We still recommend to use the create message section instead!"})
-@Examples("reply with message \"hello world\" with embed last embed with components {_row}")
-@Since("4.4.1")
+"We still recommend to use the create message section instead!",
+"You can also use the second pattern to send component-only messages."})
+@Examples({"reply with message \"hello world\" with embed last embed with components {_row}",
+"post components new danger button with id \"id\" named \"Hey\" to event-channel"})
+@Since("4.4.1, 4.4.3 (component-only)")
 public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder> {
 
 	static {
@@ -40,7 +42,8 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 				InlineMessageBuilder.class,
 				MessageCreateBuilder.class,
 				ExpressionType.COMBINED,
-				"[rich] message %string/embedbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%]"
+				"[rich] message %string/embedbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%]",
+				"[rich] component[s] %rows/buttons/dropdowns%"
 		);
 	}
 
@@ -49,30 +52,50 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 	private Expression<Object> exprRows;
 	private Expression<String> exprFiles;
 
+	private boolean isComponentOnly;
+
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+		isComponentOnly = matchedPattern == 1;
 		exprBase = (Expression<Object>) exprs[0];
-		exprEmbeds = (Expression<EmbedBuilder>) exprs[1];
-		exprRows = (Expression<Object>) exprs[2];
-		exprFiles = (Expression<String>) exprs[3];
+		if (!isComponentOnly) {
+			exprEmbeds = (Expression<EmbedBuilder>) exprs[1];
+			exprRows = (Expression<Object>) exprs[2];
+			exprFiles = (Expression<String>) exprs[3];
+		}
 		return true;
 	}
 
 	@Override
 	protected @Nullable MessageCreateBuilder[] get(@NotNull Event e) {
-		final Object base = EasyElement.parseSingle(exprBase, e, null);
 		final EmbedBuilder[] embeds = EasyElement.parseList(exprEmbeds, e, null);
 		final Object[] rows = EasyElement.parseList(exprRows, e, null);
 		final String[] files = EasyElement.parseList(exprFiles, e, null);
-		if (base == null)
-			return new MessageCreateBuilder[0];
-
 		final MessageCreateBuilder builder = new MessageCreateBuilder();
 
-		if (base instanceof String)
-			builder.setContent((String) base);
-		else if (base instanceof EmbedBuilder)
-			builder.setEmbeds(((EmbedBuilder) base).build());
+		if (isComponentOnly) {
+			final Object[] baseRows = EasyElement.parseList(exprBase, e, new Object[0]);
+			final List<ActionRow> actionRows = new ArrayList<>();
+			for (Object row : baseRows) {
+				if (row instanceof ComponentRow) {
+					actionRows.add(((ComponentRow) row).asActionRow());
+				} else if (row instanceof Button) {
+					actionRows.add(ActionRow.of((Button) row));
+				} else if (row instanceof SelectMenu) {
+					actionRows.add(ActionRow.of((SelectMenu) row));
+				} else if (row instanceof TextInput) {
+					actionRows.add(ActionRow.of((TextInput) row));
+				}
+			}
+
+			return new MessageCreateBuilder[] {builder.setComponents(actionRows)};
+		} else {
+			final Object base = EasyElement.parseSingle(exprBase, e, null);
+			if (base instanceof String)
+				builder.setContent((String) base);
+			else if (base instanceof EmbedBuilder)
+				builder.setEmbeds(((EmbedBuilder) base).build());
+		}
 
 		if (embeds != null)
 			for (EmbedBuilder embed : embeds)
