@@ -44,6 +44,9 @@ public class GetChannel extends BaseGetterExpression<Channel> {
 		channel = bot.getInstance().getPrivateChannelById(id);
 		if (channel != null) return channel;
 
+		channel = bot.getInstance().getForumChannelById(id);
+		if (channel != null) return channel;
+
 		channel = bot.getInstance().getThreadChannelById(id);
 		return channel;
 	}
