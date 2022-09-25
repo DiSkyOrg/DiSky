@@ -17,7 +17,7 @@ public class GetThread extends BaseGetterExpression<ThreadChannel> {
     static {
         register(GetThread.class,
                 ThreadChannel.class,
-                "thread");
+                "thread [channel]");
     }
 
     @Override

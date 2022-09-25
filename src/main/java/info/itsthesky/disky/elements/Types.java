@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.*;
 import net.dv8tion.jda.api.entities.channel.attribute.*;
+import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
@@ -175,6 +176,10 @@ public class Types {
         new DiSkyType<>(Role.class, "role",
                 Role::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getRoleById(input))
+        ).register();
+        new DiSkyType<>(ForumTag.class, "forumtag",
+                ForumTag::getName,
+                null
         ).register();
 
         /*

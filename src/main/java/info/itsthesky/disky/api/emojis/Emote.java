@@ -10,14 +10,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class Emote implements IMentionable {
 
-    private final RichCustomEmoji customEmoji;
+    private final CustomEmoji customEmoji;
     private final UnicodeEmoji unicodeEmoji;
 
     private final Emoji emoji;
 
     public Emote(Emoji emoji) {
         this.emoji = emoji;
-        this.customEmoji = emoji.getType().equals(Emoji.Type.CUSTOM) ? (RichCustomEmoji) emoji : null;
+        this.customEmoji = emoji.getType().equals(Emoji.Type.CUSTOM) ? (CustomEmoji) emoji : null;
         this.unicodeEmoji = emoji.getType().equals(Emoji.Type.UNICODE) ? (UnicodeEmoji) emoji : null;
     }
 
@@ -49,7 +49,7 @@ public class Emote implements IMentionable {
     }
 
     public RichCustomEmoji getEmote() {
-        return customEmoji;
+        return customEmoji instanceof RichCustomEmoji ? (RichCustomEmoji) customEmoji : null;
     }
 
     public String getName() {
@@ -79,7 +79,7 @@ public class Emote implements IMentionable {
     }
 
     public Guild getGuild() {
-        return isCustom() ? customEmoji.getGuild() : null;
+        return isCustom() && customEmoji instanceof RichCustomEmoji ? ((RichCustomEmoji) customEmoji).getGuild() : null;
     }
 
     @Override

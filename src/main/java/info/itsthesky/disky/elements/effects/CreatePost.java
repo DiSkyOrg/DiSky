@@ -2,7 +2,9 @@ package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
@@ -24,10 +26,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Name("Create Post")
 @Description({"Create a new post in a forum channel. The output value will be the newly created thread channel."})
+@Since("4.4.4")
+@Examples({
+		"create a new post in forum channel with id \"000\" named \"I need help!\" with message \"please help me!\"",
+		"create a new post in forum channel with id \"000\" named \"I need help!\" with message \"please help me!\" with tags \"help\" and \"support\""
+})
 public class CreatePost extends SpecificBotEffect<ThreadChannel> {
 
 	static {
