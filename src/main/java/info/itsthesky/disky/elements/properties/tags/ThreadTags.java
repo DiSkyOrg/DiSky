@@ -2,6 +2,9 @@ package info.itsthesky.disky.elements.properties.tags;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
@@ -22,12 +25,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ThreadTags extends MultiplyPropertyExpression<Object, ForumTag> {
+@Name("Post / Forum Tags")
+@Description({"Get all tags of a forum channel or a thread channel.",
+"You can also add or remove tags from a thread channel using this expression.",
+"You must add the tag to the forum itself before adding it to the post."})
+@Examples({"set {_tags::*} to tags of event-forumchannel",
+"add new tag named \"resolved\" with reaction \"x\" to tags of forum with id \"000\""})
+public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag> {
 
 	static {
 		register(
 				ThreadTags.class,
-				ForumTag.class,
+				BaseForumTag.class,
 				"tags",
 				"threadchannel/forumchannel"
 		);
