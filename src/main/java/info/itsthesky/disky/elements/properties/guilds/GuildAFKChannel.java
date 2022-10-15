@@ -60,7 +60,7 @@ public class GuildAFKChannel extends ChangeablePropertyExpression<Guild, VoiceCh
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         setExpr((Expression<? extends Guild>) exprs[0]);
         return true;
     }

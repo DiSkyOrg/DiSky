@@ -4,7 +4,7 @@ import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
 
-public class ReadyEvent extends DiSkyEvent<net.dv8tion.jda.api.events.ReadyEvent> {
+public class ReadyEvent extends DiSkyEvent<net.dv8tion.jda.api.events.session.ReadyEvent> {
 
 	static {
 		register("Ready Event", ReadyEvent.class, BukkitReadyEvent.class,
@@ -14,7 +14,7 @@ public class ReadyEvent extends DiSkyEvent<net.dv8tion.jda.api.events.ReadyEvent
 		SkriptUtils.registerBotValue(BukkitReadyEvent.class);
 	}
 	
-	public static class BukkitReadyEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.ReadyEvent> {
+	public static class BukkitReadyEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.session.ReadyEvent> {
 		public BukkitReadyEvent(ReadyEvent event) {
 			
 		}

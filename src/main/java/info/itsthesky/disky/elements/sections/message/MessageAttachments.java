@@ -40,7 +40,7 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 	}
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		if (!getParser().isCurrentSection(CreateMessage.class)) {
 			Skript.error("You can only use the 'message attachments' expression inside a 'create message' section");
 			return false;
@@ -49,7 +49,7 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.REMOVE)
 			if (DiSky.isSkImageInstalled())
 				return new Class[]{
@@ -62,7 +62,7 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		if (!EasyElement.isValid(delta))
 			return;
 

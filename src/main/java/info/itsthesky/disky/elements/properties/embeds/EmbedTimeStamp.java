@@ -17,7 +17,7 @@ public class EmbedTimeStamp extends EmbedProperty<Date> {
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		return new Class[] {Date.class};
 	}
 

@@ -36,7 +36,7 @@ public class EffAttDownload extends WaiterEffect {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean initEffect(Expression @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean initEffect(Expression @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         this.exprAtt = (Expression<Message.Attachment>) exprs[0];
         this.exprPath = (Expression<String>) exprs[1];
         return true;

@@ -45,7 +45,7 @@ public abstract class MultipleActionProperty<E, T extends AuditableRestAction<E>
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         setExpr(exprs[0]);
         return true;
     }

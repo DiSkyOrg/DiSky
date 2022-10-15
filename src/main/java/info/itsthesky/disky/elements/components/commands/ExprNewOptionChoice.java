@@ -31,7 +31,7 @@ public class ExprNewOptionChoice extends SimpleExpression<Command.Choice> {
 	}
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprName = (Expression<String>) exprs[0];
 		exprValue = (Expression<Object>) exprs[1];
 		return true;

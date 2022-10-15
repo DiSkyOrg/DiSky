@@ -28,7 +28,7 @@ public class RowComponents extends MultiplyPropertyExpression<ComponentRow, Obje
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.ADD))
 			return new Class[]{
 					SelectMenu.class,
@@ -39,7 +39,7 @@ public class RowComponents extends MultiplyPropertyExpression<ComponentRow, Obje
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		if (!EasyElement.isValid(delta))
 			return;
 

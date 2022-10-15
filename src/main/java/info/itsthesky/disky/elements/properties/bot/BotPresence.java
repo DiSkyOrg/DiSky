@@ -28,14 +28,14 @@ public class BotPresence extends PropertyExpression<Bot, Activity> {
     private NodeInformation info;
 
     @Override
-    public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+    public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
         if (mode == Changer.ChangeMode.SET)
             return CollectionUtils.array(Activity.class);
         return CollectionUtils.array();
     }
 
     @Override
-    public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+    public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
         if (delta == null || delta.length == 0 || delta[0] == null) return;
         Bot bot = EasyElement.parseSingle(getExpr(), e, null);
         final Activity activity = (Activity) delta[0];
@@ -60,7 +60,7 @@ public class BotPresence extends PropertyExpression<Bot, Activity> {
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         setExpr((Expression<? extends Bot>) exprs[0]);
         info = new NodeInformation();
         return true;

@@ -38,12 +38,12 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
     }
 
     @Override
-    public @Nullable Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+    public @Nullable Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
         return mode == Changer.ChangeMode.SET ? new Class[] {String.class} : new Class[0];
     }
 
     @Override
-    public void change(@NotNull Event e, @Nullable Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+    public void change(@NotNull Event e, @Nullable @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
         final Object entity = getExpr().getSingle(e);
         final @Nullable String name = delta.length == 0 ? null : (String) delta[0];
         if (name == null || entity == null)

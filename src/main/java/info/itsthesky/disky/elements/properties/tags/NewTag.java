@@ -41,7 +41,7 @@ public class NewTag extends SimpleExpression<BaseForumTag> {
 	private boolean moderate;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
 		exprName = (Expression<String>) exprs[0];
 		exprEmoji = (Expression<Emote>) exprs[1];
 		moderate = matchedPattern == 1;

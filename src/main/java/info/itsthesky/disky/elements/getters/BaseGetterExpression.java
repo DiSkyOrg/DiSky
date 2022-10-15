@@ -39,7 +39,7 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {
     protected abstract T get(String id, Bot bot);
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprId = (Expression<String>) exprs[0];
         exprBot = (Expression<Bot>) exprs[1];
         return true;

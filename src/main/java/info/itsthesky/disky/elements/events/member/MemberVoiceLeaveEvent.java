@@ -4,13 +4,16 @@ import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 
-public class MemberVoiceLeaveEvent extends DiSkyEvent<GuildVoiceLeaveEvent> {
+public class MemberVoiceLeaveEvent extends DiSkyEvent<GuildVoiceUpdateEvent> {
+
+    @Override
+    public boolean check(GuildVoiceUpdateEvent event) {
+        return event.getChannelLeft() != null;
+    }
 
     static {
         register("Member Voice Leave Event", MemberVoiceLeaveEvent.class, BukkitMemberVoiceLeaveEvent.class,
@@ -36,7 +39,7 @@ public class MemberVoiceLeaveEvent extends DiSkyEvent<GuildVoiceLeaveEvent> {
                 event -> event.getJDAEvent().getMember());
     }
 
-    public static class BukkitMemberVoiceLeaveEvent extends SimpleDiSkyEvent<GuildVoiceLeaveEvent> {
+    public static class BukkitMemberVoiceLeaveEvent extends SimpleDiSkyEvent<GuildVoiceUpdateEvent> {
         public BukkitMemberVoiceLeaveEvent(MemberVoiceLeaveEvent event) {
         }
     }

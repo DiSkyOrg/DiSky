@@ -29,7 +29,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
 
     public abstract boolean validate(@Nullable T parsedEntity);
 
-    public void init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult, SectionNode node) {};
+    public void init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, SectionNode node) {};
 
     public String parseEntry(SectionNode node, String key) {
         return parseEntry(node, key, "");
@@ -83,7 +83,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
     }
 
     @Override
-    public boolean init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult) {
         final Node node = SkriptLogger.getNode();
         if (!(node instanceof SectionNode))
             return false;

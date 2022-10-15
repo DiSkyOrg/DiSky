@@ -22,10 +22,12 @@ repositories {
 dependencies {
     shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
     shadow 'com.github.SkriptLang:Skript:structure-api-SNAPSHOT'
+    // Jetbrains Annotations
+    shadow 'org.jetbrains:annotations:23.0.0'
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.20'
+    implementation 'net.dv8tion:JDA:5.0.0-alpha.21'
 }
 
 shadowJar {

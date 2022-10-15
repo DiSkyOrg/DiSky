@@ -54,7 +54,7 @@ public class UserLocal extends SimpleExpression<String> {
 	}
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		if (!EasyElement.containsInterfaces(InteractionEvent.class)) {
 			Skript.error("The 'user locale' expression can only be used in interaction events.");
 			return false;

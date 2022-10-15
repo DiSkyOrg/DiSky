@@ -67,7 +67,7 @@ public class ExprNewSlashCommand extends SimpleExpression<Object> {
 	private Type type;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprName = (Expression<String>) exprs[0];
 		exprDesc = (Expression<String>) exprs[1];
 		type = Type.fromPattern(matchedPattern);

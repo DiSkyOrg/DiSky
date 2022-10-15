@@ -70,7 +70,7 @@ public class ComponentValue extends SimpleExpression<Object> {
 	private boolean isSingle;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		if (!EasyElement.containsEvent(ModalSendEvent.BukkitModalSendEvent.class)) {
 			Skript.error("You can only get values of components in a modal receive event.");
 			return false;

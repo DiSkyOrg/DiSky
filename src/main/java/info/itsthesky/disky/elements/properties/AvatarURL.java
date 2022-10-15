@@ -97,7 +97,7 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.RESET, Changer.ChangeMode.DELETE))
 			return new Class[] {String.class};
 		return new Class[0];

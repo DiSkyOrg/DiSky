@@ -30,7 +30,7 @@ public abstract class WaiterEffect<T> extends EasyElement {
 
     public abstract boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult);
 
-    public boolean init(Expression<?> @NotNull [] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] expressions, int i, @NotNull Kleenean kleenean, @NotNull SkriptParser.ParseResult parseResult) {
         ParserInstance.get().setHasDelayBefore(Kleenean.TRUE);
         node = new NodeInformation();
         return initEffect(expressions, i, kleenean, parseResult);

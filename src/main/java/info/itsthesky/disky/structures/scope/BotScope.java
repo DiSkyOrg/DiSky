@@ -19,8 +19,8 @@ import info.itsthesky.disky.elements.events.bots.BotStopEvent.BukkitShutdownEven
 import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;
 import info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;

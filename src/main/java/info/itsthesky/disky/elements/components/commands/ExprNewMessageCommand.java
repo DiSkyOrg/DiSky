@@ -35,7 +35,7 @@ public class ExprNewMessageCommand extends SimpleExpression<CommandData> {
 	private Expression<String> exprName;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprName = (Expression<String>) exprs[0];
 		return true;
 	}

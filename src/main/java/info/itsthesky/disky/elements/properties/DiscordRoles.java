@@ -58,7 +58,7 @@ public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, R
     }
 
     @Override
-    public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+    public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
         if (EasyElement.equalAny(mode, Changer.ChangeMode.ADD, Changer.ChangeMode.REMOVE))
             return CollectionUtils.array(Role.class);
         return new Class[0];

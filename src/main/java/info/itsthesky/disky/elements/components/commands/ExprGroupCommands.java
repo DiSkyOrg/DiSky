@@ -31,7 +31,7 @@ public class ExprGroupCommands extends MultiplyPropertyExpression<Object, Subcom
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		if (delta == null)
 			return;
 		final Object group = EasyElement.parseSingle(getExpr(), e, null);
@@ -70,7 +70,7 @@ public class ExprGroupCommands extends MultiplyPropertyExpression<Object, Subcom
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.isChangerMode(mode))
 			return new Class[] {SubcommandData[].class, SubcommandData.class};
 		return new Class[0];

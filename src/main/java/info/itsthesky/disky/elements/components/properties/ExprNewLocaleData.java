@@ -35,7 +35,7 @@ public class ExprNewLocaleData extends SimpleExpression<PropLocalization.LocaleD
 	private Expression<String> exprValue;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprLocale = (Expression<String>) exprs[0];
 		exprValue = (Expression<String>) exprs[1];
 		return true;

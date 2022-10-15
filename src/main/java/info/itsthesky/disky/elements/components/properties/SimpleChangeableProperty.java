@@ -12,7 +12,7 @@ public abstract class SimpleChangeableProperty<F, T> extends SimplePropertyExpre
 	protected abstract void set(@NotNull F entity, @Nullable T value);
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		final F entity = EasyElement.parseSingle(getExpr(), e, null);
 		final T value = (T) delta[0];
 
@@ -25,7 +25,7 @@ public abstract class SimpleChangeableProperty<F, T> extends SimplePropertyExpre
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.RESET))
 			return new Class[] {getReturnType()};
 		return new Class[0];

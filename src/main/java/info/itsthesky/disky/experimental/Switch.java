@@ -35,7 +35,7 @@ public class Switch extends Section {
 	public boolean init(Expression<?> @NotNull [] exprs,
 						int matchedPattern,
 						@NotNull Kleenean isDelayed,
-						SkriptParser.@NotNull ParseResult parseResult,
+						@NotNull SkriptParser.ParseResult parseResult,
 						@NotNull SectionNode node,
 						@NotNull List<TriggerItem> items) {
 		exprObjects = (Expression<Object>) exprs[0];

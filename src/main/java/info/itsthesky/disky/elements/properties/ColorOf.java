@@ -35,13 +35,13 @@ public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 	private boolean wasInScope;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		wasInScope = getParser().isCurrentSection(EmbedSection.class);
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Bot bot, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, Bot bot, @NotNull Changer.ChangeMode mode) {
 		if (!EasyElement.isValid(delta))
 			return;
 		final Color color = (Color) delta[0];
@@ -63,7 +63,7 @@ public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		return new Class[] {Color.class};
 	}
 

@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBuilder, T> {
 
@@ -27,7 +27,7 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 	private boolean useScope;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		useScope = ParserInstance.get().isCurrentSection(EmbedSection.class);
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
@@ -35,7 +35,7 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 	protected abstract T convert(MessageEmbed embed);
 
 	@Override
-	public void change(@NotNull Event e, @Nullable Object[] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @Nullable Object[] delta, @NotNull Changer.ChangeMode mode) {
 		final EmbedBuilder builder = EasyElement.parseSingle(getExpr(), e, null);
 		if (builder == null)
 			return;

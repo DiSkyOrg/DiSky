@@ -73,7 +73,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
 
     @Override
      @SuppressWarnings("unchecked")
-    public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, SkriptParser.@NotNull ParseResult parser) {
+    public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, @NotNull SkriptParser.ParseResult parser) {
         bot = (String) (exprs[0] == null ? null : exprs[0].getSingle());
 
         bukkitClass = (Class<? extends Event>) Arrays.stream(this.getClass().getDeclaredClasses())

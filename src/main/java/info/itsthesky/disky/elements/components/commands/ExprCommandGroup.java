@@ -38,7 +38,7 @@ public class ExprCommandGroup extends MultiplyPropertyExpression<SlashCommandDat
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		if (delta == null)
 			return;
 		final SlashCommandData command = EasyElement.parseSingle(getExpr(), e, null);
@@ -71,7 +71,7 @@ public class ExprCommandGroup extends MultiplyPropertyExpression<SlashCommandDat
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.isChangerMode(mode))
 			return new Class[] {SubcommandGroupData[].class, SubcommandGroupData.class};
 		return new Class[0];

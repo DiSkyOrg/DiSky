@@ -3,14 +3,19 @@ package info.itsthesky.disky.elements.events.member;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
-import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 
-public class MemberVoiceJoinEvent extends DiSkyEvent<GenericGuildVoiceUpdateEvent> {
+public class MemberVoiceJoinEvent extends DiSkyEvent<GuildVoiceUpdateEvent> {
+
+    @Override
+    public boolean check(GuildVoiceUpdateEvent event) {
+        return event.getChannelJoined() != null;
+    }
 
     static {
         register("Member Voice Join Event", MemberVoiceJoinEvent.class, BukkitMemberVoiceJoinEvent.class,
@@ -48,7 +53,7 @@ public class MemberVoiceJoinEvent extends DiSkyEvent<GenericGuildVoiceUpdateEven
                 event -> event.getJDAEvent().getMember());
     }
 
-    public static class BukkitMemberVoiceJoinEvent extends SimpleDiSkyEvent<GenericGuildVoiceUpdateEvent> {
+    public static class BukkitMemberVoiceJoinEvent extends SimpleDiSkyEvent<GuildVoiceUpdateEvent> {
         public BukkitMemberVoiceJoinEvent(MemberVoiceJoinEvent event) {
         }
     }

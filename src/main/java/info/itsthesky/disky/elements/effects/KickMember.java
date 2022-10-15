@@ -31,7 +31,7 @@ public class KickMember extends SpecificBotEffect {
     private Expression<String> exprReason;
 
     @Override
-    public boolean initEffect(Expression @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean initEffect(Expression @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprMember = (Expression<Member>) exprs[0];
         exprReason = (Expression<String>) exprs[1];
         return true;

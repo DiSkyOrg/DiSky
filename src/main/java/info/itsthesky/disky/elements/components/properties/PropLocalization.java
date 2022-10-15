@@ -57,7 +57,7 @@ public class PropLocalization extends MultiplyPropertyExpression<Object, PropLoc
 	}
 
 	@Override
-	public @Nullable Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public @Nullable Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.isChangerMode(mode))
 			return new Class[] {LocaleData.class, LocaleData[].class};
 		return new Class[0];

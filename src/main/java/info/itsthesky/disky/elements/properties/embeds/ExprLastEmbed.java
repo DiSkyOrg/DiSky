@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @Name("Last Embed")
 @Description("This expression returns the last generated embed using the embed builder.")
@@ -28,7 +28,7 @@ public class ExprLastEmbed extends SimpleExpression<EmbedBuilder> {
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         return true;
     }
 

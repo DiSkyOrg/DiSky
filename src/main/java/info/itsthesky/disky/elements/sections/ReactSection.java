@@ -36,7 +36,7 @@ public class ReactSection extends EffectSection {
 	public boolean init(Expression<?> @NotNull [] exprs,
 						int matchedPattern,
 						@NotNull Kleenean isDelayed,
-						SkriptParser.@NotNull ParseResult parseResult,
+						@NotNull SkriptParser.ParseResult parseResult,
 						@Nullable SectionNode sectionNode,
 						@Nullable List<TriggerItem> triggerItems) {
 		exprMessage = (Expression<Message>) exprs[0];

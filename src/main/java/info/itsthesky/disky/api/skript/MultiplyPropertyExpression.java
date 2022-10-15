@@ -8,8 +8,7 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class MultiplyPropertyExpression<F, T> extends SimpleExpression<T> {
 
@@ -30,7 +29,7 @@ public abstract class MultiplyPropertyExpression<F, T> extends SimpleExpression<
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean init(final Expression<?> @NotNull [] expr, final int matchedPattern, final @NotNull Kleenean isDelayed, final SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(final Expression<?> @NotNull [] expr, final int matchedPattern, final @NotNull Kleenean isDelayed, @NotNull final SkriptParser.ParseResult parseResult) {
         this.expr = (Expression<? extends F>) expr[0];
         return true;
     }

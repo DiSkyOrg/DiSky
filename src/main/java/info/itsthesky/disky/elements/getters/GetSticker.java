@@ -38,7 +38,7 @@ public class GetSticker extends SimpleExpression<Sticker> {
     private Expression<Guild> exprGuild;
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprId = (Expression<String>) exprs[0];
         exprGuild = (Expression<Guild>) exprs[1];
         return true;

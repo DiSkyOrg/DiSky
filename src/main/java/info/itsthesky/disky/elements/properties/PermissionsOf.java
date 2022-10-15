@@ -45,19 +45,19 @@ public class PermissionsOf extends SimpleExpression<Permission> {
     private Expression<GuildChannel> exprChannel;
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprHolder = (Expression<IPermissionHolder>) exprs[0];
         exprChannel = (Expression<GuildChannel>) exprs[1];
         return true;
     }
 
     @Override
-    public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+    public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
         return EasyElement.equalAny(mode, Changer.ChangeMode.ADD, Changer.ChangeMode.REMOVE) ? new Class[]{ Permission.class, Permission[].class } : new Class[0];
     }
 
     @Override
-    public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+    public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
         if (!EasyElement.isValid(delta))
             return;
         final IPermissionHolder holder = EasyElement.parseSingle(exprHolder, e, null);

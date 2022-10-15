@@ -36,7 +36,7 @@ public class GetTag extends SimpleExpression<ForumTag> {
 	private Expression<ForumChannel> exprChannel;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprName = (Expression<String>) exprs[0];
 		exprChannel = (Expression<ForumChannel>) exprs[1];
 		return true;

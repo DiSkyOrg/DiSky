@@ -109,7 +109,7 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 		}
 
 		@Override
-		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 			if (!EasyElement.containsEvent(BukkitSlashCompletionEvent.class))
 				return false;
 			exprChoices = (Expression<Command.Choice>) exprs[0];

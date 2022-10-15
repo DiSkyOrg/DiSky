@@ -30,14 +30,14 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.equalAny(mode, Changer.ChangeMode.ADD))
 			return new Class[] {OptionData.class, SelectOption.class};
 		return new Class[0];
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] rawValues, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, Object @NotNull [] rawValues, @NotNull Changer.ChangeMode mode) {
 		if (!mode.equals(Changer.ChangeMode.ADD))
 			return;
 		final Object entity = getExpr().getSingle(e);

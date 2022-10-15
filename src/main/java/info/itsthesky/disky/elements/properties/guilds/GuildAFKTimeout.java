@@ -26,7 +26,7 @@ public class GuildAFKTimeout extends ChangeablePropertyExpression<Guild, Number>
     }
 
     @Override
-    public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+    public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
         if (mode == Changer.ChangeMode.SET)
             return CollectionUtils.array(Number.class);
         return CollectionUtils.array();
@@ -74,7 +74,7 @@ public class GuildAFKTimeout extends ChangeablePropertyExpression<Guild, Number>
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         setExpr((Expression<? extends Guild>) exprs[0]);
         return true;
     }

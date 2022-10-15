@@ -38,7 +38,7 @@ public class ChannelType extends Condition {
 	}
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprChannel = (Expression<Channel>) exprs[0];
 		exprType = (Expression<net.dv8tion.jda.api.entities.channel.ChannelType>) exprs[1];
 		return true;

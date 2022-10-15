@@ -29,7 +29,7 @@ public class MessageContent extends SimplePropertyExpression<MessageCreateBuilde
 	}
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		if (!getParser().isCurrentSection(CreateMessage.class)) {
 			Skript.error("You can only use the 'builder content' expression inside a 'create message' section");
 			return false;
@@ -38,14 +38,14 @@ public class MessageContent extends SimplePropertyExpression<MessageCreateBuilde
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (mode == Changer.ChangeMode.SET)
 			return new Class[]{String.class};
 		return new Class[0];
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		if (!EasyElement.isValid(delta))
 			return;
 

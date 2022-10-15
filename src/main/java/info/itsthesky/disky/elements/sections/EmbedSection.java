@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @Name("Embed Builder")
@@ -54,7 +54,7 @@ public class EmbedSection extends Section {
     public boolean init(Expression<?>[] exprs,
                         int matchedPattern,
                         @NotNull Kleenean isDelayed,
-                        SkriptParser.@NotNull ParseResult parseResult,
+                        @NotNull SkriptParser.ParseResult parseResult,
                         @Nullable SectionNode sectionNode,
                         @Nullable List<TriggerItem> triggerItems) {
         exprID = (Expression<String>) exprs[0];

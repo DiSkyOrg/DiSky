@@ -30,7 +30,7 @@ public class ColorFromHex extends SimpleExpression<Color> {
     private Expression<String> exprHex;
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         exprHex = (Expression<String>) exprs[0];
         return true;
     }

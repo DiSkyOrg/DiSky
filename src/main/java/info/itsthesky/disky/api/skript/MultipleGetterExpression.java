@@ -38,7 +38,7 @@ public abstract class MultipleGetterExpression<T, E extends Event> extends Simpl
 	}
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		if (!EasyElement.containsEvent(getEvent())) {
 			Skript.error(getValue() + " cannot be used in a " + ParserInstance.get().getCurrentEventName());
 			return false;

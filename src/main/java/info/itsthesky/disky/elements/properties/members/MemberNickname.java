@@ -37,14 +37,14 @@ public class MemberNickname extends MemberProperty<String> {
     }
 
     @Override
-    public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+    public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
         if (EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.RESET))
             return new Class[] {String.class};
         return new Class[0];
     }
 
     @Override
-    public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+    public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
         if (!EasyElement.isValid(delta))
             return;
         final Member member = EasyElement.parseSingle(getExpr(), e, null);

@@ -43,7 +43,7 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.REMOVE || mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.RESET) {
 			return new Class[]{
 					String[].class, String.class,
@@ -54,7 +54,7 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		if (!EasyElement.isValid(delta))
 			return;
 

@@ -41,14 +41,14 @@ public final class BotStatus {
     public static class StringBotStatus extends PropertyExpression<Bot, String> {
 
         @Override
-        public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+        public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
             if (mode == Changer.ChangeMode.SET)
                 return CollectionUtils.array(String.class);
             return CollectionUtils.array();
         }
 
         @Override
-        public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+        public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
             if (delta == null || delta.length == 0 || delta[0] == null) return;
             Bot bot = EasyElement.parseSingle(getExpr(), e, null);
             final String status = (String) delta[0];
@@ -77,7 +77,7 @@ public final class BotStatus {
         }
 
         @Override
-        public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+        public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
             setExpr((Expression<? extends Bot>) exprs[0]);
             return true;
         }
@@ -86,14 +86,14 @@ public final class BotStatus {
     public static class EnumBotStatus extends PropertyExpression<Bot, OnlineStatus> {
 
         @Override
-        public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+        public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
             if (mode == Changer.ChangeMode.SET)
                 return CollectionUtils.array(OnlineStatus.class);
             return CollectionUtils.array();
         }
 
         @Override
-        public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+        public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
             if (delta == null || delta.length == 0 || delta[0] == null) return;
             Bot bot = EasyElement.parseSingle(getExpr(), e, null);
             final OnlineStatus status = (OnlineStatus) delta[0];
@@ -120,7 +120,7 @@ public final class BotStatus {
         }
 
         @Override
-        public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+        public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
             setExpr((Expression<? extends Bot>) exprs[0]);
             return true;
         }

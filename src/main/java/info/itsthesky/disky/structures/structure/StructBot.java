@@ -59,7 +59,7 @@ public class StructBot extends Structure {
 	private @Nullable BotOptions options;
 
 	@Override
-	public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult, @NotNull EntryContainer entryContainer) {
+	public boolean init(Literal<?>[] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, @NotNull EntryContainer entryContainer) {
 		this.name = ((Literal<String>) args[0]).getSingle();
 		this.container = entryContainer;
 		return true;
@@ -121,8 +121,8 @@ public class StructBot extends Structure {
 		try {
 
 			final EventListener listener = event -> {
-				if (event instanceof net.dv8tion.jda.api.events.ReadyEvent)
-					parsedEntity.runReady((net.dv8tion.jda.api.events.ReadyEvent) event);
+				if (event instanceof net.dv8tion.jda.api.events.session.ReadyEvent)
+					parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
 				else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
 					parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
 			};

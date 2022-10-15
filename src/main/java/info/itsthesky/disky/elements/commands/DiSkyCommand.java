@@ -80,7 +80,7 @@ public class DiSkyCommand extends SkriptEvent {
     }
 
     @Override
-    public boolean init(Literal<?> @NotNull [] exprs, int i, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Literal<?> @NotNull [] exprs, int i, @NotNull SkriptParser.ParseResult parseResult) {
         return true;
     }
 

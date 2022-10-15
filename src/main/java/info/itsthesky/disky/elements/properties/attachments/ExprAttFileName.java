@@ -9,7 +9,7 @@ import ch.njol.util.coll.CollectionUtils;
 import net.dv8tion.jda.api.entities.Message;
 import org.bukkit.event.Event;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 @Name("Attachments File Name")
 @Description("Get the file name of an attachment.")

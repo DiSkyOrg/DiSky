@@ -14,7 +14,7 @@ public class EmbedDescription extends EmbedProperty<String> {
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		return new Class[] {String.class};
 	}
 

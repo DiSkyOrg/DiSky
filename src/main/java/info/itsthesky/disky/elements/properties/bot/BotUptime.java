@@ -27,7 +27,7 @@ public class BotUptime extends ChangeablePropertyExpression<Bot, Timespan> {
     private NodeInformation info;
 
     @Override
-    public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+    public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
         return CollectionUtils.array();
     }
 
@@ -50,7 +50,7 @@ public class BotUptime extends ChangeablePropertyExpression<Bot, Timespan> {
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         setExpr((Expression<? extends Bot>) exprs[0]);
         info = new NodeInformation();
         return true;

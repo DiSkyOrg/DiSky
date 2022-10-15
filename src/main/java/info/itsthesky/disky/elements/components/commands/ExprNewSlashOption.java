@@ -30,7 +30,7 @@ public class ExprNewSlashOption extends SimpleExpression<OptionData> {
 	private boolean required, autoComplete;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprType = (Expression<OptionType>) exprs[0];
 		exprName = (Expression<String>) exprs[1];
 		exprDesc = (Expression<String>) exprs[2];

@@ -30,7 +30,7 @@ public class ExprNewInput extends SimpleExpression<TextInput.Builder> {
 	private TextInputStyle style;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprId = (Expression<String>) exprs[0];
 		exprName = (Expression<String>) exprs[1];
 		style = matchedPattern == 0 ? TextInputStyle.PARAGRAPH : TextInputStyle.SHORT;

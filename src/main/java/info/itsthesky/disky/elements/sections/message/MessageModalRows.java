@@ -34,7 +34,7 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (mode == Changer.ChangeMode.ADD)
 			return new Class[]{
 					ComponentRow.class, ComponentRow[].class,
@@ -46,7 +46,7 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 	}
 
 	@Override
-	public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		if (!EasyElement.isValid(delta))
 			return;
 

@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 	private boolean isComponentOnly;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		isComponentOnly = matchedPattern == 1;
 		exprBase = (Expression<Object>) exprs[0];
 		if (!isComponentOnly) {

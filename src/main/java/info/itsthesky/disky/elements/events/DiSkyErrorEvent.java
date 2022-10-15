@@ -35,7 +35,7 @@ public class DiSkyErrorEvent extends SelfRegisteringSkriptEvent {
 	public void unregisterAll() {}
 
 	@Override
-	public boolean init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult) {
+	public boolean init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult) {
 		return true;
 	}
 

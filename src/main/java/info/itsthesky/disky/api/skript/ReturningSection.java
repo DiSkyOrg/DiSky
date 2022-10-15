@@ -36,7 +36,7 @@ public abstract class ReturningSection<T> extends Section {
 	private Variable<T> variable;
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
 		loadOptionalCode(sectionNode);
 		variable = (Variable<T>) exprs[0];
 		return true;
@@ -60,7 +60,7 @@ public abstract class ReturningSection<T> extends Section {
 		private S section;
 
 		@Override
-		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 			section = getParser().getCurrentSection(getSectionClass());
 			return getParser().isCurrentSection(getSectionClass());
 		}
