@@ -5,8 +5,8 @@ plugins {
 
 group = 'info.itsthesky'
 def major = '4'
-def minor = '4'
-def patch = '4'
+def minor = '5'
+def patch = '0'
 version = major + '.' + minor + '.' + patch
 
 repositories {
