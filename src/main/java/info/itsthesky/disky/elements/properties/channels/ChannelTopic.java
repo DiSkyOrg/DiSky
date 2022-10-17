@@ -29,7 +29,7 @@ public class ChannelTopic extends ActionProperty<GuildChannel, ChannelAction, St
 
     @Override
     public void change(GuildChannel channel, String value) {
-        if (channel instanceof ForumChannel)
+        if (channel == null || channel instanceof ForumChannel)
             return;
 
         ((StandardGuildMessageChannel) channel).getManager().setTopic(value).queue();
