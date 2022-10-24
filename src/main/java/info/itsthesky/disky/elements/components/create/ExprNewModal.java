@@ -7,7 +7,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
-import net.dv8tion.jda.api.interactions.components.Modal;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

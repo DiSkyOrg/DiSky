@@ -50,8 +50,11 @@ public class BotScope extends BaseScope<BotOptions> {
             GatewayIntent.GUILD_MESSAGES,
             GatewayIntent.GUILD_MEMBERS,
             GatewayIntent.GUILD_PRESENCES,
-            GatewayIntent.MESSAGE_CONTENT
+            GatewayIntent.MESSAGE_CONTENT,
+            GatewayIntent.SCHEDULED_EVENTS
     };
+
+    public static final String[] defaultsStr = Arrays.stream(defaults).map(GatewayIntent::name).toArray(String[]::new);
 
     public static final SectionValidator validator = new SectionValidator()
             .addEntry("token", false)

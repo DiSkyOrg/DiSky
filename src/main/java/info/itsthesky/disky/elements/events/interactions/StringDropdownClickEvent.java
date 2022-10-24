@@ -12,25 +12,24 @@ import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.api.skript.MultipleGetterExpression;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
-import net.dv8tion.jda.api.interactions.components.Modal;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-public class DropdownClickEvent extends DiSkyEvent<SelectMenuInteractionEvent> {
+public class StringDropdownClickEvent extends DiSkyEvent<StringSelectInteractionEvent> {
 
 	static {
-		register("Dropdown Click", DropdownClickEvent.class, BukkitDropdownClickEvent.class,
+		register("String Dropdown Click", StringDropdownClickEvent.class, BukkitDropdownClickEvent.class,
 				"drop[( |-)]down click[ed]")
-				.description("Fired when an user select one or more choice in a dropdown.",
+				.description("Fired when an user select one or more choice in a string dropdown.",
 						"Use 'event-dropdown' to get the dropdown id. Don't forget to either reply or defer the interaction.",
+						"Use 'selected values' to get the selected string values.",
 						"Modal can be shown in this interaction.");
 
 		SkriptUtils.registerBotValue(BukkitDropdownClickEvent.class);
@@ -98,8 +97,8 @@ public class DropdownClickEvent extends DiSkyEvent<SelectMenuInteractionEvent> {
 		}
 	}
 
-	public static class BukkitDropdownClickEvent extends SimpleDiSkyEvent<SelectMenuInteractionEvent> implements ModalEvent, InteractionEvent {
-		public BukkitDropdownClickEvent(DropdownClickEvent event) {}
+	public static class BukkitDropdownClickEvent extends SimpleDiSkyEvent<StringSelectInteractionEvent> implements ModalEvent, InteractionEvent {
+		public BukkitDropdownClickEvent(StringDropdownClickEvent event) {}
 
 		@Override
 		public GenericInteractionCreateEvent getInteractionEvent() {

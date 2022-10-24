@@ -9,6 +9,7 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.BotOptions;
 import info.itsthesky.disky.elements.events.bots.GuildReadyEvent;
 import info.itsthesky.disky.elements.events.bots.ReadyEvent;
+import info.itsthesky.disky.structures.scope.BotScope;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -36,7 +37,7 @@ public class StructBot extends Structure {
 				StructBot.class,
 				StructureEntryValidator.builder()
 						.addEntryData(new LiteralStructureEntryData<>("token", null, false, String.class))
-						.addEntryData(new LiteralStructureEntryData<>("intents", null, false, String[].class))
+						.addEntryData(new LiteralStructureEntryData<>("intents", BotScope.defaultsStr, false, String[].class))
 
 						.addEntryData(new LiteralStructureEntryData<>("compression", Compression.ZLIB.name(), true, String.class))
 						.addEntryData(new LiteralStructureEntryData<>("cache flags", new String[0], true, String[].class))

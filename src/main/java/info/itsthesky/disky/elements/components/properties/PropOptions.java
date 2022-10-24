@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.utils.data.SerializableData;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -50,9 +51,9 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 		} if (entity instanceof SubcommandData) {
 			for (Object value : rawValues)
 				((SubcommandData) entity).addOptions((OptionData) value);
-		} else if (entity instanceof SelectMenu.Builder) {
+		} else if (entity instanceof StringSelectMenu.Builder) {
 			for (Object value : rawValues)
-				((SelectMenu.Builder) entity).addOptions((SelectOption) value);
+				((StringSelectMenu.Builder) entity).addOptions((SelectOption) value);
 		}
 	}
 
@@ -63,8 +64,8 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 
 	@Override
 	public @Nullable Object[] convert(Object entity) {
-		if (entity instanceof SelectMenu.Builder)
-			return ((SelectMenu.Builder) entity).getOptions().toArray(new SelectOption[0]);
+		if (entity instanceof StringSelectMenu.Builder)
+			return ((StringSelectMenu.Builder) entity).getOptions().toArray(new SelectOption[0]);
 		if (entity instanceof SlashCommandData)
 			return ((SlashCommandData) entity).getOptions().toArray(new OptionData[0]);
 		return new Object[0];

@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
-import net.dv8tion.jda.api.interactions.components.Modal;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
@@ -179,6 +179,10 @@ public class Types {
         ).register();
         new DiSkyType<>(ForumTag.class, "forumtag",
                 ForumTag::getName,
+                null
+        ).register();
+        new DiSkyType<>(ScheduledEvent.class, "scheduledevent",
+                ScheduledEvent::getName,
                 null
         ).register();
 

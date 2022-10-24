@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("New Dropdown Option")
 @Description({"Create a new dropdown option with different properties.",
+        "This is a predefined option holding a string value. It can only be used in string dropdowns.",
         "The value represent the returned string that this dropdown will return if this option is selected.",
         "The name / label is the actual shown name on the option.",
         "Description and emote are optional."})
