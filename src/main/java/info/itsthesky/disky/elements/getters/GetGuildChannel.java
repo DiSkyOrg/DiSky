@@ -11,13 +11,13 @@ import org.jetbrains.annotations.NotNull;
 @Description({"Get a channel from a guild using its unique ID.",
         "Channels are global on discord, means different channels cannot have the same ID.",
         "This expression cannot be changed."})
-@Examples("channel with id \"000\"")
+@Examples("guild channel with id \"000\"")
 public class GetGuildChannel extends BaseGetterExpression<GuildChannel> {
 
     static {
         register(GetGuildChannel.class,
                 GuildChannel.class,
-                "channel");
+                "guild channel");
     }
 
     @Override
