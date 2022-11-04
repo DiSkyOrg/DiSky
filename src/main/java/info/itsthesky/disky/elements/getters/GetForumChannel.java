@@ -18,7 +18,7 @@ public class GetForumChannel extends BaseGetterExpression<ForumChannel> {
     static {
         register(GetForumChannel.class,
                 ForumChannel.class,
-                "text channel");
+                "forum channel");
     }
 
     @Override
