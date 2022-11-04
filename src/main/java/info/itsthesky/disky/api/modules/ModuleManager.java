@@ -18,6 +18,7 @@ import ch.njol.yggdrasil.Fields;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.generator.DocBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -174,6 +175,8 @@ public class ModuleManager {
         final File[] modulesFile = this.moduleFolder.listFiles();
         assert modulesFile != null;
         for (final File moduleFile : modulesFile) {
+            if (moduleFile.isDirectory() || !moduleFile.getName().endsWith(".jar"))
+                continue;
             getLogger().warning("Loading module from file '"+moduleFile.getPath()+"'...");
             final DiSkyModule module;
             try {
