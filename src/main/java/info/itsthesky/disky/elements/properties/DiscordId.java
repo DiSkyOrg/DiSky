@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.ISnowflake;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
 import net.dv8tion.jda.api.interactions.components.Component;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class DiscordId extends SimplePropertyExpression<Object, String> {
 		register(DiscordId.class,
 				String.class,
 				"discord id",
-				"channel/role/user/member/sticker/message/dropdown/button/guild");
+				"channel/role/user/threadchannel/member/sticker/message/dropdown/button/guild");
 	}
 
 	@Override
