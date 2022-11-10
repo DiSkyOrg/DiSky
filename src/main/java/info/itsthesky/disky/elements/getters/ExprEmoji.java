@@ -43,7 +43,8 @@ public class ExprEmoji extends SimpleExpression<Emote> {
     }
 
     private static final Pattern COMPLEX_CUSTOM = Pattern.compile("^(?:<a?:[a-zA-Z0-9_]+:)?([0-9]+)>?$");
-    private static final Pattern SIMPLE_CUSTOM = Pattern.compile("^([0-9]+)$");
+    // Simple custom are 5 numbers or more
+    private static final Pattern SIMPLE_CUSTOM = Pattern.compile("^[0-9]{5,}$");
     private static final Pattern NAMED = Pattern.compile("^:([a-zA-Z0-9_]+):$");
 
     private Expression<String> name;
