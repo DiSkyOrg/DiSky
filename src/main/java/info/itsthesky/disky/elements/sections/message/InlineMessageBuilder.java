@@ -43,7 +43,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 				MessageCreateBuilder.class,
 				ExpressionType.COMBINED,
 				"[rich] message %string/embedbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%]",
-				"[rich] component[s] %rows/buttons/dropdowns%"
+				"rich component[s] %rows/buttons/dropdowns%"
 		);
 	}
 
