@@ -1,21 +1,27 @@
 package info.itsthesky.disky.elements.properties;
 
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.attribute.IMemberContainer;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.attribute.IMemberContainer;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Discord Members of Guild / Channel")
 @Description({"Returns a list of members.",
 "For Message text-related channel & category, it returns members with permission to view the channel",
-"For Audio Channels it returns the currently connected members of the channel."})
+"For Audio Channels it returns the currently connected members of the channel.",
+"For threads & posts, it returns the members who are in the thread. " +
+        "You can add or remove a member in this case."})
 @Examples({"members of event-channel",
-        "members of voice channel with id \"0000\""})
+        "members of voice channel with id \"0000\"",
+"add event-member to discord members of thread channel with id \"000\""})
 public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member> {
 
     static {
@@ -23,7 +29,7 @@ public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member>
                 DiscordMembersOf.class,
                 Member.class,
                 "discord member[s] [list]",
-                "guildchannel/guild"
+                "guildchannel/guild/threadchannel"
         );
     }
 
@@ -42,6 +48,39 @@ public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member>
     }
 
     @Override
+    public Class<?> @NotNull [] acceptChange(Changer.@NotNull ChangeMode mode) {
+        if (mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.REMOVE)
+            return new Class[] {Member.class, Member[].class};
+        return new Class[0];
+    }
+
+    @Override
+    public void change(@NotNull Event e, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+        final Object entity = getExpr().getSingle(e);
+        if (!(entity instanceof ThreadChannel))
+            return;
+
+        final Member[] members = (Member[]) delta;
+        final ThreadChannel thread = (ThreadChannel) entity;
+
+        if (members.length == 0)
+            return;
+
+        switch (mode) {
+            case ADD:
+                for (Member member : members)
+                    thread.addThreadMember(member).queue();
+                break;
+            case REMOVE:
+                for (Member member : members)
+                    thread.removeThreadMember(member).queue();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     protected String getPropertyName() {
-        return "discord members of ";
+        return "discord members of " + getExpr().toString(null, false);
     }}
