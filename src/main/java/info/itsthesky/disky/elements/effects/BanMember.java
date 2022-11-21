@@ -20,14 +20,14 @@ import java.util.concurrent.TimeUnit;
 
 @Name("Ban Member")
 @Description({"Bans a member from a guild."})
-@Examples({"ban event-member because of \"being lame\" and delete 10 days' worth of messages"})
+@Examples({"ban discord event-member because of \"being lame\" and delete 10 days worth of messages"})
 
 public class BanMember extends SpecificBotEffect {
 
     static {
         Skript.registerEffect(
                 BanMember.class,
-                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %timespan% [worth ]of messages]"
+                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %-timespan% [worth ]of messages]"
         );
     }
 
