@@ -8,10 +8,10 @@ import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.LayoutComponent;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,8 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 					ComponentRow.class, ComponentRow[].class,
 					Button.class, Button[].class,
 					SelectMenu.Builder.class, SelectMenu.Builder[].class,
-					TextInput.Builder.class, TextInput.Builder[].class
+					TextInput.Builder.class, TextInput.Builder[].class,
+					Modal.Builder.class, Modal.Builder[].class
 		};
 		return new Class[0];
 	}

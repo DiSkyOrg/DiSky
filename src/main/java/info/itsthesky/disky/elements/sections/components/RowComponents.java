@@ -31,9 +31,9 @@ public class RowComponents extends MultiplyPropertyExpression<ComponentRow, Obje
 	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.ADD))
 			return new Class[]{
-					SelectMenu.class,
+					SelectMenu.Builder.class,
 					Button.class, Button[].class,
-					TextInput.class, TextInput[].class
+					TextInput.Builder.class, TextInput.Builder[].class
 		};
 		return new Class[0];
 	}
@@ -48,12 +48,12 @@ public class RowComponents extends MultiplyPropertyExpression<ComponentRow, Obje
 			return;
 
 		for (Object comp : delta) {
-			if (comp instanceof SelectMenu)
-				row.setMenu((SelectMenu) comp);
+			if (comp instanceof SelectMenu.Builder)
+				row.setMenu(((SelectMenu.Builder<?, ?>) comp).build());
 			else if (comp instanceof Button)
 				row.add((Button) comp);
-			else if (comp instanceof TextInput)
-				row.setInput((TextInput) comp);
+			else if (comp instanceof TextInput.Builder)
+				row.setInput(((TextInput.Builder) comp).build());
 		}
 	}
 
