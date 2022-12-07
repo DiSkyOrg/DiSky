@@ -54,7 +54,7 @@ public class BanMember extends SpecificBotEffect {
             return;
         }
 
-        member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).queue(
+        member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).reason(reason).queue(
                 v -> restart(),
                 ex -> {
                     DiSky.getErrorHandler().exception(e, ex);
