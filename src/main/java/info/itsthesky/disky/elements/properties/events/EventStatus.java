@@ -1,7 +1,7 @@
 package info.itsthesky.disky.elements.properties.events;
 
 import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.*;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 		"- Active",
 		"- Completed",
 		"- Cancelled"})
+@Since("4.8.0")
 public class EventStatus extends SimplePropertyExpression<ScheduledEvent, String> {
 
 	static {

@@ -1,7 +1,7 @@
 package info.itsthesky.disky.elements.properties.events;
 
 import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.*;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("Channel of Scheduled Event")
 @Description({"Get the channel of a scheduled event.",
 "Can be null if the event is external. Will returns either a stage or voice channel."})
+@Since("4.8.0")
 public class EventChannel extends SimplePropertyExpression<ScheduledEvent, AudioChannel> {
 
 	static {
