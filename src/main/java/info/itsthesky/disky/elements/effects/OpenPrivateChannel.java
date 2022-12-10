@@ -50,24 +50,10 @@ public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
             return;
         }
 
-        if (bot.getInstance().getUserById(rawUser.getId()) == null) {
-            bot
-                    .getInstance()
-                    .retrieveUserById(rawUser.getId())
-                    .queue(user -> {
-                        Utils.catchAction(user.openPrivateChannel(),
-                                this::restart,
-                                ex -> {
-                                    DiSky.getErrorHandler().exception(e, ex);
-                                    restart();
-                                });
-                    });
-        } else {
-            rawUser.openPrivateChannel().queue(this::restart, ex -> {
-                DiSky.getErrorHandler().exception(e, ex);
-                restart();
-            });
-        }
+        rawUser.openPrivateChannel().queue(this::restart, ex -> {
+            DiSky.getErrorHandler().exception(e, ex);
+            restart();
+        });
 
     }
 

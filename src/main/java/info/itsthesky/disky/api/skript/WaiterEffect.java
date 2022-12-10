@@ -129,7 +129,7 @@ public abstract class WaiterEffect<T> extends EasyElement {
         if (object instanceof List)
             object = ((List) object).toArray(new Object[0]);
         if (changedVariable != null)
-            changedVariable.change(e, (object instanceof Object[] ? (Object[]) object : new Object[]{object}), Changer.ChangeMode.SET);
+            changedVariable.change(e, object == null ? new Object[0] : (object instanceof Object[] ? (Object[]) object : new Object[]{object}), Changer.ChangeMode.SET);
     }
 
     protected void runItems(Event e, Object object) {
