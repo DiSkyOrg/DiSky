@@ -49,8 +49,12 @@ public abstract class EasyElement extends Effect {
         return parseSingle(expression, e, null);
     }
 
-    public static void exception(Event event, Throwable throwable) {
+    protected void exception(Event event, Throwable throwable) {
         DiSky.getErrorHandler().exception(event, throwable);
+    }
+
+    public static void exception(Throwable throwable) {
+        DiSky.getErrorHandler().exception(null, throwable);
     }
 
     /**

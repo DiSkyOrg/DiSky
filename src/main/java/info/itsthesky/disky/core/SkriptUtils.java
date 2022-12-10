@@ -13,6 +13,7 @@ import ch.njol.skript.log.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Color;
 import ch.njol.skript.util.ColorRGB;
+import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Getter;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -33,6 +34,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -233,5 +237,10 @@ public final class SkriptUtils {
         if (classes.length > 0)
             ParserInstance.get().setCurrentEvent("custom section node", classes);
         return ScriptLoader.loadItems(sectionNode);
+    }
+
+    public static OffsetDateTime convertDate(Date date) {
+        final long ms = date.getTimestamp();
+        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(ms), ZoneId.systemDefault());
     }
 }

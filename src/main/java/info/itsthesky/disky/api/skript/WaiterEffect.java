@@ -81,6 +81,12 @@ public abstract class WaiterEffect<T> extends EasyElement {
     @Override
     protected void execute(@NotNull Event event) { }
 
+    @Override
+    protected void exception(Event event, Throwable throwable) {
+        DiSky.getErrorHandler().exception(event, throwable);
+        restart();
+    }
+
     @Nullable
     @Override
     protected TriggerItem walk(@NotNull Event e) {
