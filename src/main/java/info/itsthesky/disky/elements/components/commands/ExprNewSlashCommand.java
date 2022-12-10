@@ -72,6 +72,7 @@ public class ExprNewSlashCommand extends SimpleExpression<Object> {
 		exprName = (Expression<String>) exprs[0];
 		exprDesc = (Expression<String>) exprs[1];
 		type = Type.fromPattern(matchedPattern);
+		isNSFW = parseResult.expr.contains("nsfw");
 		return true;
 	}
 
