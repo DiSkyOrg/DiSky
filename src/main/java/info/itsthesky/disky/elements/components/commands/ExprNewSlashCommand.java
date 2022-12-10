@@ -25,7 +25,7 @@ public class ExprNewSlashCommand extends SimpleExpression<Object> {
 				ExprNewSlashCommand.class,
 				Object.class,
 				ExpressionType.COMBINED,
-				"[a] [new] slash[( |-)]command [with] [(the name|named)] %string% [and] with [the] desc[ription] %string%",
+				"[a] [new] [nsfw] slash[( |-)]command [with] [(the name|named)] %string% [and] with [the] desc[ription] %string%",
 				"[a] [new] sub [slash][( |-)]command [with] [(the name|named)] %string% [and] with [the] desc[ription] %string%",
 				"[a] [new] [slash][( |-)][command] group [with] [(the name|named)] %string% [and] with [the] desc[ription] %string%"
 		);
@@ -65,6 +65,7 @@ public class ExprNewSlashCommand extends SimpleExpression<Object> {
 	private Expression<String> exprName;
 	private Expression<String> exprDesc;
 	private Type type;
+	private boolean isNSFW;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
@@ -83,9 +84,9 @@ public class ExprNewSlashCommand extends SimpleExpression<Object> {
 		if (type == Type.SUB_GROUP)
 			return new SubcommandGroupData[] {new SubcommandGroupData(name, desc)};
 		else if (type == Type.SLASH_COMMAND)
-			return new SlashCommandData[] {Commands.slash(name, desc)};
-		else
-			return new SubcommandData[] {new SubcommandData(name, desc)};
+			return new SlashCommandData[] {Commands.slash(name, desc)
+					.setNSFW(isNSFW)};
+		else return new SubcommandData[] {new SubcommandData(name, desc)};
 	}
 
 	@Override
