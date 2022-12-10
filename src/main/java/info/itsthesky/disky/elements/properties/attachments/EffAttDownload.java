@@ -48,15 +48,13 @@ public class EffAttDownload extends WaiterEffect {
         String path = exprPath.getSingle(e);
         if (attachment == null || path == null) return;
         File file = new File(path);
-        if (file.isDirectory()) {
-            DiSky.getErrorHandler().exception(e, "DiSky tried to download an attachment, but cannot since the specified path is a folder and not a file.");
-            return;
-        }
-        if (file.exists())
+        if (!file.isDirectory() && file.exists())
             file.delete();
+        if (file.isDirectory())
+            file.mkdirs();
 
         try (InputStream in = new URL(attachment.getUrl()).openStream()) {
-            Files.copy(in, file.toPath());
+            Files.copy(in, file.isDirectory() ? Paths.get(file.getPath() + "/" + attachment.getFileName()) : Paths.get(file.getPath()));
         } catch (IOException ex) {
             DiSky.getErrorHandler().exception(e, ex);
         }
