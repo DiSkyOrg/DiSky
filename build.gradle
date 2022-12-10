@@ -5,7 +5,7 @@ plugins {
 
 group = 'info.itsthesky'
 def major = '4'
-def minor = '7'
+def minor = '8'
 def patch = '0'
 version = major + '.' + minor + '.' + patch
 
@@ -27,7 +27,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.0.0-alpha.22'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.2'
 }
 
 shadowJar {

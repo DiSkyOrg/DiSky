@@ -48,7 +48,7 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 		SkriptUtils.registerValue(BukkitSlashCompletionEvent.class, User.class,
 				event -> event.getJDAEvent().getUser());
 		SkriptUtils.registerValue(BukkitSlashCompletionEvent.class, String.class,
-				event -> event.getJDAEvent().getCommandPath());
+				event -> event.getJDAEvent().getFullCommandName());
 		SkriptUtils.registerValue(BukkitSlashCompletionEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getMessageChannel());
 
