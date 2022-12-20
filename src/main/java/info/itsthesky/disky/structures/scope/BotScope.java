@@ -182,13 +182,17 @@ public class BotScope extends BaseScope<BotOptions> {
 
         final String inputFlag = parseEntry(node, "cache flags", "");
         if (!inputFlag.isEmpty()) {
-            final String[] unparsedFlags = inputFlag.split(listPattern);
+            if (inputFlag.equalsIgnoreCase("all")) {
+                flags.addAll(Arrays.asList(CacheFlag.values()));
+            } else {
+                final String[] unparsedFlags = inputFlag.split(listPattern);
 
-            for (String flag : unparsedFlags) {
-                try {
-                    flags.add(CacheFlag.valueOf(flag.toUpperCase(Locale.ROOT).replaceAll(" ", "_")));
-                } catch (Exception ex) {
-                    return error("Unknown cache flag: " + flag);
+                for (String flag : unparsedFlags) {
+                    try {
+                        flags.add(CacheFlag.valueOf(flag.toUpperCase(Locale.ROOT).replaceAll(" ", "_")));
+                    } catch (Exception ex) {
+                        return error("Unknown cache flag: " + flag);
+                    }
                 }
             }
         }

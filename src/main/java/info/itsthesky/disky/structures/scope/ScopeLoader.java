@@ -10,7 +10,7 @@ public class ScopeLoader extends StructureLoader {
 
 	@Override
 	public boolean canUse() {
-		return !Skript.classExists("org.skriptlang.skript.lang.Structure");
+		return true;
 	}
 
 	@Override
