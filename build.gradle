@@ -4,10 +4,16 @@ plugins {
 }
 
 group = 'info.itsthesky'
+
+// Semantic Versioning
 def major = '4'
-def minor = '8'
+def minor = '9'
 def patch = '0'
-version = major + '.' + minor + '.' + patch
+
+def channel = 'nightly'
+def channelVersion = ''
+
+version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
 repositories {
     mavenCentral()
