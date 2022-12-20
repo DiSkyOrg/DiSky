@@ -10,6 +10,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ public final class BotStatus {
                     StringBotStatus.class,
                     String.class,
                     "[discord] [online] status",
-                    "bot"
+                    "bot/member"
             );
         } else {
             DiSky.debug("Registering normal enumeration for bot status");
@@ -33,12 +34,12 @@ public final class BotStatus {
                     EnumBotStatus.class,
                     OnlineStatus.class,
                     "[discord] [online] status",
-                    "bot"
+                    "bot/member"
             );
         }
     }
 
-    public static class StringBotStatus extends PropertyExpression<Bot, String> {
+    public static class StringBotStatus extends PropertyExpression<Object, String> {
 
         @Override
         public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
@@ -50,20 +51,26 @@ public final class BotStatus {
         @Override
         public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
             if (delta == null || delta.length == 0 || delta[0] == null) return;
-            Bot bot = EasyElement.parseSingle(getExpr(), e, null);
+            Object entity = EasyElement.parseSingle(getExpr(), e, null);
             final String status = (String) delta[0];
-            if (status == null || bot == null) return;
+            if (status == null || entity == null) return;
 
-            bot.getInstance().getPresence().setPresence(OnlineStatus.valueOf(
-                    status.toUpperCase().replace(" ", "_")
-            ), bot.getInstance().getPresence().getActivity());
+            if (entity instanceof Bot) {
+                ((Bot) entity).getInstance().getPresence().setPresence(OnlineStatus.valueOf(
+                        status.toUpperCase().replace(" ", "_")
+                ), ((Bot) entity).getInstance().getPresence().getActivity());
+            }
         }
 
         @Override
-        protected String @NotNull [] get(@NotNull Event e, Bot @NotNull [] source) {
+        protected String @NotNull [] get(@NotNull Event e, Object @NotNull [] source) {
             if (source.length == 0)
                 return new String[0];
-            return new String[] {source[0].getInstance().getPresence().getStatus().name().toLowerCase(Locale.ROOT).replace("_", " ")};
+            return new String[] {
+                    source[0] instanceof Bot
+                            ? ((Bot) source[0]).getInstance().getPresence().getStatus().name().toLowerCase(Locale.ROOT).replace("_", " ")
+                            : ((Member) source[0]).getOnlineStatus().name().toLowerCase(Locale.ROOT).replace("_", " ")
+            };
         }
 
         @Override
@@ -78,12 +85,12 @@ public final class BotStatus {
 
         @Override
         public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
-            setExpr((Expression<? extends Bot>) exprs[0]);
+            setExpr(exprs[0]);
             return true;
         }
     }
 
-    public static class EnumBotStatus extends PropertyExpression<Bot, OnlineStatus> {
+    public static class EnumBotStatus extends PropertyExpression<Object, OnlineStatus> {
 
         @Override
         public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
@@ -95,18 +102,24 @@ public final class BotStatus {
         @Override
         public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
             if (delta == null || delta.length == 0 || delta[0] == null) return;
-            Bot bot = EasyElement.parseSingle(getExpr(), e, null);
+            final Object entity = EasyElement.parseSingle(getExpr(), e, null);
             final OnlineStatus status = (OnlineStatus) delta[0];
-            if (status == null || bot == null) return;
+            if (status == null || entity == null) return;
 
-            bot.getInstance().getPresence().setPresence(status, bot.getInstance().getPresence().getActivity());
+            if (entity instanceof Bot) {
+                ((Bot) entity).getInstance().getPresence().setPresence(status, ((Bot) entity).getInstance().getPresence().getActivity());
+            }
         }
 
         @Override
-        protected OnlineStatus @NotNull [] get(@NotNull Event e, Bot @NotNull [] source) {
+        protected OnlineStatus @NotNull [] get(@NotNull Event e, Object @NotNull [] source) {
             if (source.length == 0)
                 return new OnlineStatus[0];
-            return new OnlineStatus[] {source[0].getInstance().getPresence().getStatus()};
+            return new OnlineStatus[] {
+                    source[0] instanceof Bot
+                            ? ((Bot) source[0]).getInstance().getPresence().getStatus()
+                            : ((Member) source[0]).getOnlineStatus()
+            };
         }
 
         @Override
@@ -121,7 +134,7 @@ public final class BotStatus {
 
         @Override
         public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
-            setExpr((Expression<? extends Bot>) exprs[0]);
+            setExpr(exprs[0]);
             return true;
         }
     }
