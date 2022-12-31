@@ -45,7 +45,7 @@ public class EffAddField extends Effect {
             return;
         }
         if (desc.length() > 1024) {
-            DiSky.getErrorHandler().exception(e, new RuntimeException("The value of a field cannot be bigger than 1024 characters. The one you're trying to set is '"+name.length()+"' length!"));
+            DiSky.getErrorHandler().exception(e, new RuntimeException("The value of a field cannot be bigger than 1024 characters. The one you're trying to set is '"+desc.length()+"' length!"));
             return;
         }
 
