@@ -46,10 +46,11 @@ public class TimeOutMember extends SpecificBotEffect {
 
 	@Override
 	public boolean initEffect(Expression[] expressions, int matchedPattern, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		this.matchedPattern = matchedPattern;
 		exprMember = (Expression<Member>) expressions[0];
+		if (matchedPattern == 2) return true;
 		exprTime = (Expression<Object>) expressions[1];
 		exprReason = (Expression<String>) expressions[2];
-		this.matchedPattern = matchedPattern;
 		return true;
 	}
 
