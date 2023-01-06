@@ -90,7 +90,7 @@ public class CommandFactory {
             } else if (info.itsthesky.disky.core.Utils.equalsAnyIgnoreCase(place, "thread", "threads")) {
                 types.addAll(Arrays.asList(ChannelType.GUILD_PUBLIC_THREAD, ChannelType.GUILD_PRIVATE_THREAD));
             } else if (info.itsthesky.disky.core.Utils.equalsAnyIgnoreCase(place, "voice")) {
-                types.addAll(Arrays.asList(ChannelType.VOICE));
+                types.add(ChannelType.VOICE);
             } else {
                 Skript.error("'executable in' should be any of ['guild', 'dm', 'voice', 'threads'], but found '" + place + "'");
                 return null;
