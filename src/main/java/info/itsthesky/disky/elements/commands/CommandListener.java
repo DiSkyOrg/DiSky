@@ -3,12 +3,9 @@ package info.itsthesky.disky.elements.commands;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.localization.Language;
 import info.itsthesky.disky.core.SkriptUtils;
-import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
@@ -35,7 +32,7 @@ public class CommandListener extends ListenerAdapter {
                     Message message = e.getMessage();
                     GuildMessageChannel textChannel = null;
                     Guild guild = null;
-                    if (message.isFromGuild() && e.isFromType(ChannelType.TEXT)) {
+                    if (message.isFromGuild() && !e.isFromType(ChannelType.UNKNOWN)) {
                         textChannel = e.getChannel().asGuildMessageChannel();
                         guild = e.getGuild();
                     }
@@ -54,7 +51,6 @@ public class CommandListener extends ListenerAdapter {
                             mentions = true;
                         }
                     }
-
                     if (rawPrefix.endsWith(" ")) {
                         // TODO I'm now questioning the need for the regex replacing, check this out
                         String[] spacedCommand = content.split(" ");
