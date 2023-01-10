@@ -7,8 +7,6 @@ import ch.njol.skript.classes.Parser;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
-import ch.njol.skript.log.RetainingLogHandler;
-import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.StringMode;
 import ch.njol.skript.util.Timespan;
@@ -86,11 +84,15 @@ public class CommandFactory {
         ArrayList<ChannelType> types = new ArrayList<>();
         for (String place : places) {
             if (info.itsthesky.disky.core.Utils.equalsAnyIgnoreCase(place, "server", "guild")) {
-                types.add(ChannelType.TEXT);
+                types.addAll(Arrays.asList(ChannelType.TEXT, ChannelType.NEWS));
             } else if (info.itsthesky.disky.core.Utils.equalsAnyIgnoreCase(place, "dm", "pm", "direct message", "private message")) {
                 types.add(ChannelType.PRIVATE);
+            } else if (info.itsthesky.disky.core.Utils.equalsAnyIgnoreCase(place, "thread", "threads")) {
+                types.addAll(Arrays.asList(ChannelType.GUILD_PUBLIC_THREAD, ChannelType.GUILD_PRIVATE_THREAD));
+            } else if (info.itsthesky.disky.core.Utils.equalsAnyIgnoreCase(place, "voice")) {
+                types.add(ChannelType.VOICE);
             } else {
-                Skript.error("'executable in' should be either 'guild', 'dm', or both, but found '" + place + "'");
+                Skript.error("'executable in' should be any of ['guild', 'dm', 'voice', 'threads'], but found '" + place + "'");
                 return null;
             }
         }

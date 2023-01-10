@@ -9,12 +9,8 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.BukkitEvent;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -57,10 +53,10 @@ public class DiSkyCommand extends SkriptEvent {
             }
         }, 0);
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, TextChannel.class, new Getter<TextChannel, EvtDiSkyCommand>() {
+        EventValues.registerEventValue(EvtDiSkyCommand.class, GuildMessageChannel.class, new Getter<GuildMessageChannel, EvtDiSkyCommand>() {
             @Override
-            public TextChannel get(@NotNull EvtDiSkyCommand event) {
-                return (TextChannel) event.jdaEvent.getChannel();
+            public GuildMessageChannel get(@NotNull EvtDiSkyCommand event) {
+                return (GuildMessageChannel) event.jdaEvent.getChannel();
             }
         }, 0);
 
