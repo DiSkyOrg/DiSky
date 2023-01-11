@@ -45,7 +45,7 @@ public class RolePosition extends ActionProperty<Role, RoleAction, Number> {
 
     @Override
     public RoleAction change(RoleAction action, Number value) {
-        return null;
+        return action.setPosition(value.intValue());
     }
 
     @Override
