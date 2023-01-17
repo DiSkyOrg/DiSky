@@ -1,5 +1,6 @@
 package info.itsthesky.disky.elements;
 
+import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.registrations.Converters;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
@@ -68,54 +69,54 @@ public class Types {
          */
         new DiSkyType<>(Channel.class, "channel",
                 Channel::getName,
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(InteractionHook.class, "interactionhook",
-                null, null).register();
+                null, null).eventExpression().register();
         new DiSkyType<>(GuildChannel.class, "guildchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildChannelById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(TextChannel.class, "textchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getTextChannelById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(VoiceChannel.class, "voicechannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getVoiceChannelById(input))
-        ).register();
-        new DiSkyType<>(AudioChannel.class, "audiohannel", Channel::getName, null).register();
+        ).eventExpression().register();
+        new DiSkyType<>(AudioChannel.class, "audiochannel", Channel::getName, null).eventExpression().register();
         new DiSkyType<>(ThreadChannel.class, "threadchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getThreadChannelById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Category.class, "category",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getCategoryById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(NewsChannel.class, "newschannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getNewsChannelById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(StageChannel.class, "stagechannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getStageChannelById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(PrivateChannel.class, "privatechannel",
                 PrivateChannel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getPrivateChannelById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(ForumChannel.class, "forumchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getForumChannelById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(ChannelAction.class, "channelaction",
                 action -> action.getType().name(),
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(RoleAction.class, "roleaction",
                 action -> "role action",
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(ChannelType.class, "channeltype",
                 type -> type.name().toLowerCase().replace("_", " "),
                 input -> {
@@ -123,7 +124,7 @@ public class Types {
                         return null;
                     return input.equalsIgnoreCase("chat") ? ChannelType.TEXT : ChannelType.valueOf(input.toUpperCase());
                 }
-        ).register();
+        ).eventExpression().register();
 
         /*
         Components
@@ -131,22 +132,22 @@ public class Types {
 
         new DiSkyType<>(ComponentRow.class, "row",
                 row -> row.asComponents().stream().map(c -> c.toData().toString()).collect(Collectors.toList()).toString(),
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(Modal.Builder.class, "modal",
                 Modal.Builder::getId,
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(Button.class, "button",
                 ActionComponent::getId,
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(SelectMenu.Builder.class, "dropdown",
                 SelectMenu.Builder::getId,
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(SelectOption.class, "selectoption",
                 option -> option.toData().toString(),
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(TextInput.Builder.class, "textinput",
                 TextInput.Builder::getId,
-                null).register();
+                null).eventExpression().register();
         DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
 
         /*
@@ -154,19 +155,19 @@ public class Types {
          */
         new DiSkyType<>(SlashCommandData.class, "slashcommand",
                 slash -> slash.toData().toString(),
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(SubcommandGroupData.class, "slashcommandgroup",
                 slash -> slash.toData().toString(),
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(SubcommandData.class, "subslashcommand",
                 slash -> slash.toData().toString(),
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(OptionData.class, "slashoption",
                 slash -> slash.toData().toString(),
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(Command.Choice.class, "slashchoice",
                 Command.Choice::getName,
-                null).register();
+                null).eventExpression().register();
         DiSkyType.fromEnum(OptionType.class, "optiontype", "optiontype").register();
 
         /*
@@ -176,15 +177,15 @@ public class Types {
         new DiSkyType<>(Role.class, "role",
                 Role::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getRoleById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(ForumTag.class, "forumtag",
                 ForumTag::getName,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(ScheduledEvent.class, "scheduledevent",
                 ScheduledEvent::getName,
                 null
-        ).register();
+        ).eventExpression().register();
 
         /*
         Message Entities
@@ -192,26 +193,26 @@ public class Types {
         new DiSkyType<>(Message.class, "message",
                 Message::getContentRaw,
                 id -> CommandEvent.lastEvent.getMessageChannel().getHistory().getMessageById(id)
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Message.Attachment.class, "attachment",
                 Message.Attachment::getUrl,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(MessageCreateBuilder.class, "messagecreatebuilder",
                 MessageCreateBuilder::getContent, null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Emote.class, "emote",
                 Emote::getAsMention,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Sticker.class, "sticker",
                 Sticker::getName,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(EmbedBuilder.class, "embedbuilder",
                 embedBuilder -> embedBuilder.getDescriptionBuilder().toString(),
                 null
-        ).register();
+        ).eventExpression().register();
 
         /*
         Global Entities
@@ -224,34 +225,34 @@ public class Types {
         new DiSkyType<>(User.class, "user",
                 user -> user.getName() + "#" + user.getDiscriminator(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(User.Profile.class, "userprofile",
                 User.Profile::toString,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Activity.class, "activity",
                 Activity::getName,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Guild.Ban.class, "ban",
                 Guild.Ban::getReason,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Invite.class, "invite",
                 Invite::getUrl,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(AuditLogEntry.class, "auditlogentry",
                 ISnowflake::getId,
                 null
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(CommandObject.class, "discordcommand",
                 CommandObject::getName,
-                null).register();
+                null).eventExpression().register();
         new DiSkyType<>(Guild.class, "guild",
                 Guild::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildById(input))
-        ).register();
+        ).eventExpression().register();
         new DiSkyType<>(Member.class, "member",
                 member -> member.getUser().getName() + "#" + member.getUser().getDiscriminator(),
                 id -> {
@@ -261,9 +262,11 @@ public class Types {
                     if (event.getJDAEvent().isFromGuild())
                         return CommandEvent.lastEvent.getGuild().getMemberById(id);
                     return null;
-                }).register();
+                }).eventExpression().register();
         new DiSkyType<>(Bot.class, "bot",
                 member -> member.getInstance().getSelfUser().getName() + "#" + member.getInstance().getSelfUser().getDiscriminator(),
-                input -> DiSky.getManager().fromName(input)).register();
+                input -> DiSky.getManager().fromName(input))
+                .eventExpression()
+                .register();
     }
 }
