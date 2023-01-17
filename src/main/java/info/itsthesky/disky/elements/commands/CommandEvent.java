@@ -41,7 +41,7 @@ public class CommandEvent extends Event implements Cancellable, MessageEvent {
                         String prefix, String usedAlias, CommandObject command, String arguments, Guild guild,
                         MessageChannel messagechannel, GuildChannel channel, Message message, User user,
                         Member member, JDA bot) {
-	    this.arguments = arguments == null ? "" : arguments;
+        this.arguments = arguments == null ? "" : arguments;
         this.command = command;
         this.guild = guild;
         this.user = user;
@@ -54,21 +54,6 @@ public class CommandEvent extends Event implements Cancellable, MessageEvent {
         this.bot = bot;
         this.event = event;
         lastEvent = this;
-    }
-
-    public CommandEvent(CommandEvent original) {
-        this(original.getEvent(),
-                original.getPrefix(),
-                original.getUsedAlias(),
-                original.getCommand(),
-				original.getArguments(),
-                original.getGuild(),
-                original.getMessageChannel(),
-                original.getTxtChannel(),
-                original.getMessage(),
-                original.getUser(),
-                original.getMember(),
-                original.getBot());
     }
 
     public MessageReceivedEvent getEvent() {
