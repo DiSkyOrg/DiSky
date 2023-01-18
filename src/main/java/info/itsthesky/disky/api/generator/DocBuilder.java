@@ -387,6 +387,7 @@ public class DocBuilder {
         private final @Nullable String[] patterns;
         private final @Nullable String[] examples;
         private final @Nullable String[] requiredPlugins;
+        private final @Nullable String module;
 
         public SimpleDocElement(SyntaxElementInfo<?> info) {
             this.id = getAnnotationOr(info, DocumentationId.class, info.c.getSimpleName());
@@ -396,6 +397,7 @@ public class DocBuilder {
             this.examples = getAnnotationOrs(info, Examples.class, null);
             this.since = getAnnotationOr(info, Since.class, null);
             this.requiredPlugins = getAnnotationOrs(info, RequiredPlugins.class, null);
+            this.module = getAnnotationOr(info, Module.class, null);
         }
 
         public @Nullable String getId() {
@@ -424,6 +426,10 @@ public class DocBuilder {
 
         public String[] getRequiredPlugins() {
             return requiredPlugins;
+        }
+
+        public @Nullable String getModule() {
+            return module;
         }
     }
 
