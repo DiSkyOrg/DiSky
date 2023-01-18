@@ -10,7 +10,7 @@ def major = '4'
 def minor = '9'
 def patch = '0'
 
-def channel = 'nightly'
+def channel = ''
 def channelVersion = ''
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
