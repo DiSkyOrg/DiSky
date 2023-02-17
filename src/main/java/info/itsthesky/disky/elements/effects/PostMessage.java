@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 		"You can send messages in a text, private, news, post or thread channel.",
 })
 @Examples({"post \"Hello world!\" to text channel with id \"000\"",
-		"post last embed to thread channel with id \"000\" and store it in {_message"})
+		"post last embed to thread channel with id \"000\" and store it in {_message}"})
 @Since("4.4.0")
 public class PostMessage extends SpecificBotEffect<Message> {
 
