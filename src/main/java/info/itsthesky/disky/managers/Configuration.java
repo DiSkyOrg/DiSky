@@ -42,19 +42,4 @@ public class Configuration extends YamlConfiguration {
 
 		return config;
 	}
-
-	@NotNull
-	public static Configuration loadConfiguration(@NotNull Reader reader) {
-		Validate.notNull(reader, "Stream cannot be null");
-
-		Configuration config = new Configuration();
-
-		try {
-			config.load(reader);
-		} catch (IOException | InvalidConfigurationException ex) {
-			Bukkit.getLogger().log(Level.SEVERE, "Cannot load configuration from stream", ex);
-		}
-
-		return config;
-	}
 }

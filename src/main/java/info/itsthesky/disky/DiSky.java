@@ -65,14 +65,8 @@ public final class DiSky extends JavaPlugin {
          * Loading the configuration
          */
         final File configFile = new File(getDataFolder(), "config.yml");
-        if (!configFile.exists()) {
-            try {
-                Files.write(configFile.toPath(), Utils.readBytesFromStream(Objects.requireNonNull(getResource("config.yml"))));
-            } catch (IOException ex) {
-                getLogger().severe("Cannot create config file");
-                ex.printStackTrace();
-            }
-        }
+        if (!configFile.exists())
+            saveResource("config.yml", false);
         configuration = Configuration.loadConfiguration(configFile);
 
         /*

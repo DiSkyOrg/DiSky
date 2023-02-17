@@ -5,6 +5,7 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.events.DiSkyErrorEvent;
+import info.itsthesky.disky.managers.config.Config;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
@@ -69,18 +70,25 @@ public class DiSkyErrorHandler implements ErrorHandler {
 		if (ex == null)
 			ex = new RuntimeException("Unknown exception (nullable message): " + ex);
 		if (ex instanceof ErrorResponseException)
-			lines = errors.getOrDefault(((ErrorResponseException) ex).getErrorResponse(), def).apply(ex);
+			lines = formatResponseError((ErrorResponseException) ex);
 		else
 			lines = def.apply(ex);
+
 		if (event != null) {
 			@Nullable Throwable finalEx = ex;
 			SkriptUtils.sync(() -> Bukkit.getPluginManager().callEvent(new DiSkyErrorEvent.BukkitDiSkyErrorEvent(finalEx, event.getEventName())));
+		}
+
+		if (lines == null) {
+			QUEUED_MESSAGES.clear();
+			return;
 		}
 
 		for (String line : lines)
 			send("&4[&c!&4] &c" + line);
 
 		send("&4[&c!&4] &c");
+		sendAll();
 	}
 
 	@Override
@@ -96,7 +104,23 @@ public class DiSkyErrorHandler implements ErrorHandler {
 		return value;
 	}
 
+	public String[] formatResponseError(ErrorResponseException ex) {
+		if (Config.getIgnoredCodes().contains(ex.getErrorCode()))
+			return null;
+
+		if (!errors.containsKey(ex.getErrorResponse()))
+			return def.apply(ex);
+
+		return errors.get(ex.getErrorResponse()).apply(ex);
+	}
+
+	private final List<String> QUEUED_MESSAGES = new ArrayList<>();
 	private void send(String message) {
-		Bukkit.getServer().getConsoleSender().sendMessage(Utils.colored(message));
+		QUEUED_MESSAGES.add(Utils.colored(message));
+	}
+
+	private void sendAll() {
+		Bukkit.getConsoleSender().sendMessage(QUEUED_MESSAGES.toArray(new String[0]));
+		QUEUED_MESSAGES.clear();
 	}
 }
