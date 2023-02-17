@@ -6,10 +6,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.events.DiSkyErrorEvent;
 import info.itsthesky.disky.managers.config.Config;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -27,6 +24,7 @@ public class DiSkyErrorHandler implements ErrorHandler {
 	private final HashMap<ErrorResponse, Function<Throwable, String[]>> errors = new HashMap<>();
 	private final HashMap<Event, Throwable> errorsValue = new HashMap<>();
 	private final Function<Throwable, String[]> def;
+	private final HashMap<ErrorResponse, String> friendlyMessages = new HashMap<>();
 
 	public DiSkyErrorHandler() {
 		def = ex -> {
@@ -36,6 +34,11 @@ public class DiSkyErrorHandler implements ErrorHandler {
 			msg.add("");
 			for (StackTraceElement line : ex.getStackTrace())
 				msg.add("" + line.toString());
+			msg.add("");
+			msg.add("&6&lREAD THE ERROR CAREFULLY&r&e, and if you are sure about it,");
+			msg.add("&eyou can report the error with the whole stacktrace on the GitHub repository:");
+			msg.add("&ehttps://github.com/DiSkyOrg/DiSky/issues/new");
+			msg.add("");
 			return msg.toArray(new String[0]);
 		};
 		errors.put(ErrorResponse.INVALID_FORM_BODY, ex -> {
@@ -56,6 +59,18 @@ public class DiSkyErrorHandler implements ErrorHandler {
 
 			return msg.toArray(new String[0]);
 		});
+
+		friendlyMessages.put(ErrorResponse.UNKNOWN_USER, "The specified user does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_CHANNEL, "The specified channel does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_GUILD, "The specified guild does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_MEMBER, "The specified member does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_ROLE, "The specified role does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_EMOJI, "The specified emoji does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_WEBHOOK, "The specified webhook does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_BAN, "The specified ban does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_INTEGRATION, "The specified integration does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_INVITE, "The specified invite does not exist or is not cached.");
+		friendlyMessages.put(ErrorResponse.UNKNOWN_MESSAGE, "The specified message does not exist or is not cached.");
 	}
 	
 	@Override
