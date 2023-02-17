@@ -52,13 +52,12 @@ public class ModifySection extends Section {
 			return getNext();
 		final List<ScreenElement> elements = new ArrayList<>();
 
+		last.setNext(null);
 		TriggerItem triggerItem = first;
 		while (triggerItem != null) {
 			if (triggerItem instanceof ScreenElement)
 				elements.add((ScreenElement) triggerItem);
 			triggerItem = triggerItem.getNext();
-			if (triggerItem != null && triggerItem.getParent() != this)
-				break;
 		}
 
 		GuildWelcomeScreenManager manager = guild.modifyWelcomeScreen();
