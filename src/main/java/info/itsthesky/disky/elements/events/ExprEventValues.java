@@ -1,14 +1,13 @@
-package info.itsthesky.disky.api.events;
+package info.itsthesky.disky.elements.events;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.api.events.EventValue;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +22,8 @@ import java.util.List;
 public class ExprEventValues extends SimpleExpression<Object> {
 
     static {
-        Skript.registerExpression(ExprEventValues.class, Object.class, ExpressionType.SIMPLE,
-                "(multiple|list|array) event-<.+>");
+        Skript.registerExpression(ExprEventValues.class, Object.class, ExpressionType.PATTERN_MATCHES_EVERYTHING,
+                "[(multiple|list|array)] event-<.+>");
     }
 
     private static final HashMap<Class<? extends Event>, List<EventValue<?, ?>>> eventValues = new HashMap<>();
