@@ -63,7 +63,7 @@ public class ConnectBot extends WaiterEffect {
 		if (bot == null || (connect && channel == null) || (!connect && guild == null))
 			return;
 
-		final AudioChannel foundChannel = bot.getInstance().getChannelById(AudioChannel.class, channel.getId());
+		final AudioChannel foundChannel = connect ? bot.getInstance().getChannelById(AudioChannel.class, channel.getId()) : guild.getAudioManager().getConnectedChannel();
 		if (foundChannel == null) {
 			Skript.error("The audio channel with id " + channel.getId() + " is not found for bot " + bot.getName() + "!");
 			restart();
