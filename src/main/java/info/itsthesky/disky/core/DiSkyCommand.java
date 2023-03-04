@@ -7,6 +7,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.modules.DiSkyModule;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,6 +31,7 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored("&b/disky docs <include time> &7- &9Generate the full documentation of DiSky, including or not event-value's time."));
             sender.sendMessage(Utils.colored("&b/disky modules &7- &9Show the list of modules."));
             sender.sendMessage(Utils.colored("&b/disky bots &7- &9Show the list of loaded bots."));
+            sender.sendMessage(Utils.colored("&b/disky bot <bot> &7- &9Show info about a specific bot."));
             sender.sendMessage(Utils.colored("&b/disky debug &7- &9Store the debug information inside the 'plugins/DiSky/debug.txt' file."));
             sender.sendMessage(Utils.colored("&b/disky reload <module name> &7- &4&lBETA &9Reload a specific module."));
             sender.sendMessage(Utils.colored(""));
@@ -112,6 +114,28 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored(""));
             for (Bot bot : DiSky.getManager().getBots())
                 sender.sendMessage(Utils.colored("  &7- &b" + bot.getName() + " &3loaded as &b" + bot.getDiscordName() + "&3, ping:&b " + bot.getInstance().getGatewayPing() + "ms"));
+            sender.sendMessage(Utils.colored(""));
+            return true;
+        } else if (args[0].equalsIgnoreCase("bot")) {
+            final String botName = args.length > 1 ? args[1] : null;
+            final Bot bot = botName == null ? null : DiSky.getManager().getBotByName(botName);
+            if (botName == null || bot == null) {
+                sender.sendMessage(Utils.colored("&cYou must specify a valid bot name!"));
+                return false;
+            }
+
+            sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Bot &b------"));
+            sender.sendMessage(Utils.colored(""));
+            sender.sendMessage(Utils.colored("  &7- &3Name: &b" + bot.getName()));
+            sender.sendMessage(Utils.colored("  &7- &3Discord Name: &b" + bot.getDiscordName()));
+            sender.sendMessage(Utils.colored("  &7- &3Uptime: &b" + bot.getUptime()));
+            sender.sendMessage(Utils.colored("  &7- &3Ping: &b" + bot.getInstance().getGatewayPing() + "ms"));
+            sender.sendMessage(Utils.colored("  &7- &3Gateway Intents ("+bot.getInstance().getGatewayIntents().size()+"):"));
+            for (GatewayIntent intent : bot.getInstance().getGatewayIntents())
+                sender.sendMessage(Utils.colored("    &7- &b" + intent.name().toLowerCase().replace("_", " ")));
+            /*sender.sendMessage(Utils.colored("  &7- &3Shards ("+bot.getInstance().getShardInfo().getShardTotal()+"):"));
+            for (int i = 0; i < bot.getInstance().getShardInfo().getShardTotal(); i++)
+                sender.sendMessage(Utils.colored("    &7- &b" + i + " &3ping: &b" + bot.getInstance().getShardManager().getShardById(i).getGatewayPing() + "ms"));*/
             sender.sendMessage(Utils.colored(""));
             return true;
         } else if (args[0].equalsIgnoreCase("reload")) {
