@@ -42,8 +42,8 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 				InlineMessageBuilder.class,
 				MessageCreateBuilder.class,
 				ExpressionType.COMBINED,
-				"[rich] message %string/embedbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%]",
-				"rich component[s] %rows/buttons/dropdowns%"
+				"[rich] [:silent] message %string/embedbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%]",
+				"rich [:silent] component[s] %rows/buttons/dropdowns%"
 		);
 	}
 
@@ -53,10 +53,12 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 	private Expression<String> exprFiles;
 
 	private boolean isComponentOnly;
+	private boolean isSilent;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		isComponentOnly = matchedPattern == 1;
+		isSilent = parseResult.hasTag("silent");
 		exprBase = (Expression<Object>) exprs[0];
 		if (!isComponentOnly) {
 			exprEmbeds = (Expression<EmbedBuilder>) exprs[1];
@@ -71,7 +73,8 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 		final EmbedBuilder[] embeds = EasyElement.parseList(exprEmbeds, e, null);
 		final Object[] rows = EasyElement.parseList(exprRows, e, null);
 		final String[] files = EasyElement.parseList(exprFiles, e, null);
-		final MessageCreateBuilder builder = new MessageCreateBuilder();
+		final MessageCreateBuilder builder = new MessageCreateBuilder()
+				.setSuppressedNotifications(isSilent);
 
 		if (isComponentOnly) {
 			final Object[] baseRows = EasyElement.parseList(exprBase, e, new Object[0]);

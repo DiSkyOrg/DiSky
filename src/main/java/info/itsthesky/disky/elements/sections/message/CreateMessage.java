@@ -1,13 +1,20 @@
 package info.itsthesky.disky.elements.sections.message;
 
+import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.TriggerItem;
+import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.ReturningSection;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @Name("Create (rich) Message")
 @Description({
@@ -69,13 +76,21 @@ public class CreateMessage extends ReturningSection<MessageCreateBuilder> {
 				CreateMessage.class,
 				MessageCreateBuilder.class,
 				message.class,
-				"(make|create) [a] [new] message"
+				"(make|create) [a] [new] [:silent] message"
 		);
+	}
+
+	private boolean silent;
+
+	@Override
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
+		silent = parseResult.hasTag("silent");
+		return super.init(exprs, matchedPattern, isDelayed, parseResult, sectionNode, triggerItems);
 	}
 
 	@Override
 	public MessageCreateBuilder createNewValue() {
-		return new MessageCreateBuilder();
+		return new MessageCreateBuilder().setSuppressedNotifications(silent);
 	}
 
 	@Override
