@@ -50,7 +50,6 @@ public class MessageManager extends ListenerAdapter {
 		deletedMessageCache.put(id, new MessageWrapper(message));
 
 		DiSky.debug("Caching message with id " + id + ": " + deletedMessageCache.get(id));
-		System.out.println(deletedMessageCache.size());
 	}
 
 	private void update(Message message) {
@@ -63,7 +62,6 @@ public class MessageManager extends ListenerAdapter {
 	}
 
 	public @Nullable Message getDeletedMessage(long id) {
-		System.out.println(deletedMessageCache.size());
 		if (!deletedMessageCache.containsKey(id))
 			DiSky.debug("Message with id " + id + " is not in deleted cache.");
 		return deletedMessageCache.getOrDefault(id, null);
