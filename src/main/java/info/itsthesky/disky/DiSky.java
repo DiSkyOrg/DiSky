@@ -14,16 +14,16 @@ import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.Configuration;
 import info.itsthesky.disky.structures.StructureLoader;
 import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.internal.handle.ChannelUpdateHandler;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.util.Objects;
 
 public final class DiSky extends JavaPlugin {
 
@@ -64,10 +64,8 @@ public final class DiSky extends JavaPlugin {
         /*
          * Loading the configuration
          */
-        final File configFile = new File(getDataFolder(), "config.yml");
-        if (!configFile.exists())
-            saveResource("config.yml", false);
-        configuration = Configuration.loadConfiguration(configFile);
+        updateConfig();
+        configuration = Configuration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 
         /*
         2.6.4/2.7's Structure API check
@@ -140,13 +138,40 @@ public final class DiSky extends JavaPlugin {
 
     }
 
+    public static void updateConfig() {
+        try {
+            final InputStream currentConfig = Files.newInputStream(new File(getInstance().getDataFolder(), "config.yml").toPath());
+            final InputStream newConfig = getInstance().getResource("config.yml");
+
+            if (currentConfig == null || newConfig == null) {
+                getInstance().getLogger().severe("Could not find config file of the JAR, this should never happens :c");
+                getInstance().getServer().getPluginManager().disablePlugin(getInstance());
+                return;
+            }
+
+            final String currentConfigString = new String(Utils.readBytesFromStream(currentConfig));
+            final String newConfigString = new String(Utils.readBytesFromStream(newConfig));
+
+            currentConfig.close();
+            newConfig.close();
+
+            if (!currentConfigString.equals(newConfigString)) {
+                getInstance().getLogger().info("Updating config file ...");
+                Files.delete(new File(getInstance().getDataFolder(), "config.yml").toPath());
+                getInstance().saveResource("config.yml", false);
+                getInstance().getLogger().info("Success!");
+            }
+        } catch (Exception ex) {
+        }
+    }
+
     public static void debug(String s) {
         getInstance().debugMessage(s);
     }
 
     private void debugMessage(String s) {
         if (getConfiguration().getOrSetDefault("debug", false))
-            getLogger().info("[DiSky DEBUG] " + s);
+            getLogger().info(ChatColor.DARK_PURPLE + "DEBUG: " + ChatColor.LIGHT_PURPLE + s);
     }
 
     @Override
