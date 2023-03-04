@@ -24,7 +24,7 @@ public class ExprPlaceholder extends SimpleChangeableProperty<Object, String> {
 	@Override
 	public @Nullable String convert(Object entity) {
 		if (entity instanceof SelectMenu.Builder)
-			return ((SelectMenu.Builder) entity).getPlaceholder();
+			return ((SelectMenu.Builder<?, ?>) entity).getPlaceholder();
 		if (entity instanceof TextInput.Builder)
 			return ((TextInput.Builder) entity).getPlaceholder();
 		return null;
@@ -38,7 +38,7 @@ public class ExprPlaceholder extends SimpleChangeableProperty<Object, String> {
 	@Override
 	protected void set(@NotNull Object entity, @Nullable String value) {
 		if (entity instanceof SelectMenu.Builder)
-			((SelectMenu.Builder) entity).setPlaceholder(value);
+			((SelectMenu.Builder<?, ?>) entity).setPlaceholder(value);
 		if (entity instanceof TextInput.Builder)
 			((TextInput.Builder) entity).setPlaceholder(value);
 	}
