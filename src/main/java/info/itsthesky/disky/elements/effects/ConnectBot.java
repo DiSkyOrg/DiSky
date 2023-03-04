@@ -75,6 +75,7 @@ public class ConnectBot extends WaiterEffect {
 		} else {
 			foundChannel.getGuild().getAudioManager().closeAudioConnection();
 		}
+		restart();
 	}
 
 	@Override
