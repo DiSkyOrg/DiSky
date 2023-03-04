@@ -18,7 +18,6 @@ public class GuildOwnerEvent extends DiSkyEvent<GuildUpdateOwnerEvent> {
                 .description("Fired when a owner of a guild changes can be used to get the old/new owner, the author and the guild.")
                 .examples("on guild owner change:");
 
-
         SkriptUtils.registerBotValue(GuildOwnerEvent.BukkitGuildOwnerEvent.class);
 
         SkriptUtils.registerAuthorValue(GuildOwnerEvent.BukkitGuildOwnerEvent.class, e -> e.getJDAEvent().getGuild());

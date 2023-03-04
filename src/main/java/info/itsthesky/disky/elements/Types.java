@@ -240,7 +240,7 @@ public class Types {
                 Invite::getUrl,
                 null
         ).eventExpression().register();
-        new DiSkyType<>(AuditLogEntry.class, "auditlogentry",
+        new DiSkyType<>(AuditLogEntry.class, "logentry",
                 ISnowflake::getId,
                 null
         ).eventExpression().register();
