@@ -23,3 +23,14 @@ fix-skript-online-status: false
 # It's mainly to avoid others people that have access to Skript to get the token.
 # Restart needed to take effect.
 token-of-bot-expression: true
+
+# When stopping the server, DiSky will try to stop all the bots gracefully.
+# For that, the server will have to wait for all the requests to be done.
+# If you don't want to wait some seconds when stopping the server, disable this.
+# Restart needed to take effect. If enabled, you can configure the max time-out time below.
+stop-bots-gracefully: true
+
+# The max time-out time in seconds when stopping the server of bots.
+# Does nothing if 'stop-bots-gracefully' is disabled.
+# Restart needed to take effect.
+stop-bots-timeout: 5

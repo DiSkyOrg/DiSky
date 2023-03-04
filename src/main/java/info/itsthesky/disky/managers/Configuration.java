@@ -1,5 +1,6 @@
 package info.itsthesky.disky.managers;
 
+import info.itsthesky.disky.DiSky;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -23,8 +24,10 @@ public class Configuration extends YamlConfiguration {
 	}
 
 	public <T> T getOrSetDefault(String key, T defaultValue) {
-		if (!contains(key))
+		if (!contains(key)) {
 			set(key, defaultValue);
+			DiSky.updateConfig();
+		}
 		return (T) get(key);
 	}
 
