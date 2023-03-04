@@ -146,6 +146,11 @@ public class DiSkyType<T> {
         register(this.classInfo);
     }
 
+    public void register(Consumer<ClassInfo<T>> consumer) {
+        consumer.accept(this.classInfo);
+        register();
+    }
+
     public DiSkyType<T> eventExpression() {
         this.classInfo.defaultExpression(new EventValueExpression<>(this.clazz));
         return this;
