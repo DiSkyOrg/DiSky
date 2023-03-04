@@ -42,20 +42,6 @@ public class Bot {
         this.options = options;
     }
 
-    public static @Nullable Bot create(BotOptions options) {
-        final JDABuilder builder = options.toBuilder();
-
-        final JDA built;
-        try {
-            built = builder.build();
-        } catch (Throwable throwable) {
-            DiSky.getErrorHandler().exception(null, throwable);
-            return null;
-        }
-
-        return new Bot(options.getName(), built, options, options.getApplication(), options.forceReload());
-    }
-
     public String getName() {
         return name;
     }

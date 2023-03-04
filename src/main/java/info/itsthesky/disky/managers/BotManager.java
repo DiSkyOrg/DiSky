@@ -7,8 +7,11 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.ReactionListener;
 import info.itsthesky.disky.elements.commands.CommandListener;
+import info.itsthesky.disky.elements.components.Test;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,5 +144,9 @@ public class BotManager {
             execute(bot -> bot.getInstance().addEventListener(listener));
         else
             queuedListeners.add(listener);
+    }
+
+    public Bot getBotByName(String name) {
+        return bots.stream().filter(bot -> bot.getName().equalsIgnoreCase(name)).findAny().orElse(null);
     }
 }

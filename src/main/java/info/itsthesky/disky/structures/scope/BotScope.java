@@ -39,7 +39,7 @@ import java.util.Locale;
 public class BotScope extends BaseScope<BotOptions> {
 
     public static final GatewayIntent[] defaults = new GatewayIntent[] {
-            GatewayIntent.GUILD_BANS,
+            GatewayIntent.GUILD_MODERATION,
             GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
             GatewayIntent.GUILD_WEBHOOKS,
             GatewayIntent.GUILD_INVITES,
@@ -158,26 +158,30 @@ public class BotScope extends BaseScope<BotOptions> {
         options.setAutoReconnect(autoReconnect);
 
         /* Intents */
-
         final String inputIntent = parseEntry(node, "intents", "");
-        final boolean defaultIntents = inputIntent.equalsIgnoreCase("default intents");
-
+        final boolean defaultIntents = inputIntent.contains("default intents");
         final String[] unparsedIntents = inputIntent.split(listPattern);
 
-        final List<GatewayIntent> intents;
+        final List<GatewayIntent> intents = new ArrayList<>();
         if (defaultIntents) {
-            intents = Arrays.asList(defaults);
-        } else {
-            intents = new ArrayList<>();
-            for (String intent : unparsedIntents) {
-                try {
-                    intents.add(GatewayIntent.valueOf(intent.toUpperCase(Locale.ROOT).replaceAll(" ", "_")));
-                } catch (Exception ex) {
-                    return error("Unknown gateway intent: " + intent);
-                }
+            intents.addAll(Arrays.asList(defaults));
+        }
+
+        for (String intent : unparsedIntents) {
+            if (intent.equalsIgnoreCase("default intents"))
+                continue;
+
+            try {
+                intents.add(GatewayIntent.valueOf(intent.toUpperCase(Locale.ROOT).replaceAll(" ", "_")));
+            } catch (Exception ex) {
+                return error("Unknown gateway intent: " + intent);
             }
         }
+
         options.setIntents(intents.toArray(new GatewayIntent[0]));
+        options.setIntents(Arrays.stream(options.getIntents()).distinct().toArray(GatewayIntent[]::new));
+
+        /* Cache Flags */
         final List<CacheFlag> flags = new ArrayList<>();
 
         final String inputFlag = parseEntry(node, "cache flags", "");
