@@ -39,6 +39,9 @@ public class MessageDeleteEvent extends DiSkyEvent<net.dv8tion.jda.api.events.me
 				String.class,
 				event -> MessageManager.getManager(event.getJDAEvent().getJDA()).getDeletedMessageContent(event.getJDAEvent().getMessageIdLong()));
 
+		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, Message.class,
+				event -> MessageManager.getManager(event.getJDAEvent().getJDA()).getDeletedMessage(event.getJDAEvent().getMessageIdLong()));
+
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, TextChannel.class,
@@ -50,6 +53,9 @@ public class MessageDeleteEvent extends DiSkyEvent<net.dv8tion.jda.api.events.me
 
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, PrivateChannel.class,
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
+
+		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, Number.class,
+				event -> event.getJDAEvent().getMessageIdLong());
 	}
 
 	public static class BukkitMessageDeleteEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.message.MessageDeleteEvent> implements info.itsthesky.disky.api.events.specific.MessageEvent {

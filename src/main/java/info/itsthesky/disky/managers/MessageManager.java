@@ -1,8 +1,8 @@
 package info.itsthesky.disky.managers;
 
-import ch.njol.skript.registrations.EventValues;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.managers.wrappers.MessageWrapper;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -16,27 +16,26 @@ import java.util.WeakHashMap;
 public class MessageManager extends ListenerAdapter {
 
 	private static final WeakHashMap<String, MessageManager> loadedManagers = new WeakHashMap<>();
-	private final WeakHashMap<Long, MessageInfo> deletedMessageCache = new WeakHashMap<>();
-	private final WeakHashMap<Long, EditedMessageInfo> editedMessageCache = new WeakHashMap<>();
 
-	public static @NotNull MessageManager getManager(JDA jda) {
-		return getManager(DiSky.getManager().fromJDA(jda));
+	public static @NotNull MessageManager getManager(JDA bot) {
+		@Nullable MessageManager manager = loadedManagers.getOrDefault(bot.getSelfUser().getId(), null);
+		if (manager == null)
+			throw new NullPointerException("The bot " + bot.getSelfUser().getAsTag() + " is not loaded!");
+		return manager;
 	}
 
-	public static @NotNull MessageManager getManager(Bot bot) {
-		@Nullable MessageManager manager = loadedManagers.getOrDefault(bot.getName(), null);
-		if (manager == null) {
-			manager = new MessageManager();
-			bot.getInstance().addEventListener(manager);
-			loadedManagers.put(bot.getName(), manager);
-		}
-		return manager;
+	// ##############################
+
+	private final WeakHashMap<Long, MessageWrapper> deletedMessageCache = new WeakHashMap<>();
+	private final WeakHashMap<Long, EditedMessageInfo> editedMessageCache = new WeakHashMap<>();
+
+	public MessageManager(Bot bot) {
+		loadedManagers.put(bot.getInstance().getSelfUser().getId(), this);
 	}
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-		insert(event.getMessage(), false);
-		insert(event.getMessage(), true);
+		insert(event.getMessage());
 	}
 
 	@Override
@@ -44,14 +43,14 @@ public class MessageManager extends ListenerAdapter {
 		update(event.getMessage());
 	}
 
-	private void insert(Message message, boolean edited) {
+	private void insert(Message message) {
 		final long id = message.getIdLong();
-		if (edited) {
-			editedMessageCache.put(id, new EditedMessageInfo(message));
-		} else {
-			deletedMessageCache.put(id, new MessageInfo(message));
-		}
-		// "Bonjour" -> "Bye"
+
+		editedMessageCache.put(id, new EditedMessageInfo(message));
+		deletedMessageCache.put(id, new MessageWrapper(message));
+
+		DiSky.debug("Caching message with id " + id + ": " + deletedMessageCache.get(id));
+		System.out.println(deletedMessageCache.size());
 	}
 
 	private void update(Message message) {
@@ -63,7 +62,10 @@ public class MessageManager extends ListenerAdapter {
 		editedMessageCache.put(message.getIdLong(), info);
 	}
 
-	public @Nullable MessageInfo getDeletedMessage(long id) {
+	public @Nullable Message getDeletedMessage(long id) {
+		System.out.println(deletedMessageCache.size());
+		if (!deletedMessageCache.containsKey(id))
+			DiSky.debug("Message with id " + id + " is not in deleted cache.");
 		return deletedMessageCache.getOrDefault(id, null);
 	}
 
@@ -77,55 +79,18 @@ public class MessageManager extends ListenerAdapter {
 	}
 
 	public @Nullable String getDeletedMessageContent(long id) {
-		final @Nullable MessageInfo info = getDeletedMessage(id);
-		return info == null ? null : info.getCurrentContent();
+		final @Nullable Message info = getDeletedMessage(id);
+		return info == null ? null : info.getContentRaw();
 	}
 
-	public static class MessageInfo {
-
-		private final long messageId;
-		private final long authorId;
-		private String currentContent;
-
-		public MessageInfo(Message original) {
-			this(original.getIdLong(), original.getAuthor().getIdLong(), original.getContentRaw());
-		}
-
-		public MessageInfo(long messageId, long authorId, String currentContent) {
-			this.messageId = messageId;
-			this.authorId = authorId;
-			this.currentContent = currentContent;
-		}
-
-		public long getMessageId() {
-			return messageId;
-		}
-
-		public long getAuthorId() {
-			return authorId;
-		}
-
-		public String getCurrentContent() {
-			return currentContent;
-		}
-
-		public void setCurrentContent(String currentContent) {
-			this.currentContent = currentContent;
-		}
-	}
-
-	public static class EditedMessageInfo extends MessageInfo {
+	public static class EditedMessageInfo {
 
 		private String previousContent;
+		private String currentContent;
 
 		public EditedMessageInfo(Message original) {
-			super(original);
 			this.previousContent = original.getContentRaw();
-		}
-
-		public EditedMessageInfo(long messageId, long authorId, String currentContent) {
-			super(messageId, authorId, currentContent);
-			this.previousContent = currentContent;
+			this.currentContent = original.getContentRaw();
 		}
 
 		public String getPreviousContent() {
@@ -134,6 +99,14 @@ public class MessageManager extends ListenerAdapter {
 
 		public void setPreviousContent(String previousContent) {
 			this.previousContent = previousContent;
+		}
+
+		public String getCurrentContent() {
+			return currentContent;
+		}
+
+		public void setCurrentContent(String currentContent) {
+			this.currentContent = currentContent;
 		}
 	}
 

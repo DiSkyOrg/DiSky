@@ -1,6 +1,5 @@
 package info.itsthesky.disky.elements;
 
-import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.registrations.Converters;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
@@ -9,13 +8,13 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.elements.commands.CommandEvent;
 import info.itsthesky.disky.elements.commands.CommandObject;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
+import info.itsthesky.disky.managers.MessageManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
@@ -213,7 +212,6 @@ public class Types {
                 embedBuilder -> embedBuilder.getDescriptionBuilder().toString(),
                 null
         ).eventExpression().register();
-
         /*
         Global Entities
          */

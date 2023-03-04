@@ -17,6 +17,7 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -50,15 +51,31 @@ public class BotManager {
     private void configureBot(Bot bot) {
         bot.getInstance().addEventListener(new CommandListener());
         bot.getInstance().addEventListener(new ReactionListener());
-        bot.getInstance().addEventListener(new MessageManager());
+        bot.getInstance().addEventListener(new MessageManager(bot));
         bot.getInstance().addEventListener(queuedListeners.toArray());
     }
 
     public void shutdown() {
-        // TODO: 29/12/2021 Make the shutdown better, it's blocking the thread currently but else it throw an error since Bukkit disable the class before the bot is offline.
+        // TODO: 04/03/2023 Better way to shutdown bots (JDA's awaitShutdown implementation)
         this.bots.forEach(bot -> {
             bot.getOptions().runShutdown(new ShutdownEvent(bot.getInstance(), OffsetDateTime.now(), 0));
-            bot.getInstance().shutdownNow();
+            final JDA jda = bot.getInstance();
+
+            if (DiSky.getConfiguration().getOrSetDefault("stop-bots-gracefully", false)) {
+                jda.shutdown();
+                DiSky.debug("Trying to shutdown gracefully bot " + bot.getName() + "...");
+                try {
+                    if (!jda.awaitShutdown(DiSky.getConfiguration().getOrSetDefault("stop-bots-timeout", 5), TimeUnit.SECONDS)) {
+                        DiSky.debug("Unable to shutdown gracefully bot " + bot.getName() + "! We'll force shutdown it!");
+                        jda.shutdownNow();
+                    } else
+                        DiSky.debug("Bot " + bot.getName() + " has been shutdown gracefully!");
+                } catch (InterruptedException e) {
+                    jda.shutdownNow();
+                    DiSky.debug("Unable to await shutdown of bot " + bot.getName() + "! We'll block the thread until it's done!");
+                }
+            } else
+                jda.shutdownNow();
         });
     }
 
