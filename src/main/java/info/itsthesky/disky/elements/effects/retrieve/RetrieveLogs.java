@@ -14,7 +14,7 @@ import java.util.List;
 
 @Name("Retrieve Logs")
 @Description("Retrieve the audit logs of a guild.")
-@Examples("retrieve audit logs from event-guild and store it in {_logs}")
+@Examples("retrieve audit logs from event-guild and store it in {_logs::*}")
 @Since("4.11.0")
 public class RetrieveLogs extends BaseMultipleRetrieveEffect<List<AuditLogEntry>, Guild> {
 
