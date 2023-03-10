@@ -36,7 +36,11 @@ public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member>
     @Override
     public @Nullable Member[] convert(Object entity) {
         if (entity instanceof IMemberContainer)
-            return ((IMemberContainer) entity).getMembers().toArray(new Member[0]);
+            if (entity instanceof ThreadChannel) {
+                return ((ThreadChannel) entity).retrieveThreadMembers().stream().map(ThreadMember::getMember).toArray(Member[]::new);
+            } else {
+                return ((IMemberContainer) entity).getMembers().toArray(new Member[0]);
+            }
         if (entity instanceof Guild)
             return ((Guild) entity).getMembers().toArray(new Member[0]);
         return new Member[0];
