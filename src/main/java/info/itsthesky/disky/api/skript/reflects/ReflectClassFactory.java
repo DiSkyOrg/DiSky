@@ -1,4 +1,4 @@
-package info.itsthesky.disky.api.skript;
+package info.itsthesky.disky.api.skript.reflects;
 
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -6,13 +6,12 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
+import info.itsthesky.disky.DiSky;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -53,13 +52,13 @@ public final class ReflectClassFactory {
 		private final String name;
 		private final String[] description;
 		private final String[] examples;
-		private final String[] since;
+		private final String since;
 
 		public Documentation(String name, String description, String examples, String since) {
 			this.name = name;
 			this.description = description.split("\n");
 			this.examples = examples.split("\n");
-			this.since = since.split("\n");
+			this.since = since;
 		}
 
 		public String getName() {
@@ -74,7 +73,7 @@ public final class ReflectClassFactory {
 			return examples;
 		}
 
-		public String[] getSince() {
+		public String getSince() {
 			return since;
 		}
 	}
@@ -90,12 +89,12 @@ public final class ReflectClassFactory {
 
 			final Class<?> elementClass = new ByteBuddy()
 					.redefine(ReflectProperty.class)
-					.name("ReflectProperty_" + COUNT.incrementAndGet())
+					.name("info.itsthesky.disky.elements.reflects.ReflectProperty_" + COUNT.incrementAndGet())
 
 					.annotateType(AnnotationDescription.Builder.ofType(Name.class).define("value", documentation.getName()).build())
 					.annotateType(AnnotationDescription.Builder.ofType(Description.class).defineArray("value", documentation.getDescription()).build())
 					.annotateType(AnnotationDescription.Builder.ofType(Examples.class).defineArray("value", documentation.getExamples()).build())
-					.annotateType(AnnotationDescription.Builder.ofType(Since.class).defineArray("value", documentation.getSince()).build())
+					.annotateType(AnnotationDescription.Builder.ofType(Since.class).define("value", documentation.getSince()).build())
 
 					.method(named("convert")).intercept(MethodDelegation.to(new ConvertMethodInterceptor<>(converter)))
 					.method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(propertyName)))
@@ -106,27 +105,10 @@ public final class ReflectClassFactory {
 
 			SimplePropertyExpression.register((Class<? extends Expression<T>>) elementClass,
 					toType, property, fromTypeName);
+			DiSky.debug("Registered property expression: " + elementClass.getName() + " (" + fromTypeName + " -> " + toType.getSimpleName() + ")");
 
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
-		}
-	}
-
-	public static class ReflectProperty extends SimplePropertyExpression<Object, Object> {
-
-		@Override
-		protected @NotNull String getPropertyName() {
-			throw new UnsupportedOperationException("This method should never be called! It is only here to make the compiler happy.");
-		}
-
-		@Override
-		public @Nullable Object convert(Object entry) {
-			throw new UnsupportedOperationException("This method should never be called! It is only here to make the compiler happy.");
-		}
-
-		@Override
-		public @NotNull Class<?> getReturnType() {
-			return Object.class;
 		}
 	}
 

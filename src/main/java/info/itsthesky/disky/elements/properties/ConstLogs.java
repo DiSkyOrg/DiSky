@@ -1,12 +1,12 @@
 package info.itsthesky.disky.elements.properties;
 
-import info.itsthesky.disky.api.skript.ReflectClassFactory;
+import info.itsthesky.disky.api.skript.reflects.ReflectClassFactory;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
-import static info.itsthesky.disky.api.skript.ReflectClassFactory.register;
+import static info.itsthesky.disky.api.skript.reflects.ReflectClassFactory.register;
 
 public final class ConstLogs {
 
