@@ -16,6 +16,7 @@ import info.itsthesky.disky.structures.StructureLoader;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -157,10 +158,29 @@ public final class DiSky extends JavaPlugin {
             newConfig.close();
 
             if (!currentConfigString.equals(newConfigString)) {
-                getInstance().getLogger().info("Updating config file ...");
-                Files.delete(new File(getInstance().getDataFolder(), "config.yml").toPath());
-                getInstance().saveResource("config.yml", false);
-                getInstance().getLogger().info("Success!");
+                final YamlConfiguration currentConfigYaml = new YamlConfiguration();
+                final YamlConfiguration newConfigYaml = new YamlConfiguration();
+
+                currentConfigYaml.loadFromString(currentConfigString);
+                newConfigYaml.loadFromString(newConfigString);
+
+                boolean needUpdate = false;
+                for (String key : newConfigYaml.getKeys(true)) {
+                    if (!currentConfigYaml.contains(key)) {
+                        needUpdate = true;
+                        break;
+                    }
+                }
+                if (needUpdate) {
+                    for (String key : currentConfigYaml.getKeys(true))
+                        if (newConfigYaml.contains(key))
+                            newConfigYaml.set(key, currentConfigYaml.get(key));
+
+                    getInstance().getLogger().info("Updating config file ...");
+                    Files.delete(new File(getInstance().getDataFolder(), "config.yml").toPath());
+                    getInstance().saveResource("config.yml", false);
+                    getInstance().getLogger().info("Success!");
+                }
             }
         } catch (Exception ex) {
         }
