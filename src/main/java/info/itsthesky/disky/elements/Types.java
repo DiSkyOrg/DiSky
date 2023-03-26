@@ -212,6 +212,10 @@ public class Types {
                 embedBuilder -> embedBuilder.getDescriptionBuilder().toString(),
                 null
         ).eventExpression().register();
+        new DiSkyType<>(MessageEmbed.Field.class, "embedfield",
+                MessageEmbed.Field::getValue,
+                null
+        ).eventExpression().register();
         /*
         Global Entities
          */
