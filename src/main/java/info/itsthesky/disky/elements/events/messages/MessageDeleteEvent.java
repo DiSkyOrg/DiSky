@@ -1,5 +1,6 @@
 package info.itsthesky.disky.elements.events.messages;
 
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
@@ -40,7 +41,12 @@ public class MessageDeleteEvent extends DiSkyEvent<net.dv8tion.jda.api.events.me
 				event -> MessageManager.getManager(event.getJDAEvent().getJDA()).getDeletedMessageContent(event.getJDAEvent().getMessageIdLong()));
 
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, Message.class,
-				event -> MessageManager.getManager(event.getJDAEvent().getJDA()).getDeletedMessage(event.getJDAEvent().getMessageIdLong()));
+				event -> {
+					DiSky.debug("Getting message from cache ["+ event.getJDAEvent().getJDA().getSelfUser().getId() +"]: " + event.getJDAEvent().getMessageIdLong());
+					final MessageManager manager = MessageManager.getManager(event.getJDAEvent().getJDA());
+					DiSky.debug(manager.getDeletedMessage(event.getJDAEvent().getMessageIdLong()) == null ? "Message is null" : ("Message is not null: " + manager.getDeletedMessage(event.getJDAEvent().getMessageIdLong()).getContentRaw()));
+					return manager.getDeletedMessage(event.getJDAEvent().getMessageIdLong());
+				});
 
 		SkriptUtils.registerValue(BukkitMessageDeleteEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
