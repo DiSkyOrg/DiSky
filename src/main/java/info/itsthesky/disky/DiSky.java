@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.util.Objects;
 
 public final class DiSky extends JavaPlugin {
 
@@ -142,6 +143,11 @@ public final class DiSky extends JavaPlugin {
 
     public static void updateConfig() {
         try {
+
+            final File config = new File(getInstance().getDataFolder(), "config.yml");
+            if (!config.exists())
+                Files.copy(Objects.requireNonNull(getInstance().getResource("config.yml")), config.toPath());
+
             final InputStream currentConfig = Files.newInputStream(new File(getInstance().getDataFolder(), "config.yml").toPath());
             final InputStream newConfig = getInstance().getResource("config.yml");
 
