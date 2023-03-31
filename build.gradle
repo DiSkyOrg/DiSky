@@ -8,7 +8,7 @@ group = 'info.itsthesky'
 // Semantic Versioning
 def major = '4'
 def minor = '11'
-def patch = '0'
+def patch = '1'
 
 def channel = ''
 def channelVersion = ''
@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
-    shadow 'com.github.SkriptLang:Skript:structure-api-SNAPSHOT'
+    shadow files('libs/StructureAPI.jar')
     // Jetbrains Annotations
     shadow 'org.jetbrains:annotations:23.0.0'
 
