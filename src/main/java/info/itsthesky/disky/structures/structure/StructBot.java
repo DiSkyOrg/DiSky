@@ -19,11 +19,10 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.skriptlang.skript.lang.structure.EntryContainer;
+import org.skriptlang.skript.lang.entry.EntryContainer;
+import org.skriptlang.skript.lang.entry.EntryValidator;
+import org.skriptlang.skript.lang.entry.util.LiteralEntryData;
 import org.skriptlang.skript.lang.structure.Structure;
-import org.skriptlang.skript.lang.structure.StructureEntryValidator;
-import org.skriptlang.skript.lang.structure.util.LiteralStructureEntryData;
-import org.skriptlang.skript.lang.structure.util.TriggerStructureEntryData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,18 +34,18 @@ public class StructBot extends Structure {
 	public static void register() {
 		Skript.registerStructure(
 				StructBot.class,
-				StructureEntryValidator.builder()
-						.addEntryData(new LiteralStructureEntryData<>("token", null, false, String.class))
-						.addEntryData(new LiteralStructureEntryData<>("intents", BotScope.defaultsStr, false, String[].class))
+				EntryValidator.builder()
+						.addEntryData(new LiteralEntryData<>("token", null, false, String.class))
+						.addEntryData(new LiteralEntryData<>("intents", BotScope.defaultsStr, false, String[].class))
 
-						.addEntryData(new LiteralStructureEntryData<>("compression", Compression.ZLIB.name(), true, String.class))
-						.addEntryData(new LiteralStructureEntryData<>("cache flags", new String[0], true, String[].class))
-						.addEntryData(new LiteralStructureEntryData<>("policy", "DEFAULT", true, String.class))
-						.addEntryData(new LiteralStructureEntryData<>("auto reconnect", true, true, Boolean.class))
-						.addEntryData(new LiteralStructureEntryData<>("force reload", false, true, Boolean.class))
+						.addEntryData(new LiteralEntryData<>("compression", Compression.ZLIB.name(), true, String.class))
+						.addEntryData(new LiteralEntryData<>("cache flags", new String[0], true, String[].class))
+						.addEntryData(new LiteralEntryData<>("policy", "DEFAULT", true, String.class))
+						.addEntryData(new LiteralEntryData<>("auto reconnect", true, true, Boolean.class))
+						.addEntryData(new LiteralEntryData<>("force reload", false, true, Boolean.class))
 
-						.addEntryData(new TriggerStructureEntryData("on ready", null, true, ReadyEvent.BukkitReadyEvent.class))
-						.addEntryData(new TriggerStructureEntryData("on guild ready", null, true, GuildReadyEvent.BukkitGuildReadyEvent.class))
+						.addEntryData(new LiteralEntryData<>("on ready", null, true, ReadyEvent.BukkitReadyEvent.class))
+						.addEntryData(new LiteralEntryData<>("on guild ready", null, true, GuildReadyEvent.BukkitGuildReadyEvent.class))
 						.addSection("on ready", true)
 						.addSection("on guild ready", true)
 						.build(),
