@@ -8,8 +8,10 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.Debug;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
@@ -60,8 +62,20 @@ public class ConnectBot extends WaiterEffect {
 		final Bot bot = parseSingle(exprBot, e);
 		final Guild guild = parseSingle(exprGuild, e);
 		final AudioChannel channel = parseSingle(exprAudioChannel, e);
-		if (bot == null || (connect && channel == null) || (!connect && guild == null))
+		if (EasyElement.anyNull(this, bot)) {
+			restart();
 			return;
+		}
+		if (connect && channel == null) {
+			Debug.debug(this, "Missing Channel", "You must specify a channel to connect to.");
+			restart();
+			return;
+		}
+		if (!connect && guild == null) {
+			Debug.debug(this, "Missing Guild", "You must specify a guild to connect to.");
+			restart();
+			return;
+		}
 
 		final AudioChannel foundChannel = connect ? bot.getInstance().getChannelById(AudioChannel.class, channel.getId()) : guild.getAudioManager().getConnectedChannel();
 		if (foundChannel == null) {

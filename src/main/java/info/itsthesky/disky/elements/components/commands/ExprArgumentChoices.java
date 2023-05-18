@@ -24,7 +24,7 @@ public class ExprArgumentChoices extends MultiplyPropertyExpression<OptionData, 
 	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
 		final Command.Choice choice = (Command.Choice) delta[0];
 		final OptionData optionData = EasyElement.parseSingle(getExpr(), e, null);
-		if (EasyElement.anyNull(choice, optionData))
+		if (EasyElement.anyNull(this, choice, optionData))
 			return;
 		try {
 			optionData.addChoices(choice);

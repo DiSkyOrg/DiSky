@@ -8,6 +8,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.skript.NodeInformation;
 import info.itsthesky.disky.api.skript.WaiterEffect;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.*;
@@ -43,7 +44,7 @@ public class DestroyEntity extends WaiterEffect {
 	@Override
 	public void runEffect(Event e) {
 		final Object entity = parseSingle(exprEntity, e, null);
-		if (anyNull(entity)) {
+		if (anyNull(this, entity)) {
 			restart();
 			return;
 		}
@@ -60,7 +61,7 @@ public class DestroyEntity extends WaiterEffect {
 			action = ((info.itsthesky.disky.api.emojis.Emote) entity).getEmote().delete();
 		else
 			action = null;
-		if (anyNull(action)) {
+		if (anyNull(this, action)) {
 			restart();
 			return;
 		}

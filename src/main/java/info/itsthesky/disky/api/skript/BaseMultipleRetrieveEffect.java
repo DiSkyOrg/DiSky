@@ -49,7 +49,7 @@ public abstract class BaseMultipleRetrieveEffect<T extends List, E> extends Spec
     public void runEffect(@NotNull Event e, Bot bot) {
         E entity = exprEntity.getSingle(e);
 
-        if (entity == null) {
+        if (anyNull(this, entity)) {
             restart();
             return;
         }

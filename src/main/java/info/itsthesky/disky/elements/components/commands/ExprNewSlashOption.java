@@ -44,7 +44,7 @@ public class ExprNewSlashOption extends SimpleExpression<OptionData> {
 		final OptionType type = EasyElement.parseSingle(exprType, e, null);
 		final String name = EasyElement.parseSingle(exprName, e, null);
 		final String desc = EasyElement.parseSingle(exprDesc, e, null);
-		if (EasyElement.anyNull(type, name, desc))
+		if (EasyElement.anyNull(this, type, name, desc))
 			return new OptionData[0];
 		return new OptionData[] {new OptionData(type, name, desc, required, autoComplete)};
 	}

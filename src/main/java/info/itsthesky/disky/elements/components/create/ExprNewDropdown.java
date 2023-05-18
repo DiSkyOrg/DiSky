@@ -66,7 +66,7 @@ public class ExprNewDropdown extends SimpleExpression<SelectMenu.Builder> {
 	@Override
 	protected SelectMenu.Builder @NotNull [] get(@NotNull Event e) {
 		final String id = EasyElement.parseSingle(exprId, e, null);
-		if (EasyElement.anyNull(id))
+		if (EasyElement.anyNull(this, id))
 			return new SelectMenu.Builder[0];
 		if (isEntity) {
 			final String[] rawTargets = EasyElement.parseList(exprTarget, e, new String[0]);

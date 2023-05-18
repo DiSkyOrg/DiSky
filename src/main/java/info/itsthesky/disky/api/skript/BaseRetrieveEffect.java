@@ -6,6 +6,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.Debug;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -65,12 +66,13 @@ public abstract class BaseRetrieveEffect<T, E> extends SpecificBotEffect<T> {
         final @Nullable String input = parseSingle(exprInput, e, null);
         E entity = exprEntity.getSingle(e);
 
-        if (entity == null) {
+        if (anyNull(entity)) {
             restart();
             return;
         }
 
         if (requireID() && input == null) {
+            Debug.debug(this, "Missing ID", "This effect requires an ID to retrieve the entity!");
             restart();
             return;
         }

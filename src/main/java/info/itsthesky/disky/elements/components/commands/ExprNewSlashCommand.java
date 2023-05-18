@@ -80,7 +80,7 @@ public class ExprNewSlashCommand extends SimpleExpression<Object> {
 	protected Object @NotNull [] get(@NotNull Event e) {
 		final String name = EasyElement.parseSingle(exprName, e, null);
 		final String desc = EasyElement.parseSingle(exprDesc, e, null);
-		if (EasyElement.anyNull(name, desc))
+		if (EasyElement.anyNull(this, name, desc))
 			return new Object[0];
 		if (type == Type.SUB_GROUP)
 			return new SubcommandGroupData[] {new SubcommandGroupData(name, desc)};

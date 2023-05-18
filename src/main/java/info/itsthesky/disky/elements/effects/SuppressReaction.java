@@ -55,7 +55,7 @@ public class SuppressReaction extends SpecificBotEffect {
 		final Emote[] emotes = parseList(exprEmote, e, null);
 		final User user = parseSingle(exprUser, e, null);
 		final Message message = parseSingle(exprMessage, e, null);
-		if (anyNull(emotes, message)) {
+		if (anyNull(this, emotes, message)) {
 			restart();
 			return;
 		}

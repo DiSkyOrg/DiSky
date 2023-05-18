@@ -37,7 +37,7 @@ public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, R
     public void change(Event e, @NotNull Object[] delta, Bot bot, Changer.ChangeMode mode) {
         final Role role = bot.getInstance().getRoleById(((Role) delta[0]).getId());
         final Object entity = getExpr().getSingle(e);
-        if (EasyElement.anyNull(role, entity))
+        if (EasyElement.anyNull(this, role, entity))
             return;
 
         if (!(entity instanceof Member))

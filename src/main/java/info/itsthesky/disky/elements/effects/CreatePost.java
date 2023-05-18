@@ -63,7 +63,7 @@ public class CreatePost extends SpecificBotEffect<ThreadChannel> {
 		final String name = parseSingle(exprName, e);
 		final Object message = parseSingle(exprMessage, e);
 		final String[] tags = parseList(exprTags, e, new String[0]);
-		if (channel == null || message == null || name == null) {
+		if (anyNull(this, channel, message, name)) {
 			restart();
 			return;
 		}

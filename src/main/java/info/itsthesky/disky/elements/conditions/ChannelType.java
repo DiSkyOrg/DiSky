@@ -27,7 +27,7 @@ public class ChannelType extends Condition {
 	public boolean check(@NotNull Event e) {
 		final Channel channel = EasyElement.parseSingle(exprChannel, e, null);
 		final net.dv8tion.jda.api.entities.channel.ChannelType type = EasyElement.parseSingle(exprType, e, null);
-		if (EasyElement.anyNull(channel, type))
+		if (EasyElement.anyNull(this, channel, type))
 			return false;
 		return channel.getType().equals(type);
 	}

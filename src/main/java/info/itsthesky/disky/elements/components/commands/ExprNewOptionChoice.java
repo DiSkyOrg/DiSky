@@ -44,7 +44,7 @@ public class ExprNewOptionChoice extends SimpleExpression<Command.Choice> {
 	protected Command.Choice @NotNull [] get(@NotNull Event e) {
 		final String name = EasyElement.parseSingle(exprName, e, null);
 		final Object value = EasyElement.parseSingle(exprValue, e, null);
-		if (EasyElement.anyNull(name, value))
+		if (EasyElement.anyNull(this, name, value))
 			return new Command.Choice[0];
 		final Command.Choice choice;
 		if (value instanceof String)

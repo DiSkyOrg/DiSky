@@ -7,6 +7,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.Debug;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
@@ -39,7 +40,12 @@ public class EffUpdateCommand extends WaiterEffect {
 	public void runEffect(Event e) {
 		final SlashCommandData[] commands = parseList(exprCommands, e, new SlashCommandData[0]);
 		final Object entity = parseSingle(exprEntity, e, null);
-		if (commands.length == 0 || entity == null) {
+		if (commands.length == 0) {
+			Debug.debug(this, Debug.Type.EMPTY_LIST, "No commands found.");
+			restart();
+			return;
+		}
+		if (anyNull(this, entity)) {
 			restart();
 			return;
 		}

@@ -8,6 +8,7 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -44,7 +45,7 @@ public class ArchiveUnarchiveThread extends SpecificBotEffect {
 	@Override
 	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
 		final ThreadChannel thread = parseSingle(exprThread, e);
-		if (thread == null) return;
+		if (EasyElement.anyNull(this, thread)) return;
 		final ThreadChannelManager manager = thread.getManager();
 		manager.setArchived(archived).queue(this::restart, null);
 	}

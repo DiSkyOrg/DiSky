@@ -43,7 +43,7 @@ public class ExprNewMessageCommand extends SimpleExpression<CommandData> {
 	@Override
 	protected CommandData @NotNull [] get(@NotNull Event e) {
 		final String name = EasyElement.parseSingle(exprName, e, null);
-		if (EasyElement.anyNull(name))
+		if (EasyElement.anyNull(this, name))
 			return new CommandData[0];
 		return new CommandData[] {Commands.message(name)};
 	}

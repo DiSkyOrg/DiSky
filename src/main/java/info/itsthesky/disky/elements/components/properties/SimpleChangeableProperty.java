@@ -16,7 +16,7 @@ public abstract class SimpleChangeableProperty<F, T> extends SimplePropertyExpre
 		final F entity = EasyElement.parseSingle(getExpr(), e, null);
 		final T value = (T) delta[0];
 
-		if (EasyElement.anyNull(entity, value))
+		if (EasyElement.anyNull(this, entity, value))
 			return;
 		if (!EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.RESET))
 			return;

@@ -37,7 +37,7 @@ public class GetUserInGuild extends SimpleExpression<Member> {
 	protected Member @NotNull [] get(@NotNull Event e) {
 		final User user = EasyElement.parseSingle(exprUser, e, null);
 		final Guild guild = EasyElement.parseSingle(exprGuild, e, null);
-		if (EasyElement.anyNull(user, guild))
+		if (EasyElement.anyNull(this, user, guild))
 			return new Member[0];
 		return new Member[] {guild.getMember(user)};
 	}

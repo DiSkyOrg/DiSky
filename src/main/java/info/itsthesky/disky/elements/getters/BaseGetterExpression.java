@@ -50,7 +50,7 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {
     T @NotNull [] get(@NotNull Event e) {
         final String id = exprId.getSingle(e);
         final Bot bot = EasyElement.parseSingle(exprBot, e, DiSky.getManager().findAny());
-        if (EasyElement.anyNull(id, bot))
+        if (EasyElement.anyNull(this, id, bot))
             return (T[]) new Object[0];
         return (T[]) new Object[] {get(id, bot)};
     }

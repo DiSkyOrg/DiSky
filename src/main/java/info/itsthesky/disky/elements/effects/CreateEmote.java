@@ -61,7 +61,7 @@ public class CreateEmote extends SpecificBotEffect<Emote> {
         final String url = exprURL.getSingle(e);
         Guild guild = exprGuild.getSingle(e);
 
-        if (name == null || guild == null || url == null) {
+        if (anyNull(this, name, guild, url)) {
             restart();
             return;
         }
@@ -69,7 +69,7 @@ public class CreateEmote extends SpecificBotEffect<Emote> {
             guild = bot.getInstance().getGuildById(guild.getId());
 
         final Icon icon = JDAUtils.parseIcon(url);
-        if (icon == null) {
+        if (anyNull(this, icon)) {
             restart();
             return;
         }

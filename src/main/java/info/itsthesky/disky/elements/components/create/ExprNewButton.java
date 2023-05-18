@@ -10,6 +10,8 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.emojis.Emote;
+import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.core.Debug;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import org.bukkit.event.Event;
@@ -53,8 +55,11 @@ public class ExprNewButton extends SimpleExpression<Button> {
         String content = exprContent == null ? null : exprContent.getSingle(e);
         Emote emoji = exprEmoji == null ? null : exprEmoji.getSingle(e);
 
-        if (style == null || idOrURL == null) return new Button[0];
-        if (emoji == null && content == null) return new Button[0];
+        if (EasyElement.anyNull(this, style, idOrURL)) return new Button[0];
+        if (EasyElement.anyNull(emoji, content)) {
+            Debug.debug(this, Debug.Type.INCOMPATIBLE_TYPE, "You must provide at least an emoji or a content.");
+            return new Button[0];
+        }
 
         if (isLink)
             style = ButtonStyle.LINK;

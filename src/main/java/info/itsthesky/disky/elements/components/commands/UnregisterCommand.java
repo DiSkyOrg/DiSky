@@ -10,6 +10,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.Debug;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -50,7 +51,12 @@ public class UnregisterCommand extends SpecificBotEffect {
     public void runEffect(@NotNull Event e, Bot bot) {
         final String[] names = parseList(exprNames, e, new String[0]);
         final Object entity = parseSingle(exprEntity, e, null);
-        if (names.length == 0 || entity == null) {
+        if (names.length == 0) {
+            Debug.debug(this, Debug.Type.EMPTY_LIST, "No names found.");
+            restart();
+            return;
+        }
+        if (anyNull(this, entity)) {
             restart();
             return;
         }

@@ -47,7 +47,7 @@ public class GetMember extends SimpleExpression<Member> {
     protected Member @NotNull [] get(@NotNull Event e) {
         final String id = exprId.getSingle(e);
         final Guild guild = exprGuild.getSingle(e);
-        if (EasyElement.anyNull(id, guild))
+        if (EasyElement.anyNull(this, id, guild))
             return new Member[0];
         return new Member[] {guild.getMemberById(id)};
     }

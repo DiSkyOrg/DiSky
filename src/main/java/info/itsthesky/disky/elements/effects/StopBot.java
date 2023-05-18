@@ -43,7 +43,7 @@ public class StopBot extends WaiterEffect {
 	@Override
 	public void runEffect(Event e) {
 		final Bot bot = parseSingle(exprBot, e, null);
-		if (!anyNull(bot))
+		if (!anyNull(this, bot))
 			bot.shutdown(force);
 		restart();
 	}

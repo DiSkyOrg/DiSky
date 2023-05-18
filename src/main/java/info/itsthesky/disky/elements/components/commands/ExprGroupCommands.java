@@ -36,7 +36,7 @@ public class ExprGroupCommands extends MultiplyPropertyExpression<Object, Subcom
 			return;
 		final Object group = EasyElement.parseSingle(getExpr(), e, null);
 		final SubcommandData[] datas = (SubcommandData[]) delta;
-		if (EasyElement.anyNull(group, datas))
+		if (EasyElement.anyNull(this, group, datas))
 			return;
 
 		final List<SubcommandData> news = new ArrayList<>(Arrays.asList(datas));

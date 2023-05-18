@@ -53,7 +53,7 @@ public class ReactSection extends EffectSection {
 		final Message message = EasyElement.parseSingle(exprMessage, e, null);
 		final Emote emote = EasyElement.parseSingle(exprEmote, e, null);
 		final @Nullable User user = EasyElement.parseSingle(exprUser, e, null);
-		if (EasyElement.anyNull(message, emote))
+		if (EasyElement.anyNull(this, message, emote))
 			return getNext();
 		emote.addReaction(message).queue(v -> ReactionListener.waiters.put(message.getIdLong(), new ReactionListener.ReactionInfo(runOneTime, emote, message.getIdLong(), message
 				.getJDA().getSelfUser().getIdLong(), user, trigger)));

@@ -34,3 +34,10 @@ stop-bots-gracefully: true
 # Does nothing if 'stop-bots-gracefully' is disabled.
 # Restart needed to take effect.
 stop-bots-timeout: 5
+
+# The developer debug mode will warn you about skript developer-end errors, including, but not limited to:
+# - Null/not set values
+# - Incompatible types
+# - States that are not supposed to be reached
+# - And more...
+developer-debug: false

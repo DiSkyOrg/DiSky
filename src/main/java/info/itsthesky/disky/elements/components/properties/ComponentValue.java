@@ -37,7 +37,7 @@ public class ComponentValue extends SimpleExpression<Object> {
 	@Override
 	protected Object @NotNull [] get(@NotNull Event e) {
 		final String id = EasyElement.parseSingle(exprId, e, null);
-		if (EasyElement.anyNull(id))
+		if (EasyElement.anyNull(this, id))
 			return new String[0];
 		final ModalMapping mapping = ((ModalSendEvent.BukkitModalSendEvent) e).getJDAEvent().getValue(id);
 		if (mapping == null)

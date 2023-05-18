@@ -57,7 +57,7 @@ public class TimeOutMember extends SpecificBotEffect {
 	@Override
 	public void runEffect(@NotNull Event e, Bot bot) {
 		final Member member = parseSingle(exprMember, e, null);
-		if (matchedPattern == 2 && !anyNull(member)) {
+		if (matchedPattern == 2 && !anyNull(this, this, member)) {
 			Utils.catchAction(member.removeTimeout(),
 					v -> restart(), ex -> {
 						DiSky.getErrorHandler().exception(e, ex);
@@ -68,7 +68,7 @@ public class TimeOutMember extends SpecificBotEffect {
 
 		final Object entity = parseSingle(exprTime, e, null);
 		final @Nullable String reason = parseSingle(exprReason, e, null);
-		if (anyNull(member, entity)) {
+		if (anyNull(this, this, member, entity)) {
 			restart();
 			return;
 		}

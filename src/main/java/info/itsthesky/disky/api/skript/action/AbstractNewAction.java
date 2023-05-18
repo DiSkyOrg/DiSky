@@ -22,11 +22,11 @@ public abstract class AbstractNewAction<T, E> extends SimpleExpression<T> {
     protected T @NotNull [] get(@NotNull Event e) {
         final E guild = EasyElement.parseSingle(exprGuild, e, null);
         final @Nullable Bot bot = EasyElement.parseSingle(exprBot, e, null);
-        if (guild == null)
+        if (EasyElement.anyNull(this, guild))
             return (T[]) new Object[0];
         final E parsedEntity = bot == null ? guild : BotChangers.convert(guild, bot);
-        if (parsedEntity == null)
-            throw new UnsupportedOperationException("The entity should not be null");
+        if (EasyElement.anyNull(this, parsedEntity))
+            return (T[]) new Object[0];
         return (T[]) new Object[] {create(parsedEntity)};
     }
 

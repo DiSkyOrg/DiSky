@@ -9,6 +9,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Member;
@@ -49,7 +50,7 @@ public class BanMember extends SpecificBotEffect {
         final @Nullable String reason = parseSingle(exprReason, e, null);
         final Timespan timespan = parseSingle(exprDays, e, null);
 
-        if (member == null || bot == null) {
+        if (EasyElement.anyNull(this, bot, member)) {
             restart();
             return;
         }

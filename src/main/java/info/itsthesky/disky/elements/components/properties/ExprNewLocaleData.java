@@ -45,7 +45,7 @@ public class ExprNewLocaleData extends SimpleExpression<PropLocalization.LocaleD
 	protected PropLocalization.LocaleData @NotNull [] get(@NotNull Event e) {
 		final String locale = EasyElement.parseSingle(exprLocale, e, null);
 		final String value = EasyElement.parseSingle(exprValue, e, null);
-		if (EasyElement.anyNull(locale, value))
+		if (EasyElement.anyNull(this, locale, value))
 			return new PropLocalization.LocaleData[0];
 
 		final DiscordLocale discordLocale = DiscordLocale.from(locale);

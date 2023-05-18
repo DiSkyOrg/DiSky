@@ -49,7 +49,7 @@ public class MemberNickname extends MemberProperty<String> {
             return;
         final Member member = EasyElement.parseSingle(getExpr(), e, null);
         final String name = (String) delta[0];
-        if (EasyElement.anyNull(member, name))
+        if (EasyElement.anyNull(this, member, name))
             return;
         Utils.catchAction(member.modifyNickname(name), e);
     }

@@ -22,7 +22,7 @@ public abstract class MultipleActionProperty<E, T extends AuditableRestAction<E>
 
     @Override
     public void change(Event e, Object[] delta, Bot bot, Changer.ChangeMode mode) {
-        if (delta == null || delta.length == 0 || delta[0] == null)
+        if (EasyElement.isValid(delta))
             return;
         final O[] value = (O[]) delta;
         final Object entity = EasyElement.parseSingle(getExpr(), e, null);

@@ -72,7 +72,7 @@ public class CreateScheduledEvent extends SpecificBotEffect<ScheduledEvent> {
 	@Override
 	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
 		final String name = parseSingle(exprName, e);
-		if (name == null) {
+		if (anyNull(this, name)) {
 			restart();
 			return;
 		}
@@ -82,7 +82,7 @@ public class CreateScheduledEvent extends SpecificBotEffect<ScheduledEvent> {
 			final Date start = parseSingle(exprStart, e);
 			final Date end = parseSingle(exprEnd, e);
 			final Guild guild = parseSingle(exprGuild, e);
-			if (place == null || start == null || end == null || guild == null) {
+			if (anyNull(this, place, start, end, guild)) {
 				restart();
 				return;
 			}

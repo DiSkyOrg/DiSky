@@ -33,7 +33,7 @@ public class CreateAction extends WaiterEffect<Object> {
     @Override
     public void runEffect(Event e) {
         final AuditableRestAction<Object> action = (AuditableRestAction<Object>) parseSingle(exprAction, e, null);
-        if (action == null) {
+        if (anyNull(this, action)) {
             restart();
             return;
         }

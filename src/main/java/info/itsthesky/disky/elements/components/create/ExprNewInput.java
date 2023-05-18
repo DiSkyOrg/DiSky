@@ -41,7 +41,7 @@ public class ExprNewInput extends SimpleExpression<TextInput.Builder> {
 	protected TextInput.Builder @NotNull [] get(@NotNull Event e) {
 		final String id = EasyElement.parseSingle(exprId, e, null);
 		final String name = EasyElement.parseSingle(exprName, e, null);
-		if (EasyElement.anyNull(id, name))
+		if (EasyElement.anyNull(this, id, name))
 			return new TextInput.Builder[0];
 		return new TextInput.Builder[] {TextInput.create(id, name, style)};
 	}

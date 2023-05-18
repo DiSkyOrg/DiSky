@@ -33,6 +33,10 @@ public class NodeInformation {
         return "(" + fileName + ", line " + line + ": " + lineContent + ")";
     }
 
+    public String getColoredDebugLabel() {
+        return " &6(" + fileName + ", line " + line + ": " + lineContent + ")";
+    }
+
     @Override
     public String toString() {
         return getDebugLabel();

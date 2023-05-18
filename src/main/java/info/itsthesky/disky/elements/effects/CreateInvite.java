@@ -51,12 +51,15 @@ public class CreateInvite extends SpecificBotEffect<Invite> {
         Number maxUses = parseSingle(exprMaxUses, e, null);
         Number maxAge = parseSingle(exprMaxAge, e, null);
 
-        if (entity == null || bot == null) return;
+        if (anyNull(this, bot, entity)){
+            restart();
+            return;
+        }
 
         final IInviteContainer channel;
         if (entity instanceof Guild) {
             Guild guild = bot.getInstance().getGuildById(((Guild) entity).getId());
-            if (anyNull(guild)) {
+            if (anyNull(this, guild)) {
                 restart();
                 return;
             }
@@ -65,7 +68,7 @@ public class CreateInvite extends SpecificBotEffect<Invite> {
             channel = (IInviteContainer) bot.getInstance().getGuildChannelById(((GuildChannel) entity).getId());
         }
 
-        if (anyNull(channel)) {
+        if (anyNull(this, channel)) {
             restart();
             return;
         }

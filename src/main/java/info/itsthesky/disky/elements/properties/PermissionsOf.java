@@ -63,7 +63,7 @@ public class PermissionsOf extends SimpleExpression<Permission> {
         final IPermissionHolder holder = EasyElement.parseSingle(exprHolder, e, null);
         final @Nullable GuildChannel channel = EasyElement.parseSingle(exprChannel, e, null);
         final Permission[] perms = (Permission[]) delta;
-        if (EasyElement.anyNull(holder, perms))
+        if (EasyElement.anyNull(this, holder, perms))
             return;
         if (channel != null && !(channel instanceof GuildChannel))
             return;
@@ -87,7 +87,7 @@ public class PermissionsOf extends SimpleExpression<Permission> {
     protected Permission @NotNull [] get(@NotNull Event e) {
         final IPermissionHolder holder = EasyElement.parseSingle(exprHolder, e, null);
         final @Nullable GuildChannel channel = EasyElement.parseSingle(exprChannel, e, null);
-        if (EasyElement.anyNull(holder))
+        if (EasyElement.anyNull(this, holder))
             return new Permission[0];
         if (channel != null && !(channel instanceof GuildChannel))
             return new Permission[0];

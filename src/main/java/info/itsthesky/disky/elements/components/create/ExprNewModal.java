@@ -37,7 +37,7 @@ public class ExprNewModal extends SimpleExpression<Modal.Builder> {
 	protected Modal.Builder @NotNull [] get(@NotNull Event e) {
 		final String id = EasyElement.parseSingle(exprId, e, null);
 		final String name = EasyElement.parseSingle(exprName, e, null);
-		if (EasyElement.anyNull(id, name))
+		if (EasyElement.anyNull(this, id, name))
 			return new Modal.Builder[0];
 		return new Modal.Builder[] {Modal.create(id, name)};
 	}

@@ -57,7 +57,7 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
         final String name = exprName.getSingle(e);
         final @Nullable Message message = parseSingle(exprMessage, e, null);
         StandardGuildMessageChannel channel = exprChannel.getSingle(e);
-        if (name == null || bot == null || channel == null) {
+        if (anyNull(this, name, bot, channel)) {
             restart();
             return;
         }

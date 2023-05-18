@@ -53,7 +53,7 @@ public class ExprNewDropdownOption extends SimpleExpression<SelectOption> {
         final String name = EasyElement.parseSingle(exprName, e, null);
         final @Nullable String desc = EasyElement.parseSingle(exprDesc, e, null);
         final @Nullable Emote emote = EasyElement.parseSingle(exprEmote, e, null);
-        if (EasyElement.anyNull(value, name))
+        if (EasyElement.anyNull(this, value, name))
             return new SelectOption[0];
 
         SelectOption option = SelectOption

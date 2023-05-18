@@ -43,7 +43,7 @@ public class ExprCommandGroup extends MultiplyPropertyExpression<SlashCommandDat
 			return;
 		final SlashCommandData command = EasyElement.parseSingle(getExpr(), e, null);
 		final SubcommandGroupData[] datas = (SubcommandGroupData[]) delta;
-		if (EasyElement.anyNull(command, datas))
+		if (EasyElement.anyNull(this, command, datas))
 			return;
 
 		final List<SubcommandGroupData> news = new ArrayList<>(Arrays.asList(datas));

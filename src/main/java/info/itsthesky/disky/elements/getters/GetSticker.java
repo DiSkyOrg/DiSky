@@ -48,7 +48,7 @@ public class GetSticker extends SimpleExpression<Sticker> {
     protected Sticker @NotNull [] get(@NotNull Event e) {
         final String id = exprId.getSingle(e);
         final Guild guild = exprGuild.getSingle(e);
-        if (EasyElement.anyNull(id, guild))
+        if (EasyElement.anyNull(this, id, guild))
             return new Sticker[0];
         return new Sticker[] {guild.getStickersByName(id, false).stream().findFirst().orElse(null)};
     }

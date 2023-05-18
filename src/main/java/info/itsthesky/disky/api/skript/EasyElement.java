@@ -7,6 +7,8 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.lang.parser.ParserInstance;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.ReflectionUtils;
+import info.itsthesky.disky.core.Debug;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,8 +78,11 @@ public abstract class EasyElement extends Effect {
      * @param objects The objects to test
      * @return True if objects contains a null object, else false
      */
-    public static boolean anyNull(Object... objects) {
-        return Arrays.stream(objects).anyMatch(Objects::isNull);
+    public static boolean anyNull(Object from, Object... objects) {
+        final boolean anyNull = Arrays.stream(objects).anyMatch(Objects::isNull);
+        if (anyNull)
+            Debug.debug(from, Debug.Type.EMPTY_VALUE, "One of the provided value is null!");
+        return anyNull;
     }
 
     /**
