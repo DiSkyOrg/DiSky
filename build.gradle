@@ -7,11 +7,11 @@ group = 'info.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '11'
-def patch = '1'
+def minor = '12'
+def patch = '0'
 
-def channel = ''
-def channelVersion = ''
+def channel = 'beta'
+def channelVersion = '1'
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
