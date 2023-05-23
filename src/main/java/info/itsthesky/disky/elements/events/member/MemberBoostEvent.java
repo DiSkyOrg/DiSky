@@ -3,11 +3,7 @@ package info.itsthesky.disky.elements.events.member;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
 
 import java.time.OffsetDateTime;
@@ -19,7 +15,6 @@ public class MemberBoostEvent extends DiSkyEvent<GuildMemberUpdateBoostTimeEvent
                 "[discord] [guild] member boost (change|update)")
                 .description("Fired when a member starts or stops boosting a guild can be used to get the old/new boosting time and the guild.")
                 .examples("member boost change:");
-
 
         SkriptUtils.registerBotValue(MemberBoostEvent.BukkitMemberBoostEvent.class);
 
