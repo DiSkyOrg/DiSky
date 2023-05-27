@@ -270,5 +270,8 @@ public class Types {
                 input -> DiSky.getManager().fromName(input))
                 .eventExpression()
                 .register();
+        DiSkyType.fromEnum(Member.MemberFlag.class, "memberflag", "memberflag")
+                .eventExpression()
+                .register();
     }
 }
