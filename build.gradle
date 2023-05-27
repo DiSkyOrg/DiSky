@@ -11,7 +11,7 @@ def minor = '12'
 def patch = '0'
 
 def channel = 'beta'
-def channelVersion = '1'
+def channelVersion = '2'
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
