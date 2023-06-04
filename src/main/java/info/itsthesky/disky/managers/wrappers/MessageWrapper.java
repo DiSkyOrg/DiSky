@@ -13,7 +13,7 @@ public class MessageWrapper extends ReceivedMessage {
 				message.getChannel(),
 				message.getType(),
 				message.getMessageReference(),
-				false,
+				message.isWebhookMessage(),
 				message.getApplicationIdLong(),
 				message.isTTS(),
 				message.isPinned(),

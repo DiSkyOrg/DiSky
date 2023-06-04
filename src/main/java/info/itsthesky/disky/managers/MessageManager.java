@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 public class MessageManager extends ListenerAdapter {
@@ -26,8 +27,8 @@ public class MessageManager extends ListenerAdapter {
 
 	// ##############################
 
-	private final WeakHashMap<Long, MessageWrapper> deletedMessageCache = new WeakHashMap<>();
-	private final WeakHashMap<Long, EditedMessageInfo> editedMessageCache = new WeakHashMap<>();
+	private final TreeMap<Long, MessageWrapper> deletedMessageCache = new TreeMap<>();
+	private final TreeMap<Long, EditedMessageInfo> editedMessageCache = new TreeMap<>();
 
 	public MessageManager(Bot bot) {
 		loadedManagers.put(bot.getInstance().getSelfUser().getId(), this);
@@ -56,9 +57,12 @@ public class MessageManager extends ListenerAdapter {
 		final EditedMessageInfo info = editedMessageCache.getOrDefault(message.getIdLong(), null);
 		if (info == null)
 			return;
+
 		info.setPreviousContent(info.getCurrentContent());
 		info.setCurrentContent(message.getContentRaw());
+
 		editedMessageCache.put(message.getIdLong(), info);
+		deletedMessageCache.put(message.getIdLong(), new MessageWrapper(message));
 	}
 
 	public @Nullable Message getDeletedMessage(long id) {
