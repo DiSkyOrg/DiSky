@@ -8,7 +8,9 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.elements.commands.CommandEvent;
 import info.itsthesky.disky.elements.commands.CommandObject;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
+import info.itsthesky.disky.elements.sections.automod.FilterType;
 import info.itsthesky.disky.managers.MessageManager;
+import info.itsthesky.disky.managers.wrappers.AutoModRuleBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
@@ -273,5 +275,10 @@ public class Types {
         DiSkyType.fromEnum(Member.MemberFlag.class, "memberflag", "memberflag")
                 .eventExpression()
                 .register();
+        new DiSkyType<>(AutoModRuleBuilder.class, "automodrule",
+                AutoModRuleBuilder::toString,
+                null).eventExpression().register();
+        DiSkyType.fromEnum(FilterType.class, "filtertype", "filtertype")
+                .eventExpression().register();
     }
 }
