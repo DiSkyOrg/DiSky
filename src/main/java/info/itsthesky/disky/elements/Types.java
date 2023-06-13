@@ -193,7 +193,7 @@ public class Types {
          */
         new DiSkyType<>(Message.class, "message",
                 Message::getContentRaw,
-                id -> CommandEvent.lastEvent.getMessageChannel().getHistory().getMessageById(id)
+                id -> CommandEvent.lastEvent == null ? null : CommandEvent.lastEvent.getMessageChannel().getHistory().getMessageById(id)
         ).eventExpression().register();
         new DiSkyType<>(Message.Attachment.class, "attachment",
                 Message.Attachment::getUrl,
