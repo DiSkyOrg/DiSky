@@ -1,6 +1,9 @@
 package info.itsthesky.disky.api;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.lang.Effect;
+import ch.njol.skript.lang.ExpressionInfo;
+import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SyntaxElementInfo;
 
 import java.lang.reflect.Constructor;
@@ -8,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -235,5 +239,38 @@ public class ReflectionUtils {
             }
         }
         return null;
+    }
+
+    public static void removeElement(String clazz, String... fields) throws Exception {
+        if (!classExist(clazz))
+            return;
+        final Class<?> clz = Class.forName(clazz);
+
+        for (String f : fields) {
+            final Field field = Skript.class.getDeclaredField(f);
+            field.setAccessible(true);
+
+            if (f.equalsIgnoreCase("expressions")) {
+                ((Collection<ExpressionInfo<?, ?>>) field.get(null))
+                        .removeIf(info -> info.c.equals(clz));
+            } else {
+                ((Collection<SyntaxElementInfo<? extends Effect>>) field.get(null))
+                        .removeIf(info -> info.c.equals(clz));
+            }
+
+            field.setAccessible(false);
+        }
+
+        if (Arrays.asList(fields).contains("expressions")) {
+            final Field exprsIndexes = Skript.class.getDeclaredField("expressionTypesStartIndices");
+            exprsIndexes.setAccessible(true);
+
+            for (ExpressionType type : ExpressionType.values()) {
+                final int[] ints = (int[]) exprsIndexes.get(null);
+                ints[type.ordinal()] = ints[type.ordinal()] - 1;
+            }
+
+            exprsIndexes.setAccessible(false);
+        }
     }
 }
