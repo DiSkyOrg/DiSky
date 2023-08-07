@@ -27,7 +27,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
 
     public abstract @Nullable T parse(@NotNull SectionNode node);
 
-    public abstract boolean validate(@Nullable T parsedEntity);
+    public abstract @Nullable String validate(@Nullable T parsedEntity);
 
     public void init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, SectionNode node) {};
 
@@ -91,7 +91,13 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
         final @Nullable T entity = parse((SectionNode) node);
         SkriptLogger.setNode(node);
         SkriptUtils.nukeSectionNode((SectionNode) node);
-        return validate(entity);
+
+        final String error = validate(entity);
+        if (error == null)
+            return true;
+
+        Skript.error(error);
+        return false;
     }
 
     @Override
