@@ -48,15 +48,21 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
      */
     public String parseEntry(SectionNode node, String key, String defaultValue) {
         String text = ScriptLoader.replaceOptions(node.get(key, defaultValue));
-        if (text.startsWith("\"") && text.endsWith("\"")) {
+
+        while (text.contains("\"\""))
+            text = text.replace("\"\"", "\"");
+
+        if (text.startsWith("\"") && text.endsWith("\""))
             text = text.substring(1, text.length() - 1);
-        }
+
         Expression<String> expr = VariableString.newInstance(text, StringMode.MESSAGE);
+
         try {
             if (((VariableString) expr).isSimple()) {
                 expr = new SimpleLiteral<>(text, false);
             }
         } catch (NullPointerException ignored) { }
+        System.out.println("Debug 4: " + expr);
         return expr.getSingle(new BotScope.BotScopeEvent());
     }
 
