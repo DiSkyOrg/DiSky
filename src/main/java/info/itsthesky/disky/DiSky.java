@@ -70,11 +70,6 @@ public final class DiSky extends JavaPlugin {
         configuration = Configuration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 
         /*
-        2.6.4/2.7's Structure API check
-         */
-        StructureLoader.get().load();
-
-        /*
         Saving & loading emojis
          */
 
@@ -133,6 +128,11 @@ public final class DiSky extends JavaPlugin {
         } catch (ClassNotFoundException | InvalidConfigurationException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
+
+        /*
+        2.6.4/2.7's Structure API check
+         */
+        StructureLoader.get().load();
 
         /*
         Default JDA's error handler
