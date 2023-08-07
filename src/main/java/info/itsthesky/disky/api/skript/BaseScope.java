@@ -62,7 +62,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
                 expr = new SimpleLiteral<>(text, false);
             }
         } catch (NullPointerException ignored) { }
-        System.out.println("Debug 4: " + expr);
+
         return expr.getSingle(new BotScope.BotScopeEvent());
     }
 
