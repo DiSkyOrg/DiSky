@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,6 +100,16 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 					restart();
 					return;
 				}
+				final IReplyCallback callback = (IReplyCallback) event.getInteractionEvent().getInteraction();
+
+				if (DeferInteraction.WAITING_INTERACTIONS.contains(callback.getHook().getInteraction().getIdLong())) {
+					DeferInteraction.WAITING_INTERACTIONS.remove(callback.getHook().getInteraction().getIdLong());
+					callback.getHook().editOriginal(MessageEditData.fromCreateData(builder.build())).queue(this::restart, ex -> {
+						DiSky.getErrorHandler().exception(e, ex);
+						restart();
+					});
+					return;
+				}
 
 				if (event.getInteractionEvent().getInteraction().isAcknowledged()) {
 					Skript.error("You are trying to reply or defer an interaction that has already been acknowledged!");
@@ -106,11 +117,7 @@ public class ReplyWith extends SpecificBotEffect<Object> {
 					return;
 				}
 
-				final IReplyCallback callback = (IReplyCallback) event.getInteractionEvent().getInteraction();
-				callback.reply(builder.build()).setEphemeral(hidden).queue(hook -> {
-					if (hidden) restart(hook);
-					else restart(hook);
-				}, ex -> {
+				callback.reply(builder.build()).setEphemeral(hidden).queue(this::restart, ex -> {
 					DiSky.getErrorHandler().exception(e, ex);
 					restart();
 				});

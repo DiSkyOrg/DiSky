@@ -93,9 +93,9 @@ public class Emote implements IMentionable {
     }
 
     public boolean isSimilar(Emote other) {
-        if (other.isCustom() && isCustom())
+        if (other.isCustom() && isCustom() && getEmote() != null && other.getEmote() != null)
             return getEmote().getName().equals(other.getEmote().getName());
-        else if (!other.isCustom() && !isCustom())
+        else if (!other.isCustom() && !isCustom() && getEmoji() != null && other.getEmoji() != null)
             return getEmoji().getName().equals(other.getEmoji().getName());
         else
             return false;

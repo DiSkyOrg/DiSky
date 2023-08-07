@@ -27,7 +27,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
 
     public abstract @Nullable T parse(@NotNull SectionNode node);
 
-    public abstract boolean validate(@Nullable T parsedEntity);
+    public abstract @Nullable String validate(@Nullable T parsedEntity);
 
     public void init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, SectionNode node) {};
 
@@ -48,15 +48,21 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
      */
     public String parseEntry(SectionNode node, String key, String defaultValue) {
         String text = ScriptLoader.replaceOptions(node.get(key, defaultValue));
-        if (text.startsWith("\"") && text.endsWith("\"")) {
+
+        while (text.contains("\"\""))
+            text = text.replace("\"\"", "\"");
+
+        if (text.startsWith("\"") && text.endsWith("\""))
             text = text.substring(1, text.length() - 1);
-        }
+
         Expression<String> expr = VariableString.newInstance(text, StringMode.MESSAGE);
+
         try {
             if (((VariableString) expr).isSimple()) {
                 expr = new SimpleLiteral<>(text, false);
             }
         } catch (NullPointerException ignored) { }
+
         return expr.getSingle(new BotScope.BotScopeEvent());
     }
 
@@ -91,7 +97,13 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
         final @Nullable T entity = parse((SectionNode) node);
         SkriptLogger.setNode(node);
         SkriptUtils.nukeSectionNode((SectionNode) node);
-        return validate(entity);
+
+        final String error = validate(entity);
+        if (error == null)
+            return true;
+
+        Skript.error(error);
+        return false;
     }
 
     @Override

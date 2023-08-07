@@ -21,6 +21,7 @@ import info.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
@@ -231,17 +232,18 @@ public class BotScope extends BaseScope<BotOptions> {
     }
 
     @Override
-    public boolean validate(@Nullable BotOptions parsedEntity) {
+    public @Nullable String validate(@Nullable BotOptions parsedEntity) {
         if (parsedEntity == null)
-            return false;
+            return "Unable to parse bot options. Please check your syntax.";
         final String name = parsedEntity.getName();
         if (DiSky.getManager().exist(name)) {
             final Bot bot = DiSky.getManager().fromName(name);
             if (bot.isForceReload())
                 bot.getInstance().shutdownNow();
             else
-                return true;
+                return null;
         }
+
         final JDA jda;
         try {
 
@@ -257,11 +259,14 @@ public class BotScope extends BaseScope<BotOptions> {
                     .addEventListeners(listener)
                     .build();
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
+            if (!(ex instanceof InvalidTokenException))
+                ex.printStackTrace();
+
+            return ex.getMessage();
         }
+
         DiSky.getManager().addBot(parsedEntity.asBot(jda, parsedEntity));
-        return true;
+        return null;
     }
 
     @Override

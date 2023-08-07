@@ -33,7 +33,7 @@ public class HasRole extends EasyPropertyCondition<Member> {
     @Override
     public boolean check(Event e, Member entity) {
         final Role target = EasyElement.parseSingle(exprRole, e, null);
-        if (target == null)
+        if (target == null || entity == null)
             return false;
         return entity.getRoles().stream().anyMatch(role -> role.getId().equalsIgnoreCase(target.getId()));
     }

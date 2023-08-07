@@ -20,6 +20,9 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Name("Defer Interaction")
 @Description({"Only usable in interaction event, currently button click/dropdown update/modal event!",
 "This will force the interaction to be acknowledge, you have 3 seconds to do so, the effect will send a success message to Discord or hold the interaction to send a message later.",
@@ -30,6 +33,8 @@ import org.jetbrains.annotations.Nullable;
 "defer the interaction and wait",
 "defer the interaction and wait silently"})
 public class DeferInteraction extends WaiterEffect {
+
+    public static final Set<Long> WAITING_INTERACTIONS = new HashSet<>();
 
     static {
         Skript.registerEffect(
@@ -59,7 +64,11 @@ public class DeferInteraction extends WaiterEffect {
         GenericInteractionCreateEvent event = ((InteractionEvent) e).getInteractionEvent();
 
         if (shouldwait) {
-            ((IReplyCallback) event).deferReply(isEphemeral).queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
+            ((IReplyCallback) event).deferReply(isEphemeral).queue(reply -> {
+                restart();
+
+                WAITING_INTERACTIONS.add(event.getInteraction().getIdLong());
+            }, ex -> DiSky.getErrorHandler().exception(e, ex));
         } else {
             if (event instanceof GenericComponentInteractionCreateEvent)
                 ((ComponentInteraction) event).deferEdit().queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
