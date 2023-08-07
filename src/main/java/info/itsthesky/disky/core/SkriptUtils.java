@@ -25,6 +25,8 @@ import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.Bukkit;
@@ -194,6 +196,8 @@ public final class SkriptUtils {
 
     public static <B extends Event, T> void registerValue(Class<B> bukkitClass, Class<T> entityClass, Function<B, T> function) {
         registerValue(bukkitClass, entityClass, function, 0);
+        if (entityClass.equals(GuildChannel.class)) // See https://github.com/DiSkyOrg/DiSky/issues/138
+            registerValue(bukkitClass, Channel.class, b -> (Channel) function.apply(b));
     }
 
     public static <E extends net.dv8tion.jda.api.events.Event, B extends SimpleDiSkyEvent<E>> void registerBotValue(Class<B> bukkitClass) {
