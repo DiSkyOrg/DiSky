@@ -31,7 +31,7 @@ public class OpenModal extends WaiterEffect {
 	@Override
 	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
 		if (!containsInterfaces(ModalEvent.class)) {
-			Skript.error("The show modal effect can only be used in modal events.");
+			Skript.error("The show modal effect can only be used in interactions outside of modal events.");
 			return false;
 		}
 		exprModal = (Expression<Modal.Builder>) expressions[0];
