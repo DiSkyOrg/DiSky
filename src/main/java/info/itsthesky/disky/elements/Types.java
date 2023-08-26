@@ -227,7 +227,7 @@ public class Types {
 
         DiSkyType.fromEnum(Permission.class, "permission", "permission").register();
         new DiSkyType<>(User.class, "user",
-                user -> user.getName() + "#" + user.getDiscriminator(),
+                user -> user.getEffectiveName(),
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getUserById(input))
         ).eventExpression().register();
         new DiSkyType<>(User.Profile.class, "userprofile",
@@ -258,7 +258,7 @@ public class Types {
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildById(input))
         ).eventExpression().register();
         new DiSkyType<>(Member.class, "member",
-                member -> member.getUser().getName() + "#" + member.getUser().getDiscriminator(),
+                member -> member.getUser().getEffectiveName(),
                 id -> {
                     final CommandEvent event = CommandEvent.lastEvent;
                     if (event == null)
@@ -268,7 +268,7 @@ public class Types {
                     return null;
                 }).eventExpression().register();
         new DiSkyType<>(Bot.class, "bot",
-                member -> member.getInstance().getSelfUser().getName() + "#" + member.getInstance().getSelfUser().getDiscriminator(),
+                member -> member.getInstance().getSelfUser().getEffectiveName(),
                 input -> DiSky.getManager().fromName(input))
                 .eventExpression()
                 .register();
