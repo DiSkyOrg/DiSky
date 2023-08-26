@@ -4,6 +4,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.entities.Member;
@@ -51,7 +52,14 @@ public class MemberNickname extends MemberProperty<String> {
         final String name = (String) delta[0];
         if (EasyElement.anyNull(this, member, name))
             return;
-        Utils.catchAction(member.modifyNickname(name), e);
+
+        if (!member.getGuild().getSelfMember().canInteract(member)) {
+            DiSky.getInstance().getLogger()
+                    .warning("The bot '"+member.getGuild().getSelfMember().getUser().getEffectiveName()+"' cannot interact with the member '"+member.getUser().getEffectiveName()+"' to change his nickname! For more information about that, please check DiSky's FAQ: https://disky.me/wiki/getting-started/faq/");
+            return;
+        }
+
+        member.modifyNickname(name).queue(null, ex -> DiSky.getErrorHandler().exception(e, ex));
     }
 
 }

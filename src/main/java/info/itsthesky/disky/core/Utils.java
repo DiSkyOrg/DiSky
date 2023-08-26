@@ -3,7 +3,10 @@ package info.itsthesky.disky.core;
 import ch.njol.util.NonNullPair;
 import com.google.common.collect.Lists;
 import info.itsthesky.disky.DiSky;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.utils.data.DataObject;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 
@@ -12,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -107,5 +111,17 @@ public final class Utils {
                 streams.add(new NonNullPair<>(new FileInputStream((String) raw), new File((String) raw).getName()));
         }
         return streams;
+    }
+
+    public static EmbedBuilder convertJSONToEmbed(String json) {
+        return EmbedBuilder.fromData(DataObject.fromJson(json));
+    }
+
+    public static String convertEmbedToJSON(EmbedBuilder builder) {
+        if (builder.isEmpty())
+            return "{}"; // TODO: 26/08/2023 Maybe handle that a bit better?
+
+        final MessageEmbed embed = builder.build();
+        return new String(embed.toData().toJson(), StandardCharsets.UTF_8);
     }
 }

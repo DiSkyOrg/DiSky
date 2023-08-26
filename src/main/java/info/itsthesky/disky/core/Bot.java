@@ -98,7 +98,7 @@ public class Bot {
     }
 
     public String getDiscordName() {
-        return getInstance().getSelfUser().getName() + "#" + getInstance().getSelfUser().getDiscriminator();
+        return getInstance().getSelfUser().getEffectiveName();
     }
 
     public BotOptions getOptions() {
