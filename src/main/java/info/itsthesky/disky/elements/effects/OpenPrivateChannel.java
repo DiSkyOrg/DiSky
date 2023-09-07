@@ -19,12 +19,9 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Open Private Channel")
 @Description({"Opens a private channel with a specific user.",
-        "The opened channel can be null and an exception can be thrown if the user does not accept message."})
-@Examples({"open private channel of event-user and store it in {_channel}",
-        "if {_channel} is not set:",
-        "\treply with \"Please enable your private messages!\"",
-        "else:",
-        "\tpost \"Hello world!\" to {_channel}"})
+        "The channel will be null if the id is not valid or if the target is the bot",
+             "WARNING: THIS DOESNT RETURN NULL WHEN THE USER BLOCKED THE BOT OR IS NOT ABLE TO SEND THE USER A MESSAGE"})
+@Examples("open private channel of event-user and store it in {_channel}")
 public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
 
     static {
