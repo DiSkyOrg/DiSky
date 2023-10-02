@@ -7,8 +7,8 @@ group = 'info.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '12'
-def patch = '1'
+def minor = '13'
+def patch = '0'
 
 def channel = ''
 def channelVersion = ''
@@ -33,7 +33,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.0.0-beta.13'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.15'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
