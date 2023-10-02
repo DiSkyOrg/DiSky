@@ -110,6 +110,10 @@ public class Types {
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getForumChannelById(input))
         ).eventExpression().register();
+        new DiSkyType<>(MediaChannel.class, "mediachannel",
+                Channel::getName,
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getMediaChannelById(input))
+        ).eventExpression().register();
         new DiSkyType<>(ChannelAction.class, "channelaction",
                 action -> action.getType().name(),
                 null

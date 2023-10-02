@@ -20,7 +20,8 @@ public class ExprPresence extends SimpleExpression<Activity> {
 				"watching [to] %string%",
 				"playing [to] %string%",
 				"streaming [to] %string% with [the] url %string%",
-				"competing [to] %string%"
+				"competing [to] %string%",
+				"custom status [of] %string%"
 				);
 	}
 
@@ -64,6 +65,8 @@ public class ExprPresence extends SimpleExpression<Activity> {
 				break;
 			case 4:
 				activity = Activity.competing(input);
+			case 5:
+				activity = Activity.customStatus(input);
 		}
 		return new Activity[] {activity};
 	}
@@ -91,6 +94,8 @@ public class ExprPresence extends SimpleExpression<Activity> {
 				return "streaming " + exprInput.toString(e, debug) + " with url " + exprURL.toString(e, debug);
 			case 4:
 				return "competing " + exprInput.toString(e, debug);
+			case 5:
+				return "custom status " + exprInput.toString(e, debug);
 		}
 		return "";
 	}
