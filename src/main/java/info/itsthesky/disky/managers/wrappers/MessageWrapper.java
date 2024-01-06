@@ -10,6 +10,10 @@ public class MessageWrapper extends ReceivedMessage {
 
 	public MessageWrapper(Message message) {
 		super(message.getIdLong(),
+				message.getChannelIdLong(),
+				message.getGuildIdLong(),
+				message.getJDA(),
+				message.getGuild(),
 				message.getChannel(),
 				message.getType(),
 				message.getMessageReference(),

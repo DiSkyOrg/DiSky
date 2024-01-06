@@ -13,6 +13,8 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.CacheRestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,12 +44,20 @@ public class OpenPrivateChannel extends SpecificBotEffect<PrivateChannel> {
     @Override
     public void runEffect(@NotNull Event e, Bot bot) {
         final User rawUser = parseSingle(exprUser, e, null);
+        DiSky.debug("Opening private channel of user " + rawUser.getId() + " ...");
         if (anyNull(this, rawUser, bot)) {
             restart();
             return;
         }
 
-        rawUser.openPrivateChannel().queue(this::restart, ex -> {
+        final CacheRestAction<PrivateChannel> response = rawUser.openPrivateChannel();
+        DiSky.debug("Request for private channel of user " + rawUser.getId() + " created. sending ...");
+
+        response.queue(entity -> {
+            restart(entity);
+            DiSky.debug("Private channel of user " + rawUser.getId() + " opened and stored in " + changedVariable.toString(e, true) + ".");
+        }, ex -> {
+            DiSky.debug("Cannot open private channel of user " + rawUser.getId() + ": " + ex.getMessage() + ".");
             DiSky.getErrorHandler().exception(e, ex);
             restart();
         });
