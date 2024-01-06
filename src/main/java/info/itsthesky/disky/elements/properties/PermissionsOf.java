@@ -67,8 +67,8 @@ public class PermissionsOf extends SimpleExpression<Object> {
 
     @Override
     public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
-        if (mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.REMOVE)
-            return new Class[] {Permission[].class};
+        if (mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.REMOVE || mode == Changer.ChangeMode.REMOVE_ALL)
+            return new Class[] {Permission[].class, Permission.class};
         return new Class[0];
     }
 
@@ -82,20 +82,25 @@ public class PermissionsOf extends SimpleExpression<Object> {
         final Permission[] perms = (Permission[]) delta;
         if (EasyElement.anyNull(this, holder, perms))
             return;
-        if (channel != null && !(channel instanceof GuildChannel))
-            return;
+
         switch (mode) {
             case ADD:
                 if (holder instanceof Role && channel == null)
                     ((Role) holder).getManager().givePermissions(perms).queue();
                 if (channel != null)
-                    ((GuildChannel) channel).getPermissionContainer().upsertPermissionOverride(holder).grant(perms).queue();
+                    channel.getPermissionContainer().upsertPermissionOverride(holder).grant(perms).queue();
                 break;
             case REMOVE:
                 if (holder instanceof Role && channel == null)
                     ((Role) holder).getManager().revokePermissions(perms).queue();
                 if (channel != null)
-                    ((GuildChannel) channel).getPermissionContainer().upsertPermissionOverride(holder).deny(perms).queue();
+                    channel.getPermissionContainer().upsertPermissionOverride(holder).deny(perms).queue();
+                break;
+            case REMOVE_ALL:
+                if (holder instanceof Role && channel == null)
+                    DiSky.getInstance().getLogger().warning("You cannot clear/reset permissions of a role, without a target channel!");
+                if (channel != null)
+                    channel.getPermissionContainer().upsertPermissionOverride(holder).clear(perms).queue();
                 break;
         }
     }
@@ -128,7 +133,7 @@ public class PermissionsOf extends SimpleExpression<Object> {
             return new Permission[0];
         if (channel == null)
             return holder.getPermissions().toArray(new Permission[0]);
-        return holder.getPermissions((GuildChannel) channel).toArray(new Permission[0]);
+        return holder.getPermissions(channel).toArray(new Permission[0]);
     }
 
     @Override
