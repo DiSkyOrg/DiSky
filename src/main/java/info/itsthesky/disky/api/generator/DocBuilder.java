@@ -390,7 +390,7 @@ public class DocBuilder {
         private final @Nullable String module;
 
         public SimpleDocElement(SyntaxElementInfo<?> info) {
-            this.id = getAnnotationOr(info, DocumentationId.class, info.c.getSimpleName());
+            this.id = getAnnotationOr(info, DocumentationId.class, info.getElementClass().getSimpleName());
             this.name = getAnnotationOr(info, Name.class, null);
             this.description = getAnnotationOrs(info, Description.class, null);
             this.patterns = info.getPatterns();

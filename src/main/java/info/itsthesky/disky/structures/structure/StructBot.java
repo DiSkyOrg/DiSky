@@ -85,7 +85,7 @@ public class StructBot extends Structure {
 				.toUpperCase().replace(" ", "_")));
 		options.setFlags(
 				Stream.of(container.getOptional("cache flags", String[].class, true))
-						.map(str -> CacheFlag.valueOf(str.toUpperCase().replace(" ", "_")))
+						.map(str -> CacheFlag.valueOf(str.toString().toUpperCase().replace(" ", "_")))
 						.toArray(CacheFlag[]::new)
 		);
 		options.setPolicy(parse(container.getOptional("policy", String.class, true)));
@@ -96,7 +96,7 @@ public class StructBot extends Structure {
 		options.setOnGuildReady(guildReady == null ? new ArrayList<>() : Collections.singletonList(guildReady));
 
 		options.setIntents(Stream.of(container.getOptional("intents", String[].class, true))
-				.map(str -> GatewayIntent.valueOf(str.toUpperCase().replace(" ", "_")))
+				.map(str -> GatewayIntent.valueOf(str.toString().toUpperCase().replace(" ", "_")))
 				.toArray(GatewayIntent[]::new));
 
 		return true;
