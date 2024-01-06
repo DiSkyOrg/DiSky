@@ -39,7 +39,7 @@ public class CommandFactory {
 
         Method _PARSE_I = null;
         try {
-            _PARSE_I = SkriptParser.class.getDeclaredMethod("parse_i", String.class, int.class, int.class);
+            _PARSE_I = SkriptParser.class.getDeclaredMethod("parse_i", String.class);
             _PARSE_I.setAccessible(true);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -61,7 +61,7 @@ public class CommandFactory {
         SkriptParser parser = new SkriptParser(args, SkriptParser.PARSE_LITERALS, ParseContext.COMMAND);
         SkriptParser.ParseResult res = null;
         try {
-            res = (SkriptParser.ParseResult) PARSE_I.invoke(parser, command.getPattern(), 0, 0);
+            res = (SkriptParser.ParseResult) PARSE_I.invoke(parser, command.getPattern());
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

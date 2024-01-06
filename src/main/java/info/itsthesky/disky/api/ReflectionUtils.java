@@ -252,10 +252,10 @@ public class ReflectionUtils {
 
             if (f.equalsIgnoreCase("expressions")) {
                 ((Collection<ExpressionInfo<?, ?>>) field.get(null))
-                        .removeIf(info -> info.c.equals(clz));
+                        .removeIf(info -> info.getElementClass().equals(clz));
             } else {
                 ((Collection<SyntaxElementInfo<? extends Effect>>) field.get(null))
-                        .removeIf(info -> info.c.equals(clz));
+                        .removeIf(info -> info.getElementClass().equals(clz));
             }
 
             field.setAccessible(false);
