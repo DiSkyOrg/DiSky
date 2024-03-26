@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -236,5 +237,14 @@ public final class DiSky extends JavaPlugin {
 
     public static BotManager getManager() {
         return botManager;
+    }
+
+    public static void runtimeError(String description, @Nullable Object... data) {
+        getInstance().getLogger().severe(ChatColor.DARK_RED + "DiSky Runtime Warning: " + ChatColor.RED + description);
+        if (data != null) {
+            getInstance().getLogger().severe(ChatColor.RED + "Provided data context:");
+            for (int i = 0; i < data.length - 1; i += 2)
+                getInstance().getLogger().severe(ChatColor.GOLD + "  - " + ChatColor.YELLOW + data[i] + ChatColor.GRAY + ": " + ChatColor.WHITE + data[i + 1]);
+        }
     }
 }
