@@ -49,8 +49,8 @@ public class PermissionsOf extends SimpleExpression<Object> {
         Skript.registerExpression(PermissionsOf.class,
                 Object.class,
                 ExpressionType.PROPERTY,
-                "[(all [[of] the]|the)] permissions of %member/role/player% [in %-channel/guildchannel%]",
-                "[(all [[of] the]|the)] %member/role/player%'s permissions [in %-channel/guildchannel%]"
+                "[(all [[of] the]|the)] [discord] permissions of %member/role/player% [in %-channel/guildchannel%]",
+                "[(all [[of] the]|the)] %member/role/player%'s [discord] permissions [in %-channel/guildchannel%]"
         );
     }
 
