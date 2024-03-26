@@ -210,6 +210,10 @@ public class Types {
                 Emote::getAsMention,
                 null
         ).eventExpression().register();
+        new DiSkyType<>(MessageReaction.class, "reaction",
+                messageReaction -> Emote.fromUnion(messageReaction.getEmoji()).getAsMention(),
+                null
+        ).eventExpression().register();
         new DiSkyType<>(Sticker.class, "sticker",
                 Sticker::getName,
                 null
