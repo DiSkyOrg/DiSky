@@ -9,27 +9,30 @@ import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SelfRegisteringSkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Trigger;
-import ch.njol.skript.lang.parser.ParserInstance;
-import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.lang.entry.EntryContainer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommandRegistry extends SelfRegisteringSkriptEvent {
+
+    private static final Pattern MATCHER_PATTERN = Pattern.compile("discord command (\\S+)( .+)?$");
 
     public static final SectionValidator commandStructure = new SectionValidator()
             .addEntry("usage", true)
@@ -75,22 +78,40 @@ public class CommandRegistry extends SelfRegisteringSkriptEvent {
     private String command;
 
     @Override
-    public boolean init(final Literal<?> @NotNull [] args, final int matchedPattern, final ParseResult parser) {
-        command = parser.regexes.get(0).group(1);
-        arguments = parser.regexes.get(0).group(2);
+    public boolean init(final Literal<?> @NotNull [] args, final int matchedPattern, final @NotNull ParseResult parser) {
+        return true;
+    }
+
+    @Override
+    public boolean load() {
+        EntryContainer entryContainer = getEntryContainer();
+
+        String fullCommand = entryContainer.getSource().getKey();
+        assert fullCommand != null;
+        fullCommand = ScriptLoader.replaceOptions(fullCommand);
+
+        Matcher matcher = MATCHER_PATTERN.matcher(fullCommand);
+        boolean matches = matcher.matches();
+        if (!matches) {
+            Skript.error("Invalid command structure pattern");
+            return false;
+        }
+
+        command = matcher.group(1);
+        arguments = matcher.group(2);
+
         // discord command test:
-        SectionNode sectionNode = (SectionNode) SkriptLogger.getNode();
+        SectionNode sectionNode = (SectionNode) getParser().getNode();
 
-        String originalName = ParserInstance.get().getCurrentEventName();
-        Class<? extends Event>[] originalEvents = ParserInstance.get().getCurrentEvents();
-        Kleenean originalDelay = ParserInstance.get().getHasDelayBefore();
-        ParserInstance.get().setCurrentEvent("discord command", CommandEvent.class);
-
+        String originalName = getParser().getCurrentEventName();
+        Class<? extends Event>[] originalEvents = getParser().getCurrentEvents();
+        Kleenean originalDelay = getParser().getHasDelayBefore();
+        getParser().setCurrentEvent("discord command", CommandEvent.class);
         CommandObject cmd = CommandFactory.getInstance().add(sectionNode);
         command = cmd == null ? command : cmd.getName();
 
-        ParserInstance.get().setCurrentEvent(originalName, originalEvents);
-        ParserInstance.get().setHasDelayBefore(originalDelay);
+        getParser().setCurrentEvent(originalName, originalEvents);
+        getParser().setHasDelayBefore(originalDelay);
         nukeSectionNode(sectionNode);
 
         return cmd != null;
