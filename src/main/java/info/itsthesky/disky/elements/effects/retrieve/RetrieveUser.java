@@ -27,18 +27,14 @@ public class RetrieveUser extends AsyncEffect {
 
     private Expression<String> exprInput;
     private Expression<Bot> exprBot;
-    private Variable exprResult;
+    private Expression<Object> exprResult;
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
         exprInput = (Expression<String>) expressions[0];
         exprBot = (Expression<Bot>) expressions[1];
-        if (!(expressions[2] instanceof Variable)) {
-            Skript.error("The object to store the user in must be a variable!");
-            return false;
-        }
+        exprResult = (Expression<Object>) expressions[2];
 
-        exprResult = (Variable) expressions[2];
         return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, User.class);
     }
 
@@ -63,6 +59,7 @@ public class RetrieveUser extends AsyncEffect {
 
     @Override
     public @NotNull String toString(@Nullable Event event, boolean b) {
-        return "retrieve user with id " + exprInput.toString(event, b) + " and store it in " + exprResult.toString(event, b);
+        return "retrieve user with id " + exprInput.toString(event, b) + " and store it in " +
+                exprResult.toString(event, b);
     }
 }
