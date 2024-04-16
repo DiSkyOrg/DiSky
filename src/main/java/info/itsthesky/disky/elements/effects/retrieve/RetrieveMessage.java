@@ -1,24 +1,68 @@
 package info.itsthesky.disky.elements.effects.retrieve;
 
-import info.itsthesky.disky.api.skript.BaseRetrieveEffect;
+import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
+import ch.njol.util.Kleenean;
+import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
-import net.dv8tion.jda.api.requests.RestAction;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class RetrieveMessage extends BaseRetrieveEffect<Message, MessageChannel> {
+public class RetrieveMessage extends AsyncEffect {
 
     static {
-        register(
+        Skript.registerEffect(
                 RetrieveMessage.class,
-                "message",
-                "channel"
+                "retrieve message (with|from) id %string% (from|with|of|in) %channel% [(with|using) [the] [bot] %-bot%] and store (it|the message) in %~objects%"
         );
     }
 
+    private Expression<String> exprID;
+    private Expression<MessageChannel> exprChannel;
+    private Expression<Bot> exprBot;
+    private Expression<Object> exprResult;
+
     @Override
-    protected RestAction<Message> retrieve(@NotNull String input, @NotNull MessageChannel entity) {
-        return entity.retrieveMessageById(input);
+    public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
+        exprID = (Expression<String>) expressions[0];
+        exprChannel = (Expression<MessageChannel>) expressions[1];
+        exprBot = (Expression<Bot>) expressions[2];
+        exprResult = (Expression<Object>) expressions[3];
+        return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
     }
 
+    @Override
+    protected void execute(@NotNull Event event) {
+        String id = exprID.getSingle(event);
+        Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
+        MessageChannel channel = exprChannel.getSingle(event);
+        if (id == null || bot == null || channel == null)
+            return;
+
+        channel = bot.getInstance().getChannelById(MessageChannel.class, channel.getId());
+        if (channel == null)
+            return;
+
+        final Message message;
+        try {
+            message = channel.retrieveMessageById(id).complete();
+        } catch (Exception ex) {
+            return;
+        }
+
+        exprResult.change(event, new Message[] {message}, Changer.ChangeMode.SET);
+    }
+
+    @Override
+    public @NotNull String toString(@Nullable Event event, boolean b) {
+        return "retrieve message with id " + exprID.toString(event, b)
+                + " from channel " + exprChannel.toString(event, b)
+                + (exprBot == null ? "" : " using bot " + exprBot.toString(event, b))
+                + " and store it in " + exprResult.toString(event, b);
+    }
 }
