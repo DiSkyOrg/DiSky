@@ -85,7 +85,8 @@ public class Emote implements IMentionable {
     @Override
     public @NotNull String getAsMention() {
         if (isCustom()) {
-            return "<:" + getEmote().getName() + ":" + getID() + ">";
+            return "<" + (isAnimated() ? "a" : "") + ":"
+                    + getName() + ":" + getID() + ">";
         } else {
             return getName();
         }
