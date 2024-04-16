@@ -33,6 +33,8 @@ public class RetrieveProfile extends AsyncEffect {
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprID = (Expression<String>) expressions[0];
         exprUser = (Expression<User>) expressions[1];
         exprResult = (Expression<Object>) expressions[2];

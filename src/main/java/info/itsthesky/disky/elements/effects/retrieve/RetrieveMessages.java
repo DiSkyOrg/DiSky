@@ -40,6 +40,8 @@ public class RetrieveMessages extends AsyncEffect {
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprAmount = (Expression<Number>) expressions[0];
         exprChannel = (Expression<MessageChannel>) expressions[1];
         exprResult = (Expression<Object>) expressions[2];

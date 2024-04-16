@@ -31,6 +31,8 @@ public class RetrieveUser extends AsyncEffect {
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprInput = (Expression<String>) expressions[0];
         exprBot = (Expression<Bot>) expressions[1];
         exprResult = (Expression<Object>) expressions[2];

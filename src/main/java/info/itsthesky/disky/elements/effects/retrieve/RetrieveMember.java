@@ -29,6 +29,8 @@ public class RetrieveMember extends AsyncEffect {
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprID = (Expression<String>) expressions[0];
         exprGuild = (Expression<Guild>) expressions[1];
         exprBot = (Expression<Bot>) expressions[2];
