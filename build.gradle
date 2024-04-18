@@ -40,6 +40,8 @@ dependencies {
 }
 
 shadowJar {
+    minimize()
+
     archiveName = 'DiSky ' + version + '.jar'
 }
 
