@@ -35,7 +35,7 @@ public class CreateRow extends ReturningSection<ComponentRow> {
 	}
 
 	@Override
-	public ComponentRow createNewValue() {
+	public ComponentRow createNewValue(Event event) {
 		return new ComponentRow();
 	}
 

@@ -89,7 +89,7 @@ public class CreateMessage extends ReturningSection<MessageCreateBuilder> {
 	}
 
 	@Override
-	public MessageCreateBuilder createNewValue() {
+	public MessageCreateBuilder createNewValue(Event event) {
 		return new MessageCreateBuilder().setSuppressedNotifications(silent);
 	}
 

@@ -24,13 +24,13 @@ public abstract class ReturningSection<T> extends Section {
 																   Class expression,
 																   String... patterns) {
 		for (int i = 0; i < patterns.length; i++)
-			patterns[i] += " and store (it|the result) in %-objects%";
+			patterns[i] += " [and store (it|the result) in %-~objects%]";
 
 		Skript.registerSection(sectionClass, patterns);
-		Skript.registerExpression(expression, returnType, ExpressionType.SIMPLE, "[the] [last] "+expression.getSimpleName()+" [builder]");
+		Skript.registerExpression(expression, returnType, ExpressionType.SIMPLE, "[the] "+expression.getSimpleName()+" [builder]");
 	}
 
-	public abstract T createNewValue();
+	public abstract T createNewValue(@NotNull Event event);
 
 	private T currentValue;
 	private Variable<T> variable;
@@ -38,15 +38,16 @@ public abstract class ReturningSection<T> extends Section {
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
 		loadOptionalCode(sectionNode);
-		variable = (Variable<T>) exprs[0];
+		variable = (Variable<T>) exprs[exprs.length - 1];
 		return true;
 	}
 
 	@Override
 	protected @Nullable TriggerItem walk(@NotNull Event e) {
 
-		currentValue = createNewValue();
-		variable.change(e, new Object[] {currentValue}, Changer.ChangeMode.SET);
+		currentValue = createNewValue(e);
+		if (variable != null)
+			variable.change(e, new Object[] {currentValue}, Changer.ChangeMode.SET);
 
 		return walk(e, true);
 	}

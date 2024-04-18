@@ -20,7 +20,7 @@ public class CreateAutoMod extends ReturningSection<AutoModRuleBuilder> {
 	}
 
 	@Override
-	public AutoModRuleBuilder createNewValue() {
+	public AutoModRuleBuilder createNewValue(Event event) {
 		return new AutoModRuleBuilder();
 	}
 
