@@ -26,6 +26,7 @@ public class MessageWrapper extends ReceivedMessage {
 				message.getAuthor(),
 				message.getMember(),
 				message.getActivity(),
+				message.getPoll(),
 				message.getTimeEdited(),
 				message.getMentions(),
 				message.getReactions(),

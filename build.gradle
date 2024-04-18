@@ -10,8 +10,8 @@ def major = '4'
 def minor = '14'
 def patch = '0'
 
-def channel = 'alpha'
-def channelVersion = '1'
+def channel = ''
+def channelVersion = ''
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
@@ -33,7 +33,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.0.0-beta.21'
+    implementation 'com.github.dv8fromtheworld:jda:5012349'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'

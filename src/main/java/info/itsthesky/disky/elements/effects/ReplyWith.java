@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
+import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
