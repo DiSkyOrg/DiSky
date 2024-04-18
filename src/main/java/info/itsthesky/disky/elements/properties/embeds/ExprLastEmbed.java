@@ -23,7 +23,8 @@ public class ExprLastEmbed extends SimpleExpression<EmbedBuilder> {
 
     static {
         Skript.registerExpression(ExprLastEmbed.class, EmbedBuilder.class, ExpressionType.SIMPLE,
-                "[the] [last] [(made|created|generated)] embed"
+                "[the] [last] (made|created|generated) embed",
+                "[the] last embed"
         );
     }
 
@@ -35,7 +36,10 @@ public class ExprLastEmbed extends SimpleExpression<EmbedBuilder> {
     @Nullable
     @Override
     protected EmbedBuilder[] get(@NotNull Event e) {
-        return new EmbedBuilder[]{EmbedSection.lastEmbed};
+        if (EmbedSection.lastSection == null)
+            return new EmbedBuilder[0];
+
+        return new EmbedBuilder[]{EmbedSection.lastSection.getCurrentValue()};
     }
 
     @Override
