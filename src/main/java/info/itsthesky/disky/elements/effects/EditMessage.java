@@ -7,10 +7,9 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -19,6 +18,8 @@ import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static info.itsthesky.disky.api.skript.EasyElement.*;
 
 @Name("Edit Message")
 @Description({"Edit a specific message/interaction hook to show a new rich or simple message.",
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 				"edit {_msg} to show \"Abracadabra!\""
 )
 @Since("4.4.0")
-public class EditMessage extends SpecificBotEffect {
+public class EditMessage extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
@@ -44,14 +45,21 @@ public class EditMessage extends SpecificBotEffect {
 	private Expression<Object> exprMessage;
 
 	@Override
-	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
+	public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		getParser().setHasDelayBefore(Kleenean.TRUE);
+
+		exprTarget = (Expression<Object>) expressions[0];
+		exprMessage = (Expression<Object>) expressions[1];
+		return true;
+	}
+
+	@Override
+	public void execute(@NotNull Event e) {
 		final Object target = parseSingle(exprTarget, e);
 		final Object message = parseSingle(exprMessage, e);
 
-		if (message == null || target == null) {
-			restart();
+		if (message == null || target == null)
 			return;
-		}
 
 		final MessageCreateBuilder builder;
 		if (message instanceof MessageCreateBuilder)
@@ -62,23 +70,14 @@ public class EditMessage extends SpecificBotEffect {
 			builder = new MessageCreateBuilder().setContent((String) message);
 		final MessageEditBuilder editBuilder = new MessageEditBuilder().applyCreateData(builder.build());
 
-		if (target instanceof Message)
-			((Message) target).editMessage(editBuilder.build()).queue(this::restart, ex -> {
-				DiSky.getErrorHandler().exception(e, ex);
-				restart();
-			});
-		else
-			((InteractionHook) target).editOriginal(editBuilder.build()).queue(this::restart, ex -> {
-				DiSky.getErrorHandler().exception(e, ex);
-				restart();
-			});
-	}
-
-	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
-		exprTarget = (Expression<Object>) expressions[0];
-		exprMessage = (Expression<Object>) expressions[1];
-		return true;
+		try {
+			if (target instanceof Message)
+				((Message) target).editMessage(editBuilder.build()).complete();
+			else
+				((InteractionHook) target).editOriginal(editBuilder.build()).complete();
+		} catch (Exception ex) {
+			DiSky.getErrorHandler().exception(e, ex);
+		}
 	}
 
 	@Override

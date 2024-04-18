@@ -1,16 +1,16 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -27,6 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static info.itsthesky.disky.api.skript.EasyElement.*;
+
 @Name("Create Post")
 @Description({"Create a new post in a forum channel. The output value will be the newly created thread channel."})
 @Since("4.4.4")
@@ -34,12 +36,12 @@ import java.util.stream.Collectors;
 		"create a new post in forum channel with id \"000\" named \"I need help!\" with message \"please help me!\"",
 		"create a new post in forum channel with id \"000\" named \"I need help!\" with message \"please help me!\" with tags \"help\" and \"support\""
 })
-public class CreatePost extends SpecificBotEffect<ThreadChannel> {
+public class CreatePost extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
 				CreatePost.class,
-				"create [a] [new] post in [channel] %forumchannel% (with name|named) %string% [with message] %string/messagecreatebuilder/embedbuilder% [with [the] tags %-strings%] [and store (it|the thread) in %-object%]"
+				"create [a] [new] post in [channel] %forumchannel% (with name|named) %string% [with message] %string/messagecreatebuilder/embedbuilder% [with [the] tags %-strings%] [and store (it|the thread) in %~objects%]"
 		);
 	}
 
@@ -47,24 +49,28 @@ public class CreatePost extends SpecificBotEffect<ThreadChannel> {
 	private Expression<String> exprName;
 	private Expression<Object> exprMessage;
 	private Expression<String> exprTags;
+	private Expression<Object> exprResult;
 
 	@Override
-	public boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		getParser().setHasDelayBefore(Kleenean.TRUE);
+
 		exprChannel = (Expression<ForumChannel>) expressions[0];
 		exprName = (Expression<String>) expressions[1];
 		exprMessage = (Expression<Object>) expressions[2];
 		exprTags = (Expression<String>) expressions[3];
-		return validateVariable(expressions[4], false, true);
+		exprResult = (Expression<Object>) expressions[4];
+
+		return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, ThreadChannel.class);
 	}
 
 	@Override
-	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
+	public void execute(@NotNull Event e) {
 		final ForumChannel channel = parseSingle(exprChannel, e);
 		final String name = parseSingle(exprName, e);
 		final Object message = parseSingle(exprMessage, e);
 		final String[] tags = parseList(exprTags, e, new String[0]);
 		if (anyNull(this, channel, message, name)) {
-			restart();
 			return;
 		}
 
@@ -99,20 +105,29 @@ public class CreatePost extends SpecificBotEffect<ThreadChannel> {
 
 		if (channel.isTagRequired() && parsedTags.isEmpty()) {
 			Skript.warning("The forum " + channel.getName() + " requires at least one tag to create a post (you provided none)!");
-			restart();
 			return;
 		}
 
-		channel.createForumPost(name, builder.build())
-				.setTags(parsedTags.stream().map(tag -> ForumTagSnowflake.fromId(tag.getId())).collect(Collectors.toList()))
-				.queue(post -> restart(post.getThreadChannel()), ex -> {
-					DiSky.getErrorHandler().exception(e, ex);
-					restart();
-				});
+		final ThreadChannel threadChannel;
+		try {
+			threadChannel = channel.createForumPost(name, builder.build())
+					.setTags(parsedTags.stream().map(tag -> ForumTagSnowflake.fromId(tag.getId())).collect(Collectors.toList()))
+					.complete()
+					.getThreadChannel();
+		} catch (Exception ex) {
+			DiSky.getErrorHandler().exception(e, ex);
+			return;
+		}
+
+		exprResult.change(e, new ThreadChannel[] {threadChannel}, Changer.ChangeMode.SET);
 	}
 
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "create a new post in channel " + exprChannel.toString(e, debug) + " with name " + exprName.toString(e, debug) + " with message " + exprMessage.toString(e, debug) + " with tags " + exprTags.toString(e, debug);
+		return "create a new post in channel " + exprChannel.toString(e, debug)
+				+ " with name " + exprName.toString(e, debug)
+				+ " with message " + exprMessage.toString(e, debug)
+				+ " with tags " + exprTags.toString(e, debug)
+				+ " and store it in " + exprResult.toString(e, debug);
 	}
 }

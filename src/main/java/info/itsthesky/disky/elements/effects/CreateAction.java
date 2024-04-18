@@ -1,47 +1,62 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Variable;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.WaiterEffect;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static info.itsthesky.disky.api.skript.EasyElement.anyNull;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
+
 @SuppressWarnings("unchecked")
-public class CreateAction extends WaiterEffect<Object> {
+public class CreateAction extends AsyncEffect {
 
     static {
         Skript.registerEffect(
                 CreateAction.class,
-                "create [the] [(action|manager)] %roleaction/channelaction% and store (it|the (role|channel)) in %object%"
+                "create [the] [(action|manager)] %roleaction/channelaction% and store (it|the (role|channel)) in %~objects%"
         );
     }
 
     private Expression<Object> exprAction;
+    private Expression<Object> exprResult;
 
     @Override
-    public boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         exprAction = (Expression<Object>) expressions[0];
-        setChangedVariable((Variable) expressions[1]);
-        return true;
+        exprResult = (Expression<Object>) expressions[1];
+        return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Object.class);
     }
 
     @Override
-    public void runEffect(Event e) {
+    public void execute(Event e) {
         final AuditableRestAction<Object> action = (AuditableRestAction<Object>) parseSingle(exprAction, e, null);
-        if (anyNull(this, action)) {
-            restart();
+        if (anyNull(this, action))
+            return;
+
+        final Object result;
+        try {
+            result = action.complete();
+        } catch (Exception ex) {
+            DiSky.getErrorHandler().exception(e, ex);
             return;
         }
-        action.queue(this::restart);
+
+        exprResult.change(e, new Object[] {result}, Changer.ChangeMode.SET);
     }
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "create action " + exprAction.toString(e, debug);
+        return "create action " + exprAction.toString(e, debug)
+                + " and store it in " + exprResult.toString(e, debug);
     }
 }

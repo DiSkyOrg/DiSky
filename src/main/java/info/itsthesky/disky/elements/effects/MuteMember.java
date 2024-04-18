@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
@@ -15,12 +16,14 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
+
 @Name("Mute Member")
 @Description({"Mute or unmute a member in their guild."})
 @Examples({"voice mute event-member",
         "unmute member event-member"})
 
-public class MuteMember extends SpecificBotEffect {
+public class MuteMember extends AsyncEffect {
 
     static {
         Skript.registerEffect(
@@ -34,28 +37,26 @@ public class MuteMember extends SpecificBotEffect {
     private int matchedPattern;
 
     @Override
-    public boolean initEffect(Expression[] expr, int matchedPattern, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression[] expr, int matchedPattern, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprMember = (Expression<Member>) expr[0];
         this.matchedPattern = matchedPattern;
         return true;
     }
 
     @Override
-    public void runEffect(@NotNull Event e, Bot bot) {
+    public void execute(@NotNull Event e) {
         final Member member = parseSingle(exprMember, e, null);
 
-        if (member == null || bot == null) {
-            restart();
+        if (member == null)
             return;
-        }
 
-        member.mute(pattern2bool(matchedPattern)).queue(
-                (v) -> restart(),
-                ex -> {
-                    DiSky.getErrorHandler().exception(e, ex);
-                    restart();
-                }
-        );
+        try {
+            member.mute(pattern2bool(matchedPattern)).complete();
+        } catch (Exception ex) {
+            DiSky.getErrorHandler().exception(e, ex);
+        }
     }
 
     @Override
@@ -64,7 +65,6 @@ public class MuteMember extends SpecificBotEffect {
     }
 
     private boolean pattern2bool(int v) {
-        if (v <= 0) return true;
-        return false;
+        return v <= 0;
     }
 }

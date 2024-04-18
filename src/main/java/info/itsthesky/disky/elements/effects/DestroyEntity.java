@@ -6,25 +6,26 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.NodeInformation;
-import info.itsthesky.disky.api.skript.WaiterEffect;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static info.itsthesky.disky.api.skript.EasyElement.anyNull;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
+
 @Name("Destroy Discord Entity")
 @Description("Destroy on Discord the wanted entity.")
 @Examples({"destroy event-channel",
 "destroy event-message"})
-public class DestroyEntity extends WaiterEffect {
+public class DestroyEntity extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
@@ -36,18 +37,19 @@ public class DestroyEntity extends WaiterEffect {
 	private Expression<Object> exprEntity;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		getParser().setHasDelayBefore(Kleenean.TRUE);
+
 		exprEntity = (Expression<Object>) expressions[0];
 		return true;
 	}
 
 	@Override
-	public void runEffect(Event e) {
+	public void execute(Event e) {
 		final Object entity = parseSingle(exprEntity, e, null);
-		if (anyNull(this, entity)) {
-			restart();
+		if (anyNull(this, entity))
 			return;
-		}
+
 		final RestAction<Void> action;
 		if (entity instanceof Guild)
 			action = ((Guild) entity).delete();
@@ -61,14 +63,14 @@ public class DestroyEntity extends WaiterEffect {
 			action = ((info.itsthesky.disky.api.emojis.Emote) entity).getEmote().delete();
 		else
 			action = null;
-		if (anyNull(this, action)) {
-			restart();
+		if (anyNull(this, action))
 			return;
-		}
-		action.queue(v -> restart(), ex -> {
-			restart();
+
+		try {
+			action.complete();
+		} catch (Exception ex) {
 			DiSky.getErrorHandler().exception(e, ex);
-		});
+		}
 	}
 
 	@Override
