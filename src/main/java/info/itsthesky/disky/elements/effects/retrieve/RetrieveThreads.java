@@ -11,11 +11,14 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.attribute.IPostContainer;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Name("Retrieve Threads")
@@ -26,11 +29,11 @@ public class RetrieveThreads extends AsyncEffect {
     static {
         Skript.registerEffect(
                 RetrieveThreads.class,
-                "retrieve [(all|every)] thread[s] (from|with|of|in) %guild% [(with|using) [the] [bot] %-bot%] and store (them|the thread[s]) in %~objects%"
+                "retrieve [(all|every)] thread[s] (from|with|of|in) %guild/channel% [(with|using) [the] [bot] %-bot%] and store (them|the thread[s]) in %~objects%"
         );
     }
 
-    private Expression<Guild> exprGuild;
+    private Expression<Object> exprGuild;
     private Expression<Bot> exprBot;
     private Expression<Object> exprResult;
 
@@ -38,7 +41,7 @@ public class RetrieveThreads extends AsyncEffect {
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
 
-        exprGuild = (Expression<Guild>) expressions[0];
+        exprGuild = (Expression<Object>) expressions[0];
         exprBot = (Expression<Bot>) expressions[1];
         exprResult = (Expression<Object>) expressions[2];
         return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, ThreadChannel[].class);
@@ -46,14 +49,19 @@ public class RetrieveThreads extends AsyncEffect {
 
     @Override
     protected void execute(@NotNull Event event) {
-        Guild guild = exprGuild.getSingle(event);
+        Object entity = exprGuild.getSingle(event);
         Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
-        if (guild == null || bot == null)
+        if (bot == null || !(entity instanceof IPostContainer))
             return;
 
         final List<ThreadChannel> threads;
         try {
-            threads = guild.retrieveActiveThreads().complete();
+            if (entity instanceof Guild)
+                threads = ((Guild) entity).retrieveActiveThreads().complete();
+            else if (entity instanceof ForumChannel)
+                threads = ((ForumChannel) entity).retrieveArchivedPublicThreadChannels().complete();
+            else
+                threads = new ArrayList<>();
         } catch (Exception ex) {
             DiSky.getErrorHandler().exception(event, ex);
             return;
