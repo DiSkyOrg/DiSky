@@ -8,6 +8,7 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.elements.commands.CommandEvent;
 import info.itsthesky.disky.elements.commands.CommandObject;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
+import info.itsthesky.disky.elements.properties.polls.PollAnswerData;
 import info.itsthesky.disky.elements.sections.automod.FilterType;
 import info.itsthesky.disky.managers.MessageManager;
 import info.itsthesky.disky.managers.wrappers.AutoModRuleBuilder;
@@ -38,6 +39,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -210,6 +212,10 @@ public class Types {
                 Emote::getAsMention,
                 null
         ).eventExpression().register();
+        new DiSkyType<>(MessageReaction.class, "reaction",
+                messageReaction -> Emote.fromUnion(messageReaction.getEmoji()).getAsMention(),
+                null
+        ).eventExpression().register();
         new DiSkyType<>(Sticker.class, "sticker",
                 Sticker::getName,
                 null
@@ -222,6 +228,15 @@ public class Types {
                 MessageEmbed.Field::getValue,
                 null
         ).eventExpression().register();
+        new DiSkyType<>(MessagePollBuilder.class, "messagepoll",
+                v -> "a discord poll",
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(PollAnswerData.class, "messagepollanswer",
+                PollAnswerData::asString,
+                null
+        ).eventExpression().register();
+
         /*
         Global Entities
          */

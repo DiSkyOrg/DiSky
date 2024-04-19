@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
@@ -14,6 +15,7 @@ import info.itsthesky.disky.api.skript.WaiterEffect;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import org.bukkit.event.Event;
@@ -32,7 +34,7 @@ import java.util.Set;
 @Examples({"defer the interaction",
 "defer the interaction and wait",
 "defer the interaction and wait silently"})
-public class DeferInteraction extends WaiterEffect {
+public class DeferInteraction extends AsyncEffect {
 
     public static final Set<Long> WAITING_INTERACTIONS = new HashSet<>();
 
@@ -47,7 +49,9 @@ public class DeferInteraction extends WaiterEffect {
     private boolean shouldwait;
 
     @Override
-    public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         if (!EasyElement.containsInterfaces(InteractionEvent.class)) {
             Skript.error("The defer interaction effect can only be used in interaction events!");
             return false;
@@ -60,20 +64,21 @@ public class DeferInteraction extends WaiterEffect {
     }
 
     @Override
-    public void runEffect(Event e) {
+    public void execute(Event e) {
         GenericInteractionCreateEvent event = ((InteractionEvent) e).getInteractionEvent();
 
-        if (shouldwait) {
-            ((IReplyCallback) event).deferReply(isEphemeral).queue(reply -> {
-                restart();
-
+        try {
+            if (shouldwait) {
+                ((IReplyCallback) event).deferReply(isEphemeral).complete();
                 WAITING_INTERACTIONS.add(event.getInteraction().getIdLong());
-            }, ex -> DiSky.getErrorHandler().exception(e, ex));
-        } else {
-            if (event instanceof GenericComponentInteractionCreateEvent)
-                ((ComponentInteraction) event).deferEdit().queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
-            if (event instanceof ModalInteractionEvent)
-                ((ModalInteractionEvent) event).deferEdit().queue(this::restart, ex -> DiSky.getErrorHandler().exception(e, ex));
+            } else {
+                if (event instanceof GenericComponentInteractionCreateEvent)
+                    ((ComponentInteraction) event).deferEdit().complete();
+                if (event instanceof ModalInteractionEvent)
+                    ((ModalInteractionEvent) event).deferEdit().complete();
+            }
+        } catch (Exception ex) {
+            DiSky.getErrorHandler().exception(e, ex);
         }
     }
 

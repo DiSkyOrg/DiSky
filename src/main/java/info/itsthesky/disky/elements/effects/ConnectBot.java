@@ -7,17 +7,18 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.Debug;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @SuppressWarnings("rawtypes")
 @Name("Connect / Disconnect Bot")
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"connect bot \"bot_name\" to voice channel with id \"000\"",
 		"disconnect from event-guild"})
 @Since("4.9.0")
-public class ConnectBot extends WaiterEffect {
+public class ConnectBot extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
@@ -45,7 +46,9 @@ public class ConnectBot extends WaiterEffect {
 	private Expression<Guild> exprGuild;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		getParser().setHasDelayBefore(Kleenean.TRUE);
+
 		exprBot = (Expression<Bot>) expressions[0];
 		connect = i == 0;
 
@@ -58,29 +61,25 @@ public class ConnectBot extends WaiterEffect {
 	}
 
 	@Override
-	public void runEffect(Event e) {
+	public void execute(Event e) {
 		final Bot bot = parseSingle(exprBot, e);
 		final Guild guild = parseSingle(exprGuild, e);
 		final AudioChannel channel = parseSingle(exprAudioChannel, e);
 		if (EasyElement.anyNull(this, bot)) {
-			restart();
 			return;
 		}
 		if (connect && channel == null) {
 			Debug.debug(this, "Missing Channel", "You must specify a channel to connect to.");
-			restart();
 			return;
 		}
 		if (!connect && guild == null) {
 			Debug.debug(this, "Missing Guild", "You must specify a guild to connect to.");
-			restart();
 			return;
 		}
 
 		final AudioChannel foundChannel = connect ? bot.getInstance().getChannelById(AudioChannel.class, channel.getId()) : guild.getAudioManager().getConnectedChannel();
 		if (foundChannel == null) {
 			Skript.error("The audio channel with id " + channel.getId() + " is not found for bot " + bot.getName() + "!");
-			restart();
 			return;
 		}
 
@@ -89,7 +88,6 @@ public class ConnectBot extends WaiterEffect {
 		} else {
 			foundChannel.getGuild().getAudioManager().closeAudioConnection();
 		}
-		restart();
 	}
 
 	@Override

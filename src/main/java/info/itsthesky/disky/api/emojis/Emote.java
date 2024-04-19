@@ -84,7 +84,12 @@ public class Emote implements IMentionable {
 
     @Override
     public @NotNull String getAsMention() {
-        return emoji.getAsReactionCode();
+        if (isCustom()) {
+            return "<" + (isAnimated() ? "a" : "") + ":"
+                    + getName() + ":" + getID() + ">";
+        } else {
+            return getName();
+        }
     }
 
     @Override

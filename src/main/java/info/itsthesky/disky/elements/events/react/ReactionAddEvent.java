@@ -38,6 +38,10 @@ public class ReactionAddEvent extends DiSkyEvent<MessageReactionAddEvent> {
 				event -> event.getJDAEvent().getChannel());
 		SkriptUtils.registerValue(ReactionAddEvent.BukkitReactionAddEvent.class, Emote.class,
 				event -> Emote.fromUnion(event.getJDAEvent().getEmoji()));
+		SkriptUtils.registerValue(ReactionAddEvent.BukkitReactionAddEvent.class, MessageReaction.class,
+				event -> event.getJDAEvent().getReaction());
+		SkriptUtils.registerValue(ReactionAddEvent.BukkitReactionAddEvent.class, long.class,
+				event -> event.getJDAEvent().getMessageAuthorIdLong());
 
 		SkriptUtils.registerValue(ReactionAddEvent.BukkitReactionAddEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);

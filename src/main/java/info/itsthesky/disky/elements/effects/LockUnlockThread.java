@@ -7,21 +7,23 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
+
 @Name("Lock / Unlock Thread")
 @Description("Lock or unlock a specific thread.")
 @Examples({"lock event-threadchannel",
 		"unlock thread channel with id \"000\""})
 @Since("4.4.0")
-public class LockUnlockThread extends SpecificBotEffect {
+public class LockUnlockThread extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
@@ -35,18 +37,26 @@ public class LockUnlockThread extends SpecificBotEffect {
 	private boolean lock;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		getParser().setHasDelayBefore(Kleenean.TRUE);
+
 		exprThread = expressions[0];
 		lock = i == 0;
 		return true;
 	}
 
 	@Override
-	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
+	public void execute(@NotNull Event e) {
 		final ThreadChannel thread = parseSingle(exprThread, e);
-		if (thread == null) return;
+		if (thread == null)
+			return;
+
 		final ThreadChannelManager manager = thread.getManager();
-		manager.setLocked(lock).queue(this::restart, null);
+		try {
+			manager.setLocked(lock).complete();
+		} catch (Exception ex) {
+			DiSky.getErrorHandler().exception(e, ex);
+		}
 	}
 
 	@Override

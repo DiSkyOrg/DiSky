@@ -7,11 +7,11 @@ group = 'info.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '12'
-def patch = '2'
+def minor = '14'
+def patch = '0'
 
-def channel = 'beta'
-def channelVersion = '1'
+def channel = ''
+def channelVersion = ''
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
@@ -27,19 +27,21 @@ repositories {
 
 dependencies {
     shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
-    shadow 'com.github.SkriptLang:Skript:2.8.0-pre1'
+    shadow 'com.github.SkriptLang:Skript:2.8.0'
     // Jetbrains Annotations
     shadow 'org.jetbrains:annotations:23.0.0'
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.0.0-beta.19'
+    implementation 'com.github.dv8fromtheworld:jda:5012349'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
 }
 
 shadowJar {
+    minimize()
+
     archiveName = 'DiSky ' + version + '.jar'
 }
 

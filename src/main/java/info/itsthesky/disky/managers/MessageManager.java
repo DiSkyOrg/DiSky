@@ -45,6 +45,9 @@ public class MessageManager extends ListenerAdapter {
 	}
 
 	private void insert(Message message) {
+		if (!message.isFromGuild())
+			return;
+
 		final long id = message.getIdLong();
 
 		editedMessageCache.put(id, new EditedMessageInfo(message));

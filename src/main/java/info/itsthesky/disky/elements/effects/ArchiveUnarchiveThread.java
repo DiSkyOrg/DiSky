@@ -7,10 +7,9 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
 import org.bukkit.event.Event;
@@ -22,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"archive event-threadchannel",
 		"unarchive thread channel with id \"000\""})
 @Since("4.4.0")
-public class ArchiveUnarchiveThread extends SpecificBotEffect {
+public class ArchiveUnarchiveThread extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
@@ -36,18 +35,28 @@ public class ArchiveUnarchiveThread extends SpecificBotEffect {
 	private boolean archived;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
-		exprThread = expressions[0];
+	public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		getParser().setHasDelayBefore(Kleenean.TRUE);
+
+		exprThread = (Expression<ThreadChannel>) expressions[0];
 		archived = i == 0;
+
 		return true;
 	}
 
 	@Override
-	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
-		final ThreadChannel thread = parseSingle(exprThread, e);
-		if (EasyElement.anyNull(this, thread)) return;
+	public void execute(@NotNull Event e) {
+		final ThreadChannel thread = exprThread.getSingle(e);
+		if (thread == null)
+			return;
+
 		final ThreadChannelManager manager = thread.getManager();
-		manager.setArchived(archived).queue(this::restart, null);
+
+		try {
+			manager.setArchived(archived).complete();
+		} catch (Exception ex) {
+			DiSky.getErrorHandler().exception(e, ex);
+		}
 	}
 
 	@Override

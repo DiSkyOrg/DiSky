@@ -12,15 +12,14 @@ import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.Configuration;
-import info.itsthesky.disky.structures.StructureLoader;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -130,11 +129,6 @@ public final class DiSky extends JavaPlugin {
         }
 
         /*
-        2.6.4/2.7's Structure API check
-         */
-        StructureLoader.get().load();
-
-        /*
         Default JDA's error handler
          */
         RestAction.setDefaultFailure(throwable -> DiSky.getErrorHandler().exception(null, throwable));
@@ -236,5 +230,14 @@ public final class DiSky extends JavaPlugin {
 
     public static BotManager getManager() {
         return botManager;
+    }
+
+    public static void runtimeError(String description, @Nullable Object... data) {
+        getInstance().getLogger().severe(ChatColor.DARK_RED + "DiSky Runtime Warning: " + ChatColor.RED + description);
+        if (data != null) {
+            getInstance().getLogger().severe(ChatColor.RED + "Provided data context:");
+            for (int i = 0; i < data.length - 1; i += 2)
+                getInstance().getLogger().severe(ChatColor.GOLD + "  - " + ChatColor.YELLOW + data[i] + ChatColor.GRAY + ": " + ChatColor.WHITE + data[i + 1]);
+        }
     }
 }

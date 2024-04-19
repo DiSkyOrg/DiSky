@@ -8,8 +8,8 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.StringMode;
+import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
-import info.itsthesky.disky.structures.scope.BotScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,9 +18,11 @@ import java.util.List;
 
 /**
  * Represent a scope that work as an event, with possible entries and sections when parsed.
+ * <strong>It should be replaced by {@link org.skriptlang.skript.lang.structure.Structure} and this should not be used anymore.</strong>
  * @param <T> The object that the scope will parse into.
  * @author ItsTheSky
  */
+@Deprecated
 public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
 
     protected static final String listPattern = "\\s*,\\s*|\\s+(and|or|, )\\s+";
@@ -63,7 +65,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
             }
         } catch (NullPointerException ignored) { }
 
-        return expr.getSingle(new BotScope.BotScopeEvent());
+        return expr.getSingle(new SimpleDiSkyEvent<>());
     }
 
     /**
@@ -94,6 +96,12 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
         if (!(node instanceof SectionNode))
             return false;
         init(args, matchedPattern, parseResult, (SectionNode) node);
+        return true;
+    }
+
+    @Override
+    public boolean load() {
+        final Node node = SkriptLogger.getNode();
         final @Nullable T entity = parse((SectionNode) node);
         SkriptLogger.setNode(node);
         SkriptUtils.nukeSectionNode((SectionNode) node);

@@ -49,6 +49,19 @@ public class EffUpdateCommand extends WaiterEffect {
 			restart();
 			return;
 		}
+
+		if (isGlobal && !(entity instanceof Bot)) {
+			Debug.debug(this, Debug.Type.INCOMPATIBLE_TYPE, "The entity must be a bot to update commands globally!");
+			restart();
+			return;
+		}
+
+		if (!isGlobal && !(entity instanceof Guild)) {
+			Debug.debug(this, Debug.Type.INCOMPATIBLE_TYPE, "The entity must be a guild to update commands locally!");
+			restart();
+			return;
+		}
+
 		final CommandListUpdateAction updateAction;
 		if (isGlobal)
 			updateAction = ((Bot) entity).getInstance().updateCommands();

@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Description({"Bans a member from a guild."})
 @Examples({"ban discord event-member because of \"being lame\" and delete 10 days worth of messages"})
 
-public class BanMember extends SpecificBotEffect {
+public class BanMember extends AsyncEffect {
 
     static {
         Skript.registerEffect(
@@ -37,31 +38,30 @@ public class BanMember extends SpecificBotEffect {
     private Expression<Timespan> exprDays;
 
     @Override
-    public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression[] expr, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprMember = (Expression<Member>) expr[0];
         exprReason = (Expression<String>) expr[1];
         exprDays = (Expression<Timespan>) expr[2];
+
         return true;
     }
 
     @Override
-    public void runEffect(@NotNull Event e, Bot bot) {
-        final Member member = parseSingle(exprMember, e, null);
-        final @Nullable String reason = parseSingle(exprReason, e, null);
-        final Timespan timespan = parseSingle(exprDays, e, null);
+    public void execute(@NotNull Event e) {
+        final Member member = exprMember.getSingle(e);
+        final @Nullable String reason = exprReason == null ? null : exprReason.getSingle(e);
+        final Timespan timespan = exprDays == null ? null : exprDays.getSingle(e);
 
-        if (EasyElement.anyNull(this, bot, member)) {
-            restart();
+        if (member == null)
             return;
-        }
 
-        member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).reason(reason).queue(
-                v -> restart(),
-                ex -> {
-                    DiSky.getErrorHandler().exception(e, ex);
-                    restart();
-                }
-           );
+        try {
+            member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).reason(reason).complete();
+        } catch (Exception ex) {
+            DiSky.getErrorHandler().exception(e, ex);
+        }
     }
 
     @Override

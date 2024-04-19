@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -73,22 +74,27 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 
 			final List<ForumTag> parsedTags = new ArrayList<>();
 			// Parsing tags
-			for (String input : (String[]) delta) {
-				final Matcher numeral = Pattern.compile("^([0-9]+)$").matcher(input);
-				if (numeral.matches()) {
-					final ForumTag tag = channel.getAvailableTagById(input);
-					if (tag == null) {
-						Skript.warning("The tag with ID " + input + " doesn't exist in the channel " + channel.getName() + "!");
-						continue;
+			for (Object in : delta) {
+				if (in instanceof String) {
+					final String input = (String) in;
+					final Matcher numeral = Pattern.compile("^([0-9]+)$").matcher(input);
+					if (numeral.matches()) {
+						final ForumTag tag = channel.getAvailableTagById(input);
+						if (tag == null) {
+							Skript.warning("The tag with ID " + input + " doesn't exist in the channel " + channel.getName() + "!");
+							continue;
+						}
+						parsedTags.add(tag);
+					} else {
+						final List<ForumTag> tag = channel.getAvailableTagsByName(input, true);
+						if (tag.isEmpty()) {
+							Skript.warning("The tag with name " + input + " doesn't exist in the channel " + channel.getName() + "!");
+							continue;
+						}
+						parsedTags.add(tag.get(0));
 					}
-					parsedTags.add(tag);
-				} else {
-					final List<ForumTag> tag = channel.getAvailableTagsByName(input, true);
-					if (tag.isEmpty()) {
-						Skript.warning("The tag with name " + input + " doesn't exist in the channel " + channel.getName() + "!");
-						continue;
-					}
-					parsedTags.add(tag.get(0));
+				} else if (in instanceof BaseForumTag) {
+					parsedTags.add((ForumTag) in);
 				}
 			}
 

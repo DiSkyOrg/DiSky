@@ -28,7 +28,6 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
-		useScope = ParserInstance.get().isCurrentSection(EmbedSection.class);
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
 
@@ -43,8 +42,6 @@ public abstract class EmbedProperty<T> extends SimplePropertyExpression<EmbedBui
 			return;
 		final T entity = (T) delta[0];
 		set(builder, entity);
-		if (useScope)
-			set(EmbedSection.lastEmbed, entity);
 	}
 
 	public abstract void set(EmbedBuilder builder, T value);

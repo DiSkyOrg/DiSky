@@ -104,4 +104,8 @@ public class Bot {
     public BotOptions getOptions() {
         return options;
     }
+
+    public static @Nullable Bot any() {
+        return DiSky.getManager().findAny();
+    }
 }

@@ -1,25 +1,67 @@
 package info.itsthesky.disky.elements.effects.retrieve;
 
-import info.itsthesky.disky.api.skript.BaseMultipleRetrieveEffect;
+import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
+import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.requests.RestAction;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+public class RetrieveBans extends AsyncEffect {
 
-public class RetrieveBans extends BaseMultipleRetrieveEffect<List<Guild.Ban>, Guild> {
-
+    // Guild.Ban
     static {
-        register(
+        Skript.registerEffect(
                 RetrieveBans.class,
-                "bans",
-                "guild"
+                "retrieve [(all|every)] bans (from|with|of|in) %guild% [(with|using) [the] [bot] %-bot%] and store (them|the bans) in %~objects%"
         );
     }
 
+    private Expression<Guild> exprGuild;
+    private Expression<Bot> exprBot;
+    private Expression<Object> exprResult;
+
     @Override
-    protected RestAction<List<Guild.Ban>> retrieve(@NotNull Guild entity) {
-        return entity.retrieveBanList();
+    public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
+        exprGuild = (Expression<Guild>) expressions[0];
+        exprBot = (Expression<Bot>) expressions[1];
+        exprResult = (Expression<Object>) expressions[2];
+        return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Guild.Ban[].class);
     }
 
+    @Override
+    protected void execute(@NotNull Event event) {
+        Guild guild = exprGuild.getSingle(event);
+        Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
+        if (guild == null || bot == null)
+            return;
+
+        guild = bot.getInstance().getGuildById(guild.getId());
+        if (guild == null)
+            return;
+
+        final Guild.Ban[] bans;
+        try {
+            bans = guild.retrieveBanList().complete().toArray(new Guild.Ban[0]);
+        } catch (Exception e) {
+            DiSky.getErrorHandler().exception(event, e);
+            return;
+        }
+
+        exprResult.change(event, bans, Changer.ChangeMode.SET);
+    }
+
+    @Override
+    public @NotNull String toString(Event e, boolean debug) {
+        return "retrieve bans from guild " + exprGuild.toString(e, debug)
+                + (exprBot != null ? " using bot " + exprBot.toString(e, debug) : "")
+                + " and store them in " + exprResult.toString(e, debug);
+    }
 }

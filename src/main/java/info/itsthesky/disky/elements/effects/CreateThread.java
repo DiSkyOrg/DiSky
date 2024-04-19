@@ -1,13 +1,15 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Variable;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -17,24 +19,28 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static info.itsthesky.disky.api.skript.EasyElement.*;
+
 @Name("Create Thread")
 @Description({"Create a new thread in a text channel with a base name.",
         "The bot used in that effect will automatically join the thread, so you don't have to make it join yourself.",
         "If you create a private thread, then you cannot specify a message.",
         "Else, the Thread will be created based on the specified message.",
         "Creating private thread need the guild to be level 2 or more, else it'll throw an exception."})
-public class CreateThread extends SpecificBotEffect<ThreadChannel> {
+public class CreateThread extends AsyncEffect {
 
     static {
         Skript.registerEffect(
                 CreateThread.class,
-                "(make|create) [the] [new] [private] thread (named|with name) %string% in [the] [channel] %channel/textchannel% [(with|using) [the] [message] [as reference] %-message%] [(with|using) [the] [bot] %-bot%] and store (it|the thread) in %object%"
+                "(make|create) [the] [new] [1:private] thread (named|with name) %string% in [the] [channel] %channel/textchannel% [(with|using) [the] [message] [as reference] %-message%] [(with|using) [the] [bot] %-bot%] and store (it|the thread) in %~objects%"
         );
     }
 
     private Expression<String> exprName;
     private Expression<Message> exprMessage;
     private Expression<StandardGuildMessageChannel> exprChannel;
+    private Expression<Bot> exprBot;
+    private Expression<Object> exprResult;
     private boolean isPrivate = false;
 
     @Override
@@ -43,29 +49,30 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
     }
 
     @Override
-    public boolean initEffect(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprName = (Expression<String>) exprs[0];
         exprChannel = (Expression<StandardGuildMessageChannel>) exprs[1];
         exprMessage = (Expression<Message>) exprs[2];
-        setChangedVariable((Variable<ThreadChannel>) exprs[4]);
-        isPrivate = parseResult.expr.contains("private thread");
-        return true;
+        exprBot = (Expression<Bot>) exprs[3];
+        exprResult = (Expression<Object>) exprs[4];
+        isPrivate = parseResult.hasTag("1");
+        return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, ThreadChannel.class);
     }
 
     @Override
-    public void runEffect(@NotNull Event e, Bot bot) {
+    public void execute(@NotNull Event e) {
         final String name = exprName.getSingle(e);
         final @Nullable Message message = parseSingle(exprMessage, e, null);
+        final Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(e);
         StandardGuildMessageChannel channel = exprChannel.getSingle(e);
-        if (anyNull(this, name, bot, channel)) {
-            restart();
+        if (anyNull(this, bot, name, channel))
             return;
-        }
-        channel = bot.getInstance().getTextChannelById(channel.getId());
-        if (channel == null) {
-            restart();
+
+        channel = bot.getInstance().getChannelById(StandardGuildMessageChannel.class, channel.getId());
+        if (channel == null)
             return;
-        }
 
         final RestAction<ThreadChannel> action;
         if (isPrivate) {
@@ -77,6 +84,15 @@ public class CreateThread extends SpecificBotEffect<ThreadChannel> {
                 action = channel.createThreadChannel(name, message.getId());
             }
         }
-        action.queue(this::restart);
+
+        final ThreadChannel threadChannel;
+        try {
+            threadChannel = action.complete();
+        } catch (Exception ex) {
+            DiSky.getErrorHandler().exception(e, ex);
+            return;
+        }
+
+        exprResult.change(e, new ThreadChannel[] {threadChannel}, Changer.ChangeMode.SET);
     }
 }
