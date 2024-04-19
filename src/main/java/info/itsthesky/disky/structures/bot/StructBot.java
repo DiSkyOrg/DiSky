@@ -52,7 +52,7 @@ public class StructBot extends Structure {
 			GatewayIntent.SCHEDULED_EVENTS
 	};
 
-	public static void register() {
+        static {
 		Skript.registerStructure(
 				StructBot.class,
 				EntryValidator.builder()
