@@ -102,8 +102,14 @@ public class BotOptions {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setToken(String text) {
+        while (text.contains("\"\""))
+            text = text.replace("\"\"", "\"");
+
+        if (text.startsWith("\"") && text.endsWith("\""))
+            text = text.substring(1, text.length() - 1);
+
+        this.token = text;
     }
 
     public GatewayIntent[] getIntents() {
