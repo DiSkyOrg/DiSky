@@ -129,11 +129,6 @@ public final class DiSky extends JavaPlugin {
         }
 
         /*
-        2.6.4/2.7's Structure API check
-         */
-        StructureLoader.get().load();
-
-        /*
         Default JDA's error handler
          */
         RestAction.setDefaultFailure(throwable -> DiSky.getErrorHandler().exception(null, throwable));
