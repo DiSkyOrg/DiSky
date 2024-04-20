@@ -1,4 +1,4 @@
-package info.itsthesky.disky.structures.bot;
+package info.itsthesky.disky.elements.structures;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
@@ -52,7 +52,7 @@ public class StructBot extends Structure {
 			GatewayIntent.SCHEDULED_EVENTS
 	};
 
-        static {
+	static {
 		Skript.registerStructure(
 				StructBot.class,
 				EntryValidator.builder()
@@ -227,6 +227,8 @@ public class StructBot extends Structure {
 					parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
 				else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
 					parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
+				else if (event instanceof net.dv8tion.jda.api.events.session.ShutdownEvent)
+					parsedEntity.runShutdown((net.dv8tion.jda.api.events.session.ShutdownEvent) event);
 			};
 
 			jda = parsedEntity
