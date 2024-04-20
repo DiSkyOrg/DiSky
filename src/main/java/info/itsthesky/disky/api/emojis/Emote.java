@@ -22,6 +22,9 @@ public class Emote implements IMentionable {
     }
 
     public static Emote fromUnion(EmojiUnion emote) {
+        if (emote == null)
+            return null;
+
         if (emote.getType().equals(Emoji.Type.CUSTOM)) {
             return new Emote(emote.asCustom());
         } else {
