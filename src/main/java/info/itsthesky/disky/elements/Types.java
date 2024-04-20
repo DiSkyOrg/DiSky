@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.channel.*;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -228,12 +229,16 @@ public class Types {
                 MessageEmbed.Field::getValue,
                 null
         ).eventExpression().register();
-        new DiSkyType<>(MessagePollBuilder.class, "messagepoll",
+        new DiSkyType<>(MessagePollBuilder.class, "messagepollbuilder",
                 v -> "a discord poll",
                 null
         ).eventExpression().register();
-        new DiSkyType<>(PollAnswerData.class, "messagepollanswer",
+        new DiSkyType<>(PollAnswerData.class, "pollanswer",
                 PollAnswerData::asString,
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(MessagePoll.class, "messagepoll",
+                v -> v.getQuestion().getText(),
                 null
         ).eventExpression().register();
 
