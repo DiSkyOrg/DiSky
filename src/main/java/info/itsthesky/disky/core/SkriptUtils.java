@@ -247,4 +247,11 @@ public final class SkriptUtils {
         final long ms = date.getTimestamp();
         return OffsetDateTime.ofInstant(Instant.ofEpochMilli(ms), ZoneId.systemDefault());
     }
+
+    public static void error(Node node, String message) {
+        final Node previous = ParserInstance.get().getNode();
+        ParserInstance.get().setNode(node);
+        Skript.error(message);
+        ParserInstance.get().setNode(previous);
+    }
 }
