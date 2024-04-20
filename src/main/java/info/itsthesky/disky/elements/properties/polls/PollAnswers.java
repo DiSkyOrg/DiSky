@@ -1,25 +1,33 @@
 package info.itsthesky.disky.elements.properties.polls;
 
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import info.itsthesky.disky.api.changers.MultipleChangeablePropertyExpression;
+import info.itsthesky.disky.core.Bot;
+import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class PollAnswers extends SimplePropertyExpression<MessagePollBuilder, PollAnswerData> {
+public class PollAnswers extends MultipleChangeablePropertyExpression<Object, PollAnswerData> {
 
     static {
         register(PollAnswers.class,
                 PollAnswerData.class,
                 "[poll] answers",
-                "messagepoll"
+                "messagepollbuilder/messagepoll"
         );
     }
 
     @Override
-    public PollAnswerData convert(MessagePollBuilder from) {
-        return null;
+    protected PollAnswerData[] convert(Object entity) {
+        if (entity instanceof MessagePoll)
+            return ((MessagePoll) entity)
+                    .getAnswers()
+                    .stream()
+                    .map(PollAnswerData::new)
+                    .toArray(PollAnswerData[]::new);
+
+        return new PollAnswerData[0];
     }
 
     @Override
@@ -41,18 +49,21 @@ public class PollAnswers extends SimplePropertyExpression<MessagePollBuilder, Po
     }
 
     @Override
-    public void change(@NotNull Event event, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+    public void change(@NotNull Event event, Object @NotNull [] delta, Bot bot, Changer.@NotNull ChangeMode mode) {
         if (delta.length == 0)
             return;
 
         PollAnswerData[] answers = (PollAnswerData[]) delta;
         if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.ADD) {
-            for (MessagePollBuilder poll : getExpr().getArray(event)) {
-                for (PollAnswerData answer : answers) {
-                    if (answer == null)
-                        return;
+            for (Object entity : getExpr().getArray(event)) {
+                if (entity instanceof MessagePollBuilder) {
+                    final MessagePollBuilder poll = (MessagePollBuilder) entity;
+                    for (PollAnswerData answer : answers) {
+                        if (answer == null)
+                            return;
 
-                    poll.addAnswer(answer.getAnswer(), answer.getJDAEmote());
+                        poll.addAnswer(answer.getAnswer(), answer.getJDAEmote());
+                    }
                 }
             }
         }

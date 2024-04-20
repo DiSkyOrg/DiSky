@@ -16,7 +16,7 @@ public class PollDuration extends SimplePropertyExpression<MessagePollBuilder, T
         register(PollDuration.class,
                 Timespan.class,
                 "poll duration",
-                "messagepoll"
+                "messagepollbuilder"
         );
     }
 
