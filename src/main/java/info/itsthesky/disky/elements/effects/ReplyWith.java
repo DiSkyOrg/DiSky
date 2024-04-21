@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
+import net.dv8tion.jda.api.utils.messages.MessagePollData;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,6 +105,7 @@ public class ReplyWith extends AsyncEffect {
 				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
 			else
 				builder = new MessageCreateBuilder().setContent((String) message);
+			final @Nullable MessagePollData poll = builder.getPoll();
 
 			if (!builder.isValid()) {
 				SkriptUtils.error(node, "The provided message is not valid!");
@@ -128,11 +130,15 @@ public class ReplyWith extends AsyncEffect {
 						return;
 					}
 
-					otherRestAction = callback.reply(builder.build()).setEphemeral(hidden);
+					otherRestAction = callback.reply(builder.build())
+							.setPoll(poll)
+							.setEphemeral(hidden);
 				}
 			} else {
 				final MessageEvent event = (MessageEvent) e;
-				messageRestAction = event.getMessageChannel().sendMessage(builder.build()).setMessageReference(reference);
+				messageRestAction = event.getMessageChannel().sendMessage(builder.build())
+						.setPoll(poll)
+						.setMessageReference(reference);
 			}
 		}
 
