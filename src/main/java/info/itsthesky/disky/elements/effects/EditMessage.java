@@ -80,7 +80,6 @@ public class EditMessage extends AsyncEffect {
 					&& ((InteractionEvent) e).getInteractionEvent().getInteraction() instanceof ComponentInteraction
 					&&  ((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).getMessageId().equals(((Message) target).getId()))
 				((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).editMessage(editBuilder.build()).complete();
-
 			else if (target instanceof Message)
 				((Message) target).editMessage(editBuilder.build()).complete();
 		} catch (Exception ex) {

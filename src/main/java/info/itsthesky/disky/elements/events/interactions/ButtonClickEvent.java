@@ -2,6 +2,7 @@ package info.itsthesky.disky.elements.events.interactions;
 
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import info.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.core.SkriptUtils;
@@ -58,7 +59,7 @@ public class ButtonClickEvent extends DiSkyEvent<ButtonInteractionEvent> {
 				event -> !event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getChannel().asPrivateChannel() : null);
 	}
 
-	public static class BukkitButtonClickEvent extends SimpleDiSkyEvent<ButtonInteractionEvent> implements ModalEvent, InteractionEvent {
+	public static class BukkitButtonClickEvent extends SimpleDiSkyEvent<ButtonInteractionEvent> implements ModalEvent, ComponentInteractionEvent {
 		public BukkitButtonClickEvent(ButtonClickEvent event) {}
 
 		@Override

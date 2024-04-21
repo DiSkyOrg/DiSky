@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import info.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.events.specific.ModalEvent;
 import info.itsthesky.disky.api.skript.MultipleGetterExpression;
@@ -105,7 +106,7 @@ public class EntityDropdownClickEvent extends DiSkyEvent<EntitySelectInteraction
 		}
 	}
 
-	public static class BukkitDropdownClickEvent extends SimpleDiSkyEvent<EntitySelectInteractionEvent> implements ModalEvent, InteractionEvent {
+	public static class BukkitDropdownClickEvent extends SimpleDiSkyEvent<EntitySelectInteractionEvent> implements ModalEvent, ComponentInteractionEvent {
 		public BukkitDropdownClickEvent(EntityDropdownClickEvent event) {}
 
 		@Override
