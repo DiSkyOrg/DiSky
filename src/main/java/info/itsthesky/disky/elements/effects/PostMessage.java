@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,7 @@ public class PostMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder% (in|to) [the] %channel% [and store (it|the message) in %-~objects%]"
+				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% (in|to) [the] %channel% [and store (it|the message) in %-~objects%]"
 		);
 	}
 
@@ -84,10 +85,13 @@ public class PostMessage extends AsyncEffect {
 				builder = (MessageCreateBuilder) message;
 			else if (message instanceof EmbedBuilder)
 				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+			else if (message instanceof MessagePollBuilder)
+				builder = new MessageCreateBuilder().setPoll(((MessagePollBuilder) message).build());
 			else
 				builder = new MessageCreateBuilder().setContent((String) message);
 
-			action = ((MessageChannel) channel).sendMessage(builder.build());
+			action = ((MessageChannel) channel).sendMessage(builder.build())
+					.setPoll(builder.getPoll());
 		}
 
 		final Message finalMessage;

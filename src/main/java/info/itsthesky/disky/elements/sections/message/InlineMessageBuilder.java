@@ -43,7 +43,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 				InlineMessageBuilder.class,
 				MessageCreateBuilder.class,
 				ExpressionType.COMBINED,
-				"[rich] [:silent] message %string/embedbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%] [with poll %-messagepollbuilder%]",
+				"[rich] [:silent] message %string/embedbuilder/messagepollbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%] [with poll %-messagepollbuilder%]",
 				"rich [:silent] component[s] %rows/buttons/dropdowns%"
 		);
 	}
@@ -102,6 +102,8 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 				builder.setContent((String) base);
 			else if (base instanceof EmbedBuilder)
 				builder.setEmbeds(((EmbedBuilder) base).build());
+			else if (base instanceof MessagePollBuilder)
+				builder.setPoll(((MessagePollBuilder) base).build());
 		}
 
 		if (embeds != null)

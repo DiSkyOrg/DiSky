@@ -52,7 +52,7 @@ public class ReplyWith extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				ReplyWith.class,
-				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]"
+				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]"
 		);
 	}
 
@@ -103,6 +103,8 @@ public class ReplyWith extends AsyncEffect {
 				builder = (MessageCreateBuilder) message;
 			else if (message instanceof EmbedBuilder)
 				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+			else if (message instanceof MessagePollBuilder)
+				builder = new MessageCreateBuilder().setPoll(((MessagePollBuilder) message).build());
 			else
 				builder = new MessageCreateBuilder().setContent((String) message);
 			final @Nullable MessagePollData poll = builder.getPoll();
