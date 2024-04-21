@@ -88,8 +88,8 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 					actionRows.add(((ComponentRow) row).asActionRow());
 				} else if (row instanceof Button) {
 					actionRows.add(ActionRow.of((Button) row));
-				} else if (row instanceof SelectMenu) {
-					actionRows.add(ActionRow.of((SelectMenu) row));
+				} else if (row instanceof SelectMenu.Builder) {
+					actionRows.add(ActionRow.of(((SelectMenu.Builder) row).build()));
 				} else if (row instanceof TextInput) {
 					actionRows.add(ActionRow.of((TextInput) row));
 				}
