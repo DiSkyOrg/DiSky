@@ -10,9 +10,11 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.bukkit.event.Event;
@@ -37,7 +39,7 @@ public class EditMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				EditMessage.class,
-				"edit [the] [message] %message/interactionhook% (with|to show) %string/messagecreatebuilder/embedbuilder%"
+				"edit [the] [message] %message% (with|to show) %string/messagecreatebuilder/embedbuilder%"
 		);
 	}
 
@@ -71,10 +73,16 @@ public class EditMessage extends AsyncEffect {
 		final MessageEditBuilder editBuilder = new MessageEditBuilder().applyCreateData(builder.build());
 
 		try {
-			if (target instanceof Message)
+			// Basically, here we check if it's an interaction event, if that event holds a ComponentInteraction,
+			// and also if the provided message's ID is the original message of the interaction.
+			// ==> Why? In interactions, we have to edit the interaction itself, and not the message.
+			if (e instanceof InteractionEvent
+					&& ((InteractionEvent) e).getInteractionEvent().getInteraction() instanceof ComponentInteraction
+					&&  ((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).getMessageId().equals(((Message) target).getId()))
+				((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).editMessage(editBuilder.build()).complete();
+
+			else if (target instanceof Message)
 				((Message) target).editMessage(editBuilder.build()).complete();
-			else
-				((InteractionHook) target).editOriginal(editBuilder.build()).complete();
 		} catch (Exception ex) {
 			DiSky.getErrorHandler().exception(e, ex);
 		}
@@ -82,6 +90,6 @@ public class EditMessage extends AsyncEffect {
 
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "edit the message/hook " + exprTarget.toString(e, debug) + " with " + exprMessage.toString(e, debug);
+		return "edit the message/interaction " + exprTarget.toString(e, debug) + " with " + exprMessage.toString(e, debug);
 	}
 }
