@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.interactions.components.ActionComponent;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
@@ -74,7 +75,7 @@ public class Types {
         new DiSkyType<>(Channel.class, "channel",
                 Channel::getName,
                 null).eventExpression().register();
-        new DiSkyType<>(InteractionHook.class, "interactionhook",
+        new DiSkyType<>(ComponentInteraction.class, "interaction",
                 null, null).eventExpression().register();
         new DiSkyType<>(GuildChannel.class, "guildchannel",
                 Channel::getName,

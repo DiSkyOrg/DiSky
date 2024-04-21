@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
@@ -53,6 +54,8 @@ public class EntityDropdownClickEvent extends DiSkyEvent<EntitySelectInteraction
 				event -> event.getJDAEvent().getComponent().getId());
 		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, MessageChannel.class,
 				event -> event.getJDAEvent().getChannel());
+		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, ComponentInteraction.class,
+				event -> event.getJDAEvent().getInteraction());
 
 		SkriptUtils.registerValue(BukkitDropdownClickEvent.class, GuildChannel.class,
 				event -> event.getJDAEvent().isFromGuild() ? event.getJDAEvent().getGuildChannel() : null);
