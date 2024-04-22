@@ -45,21 +45,22 @@ public class ExprNewDropdown extends SimpleExpression<SelectMenu.Builder> {
 				ExprNewDropdown.class,
 				SelectMenu.Builder.class,
 				ExpressionType.COMBINED,
-				"[a] [new] [string] drop[( |-)]down [with] [the] [id] %string%",
-				"[a] [new] entit(y|ies) drop[( |-)]down [with] [the] [id] %string% targeting %strings%"
+				"[a] [new] [string] [:disabled] drop[( |-)]down [with] [the] [id] %string%",
+				"[a] [new] [:disabled] entit(y|ies) drop[( |-)]down [with] [the] [id] %string% targeting %strings%"
 		);
 	}
 
 	private Expression<String> exprId;
 	private boolean isEntity;
+	private boolean isDisabled;
 	private Expression<String> exprTarget;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprId = (Expression<String>) exprs[0];
 		isEntity = matchedPattern == 1;
-		if (isEntity)
-			exprTarget = (Expression<String>) exprs[1];
+		if (isEntity) exprTarget = (Expression<String>) exprs[1];
+		isDisabled = parseResult.hasTag("disabled");
 		return true;
 	}
 
@@ -87,9 +88,11 @@ public class ExprNewDropdown extends SimpleExpression<SelectMenu.Builder> {
 				return new SelectMenu.Builder[0];
 			}
 
-			return new SelectMenu.Builder[] {EntitySelectMenu.create(id, targets)};
+			return new SelectMenu.Builder[] {EntitySelectMenu.create(id, targets)
+					.setDisabled(isDisabled)};
 		} else
-			return new SelectMenu.Builder[] {StringSelectMenu.create(id)};
+			return new SelectMenu.Builder[] {StringSelectMenu.create(id)
+					.setDisabled(isDisabled)};
 	}
 
 	@Override
