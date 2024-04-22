@@ -22,6 +22,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.interactions.Interaction;
+import net.dv8tion.jda.api.interactions.callbacks.IPremiumRequiredReplyCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -52,7 +54,8 @@ public class ReplyWith extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				ReplyWith.class,
-				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]"
+				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]",
+				"reply with premium [required] message"
 		);
 	}
 
@@ -61,6 +64,7 @@ public class ReplyWith extends AsyncEffect {
 	private Expression<Message> exprReference;
 	private Expression<Object> exprResult;
 	private boolean hidden;
+	private boolean premium;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
@@ -70,16 +74,41 @@ public class ReplyWith extends AsyncEffect {
 		}
 
 		node = getParser().getNode();
-		hidden = parseResult.expr.startsWith("reply with hidden");
-		exprMessage = (Expression<Object>) expressions[0];
-		exprReference = (Expression<Message>) expressions[1];
-		exprResult = (Expression<Object>) expressions[2];
+		premium = i == 1;
+
+		if (!premium) {
+			hidden = parseResult.expr.startsWith("reply with hidden");
+			exprMessage = (Expression<Object>) expressions[0];
+			exprReference = (Expression<Message>) expressions[1];
+			exprResult = (Expression<Object>) expressions[2];
+		}
 
 		return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
 	}
 
 	@Override
 	public void execute(@NotNull Event e) {
+		if (premium) {
+			if (e instanceof InteractionEvent) {
+				final InteractionEvent event = (InteractionEvent) e;
+				final Interaction interaction = event.getInteractionEvent().getInteraction();
+				if (!(interaction instanceof IPremiumRequiredReplyCallback)) {
+					SkriptUtils.error(node, "You can only use the premium required message in an interaction event!");
+					return;
+				}
+
+				try {
+					((IPremiumRequiredReplyCallback) interaction).replyWithPremiumRequired().complete();
+				} catch (Exception ex) {
+					DiSky.getErrorHandler().exception(e, ex);
+				}
+
+            } else {
+				SkriptUtils.error(node, "You can only use the premium required message in an interaction event!");
+            }
+            return;
+        }
+
 		final Object message = parseSingle(exprMessage, e);
 		final Message reference = parseSingle(exprReference, e);
 		if (message == null)
