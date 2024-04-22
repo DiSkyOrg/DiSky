@@ -10,10 +10,7 @@ import info.itsthesky.disky.api.changers.ChangeableSimplePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.Utils;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Icon;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +30,7 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 				AvatarURL.class,
 				String.class,
 				"avatar [url]",
-				"guild/user/sticker/member/bot"
+				"guild/user/sticker/member/bot/applicationinfo"
 		);
 	}
 
@@ -115,6 +112,8 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 			return ((Member) entity).getEffectiveAvatarUrl();
 		if (entity instanceof Sticker)
 			return ((Sticker) entity).getIconUrl();
+		if (entity instanceof ApplicationInfo)
+			return ((ApplicationInfo) entity).getIconUrl();
 		return null;
 	}
 
