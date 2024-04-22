@@ -9,7 +9,7 @@ public class ApplicationPolicy extends SimplePropertyExpression<ApplicationInfo,
 
     static {
         register(ApplicationPolicy.class, String.class,
-                "[discord] [application] [privacy] policy",
+                "[discord] [application] [privacy] policy [url]",
                 "applicationinfo"
         );
     }

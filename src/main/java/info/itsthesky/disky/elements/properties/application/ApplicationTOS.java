@@ -9,7 +9,7 @@ public class ApplicationTOS extends SimplePropertyExpression<ApplicationInfo, St
 
     static {
         register(ApplicationTOS.class, String.class,
-                "[discord] [application] (tos|terms of service)",
+                "[discord] [application] (tos|terms of service) [url]",
                 "applicationinfo"
         );
     }
