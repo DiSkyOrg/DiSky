@@ -13,7 +13,7 @@ public class IsMuted extends PropertyCondition<Member> {
         register(
                 IsMuted.class,
                 PropertyType.BE,
-                "[discord] [member] [:self|:guild] mute[d]",
+                "[discord] [member] [(:self|:guild)] mute[d]",
                 "member"
         );
     }

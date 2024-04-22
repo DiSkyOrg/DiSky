@@ -13,7 +13,7 @@ public class IsDeafen extends PropertyCondition<Member> {
         register(
                 IsDeafen.class,
                 PropertyType.BE,
-                "[discord] [member] [:self|:guild] deafen[ed]",
+                "[discord] [member] [(:self|:guild)] deafen[ed]",
                 "member"
         );
     }
