@@ -42,19 +42,21 @@ public class PostMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% (in|to) [the] %channel% [and store (it|the message) in %-~objects%]"
+				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% (in|to) [the] %channel% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]"
 		);
 	}
 
 	private Expression<Object> exprMessage;
 	private Expression<Channel> exprChannel;
+	private Expression<Message> exprReference;
 	private Expression<Object> exprResult;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
 		this.exprMessage = (Expression<Object>) expressions[0];
 		this.exprChannel = (Expression<Channel>) expressions[1];
-		this.exprResult = (Expression<Object>) expressions[2];
+		this.exprReference = (Expression<Message>) expressions[2];
+		this.exprResult = (Expression<Object>) expressions[3];
 		return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
 	}
 
@@ -62,6 +64,7 @@ public class PostMessage extends AsyncEffect {
 	public void execute(@NotNull Event e) {
 		final Object message = parseSingle(exprMessage, e);
 		final Channel channel = parseSingle(exprChannel, e);
+		final @Nullable Message reference = parseSingle(exprReference, e);
 		if (message == null || channel == null)
 			return;
 
@@ -91,6 +94,7 @@ public class PostMessage extends AsyncEffect {
 				builder = new MessageCreateBuilder().setContent((String) message);
 
 			action = ((MessageChannel) channel).sendMessage(builder.build())
+					.setMessageReference(reference)
 					.setPoll(builder.getPoll());
 		}
 
