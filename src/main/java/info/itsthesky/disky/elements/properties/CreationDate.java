@@ -29,7 +29,7 @@ public class CreationDate extends SimplePropertyExpression<ISnowflake, Date> {
                 CreationDate.class,
                 Date.class,
                 "creat(ion|ed) date",
-                "guild/member/user/role/channel/message/emote"
+                "guild/member/user/role/channel/message/emote/webhook"
         );
     }
 

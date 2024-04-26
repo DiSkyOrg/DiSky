@@ -19,7 +19,7 @@ public class DiscordId extends SimplePropertyExpression<Object, String> {
 		register(DiscordId.class,
 				String.class,
 				"discord id",
-				"channel/role/user/threadchannel/scheduledevent/member/sticker/message/dropdown/button/guild/applicationinfo");
+				"channel/role/user/threadchannel/scheduledevent/member/sticker/message/dropdown/button/guild/applicationinfo/webhook");
 	}
 
 	@Override

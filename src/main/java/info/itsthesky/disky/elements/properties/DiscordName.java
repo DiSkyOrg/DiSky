@@ -28,7 +28,7 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
                 DiscordName.class,
                 String.class,
                 "[the] discord name",
-                "channel/user/member/sticker/scheduledevent/emote/threadchannel/role/guild/embedfield/applicationinfo"
+                "channel/user/member/sticker/scheduledevent/emote/threadchannel/role/guild/embedfield/applicationinfo/webhook"
         );
     }
 
@@ -78,6 +78,8 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
             return ((MessageEmbed.Field) entity).getName();
         } else if (entity instanceof ApplicationInfo) {
             return ((ApplicationInfo) entity).getName();
+        } else if (entity instanceof Webhook) {
+            return ((Webhook) entity).getName();
         } else {
             return null;
         }

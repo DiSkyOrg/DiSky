@@ -27,7 +27,7 @@ public class GuildOf extends SimplePropertyExpression<Object, Guild> {
                 GuildOf.class,
                 Guild.class,
                 "guild",
-                "channel/role/sticker/member/message"
+                "channel/role/sticker/member/message/webhook"
         );
     }
 
@@ -46,6 +46,8 @@ public class GuildOf extends SimplePropertyExpression<Object, Guild> {
             return ((Member) entity).getGuild();
         if (entity instanceof RichSticker)
             return ((RichSticker) entity).getTags().equals(Sticker.Type.GUILD) ? ((GuildSticker) entity).getGuild() : null;
+        if (entity instanceof Webhook)
+            return ((Webhook) entity).getGuild();
         return null;
     }
 
