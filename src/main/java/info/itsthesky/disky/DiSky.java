@@ -12,6 +12,7 @@ import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.ConstLogs;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.Configuration;
+import info.itsthesky.disky.managers.WebhooksManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -36,6 +37,7 @@ public final class DiSky extends JavaPlugin {
     private static boolean skImageInstalled;
     private static ModuleManager moduleManager;
     private static DocBuilder builder;
+    private static WebhooksManager webhooksManager;
 
     public static DiSkyModule getModule(String moduleName) {
         return getModuleManager()
@@ -55,6 +57,7 @@ public final class DiSky extends JavaPlugin {
         instance = this;
         botManager = new BotManager(this);
         builder = new DocBuilder(this);
+        webhooksManager = new WebhooksManager(this);
         errorHandler = botManager.errorHandler();
         skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage");
 
@@ -230,6 +233,10 @@ public final class DiSky extends JavaPlugin {
 
     public static BotManager getManager() {
         return botManager;
+    }
+
+    public static WebhooksManager getWebhooksManager() {
+        return webhooksManager;
     }
 
     public static void runtimeError(String description, @Nullable Object... data) {
