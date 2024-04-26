@@ -12,6 +12,7 @@ import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
@@ -30,7 +31,7 @@ public class DestroyEntity extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				DestroyEntity.class,
-				"destroy %guild/message/role/channel/emote%"
+				"destroy %guild/message/role/channel/emote/webhook%"
 		);
 	}
 
@@ -61,6 +62,8 @@ public class DestroyEntity extends AsyncEffect {
 			action = ((Channel) entity).delete();
 		else if (entity instanceof info.itsthesky.disky.api.emojis.Emote && ((info.itsthesky.disky.api.emojis.Emote) entity).isCustom())
 			action = ((info.itsthesky.disky.api.emojis.Emote) entity).getEmote().delete();
+		else if (entity instanceof Webhook)
+			action = ((Webhook) entity).delete();
 		else
 			action = null;
 		if (anyNull(this, action))

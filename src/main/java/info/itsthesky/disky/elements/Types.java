@@ -195,6 +195,10 @@ public class Types {
                 ScheduledEvent::getName,
                 null
         ).eventExpression().register();
+        new DiSkyType<>(Webhook.class, "webhook",
+                Webhook::getName,
+                null
+        ).eventExpression().register();
 
         /*
         Message Entities
