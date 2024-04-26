@@ -25,7 +25,7 @@ public class MakeClientSpeak extends AsyncEffect {
     static {
         Skript.registerEffect(
                 MakeClientSpeak.class,
-                "make [the] [webhook] client %string% (post|send) [the] [message] %string/messagecreatebuilder/embedbuilder/messagepollbuilder% [with [the] avatar [url] %-string%] [[and] with [the] username %-string%] [and store (it|the message) in %-~objects%]"
+                "make [the] [webhook] client %string% (post|send) [the] [message] %string/messagecreatebuilder/embedbuilder/messagepollbuilder% [with [the] username %-string%] [[and] [with] [the] avatar [url] %-string%] [and store (it|the message) in %-~objects%]"
         );
     }
 
@@ -40,8 +40,8 @@ public class MakeClientSpeak extends AsyncEffect {
     public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
         exprName = (Expression<String>) expressions[0];
         exprMessage = (Expression<Object>) expressions[1];
-        exprAvatar = (Expression<String>) expressions[2];
-        exprUsername = (Expression<String>) expressions[3];
+        exprUsername = (Expression<String>) expressions[2];
+        exprAvatar = (Expression<String>) expressions[3];
         exprResult = (Expression<Object>) expressions[4];
         node = getParser().getNode();
         return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
