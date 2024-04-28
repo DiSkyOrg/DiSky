@@ -18,7 +18,7 @@ public class RetrieveInvites extends AsyncEffect {
     static {
         Skript.registerEffect(
                 RetrieveInvites.class,
-                "retrieve [the] invite[s] (from|with|of|in) %guild% [(with|using) [the] [bot] %-bot%] and store (it|the invites) in %~objects%"
+                "retrieve [all [of]] [the] invite[s] (from|with|of|in) %guild% [(with|using) [the] [bot] %-bot%] and store (it|them|the invites) in %~objects%"
         );
     }
 
