@@ -1,6 +1,7 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -11,9 +12,9 @@ import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
+import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -21,7 +22,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.*;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Edit Message")
 @Description({"Edit a specific message/interaction hook to show a new rich or simple message.",
@@ -39,12 +40,14 @@ public class EditMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				EditMessage.class,
-				"edit [the] [message] %message% (with|to show) %string/messagecreatebuilder/embedbuilder%"
+				"edit [:direct] [the] [message] %message% (with|to show) %string/messagecreatebuilder/embedbuilder%"
 		);
 	}
 
 	private Expression<Object> exprTarget;
 	private Expression<Object> exprMessage;
+	private boolean direct = false;
+	private Node node;
 
 	@Override
 	public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
@@ -52,6 +55,9 @@ public class EditMessage extends AsyncEffect {
 
 		exprTarget = (Expression<Object>) expressions[0];
 		exprMessage = (Expression<Object>) expressions[1];
+		direct = parseResult.hasTag("direct");
+		node = getParser().getNode();
+
 		return true;
 	}
 
@@ -72,15 +78,29 @@ public class EditMessage extends AsyncEffect {
 			builder = new MessageCreateBuilder().setContent((String) message);
 		final MessageEditBuilder editBuilder = new MessageEditBuilder().applyCreateData(builder.build());
 
+		// Basically, here we check if it's an interaction event, if that event holds a ComponentInteraction,
+		// and also if the provided message's ID is the original message of the interaction.
+		// ==> Why? In interactions, we have to edit the interaction itself, and not the message.
+		if (e instanceof InteractionEvent
+				&& ((InteractionEvent) e).getInteractionEvent().getInteraction() instanceof ComponentInteraction
+				&&  ((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).getMessageId().equals(((Message) target).getId())
+				&& !direct) {
+			try {
+				final ComponentInteraction componentInteraction = ((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction());
+				if (componentInteraction.isAcknowledged()) {
+					SkriptUtils.error(node, "You're trying to edit a message's interaction, but you already acknowledged it! You may want to use the 'direct' option to edit the message itself!");
+					return;
+				} else {
+					componentInteraction.editMessage(editBuilder.build()).complete();
+				}
+			} catch (Exception ex) {
+				DiSky.getErrorHandler().exception(e, ex);
+			}
+			return;
+		}
+
 		try {
-			// Basically, here we check if it's an interaction event, if that event holds a ComponentInteraction,
-			// and also if the provided message's ID is the original message of the interaction.
-			// ==> Why? In interactions, we have to edit the interaction itself, and not the message.
-			if (e instanceof InteractionEvent
-					&& ((InteractionEvent) e).getInteractionEvent().getInteraction() instanceof ComponentInteraction
-					&&  ((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).getMessageId().equals(((Message) target).getId()))
-				((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).editMessage(editBuilder.build()).complete();
-			else if (target instanceof Message)
+			if (target instanceof Message)
 				((Message) target).editMessage(editBuilder.build()).complete();
 		} catch (Exception ex) {
 			DiSky.getErrorHandler().exception(e, ex);
