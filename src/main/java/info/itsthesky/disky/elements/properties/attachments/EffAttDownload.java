@@ -53,9 +53,19 @@ public class EffAttDownload extends WaiterEffect {
         if (file.isDirectory())
             file.mkdirs();
 
-        try (InputStream in = new URL(attachment.getUrl()).openStream()) {
-            Files.copy(in, file.isDirectory() ? Paths.get(file.getPath() + "/" + attachment.getFileName()) : Paths.get(file.getPath()));
-        } catch (IOException ex) {
+        if (!file.isDirectory()) {
+            File parent = file.getParentFile();
+            while (parent != null && !parent.exists()) {
+                parent.mkdirs();
+                parent = parent.getParentFile();
+            }
+        }
+
+        try  {
+            attachment.getProxy().downloadToPath(
+                    file.isDirectory() ? Paths.get(file.getPath() + "/" + attachment.getFileName()) : Paths.get(file.getPath())
+            );
+        } catch (Exception ex) {
             DiSky.getErrorHandler().exception(e, ex);
         }
         restart();
