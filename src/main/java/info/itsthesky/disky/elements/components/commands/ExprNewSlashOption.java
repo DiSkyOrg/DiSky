@@ -20,22 +20,25 @@ public class ExprNewSlashOption extends SimpleExpression<OptionData> {
 				ExprNewSlashOption.class,
 				OptionData.class,
 				ExpressionType.COMBINED,
-				"[a] [new] [slash[( |-)]command] [(1¦required)] [(2¦auto[( |-)]complete)] %optiontype% option [(named|with name)] %string% with [the] desc[ription] %string%"
+				"[a] [new] [slash[( |-)]command] [(:required)] [(:auto[( |-)]complete)] (%-optiontype%|:member) option [(named|with name)] %string% with [the] desc[ription] %string%"
 		);
 	}
 
 	private Expression<OptionType> exprType;
 	private Expression<String> exprName;
 	private Expression<String> exprDesc;
-	private boolean required, autoComplete;
+	private boolean required, autoComplete, member;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		exprType = (Expression<OptionType>) exprs[0];
 		exprName = (Expression<String>) exprs[1];
 		exprDesc = (Expression<String>) exprs[2];
-		required = (parseResult.mark & 1) != 0;
-		autoComplete = (parseResult.mark & 2) != 0;
+
+		member = parseResult.hasTag("member");
+		required = parseResult.hasTag("required");
+		autoComplete = parseResult.hasTag("auto");
+
 		return true;
 	}
 
@@ -44,9 +47,16 @@ public class ExprNewSlashOption extends SimpleExpression<OptionData> {
 		final OptionType type = EasyElement.parseSingle(exprType, e, null);
 		final String name = EasyElement.parseSingle(exprName, e, null);
 		final String desc = EasyElement.parseSingle(exprDesc, e, null);
-		if (EasyElement.anyNull(this, type, name, desc))
+		if (EasyElement.anyNull(this, name, desc))
 			return new OptionData[0];
-		return new OptionData[] {new OptionData(type, name, desc, required, autoComplete)};
+
+		if (member) {
+			return new OptionData[] {new OptionData(OptionType.USER, name, desc, required, autoComplete)};
+		} else {
+			if (type == null)
+				return new OptionData[0];
+			return new OptionData[] {new OptionData(type, name, desc, required, autoComplete)};
+		}
 	}
 
 	@Override
