@@ -8,7 +8,6 @@ import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
-import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.interactions.components.Component;
