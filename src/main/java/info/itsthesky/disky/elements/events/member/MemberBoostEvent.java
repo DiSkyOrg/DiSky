@@ -1,5 +1,6 @@
 package info.itsthesky.disky.elements.events.member;
 
+import ch.njol.skript.util.Date;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
@@ -13,21 +14,19 @@ import java.time.OffsetDateTime;
 public class MemberBoostEvent extends DiSkyEvent<GuildMemberUpdateBoostTimeEvent> {
 
     static {
-        register("Member Boost Event", MemberBoostEvent.class, BukkitMemberBoostEvent.class,
-                "[discord] [guild] member boost (change|update)")
-                .description("Fired when a member starts or stops boosting a guild can be used to get the old/new boosting time and the guild.")
-                .examples("member boost change:");
+        register("Member Boost Time Update Event", MemberBoostEvent.class, BukkitMemberBoostEvent.class,
+                "[discord] [guild] member boost time (change|update)");
 
         SkriptUtils.registerBotValue(MemberBoostEvent.BukkitMemberBoostEvent.class);
 
-        SkriptUtils.registerValue(MemberBoostEvent.BukkitMemberBoostEvent.class, OffsetDateTime.class,
-                event -> event.getJDAEvent().getOldValue(), -1);
+        SkriptUtils.registerValue(MemberBoostEvent.BukkitMemberBoostEvent.class, Date.class,
+                event -> SkriptUtils.convertDateTime(event.getJDAEvent().getOldValue()), -1);
 
-        SkriptUtils.registerValue(MemberBoostEvent.BukkitMemberBoostEvent.class, OffsetDateTime.class,
-                event -> event.getJDAEvent().getNewValue(), 0);
+        SkriptUtils.registerValue(MemberBoostEvent.BukkitMemberBoostEvent.class, Date.class,
+                event -> SkriptUtils.convertDateTime(event.getJDAEvent().getNewValue()), 0);
 
-        SkriptUtils.registerValue(MemberBoostEvent.BukkitMemberBoostEvent.class, OffsetDateTime.class,
-                event -> event.getJDAEvent().getNewValue(), 1);
+        SkriptUtils.registerValue(MemberBoostEvent.BukkitMemberBoostEvent.class, Date.class,
+                event -> SkriptUtils.convertDateTime(event.getJDAEvent().getNewValue()), 1);
 
         SkriptUtils.registerValue(MemberBoostEvent.BukkitMemberBoostEvent.class, Guild.class,
                 event -> event.getJDAEvent().getGuild());

@@ -254,4 +254,11 @@ public final class SkriptUtils {
         Skript.error(message);
         ParserInstance.get().setNode(previous);
     }
+
+    public static Date convertDateTime(@Nullable OffsetDateTime dateTime) {
+        if (dateTime == null)
+            return null;
+
+        return new Date(dateTime.toInstant().toEpochMilli());
+    }
 }
