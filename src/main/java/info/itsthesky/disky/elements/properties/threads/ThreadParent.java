@@ -3,25 +3,26 @@ package info.itsthesky.disky.elements.properties.threads;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Thread Channel Parent")
-public class ThreadParent extends SimplePropertyExpression<ThreadChannel, GuildMessageChannel> {
+public class ThreadParent extends SimplePropertyExpression<ThreadChannel, GuildChannel> {
 
 	static {
 		register(
 				ThreadParent.class,
-				GuildMessageChannel.class,
+				GuildChannel.class,
 				"[the] thread parent [channel]",
 				"threadchannel"
 		);
 	}
 
 	@Override
-	public @Nullable GuildMessageChannel convert(ThreadChannel threadChannel) {
-		return threadChannel.getParentChannel().asTextChannel();
+	public @Nullable GuildChannel convert(ThreadChannel threadChannel) {
+		return threadChannel.getParentChannel();
 	}
 
 	@Override
@@ -30,7 +31,7 @@ public class ThreadParent extends SimplePropertyExpression<ThreadChannel, GuildM
 	}
 
 	@Override
-	public @NotNull Class<? extends GuildMessageChannel> getReturnType() {
-		return GuildMessageChannel.class;
+	public @NotNull Class<? extends GuildChannel> getReturnType() {
+		return GuildChannel.class;
 	}
 }
