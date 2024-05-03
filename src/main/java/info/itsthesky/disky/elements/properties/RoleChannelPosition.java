@@ -62,15 +62,12 @@ public class RoleChannelPosition extends SimplePropertyExpression<Object, Number
                     if (current == -1)
                         continue;
 
-                    if (mode == Changer.ChangeMode.ADD)
-                        amount += current;
-                    else
-                        amount = current - amount;
+                    current += mode == Changer.ChangeMode.ADD ? amount : -amount;
 
                     if (entity instanceof Role)
-                        action = ((Role) entity).getGuild().modifyRolePositions().selectPosition(((Role) entity)).moveTo(amount);
+                        action = ((Role) entity).getGuild().modifyRolePositions().selectPosition(((Role) entity)).moveTo(current);
                     if (entity instanceof IPositionableChannel)
-                        action = ((IPositionableChannel) entity).getManager().setPosition(amount);
+                        action = ((IPositionableChannel) entity).getManager().setPosition(current);
                 }
                 break;
             case SET:
@@ -83,7 +80,6 @@ public class RoleChannelPosition extends SimplePropertyExpression<Object, Number
                 break;
         }
 
-        // TODO: Implement some sort of "async effects" somehow
         if (action != null)
             action.queue();
     }
