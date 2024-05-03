@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.Interaction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IPremiumRequiredReplyCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -115,7 +116,7 @@ public class ReplyWith extends AsyncEffect {
 			return;
 
 		@Nullable RestAction<Message> messageRestAction = null;
-		@Nullable RestAction<?> otherRestAction = null;
+		@Nullable RestAction<InteractionHook> otherRestAction = null;
 
 		if (message instanceof Sticker) {
 			final MessageEvent event = (MessageEvent) e;
@@ -188,10 +189,16 @@ public class ReplyWith extends AsyncEffect {
 		}
 
 		if (otherRestAction != null) {
+			final InteractionHook interactionHook;
 			try {
-				otherRestAction.complete();
+				interactionHook = otherRestAction.complete();
 			} catch (Exception ex) {
 				DiSky.getErrorHandler().exception(e, ex);
+				return;
+			}
+			if (exprResult != null) {
+				final Message hookMessage = interactionHook.retrieveOriginal().complete();
+				exprResult.change(e, new Message[] {hookMessage}, Changer.ChangeMode.SET);
 			}
 		}
 	}
