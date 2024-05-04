@@ -255,6 +255,13 @@ public final class SkriptUtils {
         ParserInstance.get().setNode(previous);
     }
 
+    public static void warning(Node node, String message) {
+        final Node previous = ParserInstance.get().getNode();
+        ParserInstance.get().setNode(node);
+        Skript.warning(message);
+        ParserInstance.get().setNode(previous);
+    }
+
     public static Date convertDateTime(@Nullable OffsetDateTime dateTime) {
         if (dateTime == null)
             return null;
