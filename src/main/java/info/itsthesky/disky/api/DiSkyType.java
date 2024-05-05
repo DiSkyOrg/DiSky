@@ -5,6 +5,7 @@ import ch.njol.skript.classes.Parser;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +31,8 @@ public class DiSkyType<T> {
     private final boolean isEnum;
     private final ClassInfo<T> classInfo;
 
+    private @Nullable Function<String, RestAction<T>> restParser;
+
     public DiSkyType(Class<T> clazz, String codeName, Function<T, String> toString, @Nullable Function<String, T> parser) {
         this(clazz, codeName, codeName, toString, parser, false);
     }
@@ -41,7 +44,8 @@ public class DiSkyType<T> {
         this.toString = toString;
         this.parser = parser;
         this.isEnum = isEnum;
-        this.classInfo = new ClassInfo<>(clazz, codeName)
+        this.classInfo = new DiSkyTypeWrapper<>(clazz, codeName)
+                .diskyType(this)
                 .user(user)
                 .parser(new Parser<T>() {
                     @Override
@@ -156,6 +160,11 @@ public class DiSkyType<T> {
         return this;
     }
 
+    public DiSkyType<T> createRestParser(Function<String, RestAction<T>> parser) {
+        this.restParser = parser;
+        return this;
+    }
+
     public boolean isEnum() {
         return isEnum;
     }
@@ -186,5 +195,31 @@ public class DiSkyType<T> {
 
     public Function<T, String> getToString() {
         return toString;
+    }
+
+    public @Nullable Function<String, RestAction<T>> getRestParser() {
+        return restParser;
+    }
+
+    public static class DiSkyTypeWrapper<T> extends ClassInfo<T> {
+
+        private DiSkyType<T> diSkyType;
+
+        /**
+         * @param c        The class
+         * @param codeName The name used in patterns
+         */
+        public DiSkyTypeWrapper(Class<T> c, String codeName) {
+            super(c, codeName);
+        }
+
+        public DiSkyType<T> getDiSkyType() {
+            return diSkyType;
+        }
+
+        public DiSkyTypeWrapper<T> diskyType(DiSkyType<T> diSkyType) {
+            this.diSkyType = diSkyType;
+            return this;
+        }
     }
 }

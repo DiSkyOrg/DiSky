@@ -13,8 +13,10 @@ import ch.njol.skript.util.Timespan;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
+import info.itsthesky.disky.api.DiSkyType;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 
 import java.lang.reflect.InvocationTargetException;
@@ -65,16 +67,61 @@ public class CommandFactory {
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
-        if (res == null) {
-            return false;
+        List<Argument<?>> arguments = command.getArguments();
+        /* if (res == null)
+        {
+            // try custom parser
+            final String[] rawArgs = args.split(" ");
+            for (Argument<?> argument : arguments) {
+                final ClassInfo<?> info = argument.getTypeInfo();
+                if (info.getParser() == null || !info.getParser().canParse(ParseContext.COMMAND))
+                    return false;
+
+                final Object value = info.getParser().parse(rawArgs[argument.getIndex()], ParseContext.COMMAND);
+                if (value == null && !argument.isOptional())
+                {
+                    argument.setToDefault(event);
+                }
+                else if (value != null)
+                {
+                    argument.set(event, new Object[] { value });
+                }
+                else {
+                    // try using custom DiSky parser
+                    if (info instanceof DiSkyType.DiSkyTypeWrapper) {
+                        final DiSkyType<?> type = ((DiSkyType.DiSkyTypeWrapper<?>) info).getDiSkyType();
+                        if (type.getRestParser() != null) {
+                            final RestAction<?> restAction = type.getRestParser().apply(rawArgs[argument.getIndex()]);
+                            if (restAction == null)
+                                return false;
+
+                            final Object newValue = restAction.complete();
+                            if (newValue == null && !argument.isOptional())
+                            {
+                                argument.setToDefault(event);
+                            }
+                            else if (newValue != null)
+                            {
+                                argument.set(event, new Object[] { newValue });
+                            }
+                            else
+                                return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
-        List<Argument<?>> as = command.getArguments();
-        assert as.size() == res.exprs.length;
+        This needs an overall rework of the command system to work ASYNC, but discord commands will be less and less used, so does it worth it?
+         */
+
+        assert arguments.size() == res.exprs.length;
         for (int i = 0; i < res.exprs.length; i++) {
             if (res.exprs[i] == null) {
-                as.get(i).setToDefault(event);
+                arguments.get(i).setToDefault(event);
             } else {
-                as.get(i).set(event, res.exprs[i].getArray(event));
+                arguments.get(i).set(event, res.exprs[i].getArray(event));
             }
         }
         return true;

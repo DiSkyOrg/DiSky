@@ -135,4 +135,8 @@ public class Argument<T> {
         return single;
     }
 
+    public ClassInfo<T> getTypeInfo() {
+        return type;
+    }
+
 }
