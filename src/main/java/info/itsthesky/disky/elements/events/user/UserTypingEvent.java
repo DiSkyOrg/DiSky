@@ -29,6 +29,9 @@ public class UserTypingEvent extends DiSkyEvent<net.dv8tion.jda.api.events.user.
 
         SkriptUtils.registerValue(UserTypingEvent.BukkitUserTypingEvent.class, Member.class,
                 event -> event.getJDAEvent().getMember(), 0);
+
+        SkriptUtils.registerValue(UserTypingEvent.BukkitUserTypingEvent.class, MessageChannel.class,
+                event -> event.getJDAEvent().getChannel(), 0);
     }
 
     public static class BukkitUserTypingEvent extends SimpleDiSkyEvent<net.dv8tion.jda.api.events.user.UserTypingEvent> {
