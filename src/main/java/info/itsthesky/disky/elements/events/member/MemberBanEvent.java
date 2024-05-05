@@ -17,20 +17,20 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author ItsTheSky
  */
-public class MemberKickEvent extends SkriptEvent {
+public class MemberBanEvent extends SkriptEvent {
 
     static {
-        Skript.registerEvent("Member Kick Event",
-                MemberKickEvent.class, BukkitMemberKickEvent.class,
-                "[discord] member kick[ed]");
+        Skript.registerEvent("Member Ban Event",
+                MemberBanEvent.class, BukkitMemberBanEvent.class,
+                "[discord] member ban[ned]");
 
-        SkriptUtils.registerValue(BukkitMemberKickEvent.class, User.class,
+        SkriptUtils.registerValue(BukkitMemberBanEvent.class, User.class,
                 event -> event.target);
-        SkriptUtils.registerValue(BukkitMemberKickEvent.class, Guild.class,
+        SkriptUtils.registerValue(BukkitMemberBanEvent.class, Guild.class,
                 event -> event.guild);
-        SkriptUtils.registerValue(BukkitMemberKickEvent.class, Bot.class,
+        SkriptUtils.registerValue(BukkitMemberBanEvent.class, Bot.class,
                 event -> Bot.byJDA(event.bot));
-        SkriptUtils.registerValue(BukkitMemberKickEvent.class, Member.class,
+        SkriptUtils.registerValue(BukkitMemberBanEvent.class, Member.class,
                 event -> event.author);
     }
 
@@ -41,16 +41,16 @@ public class MemberKickEvent extends SkriptEvent {
 
     @Override
     public boolean check(@NotNull Event event) {
-        return event instanceof BukkitMemberKickEvent;
+        return event instanceof BukkitMemberBanEvent;
     }
 
     @Override
     public @NotNull String toString(@Nullable Event event, boolean debug) {
-        return "member kick event";
+        return "member ban event";
     }
 
-    public static class BukkitMemberKickEvent extends BukkitMemberRemoveEvent {
-        public BukkitMemberKickEvent(User target, Guild guild, JDA bot) {
+    public static class BukkitMemberBanEvent extends BukkitMemberRemoveEvent {
+        public BukkitMemberBanEvent(User target, Guild guild, JDA bot) {
             super(target, guild, bot);
         }
     }

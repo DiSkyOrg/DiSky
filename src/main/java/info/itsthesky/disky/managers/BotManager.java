@@ -5,6 +5,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.EventListener;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.MemberRemoveEventListener;
 import info.itsthesky.disky.core.ReactionListener;
 import info.itsthesky.disky.elements.commands.CommandListener;
 import info.itsthesky.disky.elements.events.member.MemberKickEvent;
@@ -52,7 +53,7 @@ public class BotManager {
         bot.getInstance().addEventListener(new CommandListener());
         bot.getInstance().addEventListener(new ReactionListener());
         bot.getInstance().addEventListener(new MessageManager(bot));
-        bot.getInstance().addEventListener(new MemberKickEvent.MemberKickEventListener());
+        bot.getInstance().addEventListener(new MemberRemoveEventListener());
         bot.getInstance().addEventListener(queuedListeners.toArray());
     }
 
