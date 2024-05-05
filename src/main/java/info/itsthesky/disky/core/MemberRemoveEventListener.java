@@ -16,8 +16,8 @@ import java.util.WeakHashMap;
  */
 public class MemberRemoveEventListener extends ListenerAdapter {
 
-    private static final WeakHashMap<Long, MemberKickEvent.BukkitMemberKickEvent> WaitingKicks = new WeakHashMap<>();
-    private static final WeakHashMap<Long, MemberBanEvent.BukkitMemberBanEvent> WaitingBans = new WeakHashMap<>();
+    private final WeakHashMap<Long, MemberKickEvent.BukkitMemberKickEvent> WaitingKicks = new WeakHashMap<>();
+    private final WeakHashMap<Long, MemberBanEvent.BukkitMemberBanEvent> WaitingBans = new WeakHashMap<>();
 
     @Override
     public void onGuildMemberRemove(GuildMemberRemoveEvent event) {
