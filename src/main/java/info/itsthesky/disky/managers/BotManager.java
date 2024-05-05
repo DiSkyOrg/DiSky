@@ -7,6 +7,7 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.ReactionListener;
 import info.itsthesky.disky.elements.commands.CommandListener;
+import info.itsthesky.disky.elements.events.member.MemberKickEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,6 +52,7 @@ public class BotManager {
         bot.getInstance().addEventListener(new CommandListener());
         bot.getInstance().addEventListener(new ReactionListener());
         bot.getInstance().addEventListener(new MessageManager(bot));
+        bot.getInstance().addEventListener(new MemberKickEvent.MemberKickEventListener());
         bot.getInstance().addEventListener(queuedListeners.toArray());
     }
 

@@ -108,4 +108,8 @@ public class Bot {
     public static @Nullable Bot any() {
         return DiSky.getManager().findAny();
     }
+
+    public static @Nullable Bot byJDA(JDA instance) {
+        return DiSky.getManager().fromJDA(instance);
+    }
 }

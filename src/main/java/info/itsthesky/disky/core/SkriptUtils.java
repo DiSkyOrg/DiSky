@@ -23,6 +23,7 @@ import info.itsthesky.disky.elements.events.ExprEventValues;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
+import info.itsthesky.disky.elements.events.member.MemberKickEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -267,5 +268,9 @@ public final class SkriptUtils {
             return null;
 
         return new Date(dateTime.toInstant().toEpochMilli());
+    }
+
+    public static void dispatchEvent(Event e) {
+        SkriptUtils.sync(() -> Bukkit.getPluginManager().callEvent(e));
     }
 }
