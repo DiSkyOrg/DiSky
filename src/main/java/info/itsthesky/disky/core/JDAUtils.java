@@ -104,27 +104,31 @@ public final class JDAUtils {
 	}
 
 	public static Object parseOptionValue(OptionMapping option) {
-		switch (option.getType()) {
-			case ROLE:
-				return option.getAsRole();
-			case USER:
-				return option.getAsUser();
-			case CHANNEL:
-				return option.getAsChannel().asGuildMessageChannel();
-			case NUMBER:
-				return option.getAsDouble();
-			case INTEGER:
-				return option.getAsInt();
-			case STRING:
-				return option.getAsString();
-			case ATTACHMENT:
-				return option.getAsAttachment();
-			case BOOLEAN:
-				return option.getAsBoolean();
-			case MENTIONABLE:
-				return option.getAsMentionable();
-			default:
-				return new Object();
+		try {
+			switch (option.getType()) {
+				case ROLE:
+					return option.getAsRole();
+				case USER:
+					return option.getAsUser();
+				case CHANNEL:
+					return option.getAsChannel().asGuildMessageChannel();
+				case NUMBER:
+					return option.getAsDouble();
+				case INTEGER:
+					return option.getAsInt();
+				case STRING:
+					return option.getAsString();
+				case ATTACHMENT:
+					return option.getAsAttachment();
+				case BOOLEAN:
+					return option.getAsBoolean();
+				case MENTIONABLE:
+					return option.getAsMentionable();
+				default:
+					return null;
+			}
+		} catch (IllegalStateException ex) {
+			return null;
 		}
 	}
 }

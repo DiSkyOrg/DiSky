@@ -16,6 +16,7 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.events.bots.ReadyEvent;
 import info.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
+import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
 import net.dv8tion.jda.api.Permission;
@@ -312,11 +313,11 @@ public class StructSlashCommand extends Structure {
             final SectionNode completionNode = container.getOptional("on completion request", SectionNode.class, true);
             if (completionNode != null) {
                 final Trigger trigger = new Trigger(getParser().getCurrentScript(), "completion for argument " + argument.getName(), new SimpleEvent(),
-                        SkriptUtils.loadCode(completionNode, SimpleDiSkyEvent.class));
+                        SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class));
                 argument.setOnCompletionRequest(trigger);
             }
 
-            if (argument.isAutoCompletion() && argument.isAutoCompletion()) {
+            if (argument.hasChoices() && argument.isAutoCompletion()) {
                 Skript.error("You can't have both auto completion and choices for the same argument.");
                 return null;
             }

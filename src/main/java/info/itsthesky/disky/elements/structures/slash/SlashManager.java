@@ -7,9 +7,12 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.elements.effects.SendTyping;
 import info.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
+import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
+import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
 import info.itsthesky.disky.elements.structures.slash.models.RegisteredCommand;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -174,6 +177,8 @@ public final class SlashManager extends ListenerAdapter {
                             optionData.addChoice(key, ((Number) value).doubleValue());
                     });
                 }
+                if (parsedArgument.isAutoCompletion())
+                    optionData.setAutoComplete(true);
 
                 slashCommandData.addOptions(optionData);
             });
@@ -197,9 +202,38 @@ public final class SlashManager extends ListenerAdapter {
                 return;
             }
 
-            registeredCommand.prepareArguments(event);
+            registeredCommand.prepareArguments(event.getOptions());
             final Trigger trigger = registeredCommand.getTrigger();
             final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
+            bukkitEvent.setJDAEvent(event);
+
+            trigger.execute(bukkitEvent);
+        }
+    }
+
+    @Override
+    public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+        if (event.isFromGuild()) {
+            final RegisteredCommand registeredCommand = findCommand(event.getName(), event.getGuild().getId());
+            if (registeredCommand == null) {
+                DiSky.debug("Received command " + event.getName() + " but it's not registered on guild " + event.getGuild().getId() + " for bot " + event.getJDA().getSelfUser().getGlobalName());
+                return;
+            }
+            final String focusedArgument = event.getFocusedOption().getName();
+            final Trigger trigger = registeredCommand.getArguments()
+                            .stream()
+                            .filter(parsedArgument -> parsedArgument.getName().equals(focusedArgument))
+                            .findFirst()
+                            .map(ParsedArgument::getOnCompletionRequest)
+                            .orElse(null);
+            if (trigger == null) {
+                DiSky.debug("Received command " + event.getName() + " but no completion trigger for argument " + focusedArgument);
+                return;
+            }
+
+            registeredCommand.prepareArguments(event.getOptions());
+            final SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
+                    new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
             bukkitEvent.setJDAEvent(event);
 
             trigger.execute(bukkitEvent);

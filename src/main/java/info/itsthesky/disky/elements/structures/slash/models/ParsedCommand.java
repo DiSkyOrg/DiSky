@@ -124,8 +124,7 @@ public class ParsedCommand {
                 || !this.getGuilds().equals(command.getGuilds());*/
     }
 
-    public void prepareArguments(SlashCommandInteractionEvent event) {
-        final List<OptionMapping> options = event.getOptions();
+    public void prepareArguments(List<OptionMapping> options) {
         for (int i = 0; i < options.size(); i++) {
             final OptionMapping option = options.get(i);
             final ParsedArgument argument = arguments.get(i);

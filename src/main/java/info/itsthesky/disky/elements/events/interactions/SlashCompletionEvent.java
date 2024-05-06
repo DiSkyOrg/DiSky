@@ -30,6 +30,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+
 public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteractionEvent> {
 
 	static {

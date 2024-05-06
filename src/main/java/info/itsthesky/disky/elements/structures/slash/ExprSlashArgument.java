@@ -125,7 +125,6 @@ public class ExprSlashArgument extends SimpleExpression<Object> {
 
     @Override
     public @NotNull Class<?> getReturnType() {
-        System.out.println("class: " + arg.getTypeInfo().getC());
         return arg.getTypeInfo().getC();
     }
 
