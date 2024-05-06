@@ -1,7 +1,14 @@
 package info.itsthesky.disky.elements.structures.slash.models;
 
+import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.lang.Trigger;
+import ch.njol.skript.registrations.Classes;
 import com.google.common.base.Objects;
+import net.dv8tion.jda.api.entities.IMentionable;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +26,9 @@ public class ParsedArgument {
     private String description;
     private Map<String, Object> choices;
     private @Nullable Trigger onCompletionRequest;
+
+    // Set when the argument is executed
+    private Object value;
 
     public ParsedArgument(OptionType type, String name, boolean required) {
         this.type = type;
@@ -89,5 +99,38 @@ public class ParsedArgument {
     @Override
     public int hashCode() {
         return Objects.hashCode(type, name, required, description, choices);
+    }
+
+    public ClassInfo<?> getTypeInfo() {
+        switch (type) {
+            case STRING:
+                return Classes.getExactClassInfo(String.class);
+            case INTEGER:
+                return Classes.getExactClassInfo(Integer.class);
+            case BOOLEAN:
+                return Classes.getExactClassInfo(Boolean.class);
+            case USER:
+                return Classes.getExactClassInfo(User.class);
+            case CHANNEL:
+                return Classes.getExactClassInfo(MessageChannel.class);
+            case ROLE:
+                return Classes.getExactClassInfo(Role.class);
+            case NUMBER:
+                return Classes.getExactClassInfo(Number.class);
+            case ATTACHMENT:
+                return Classes.getExactClassInfo(Message.Attachment.class);
+            case MENTIONABLE:
+                return Classes.getExactClassInfo(IMentionable.class);
+            default:
+                return Classes.getExactClassInfo(Object.class);
+        }
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 }

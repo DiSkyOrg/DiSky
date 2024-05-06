@@ -2,8 +2,11 @@ package info.itsthesky.disky.elements.structures.slash.models;
 
 import ch.njol.skript.lang.Trigger;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.JDAUtils;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,5 +122,15 @@ public class ParsedCommand {
                 || this.isDisabledByDefault() != command.isDisabledByDefault();
                 /*|| !this.getBots().equals(command.getBots())
                 || !this.getGuilds().equals(command.getGuilds());*/
+    }
+
+    public void prepareArguments(SlashCommandInteractionEvent event) {
+        final List<OptionMapping> options = event.getOptions();
+        for (int i = 0; i < options.size(); i++) {
+            final OptionMapping option = options.get(i);
+            final ParsedArgument argument = arguments.get(i);
+
+            argument.setValue(JDAUtils.parseOptionValue(option));
+        }
     }
 }

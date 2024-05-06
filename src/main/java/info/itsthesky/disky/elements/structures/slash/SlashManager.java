@@ -112,7 +112,10 @@ public final class SlashManager extends ListenerAdapter {
                               RegisteredCommand registeredCommand,
                               Bot bot, String guildId) {
         // We first must check if they were any changes in the command itself
-        registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway
+
+        registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway & the args
+        registeredCommand.setArguments(command.getArguments());
+
         if (!registeredCommand.shouldUpdate(command))
         {
             DiSky.debug("{UPDATE} No changes detected for command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
@@ -194,6 +197,7 @@ public final class SlashManager extends ListenerAdapter {
                 return;
             }
 
+            registeredCommand.prepareArguments(event);
             final Trigger trigger = registeredCommand.getTrigger();
             final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
             bukkitEvent.setJDAEvent(event);

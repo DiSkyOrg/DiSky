@@ -6,6 +6,7 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
+import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleEvent;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
@@ -28,6 +29,7 @@ import org.skriptlang.skript.lang.entry.EntryValidator;
 import org.skriptlang.skript.lang.structure.Structure;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,8 +78,13 @@ public class StructSlashCommand extends Structure {
         );
     }
 
+    private ParsedCommand parsedCommand;
     private EntryContainer entryContainer;
     private @NotNull Node structure;
+
+    public ParsedCommand getParsedCommand() {
+        return parsedCommand;
+    }
 
     @Override
     public boolean init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult, @NotNull EntryContainer entryContainer) {
@@ -88,7 +95,7 @@ public class StructSlashCommand extends Structure {
 
     @Override
     public boolean load() {
-        final ParsedCommand parsedCommand = new ParsedCommand();
+        parsedCommand = new ParsedCommand();
 
         // Default command name
         final String commandName = parseCommandName();
