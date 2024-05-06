@@ -34,6 +34,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.entry.EntryValidator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -272,5 +273,11 @@ public final class SkriptUtils {
 
     public static void dispatchEvent(Event e) {
         SkriptUtils.sync(() -> Bukkit.getPluginManager().callEvent(e));
+    }
+
+    public static EntryValidator custom() {
+        return EntryValidator.builder()
+                .unexpectedNodeTester(node -> false)
+                .build();
     }
 }

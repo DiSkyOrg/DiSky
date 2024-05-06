@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
 
 public class StructBot extends Structure {
 
+	private static final Priority PRIORITY = new Priority(500);
+
 	public static final GatewayIntent[] DefaultIntents = new GatewayIntent[] {
 			GatewayIntent.GUILD_MODERATION,
 			GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
@@ -259,5 +261,10 @@ public class StructBot extends Structure {
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
 		return "define bot named " + name;
+	}
+
+	@Override
+	public @NotNull Priority getPriority() {
+		return PRIORITY;
 	}
 }

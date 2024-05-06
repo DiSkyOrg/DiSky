@@ -10,10 +10,12 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.ConstLogs;
+import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.Configuration;
 import info.itsthesky.disky.managers.WebhooksManager;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -195,11 +197,12 @@ public final class DiSky extends JavaPlugin {
 
     private void debugMessage(String s) {
         if (getConfiguration().getOrSetDefault("debug", false))
-            getLogger().info(ChatColor.DARK_PURPLE + "DEBUG: " + ChatColor.LIGHT_PURPLE + s);
+            Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_PURPLE + "DEBUG: " + ChatColor.LIGHT_PURPLE + s);
     }
 
     @Override
     public void onDisable() {
+        SlashManager.shutdownAll();
         botManager.shutdown();
     }
 
