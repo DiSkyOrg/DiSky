@@ -35,7 +35,7 @@ public final class SlashManager extends ListenerAdapter {
         MANAGERS.clear();
     }
 
-    private final Multimap<String, Runnable> waitingGuildCommands = ArrayListMultimap.create();
+    private final Map<String, List<Runnable>> waitingGuildCommands = new HashMap<>();
     private final Set<String> readyGuilds = new HashSet<>();
 
     private final List<RegisteredCommand> registeredCommands;
@@ -71,7 +71,7 @@ public final class SlashManager extends ListenerAdapter {
                 if (readyGuilds.contains(guildId)) {
                     runnable.run();
                 } else {
-                    waitingGuildCommands.put(guildId, runnable);
+                    waitingGuildCommands.computeIfAbsent(guildId, k -> new ArrayList<>()).add(runnable);
                     DiSky.debug("Guild " + guildId + " is not ready yet, waiting for ready event to register command (now " + waitingGuildCommands.get(guildId).size() + " waiting)");
                 }
             }
@@ -102,6 +102,9 @@ public final class SlashManager extends ListenerAdapter {
 
             registeredCommands.add(registeredCommand);
             DiSky.debug("{CREATE} Registered command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
+        }, ex -> {
+            DiSky.debug("{CREATE} Failed to register command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
+            DiSky.getErrorHandler().exception(null, ex);
         });
     }
 
@@ -109,6 +112,7 @@ public final class SlashManager extends ListenerAdapter {
                               RegisteredCommand registeredCommand,
                               Bot bot, String guildId) {
         // We first must check if they were any changes in the command itself
+        registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway
         if (!registeredCommand.shouldUpdate(command))
         {
             DiSky.debug("{UPDATE} No changes detected for command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
@@ -121,6 +125,12 @@ public final class SlashManager extends ListenerAdapter {
                 throw new IllegalStateException("Command ID changed after update! (this should never happens)");
 
             DiSky.debug("{UPDATE} Updated command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
+        }, ex -> {
+            DiSky.debug("{UPDATE} Failed to update command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
+            DiSky.debug("We'll register it again instead");
+            DiSky.getErrorHandler().exception(null, ex);
+
+            registerCommand(command, bot, guildId);
         });
     }
 
@@ -203,12 +213,15 @@ public final class SlashManager extends ListenerAdapter {
         if (readyGuilds.contains(guildId)) {
             DiSky.debug("Guild " + guildId + " is already ready, skipping command registration");
             return;
+        } else if (!waitingGuildCommands.containsKey(guildId)) {
+            DiSky.debug("Guild " + guildId + " is ready, but no command to register");
+            return;
         }
 
         readyGuilds.add(guildId);
         final Collection<Runnable> runnables = waitingGuildCommands.get(guildId);
         DiSky.debug("Guild " + guildId + " is ready, registering commands (" + runnables.size() + ")");
         runnables.forEach(Runnable::run);
-        waitingGuildCommands.removeAll(guildId);
+        waitingGuildCommands.remove(guildId);
     }
 }
