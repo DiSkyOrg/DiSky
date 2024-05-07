@@ -184,7 +184,7 @@ public class StructSlashCommand extends Structure {
         DiSky.debug("------------------- End -------------------");
         //endregion
 
-        SlashManager.getManager(parsedCommand.getBot()).registerCommand(parsedCommand);
+        parsedCommand.getBot().getSlashManager().registerCommand(parsedCommand);
 
         return true;
     }
@@ -439,15 +439,17 @@ public class StructSlashCommand extends Structure {
         }
         parsedCommand.setBot(bot);
 
-        final String[] guildIds = rawGuilds.split(LIST.pattern());
-        for (String guildId : guildIds) {
-            if (!guildId.matches("\\d+")) {
-                getParser().setNode(structure);
-                Skript.error("Invalid guild ID: " + guildId);
-                return false;
-            }
+        if (!rawGuilds.isEmpty()) {
+            final String[] guildIds = rawGuilds.split(LIST.pattern());
+            for (String guildId : guildIds) {
+                if (!guildId.matches("\\d+")) {
+                    getParser().setNode(structure);
+                    Skript.error("Invalid guild ID: " + guildId);
+                    return false;
+                }
 
-            parsedCommand.addGuild(guildId);
+                parsedCommand.addGuild(guildId);
+            }
         }
 
         return true;

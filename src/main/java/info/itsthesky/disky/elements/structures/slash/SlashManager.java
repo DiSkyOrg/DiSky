@@ -25,12 +25,15 @@ import net.dv8tion.jda.api.requests.RestAction;
 
 import java.util.*;
 
+/**
+ * @author ItsTheSky
+ */
 public final class SlashManager extends ListenerAdapter {
 
     private static final Map<Bot, SlashManager> MANAGERS = new HashMap<>();
 
     public static SlashManager getManager(Bot bot) {
-        return MANAGERS.computeIfAbsent(bot, b -> new SlashManager(b));
+        return MANAGERS.computeIfAbsent(bot, SlashManager::new);
     }
 
     public static void shutdownAll() {
@@ -40,6 +43,9 @@ public final class SlashManager extends ListenerAdapter {
 
     private final Map<String, List<Runnable>> waitingGuildCommands = new HashMap<>();
     private final Set<String> readyGuilds = new HashSet<>();
+
+    private final List<Runnable> waitingGlobalCommands = new ArrayList<>();
+    private boolean readyGlobal = false;
 
     private final List<RegisteredCommand> registeredCommands;
     private final Bot bot;
@@ -54,10 +60,40 @@ public final class SlashManager extends ListenerAdapter {
 
     public void registerCommand(ParsedCommand command) {
         if (command.getGuilds().isEmpty()) {
-            // todo: register command globally
             DiSky.debug("Registering command " + command.getName() + " for all guilds on bot " + bot.getName());
-            DiSky.debug("(Not implemented yet)");
+
+            // first check for existing ones in guilds (in case we updated it)
+            for (RegisteredCommand cmd : registeredCommands) {
+                if (cmd.getGuildId() != null && cmd.getName().equalsIgnoreCase(command.getName())) {
+                    deleteLocalCommand(cmd);
+                    DiSky.getInstance().getLogger().warning("We deleted the command '" + cmd.getName() + "' of bot '" + bot.getName() + "' as you updated its registration from guild '" + cmd.getGuildId() + "' to global!");
+                }
+            }
+
+            final Runnable runnable = () -> {
+                final RegisteredCommand global = findCommand(command.getName());
+                if (global == null) {
+                    registerGlobalCommand(command, bot);
+                } else {
+                    updateGlobalCommand(command, global, bot);
+                }
+            };
+
+            if (readyGlobal) {
+                runnable.run();
+            } else {
+                waitingGlobalCommands.add(runnable);
+                DiSky.debug("Bot " + bot.getName() + " is not ready yet, waiting for ready event to register command (now " + waitingGlobalCommands.size() + " waiting)");
+            }
+
         } else {
+            // first check for existing ones in global
+            final RegisteredCommand global = findCommand(command.getName());
+            if (global != null) {
+                deleteGlobalCommand(global);
+                DiSky.getInstance().getLogger().warning("We deleted the command '" + global.getName() + "' of bot '" + bot.getName() + "' as you updated its registration from global to guilds!");
+            }
+
             for (String guildId : command.getGuilds()) {
                 DiSky.debug("Managing command " + command.getName() + " for guild " + guildId + " on bot " + bot.getName());
                 final Runnable runnable = () -> {
@@ -87,6 +123,25 @@ public final class SlashManager extends ListenerAdapter {
                 .filter(registeredCommand -> registeredCommand.getGuildId().equals(guildId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public RegisteredCommand findCommand(String name) {
+        return registeredCommands.stream()
+                .filter(registeredCommand -> registeredCommand.getName().equals(name))
+                .filter(registeredCommand -> registeredCommand.getGuildId() == null)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void deleteLocalCommand(RegisteredCommand command) {
+        registeredCommands.remove(command);
+        bot.getInstance().getGuildById(command.getGuildId())
+                .deleteCommandById(command.getCommandId()).queue();
+    }
+
+    public void deleteGlobalCommand(RegisteredCommand command) {
+        registeredCommands.remove(command);
+        bot.getInstance().deleteCommandById(command.getCommandId()).queue();
     }
 
     public void registerCommand(ParsedCommand command,
@@ -140,12 +195,70 @@ public final class SlashManager extends ListenerAdapter {
         });
     }
 
+    public void registerGlobalCommand(ParsedCommand command, Bot bot) {
+        final SlashCommandData slashCommandData = buildCommand(command);
+        final RestAction<Command> createAction
+                = bot.getInstance().upsertCommand(slashCommandData);
+
+        createAction.queue(cmd -> {
+            final RegisteredCommand registeredCommand = new RegisteredCommand(
+                    command,
+                    cmd.getIdLong(),
+                    bot.getName(),
+                    null
+            );
+
+            registeredCommands.add(registeredCommand);
+            DiSky.debug("{CREATE} Registered command " + command.getName() + " on all guilds for bot " + bot.getName());
+        }, ex -> {
+            DiSky.debug("{CREATE} Failed to register command " + command.getName() + " on all guilds for bot " + bot.getName());
+            DiSky.getErrorHandler().exception(null, ex);
+        });
+    }
+
+    public void updateGlobalCommand(ParsedCommand command,
+                                    RegisteredCommand registeredCommand,
+                                    Bot bot) {
+        // We first must check if they were any changes in the command itself
+
+        registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway & the args
+        registeredCommand.setArguments(command.getArguments());
+
+        if (!registeredCommand.shouldUpdate(command))
+        {
+            DiSky.debug("{UPDATE} No changes detected for command " + command.getName() + " on all guilds for bot " + bot.getName());
+            return; // no changes, no need to update for Discord
+        }
+
+        final SlashCommandData slashCommandData = buildCommand(command);
+        bot.getInstance().editCommandById(registeredCommand.getCommandId()).apply(slashCommandData).queue(cmd -> {
+            if (cmd.getIdLong() != registeredCommand.getCommandId())
+                throw new IllegalStateException("Command ID changed after update! (this should never happens)");
+
+            DiSky.debug("{UPDATE} Updated command " + command.getName() + " on all guilds for bot " + bot.getName());
+        }, ex -> {
+            DiSky.debug("{UPDATE} Failed to update command " + command.getName() + " on all guilds for bot " + bot.getName());
+            DiSky.debug("We'll register it again instead");
+            DiSky.getErrorHandler().exception(null, ex);
+
+            registerGlobalCommand(command, bot);
+        });
+    }
+
     public void shutdown() {
         bot.getInstance().removeEventListener(this);
         registeredCommands.forEach(registeredCommand -> {
-            bot.getInstance().getGuildById(registeredCommand.getGuildId())
-                    .deleteCommandById(registeredCommand.getCommandId()).complete();
-            DiSky.debug("{DELETE} Deleted command " + registeredCommand.getName() + " on guild " + registeredCommand.getGuildId() + " for bot " + bot.getName());
+            try {
+                if (registeredCommand.getGuildId() == null) {
+                    bot.getInstance().deleteCommandById(registeredCommand.getCommandId()).complete();
+                } else {
+                    bot.getInstance().getGuildById(registeredCommand.getGuildId())
+                            .deleteCommandById(registeredCommand.getCommandId()).complete();
+                }
+                DiSky.debug("{DELETE} Deleted command " + registeredCommand.getName() + " on guild " + registeredCommand.getGuildId() + " for bot " + bot.getName());
+            } catch (Exception ex) {
+                DiSky.debug("{DELETE} Failed to delete command " + registeredCommand.getName() + " on guild " + registeredCommand.getGuildId() + " for bot " + bot.getName() + " (already deleted?): " + ex.getMessage());
+            }
         });
         registeredCommands.clear();
     }
@@ -195,10 +308,23 @@ public final class SlashManager extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        if (event.isFromGuild()) {
+        if (!event.isGlobalCommand()) {
             final RegisteredCommand registeredCommand = findCommand(event.getName(), event.getGuild().getId());
             if (registeredCommand == null) {
                 DiSky.debug("Received command " + event.getName() + " but it's not registered on guild " + event.getGuild().getId() + " for bot " + event.getJDA().getSelfUser().getGlobalName());
+                return;
+            }
+
+            registeredCommand.prepareArguments(event.getOptions());
+            final Trigger trigger = registeredCommand.getTrigger();
+            final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
+            bukkitEvent.setJDAEvent(event);
+
+            trigger.execute(bukkitEvent);
+        } else {
+            final RegisteredCommand registeredCommand = findCommand(event.getName());
+            if (registeredCommand == null) {
+                DiSky.debug("Received command " + event.getName() + " but it's not registered on all guilds for bot " + event.getJDA().getSelfUser().getGlobalName());
                 return;
             }
 
@@ -213,7 +339,7 @@ public final class SlashManager extends ListenerAdapter {
 
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
-        if (event.isFromGuild()) {
+        if (!event.isGlobalCommand()) {
             final RegisteredCommand registeredCommand = findCommand(event.getName(), event.getGuild().getId());
             if (registeredCommand == null) {
                 DiSky.debug("Received command " + event.getName() + " but it's not registered on guild " + event.getGuild().getId() + " for bot " + event.getJDA().getSelfUser().getGlobalName());
@@ -237,12 +363,41 @@ public final class SlashManager extends ListenerAdapter {
             bukkitEvent.setJDAEvent(event);
 
             trigger.execute(bukkitEvent);
+        } else {
+            final RegisteredCommand registeredCommand = findCommand(event.getName());
+            if (registeredCommand == null) {
+                DiSky.debug("Received command " + event.getName() + " but it's not registered on all guilds for bot " + event.getJDA().getSelfUser().getGlobalName());
+                return;
+            }
+
+            final String focusedArgument = event.getFocusedOption().getName();
+            final Trigger trigger = registeredCommand.getArguments()
+                    .stream()
+                    .filter(parsedArgument -> parsedArgument.getName().equals(focusedArgument))
+                    .findFirst()
+                    .map(ParsedArgument::getOnCompletionRequest)
+                    .orElse(null);
+
+            if (trigger == null) {
+                DiSky.debug("Received command " + event.getName() + " but no completion trigger for argument " + focusedArgument);
+                return;
+            }
+
+            registeredCommand.prepareArguments(event.getOptions());
+            final SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
+                    new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
+            bukkitEvent.setJDAEvent(event);
+
+            trigger.execute(bukkitEvent);
         }
     }
 
     @Override
     public void onReady(ReadyEvent event) {
-        //todo: global commands
+        readyGlobal = true;
+        DiSky.debug("Bot " + bot.getName() + " is ready, registering commands (" + waitingGlobalCommands.size() + ")");
+        waitingGlobalCommands.forEach(Runnable::run);
+        waitingGlobalCommands.clear();
     }
 
     @Override
