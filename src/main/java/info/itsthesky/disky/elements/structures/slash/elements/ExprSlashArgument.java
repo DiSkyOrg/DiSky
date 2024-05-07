@@ -1,10 +1,7 @@
-package info.itsthesky.disky.elements.structures.slash;
+package info.itsthesky.disky.elements.structures.slash.elements;
 
-import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
@@ -15,15 +12,12 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
 import ch.njol.util.StringUtils;
-import info.itsthesky.disky.elements.commands.Argument;
-import info.itsthesky.disky.elements.commands.CommandEvent;
-import info.itsthesky.disky.elements.commands.CommandFactory;
+import info.itsthesky.disky.elements.structures.slash.StructSlashCommand;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExprSlashArgument extends SimpleExpression<Object> {

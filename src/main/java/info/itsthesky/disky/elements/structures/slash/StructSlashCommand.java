@@ -8,6 +8,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleEvent;
+import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.entries.MutexEntryData;
@@ -17,6 +18,7 @@ import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.events.bots.ReadyEvent;
 import info.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
 import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
+import info.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
 import net.dv8tion.jda.api.Permission;
@@ -27,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 import org.skriptlang.skript.lang.entry.EntryValidator;
+import org.skriptlang.skript.lang.entry.KeyValueEntryData;
 import org.skriptlang.skript.lang.structure.Structure;
 
 import java.util.*;
@@ -58,6 +61,14 @@ public class StructSlashCommand extends Structure {
 
             .addSection("arguments", true)
             .addSection("name", true)
+
+            .addEntryData(new KeyValueEntryData<Timespan>("cooldown", null, true) {
+                @Override
+                protected @Nullable Timespan getValue(@NotNull String value) {
+                    return Timespan.parse(value);
+                }
+            })
+            .addSection("on cooldown", true)
 
             .addSection("trigger", false)
 
@@ -137,6 +148,12 @@ public class StructSlashCommand extends Structure {
         if (!trigger)
             return false;
 
+
+        // Cooldown
+        final boolean cooldown = parseCooldown(parsedCommand);
+        if (!cooldown)
+            return false;
+
         //region Debug
         DiSky.debug("------------------- Name -------------------");
         DiSky.debug("Default: " + parsedCommand.getName());
@@ -180,6 +197,19 @@ public class StructSlashCommand extends Structure {
         }
         else
             DiSky.debug("No trigger found.");
+
+        DiSky.debug("------------------- Cooldown -------------------");
+        if (parsedCommand.hasCooldown()) {
+            DiSky.debug("Cooldown: " + parsedCommand.getCooldown() + "ms (" + parsedCommand.getCooldown() / 1000 + "s)");
+            if (parsedCommand.getOnCooldown() != null) {
+                DiSky.debug(" - On Cooldown trigger found.");
+                DiSky.debug("   - Label: " + parsedCommand.getOnCooldown().getDebugLabel());
+            }
+            else
+                DiSky.debug(" - No on cooldown trigger found.");
+        }
+        else
+            DiSky.debug("No cooldown found.");
 
         DiSky.debug("------------------- End -------------------");
         //endregion
@@ -260,69 +290,70 @@ public class StructSlashCommand extends Structure {
             if (argNode == null)
                 continue;
 
-            if (!(argNode instanceof SectionNode)) {
-                Skript.error("Invalid argument node (Not a section! Check the wiki for information's): " + argNode);
-                return null;
-            }
+            if (argNode instanceof SectionNode) {
+                final SectionNode argSection = (SectionNode) argNode;
+                final EntryContainer container = ARGUMENT_VALIDATOR.validate(argSection);
+                if (container == null)
+                    return null;
 
-            final SectionNode argSection = (SectionNode) argNode;
-            final EntryContainer container = ARGUMENT_VALIDATOR.validate(argSection);
-            if (container == null)
-                return null;
+                final String description = container.get("description", String.class, true);
 
-            final String description = container.get("description", String.class, true);
+                // Choices, if applicable
+                final SectionNode choiceNode = container.getOptional("choices", SectionNode.class, true);
+                if (choiceNode != null) {
+                    final OptionType type = argument.getType();
+                    if (!type.canSupportChoices()) {
+                        Skript.error("Choices are not supported for the argument type: " + type);
+                        return null;
+                    }
 
-            // Choices, if applicable
-            final SectionNode choiceNode = container.getOptional("choices", SectionNode.class, true);
-            if (choiceNode != null) {
-                final OptionType type = argument.getType();
-                if (!type.canSupportChoices()) {
-                    Skript.error("Choices are not supported for the argument type: " + type);
+                    choiceNode.convertToEntries(0);
+                    for (Node choice : choiceNode) {
+                        final String name = choice.getKey();
+                        final String value = choiceNode.get(name, "");
+                        if (value.isEmpty()) {
+                            Skript.error("Empty value for choice: " + name);
+                            return null;
+                        }
+
+                        final Object arg;
+                        if (type.equals(OptionType.NUMBER) || type.equals(OptionType.INTEGER)) {
+                            try {
+                                arg = Integer.parseInt(value);
+                            } catch (NumberFormatException ex) {
+                                Skript.error("Invalid number value for choice: " + name);
+                                return null;
+                            }
+                        } else if (type.equals(OptionType.STRING)) {
+                            arg = value;
+                        } else {
+                            Skript.error("Invalid choice type: " + type);
+                            return null;
+                        }
+
+                        argument.addChoice(name, arg);
+                    }
+                }
+
+                //  auto completion
+                final SectionNode completionNode = container.getOptional("on completion request", SectionNode.class, true);
+                if (completionNode != null) {
+                    final Trigger trigger = new Trigger(getParser().getCurrentScript(), "completion for argument " + argument.getName(), new SimpleEvent(),
+                            SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class));
+                    argument.setOnCompletionRequest(trigger);
+                }
+
+                if (argument.hasChoices() && argument.isAutoCompletion()) {
+                    Skript.error("You can't have both auto completion and choices for the same argument.");
                     return null;
                 }
 
-                choiceNode.convertToEntries(0);
-                for (Node choice : choiceNode) {
-                    final String name = choice.getKey();
-                    final String value = choiceNode.get(name, "");
-                    if (value.isEmpty()) {
-                        Skript.error("Empty value for choice: " + name);
-                        return null;
-                    }
-
-                    final Object arg;
-                    if (type.equals(OptionType.NUMBER) || type.equals(OptionType.INTEGER)) {
-                        try {
-                            arg = Integer.parseInt(value);
-                        } catch (NumberFormatException ex) {
-                            Skript.error("Invalid number value for choice: " + name);
-                            return null;
-                        }
-                    } else if (type.equals(OptionType.STRING)) {
-                        arg = value;
-                    } else {
-                        Skript.error("Invalid choice type: " + type);
-                        return null;
-                    }
-
-                    argument.addChoice(name, arg);
-                }
+                argument.setDescription(description);
+            } else {
+                final String description = node.getValue(argument.getName());
+                argument.setDescription(description);
             }
 
-            //  auto completion
-            final SectionNode completionNode = container.getOptional("on completion request", SectionNode.class, true);
-            if (completionNode != null) {
-                final Trigger trigger = new Trigger(getParser().getCurrentScript(), "completion for argument " + argument.getName(), new SimpleEvent(),
-                        SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class));
-                argument.setOnCompletionRequest(trigger);
-            }
-
-            if (argument.hasChoices() && argument.isAutoCompletion()) {
-                Skript.error("You can't have both auto completion and choices for the same argument.");
-                return null;
-            }
-
-            argument.setDescription(description);
         }
 
         return arguments;
@@ -471,6 +502,29 @@ public class StructSlashCommand extends Structure {
     }
 
     //endregion
+
+    //region Cooldown
+
+    public boolean parseCooldown(ParsedCommand parsedCommand) {
+        final Timespan cooldown = entryContainer.getOptional("cooldown", Timespan.class, true);
+        if (cooldown == null)
+            return true;
+
+        final SectionNode sectionNode = entryContainer.getOptional("on cooldown", SectionNode.class, true);
+        if (sectionNode == null) {
+            Skript.error("You must specify a section for the cooldown. ('on cooldown' section, to be ran when the command is on cooldown)");
+            return false;
+        }
+
+
+        final Trigger trigger = new Trigger(getParser().getCurrentScript(), "on cooldown for " + parsedCommand.getName(),
+                new OnCooldownEvent(),
+                SkriptUtils.loadCode(sectionNode, OnCooldownEvent.BukkitCooldownEvent.class));
+
+        parsedCommand.setCooldown(cooldown.getMilliSeconds());
+        parsedCommand.setOnCooldown(trigger);
+        return true;
+    }
 
     @Override
     public @NotNull Priority getPriority() {

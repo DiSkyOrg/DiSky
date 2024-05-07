@@ -29,6 +29,9 @@ public class ParsedCommand {
     private Bot bot;
     private List<String> guilds = new ArrayList<>();
 
+    private long cooldown; // in ms
+    private Trigger onCooldown;
+
     private Trigger trigger;
 
     // ------------------------------------------------------------
@@ -111,6 +114,26 @@ public class ParsedCommand {
 
     public void setTrigger(Trigger trigger) {
         this.trigger = trigger;
+    }
+
+    public long getCooldown() {
+        return cooldown;
+    }
+
+    public void setCooldown(long cooldown) {
+        this.cooldown = cooldown;
+    }
+
+    public Trigger getOnCooldown() {
+        return onCooldown;
+    }
+
+    public void setOnCooldown(Trigger onCooldown) {
+        this.onCooldown = onCooldown;
+    }
+
+    public boolean hasCooldown() {
+        return cooldown > 0 || onCooldown != null;
     }
 
     public boolean shouldUpdate(ParsedCommand command) {

@@ -1,16 +1,16 @@
 package info.itsthesky.disky.elements.structures.slash;
 
 import ch.njol.skript.lang.Trigger;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.elements.effects.SendTyping;
 import info.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
 import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
+import info.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
 import info.itsthesky.disky.elements.structures.slash.models.RegisteredCommand;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -82,8 +83,13 @@ public final class SlashManager extends ListenerAdapter {
             if (readyGlobal) {
                 runnable.run();
             } else {
-                waitingGlobalCommands.add(runnable);
-                DiSky.debug("Bot " + bot.getName() + " is not ready yet, waiting for ready event to register command (now " + waitingGlobalCommands.size() + " waiting)");
+                if (!bot.getInstance().getStatus().equals(JDA.Status.CONNECTED)) {
+                    waitingGlobalCommands.add(runnable);
+                    DiSky.debug("Bot " + bot.getName() + " is not ready yet, waiting for ready event to register command (now " + waitingGlobalCommands.size() + " waiting)");
+                    return;
+                }
+
+                runnable.run();
             }
 
         } else {
@@ -110,8 +116,14 @@ public final class SlashManager extends ListenerAdapter {
                 if (readyGuilds.contains(guildId)) {
                     runnable.run();
                 } else {
-                    waitingGuildCommands.computeIfAbsent(guildId, k -> new ArrayList<>()).add(runnable);
-                    DiSky.debug("Guild " + guildId + " is not ready yet, waiting for ready event to register command (now " + waitingGuildCommands.get(guildId).size() + " waiting)");
+                    final @Nullable Guild guild = bot.getInstance().getGuildById(guildId);
+                    if (guild == null) {
+                        waitingGuildCommands.computeIfAbsent(guildId, k -> new ArrayList<>()).add(runnable);
+                        DiSky.debug("Guild " + guildId + " is not ready yet, waiting for ready event to register command (now " + waitingGuildCommands.get(guildId).size() + " waiting)");
+                        return;
+                    }
+
+                    runnable.run();
                 }
             }
         }
@@ -173,6 +185,8 @@ public final class SlashManager extends ListenerAdapter {
 
         registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway & the args
         registeredCommand.setArguments(command.getArguments());
+        registeredCommand.setOnCooldown(command.getOnCooldown());
+        registeredCommand.setCooldown(command.getCooldown());
 
         if (!registeredCommand.shouldUpdate(command))
         {
@@ -223,6 +237,8 @@ public final class SlashManager extends ListenerAdapter {
 
         registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway & the args
         registeredCommand.setArguments(command.getArguments());
+        registeredCommand.setOnCooldown(command.getOnCooldown());
+        registeredCommand.setCooldown(command.getCooldown());
 
         if (!registeredCommand.shouldUpdate(command))
         {
@@ -264,9 +280,6 @@ public final class SlashManager extends ListenerAdapter {
     }
 
 
-
-
-
     private SlashCommandData buildCommand(ParsedCommand parsedCommand) {
         final SlashCommandData slashCommandData = Commands.slash(parsedCommand.getName(), parsedCommand.getDescription());
 
@@ -306,6 +319,8 @@ public final class SlashManager extends ListenerAdapter {
         return slashCommandData;
     }
 
+    // ---------------------------------------------------------------------------------------------
+
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (!event.isGlobalCommand()) {
@@ -315,12 +330,7 @@ public final class SlashManager extends ListenerAdapter {
                 return;
             }
 
-            registeredCommand.prepareArguments(event.getOptions());
-            final Trigger trigger = registeredCommand.getTrigger();
-            final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
-            bukkitEvent.setJDAEvent(event);
-
-            trigger.execute(bukkitEvent);
+            tryExecute(registeredCommand, event);
         } else {
             final RegisteredCommand registeredCommand = findCommand(event.getName());
             if (registeredCommand == null) {
@@ -328,13 +338,38 @@ public final class SlashManager extends ListenerAdapter {
                 return;
             }
 
-            registeredCommand.prepareArguments(event.getOptions());
-            final Trigger trigger = registeredCommand.getTrigger();
-            final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
-            bukkitEvent.setJDAEvent(event);
-
-            trigger.execute(bukkitEvent);
+            tryExecute(registeredCommand, event);
         }
+    }
+
+    private void tryExecute(RegisteredCommand command, SlashCommandInteractionEvent event) {
+
+        // cooldown
+        if (command.hasCooldown()) {
+            if (command.isInCooldown(event.getUser())) {
+                if (command.getOnCooldown() != null) {
+                    final OnCooldownEvent.BukkitCooldownEvent bukkitEvent =
+                            new OnCooldownEvent.BukkitCooldownEvent(new OnCooldownEvent(),
+                                    command.getCooldown(event.getUser()) - System.currentTimeMillis());
+                    bukkitEvent.setJDAEvent(event);
+                    command.prepareArguments(event.getOptions());
+                    command.getOnCooldown().execute(bukkitEvent);
+
+                    if (!bukkitEvent.isCancelled())
+                        return;
+                }
+            }
+
+            command.setCooldown(event.getUser());
+        }
+
+        // "real" execution
+        command.prepareArguments(event.getOptions());
+        final Trigger trigger = command.getTrigger();
+        final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
+        bukkitEvent.setJDAEvent(event);
+
+        trigger.execute(bukkitEvent);
     }
 
     @Override
