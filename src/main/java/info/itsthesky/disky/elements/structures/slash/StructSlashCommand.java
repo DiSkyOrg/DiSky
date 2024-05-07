@@ -243,6 +243,9 @@ public class StructSlashCommand extends Structure {
         }
 
         final String rawArguments = argsMatcher.group(3);
+        if (rawArguments == null)
+            return arguments;
+
         final String[] args = rawArguments.split(" ");
         for (String arg : args) {
             final Matcher matcher = ARGUMENT.matcher(arg);
@@ -525,6 +528,8 @@ public class StructSlashCommand extends Structure {
         parsedCommand.setOnCooldown(trigger);
         return true;
     }
+
+    //endregion
 
     @Override
     public @NotNull Priority getPriority() {
