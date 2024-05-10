@@ -20,7 +20,7 @@ public class EmoteURL extends SimplePropertyExpression<Emote, String> {
         register(
                 EmoteURL.class,
                 String.class,
-                "[the] emo(te|ji) (ur(i|l)|image [url])",
+                "[the] emo(te|ji) image [url]",
                 "emote"
         );
     }
