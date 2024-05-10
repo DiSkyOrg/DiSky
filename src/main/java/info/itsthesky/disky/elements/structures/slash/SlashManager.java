@@ -64,7 +64,7 @@ public final class SlashManager extends ListenerAdapter {
             DiSky.debug("Registering command " + command.getName() + " for all guilds on bot " + bot.getName());
 
             // first check for existing ones in guilds (in case we updated it)
-            for (RegisteredCommand cmd : registeredCommands) {
+            for (RegisteredCommand cmd : new ArrayList<>(registeredCommands)) {
                 if (cmd.getGuildId() != null && cmd.getName().equalsIgnoreCase(command.getName())) {
                     deleteLocalCommand(cmd);
                     DiSky.getInstance().getLogger().warning("We deleted the command '" + cmd.getName() + "' of bot '" + bot.getName() + "' as you updated its registration from guild '" + cmd.getGuildId() + "' to global!");

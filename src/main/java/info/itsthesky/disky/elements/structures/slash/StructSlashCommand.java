@@ -21,6 +21,7 @@ import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import info.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
+import info.itsthesky.disky.elements.structures.slash.models.SlashCommandInformation;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -43,6 +44,7 @@ import java.util.regex.Pattern;
 public class StructSlashCommand extends Structure {
 
     public static final Priority PRIORITY = new Priority(800);
+    public static final Set<SlashCommandInformation> REMOVED_COMMANDS = new HashSet<>();
 
     private static final Pattern ARGUMENT = Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>\\w+)\">(\\])?");
     private static final Pattern STRUCTURE = Pattern.compile("slash command ([A-z]+)( )?(.+)?");
@@ -215,13 +217,14 @@ public class StructSlashCommand extends Structure {
         //endregion
 
         parsedCommand.getBot().getSlashManager().registerCommand(parsedCommand);
+        REMOVED_COMMANDS.removeIf(info -> info.getCommand().equals(parsedCommand.getName()));
 
         return true;
     }
 
     @Override
     public void unload() {
-        System.out.println("Unloaded!");
+        REMOVED_COMMANDS.add(new SlashCommandInformation(parsedCommand, getParser().getNode()));
     }
 
     @Override
