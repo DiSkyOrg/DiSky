@@ -116,7 +116,6 @@ public class StructBot extends Structure {
 							}
 						})
 
-						//.addEntryData(new LiteralEntryData<>("policy", "DEFAULT", true, String.class))
 						.addEntryData(new KeyValueEntryData<MemberCachePolicy>("policy", MemberCachePolicy.DEFAULT, true) {
 							@Override
 							protected MemberCachePolicy getValue(@NotNull String value) {
