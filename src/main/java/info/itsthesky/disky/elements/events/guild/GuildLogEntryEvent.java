@@ -23,6 +23,8 @@ public class GuildLogEntryEvent extends DiSkyEvent<GuildAuditLogEntryCreateEvent
 
 		SkriptUtils.registerValue(BukkitGuildLogEntryEvent.class, Guild.class,
 				event -> event.getJDAEvent().getGuild(), 0);
+		SkriptUtils.registerRestValue("author", BukkitGuildLogEntryEvent.class,
+				event -> event.getJDAEvent().getGuild().retrieveMemberById(event.getJDAEvent().getEntry().getUserIdLong()));
 
 	}
 
