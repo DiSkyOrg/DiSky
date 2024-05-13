@@ -95,6 +95,7 @@ public class StructSlashCommand extends Structure {
     private ParsedCommand parsedCommand;
     private EntryContainer entryContainer;
     private @NotNull Node structure;
+    private Node node;
 
     public ParsedCommand getParsedCommand() {
         return parsedCommand;
@@ -104,6 +105,7 @@ public class StructSlashCommand extends Structure {
     public boolean init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult, @NotNull EntryContainer entryContainer) {
         this.entryContainer = entryContainer;
         structure = getEntryContainer().getSource();
+        node = getParser().getNode();
         return true;
     }
 
@@ -224,7 +226,7 @@ public class StructSlashCommand extends Structure {
 
     @Override
     public void unload() {
-        REMOVED_COMMANDS.add(new SlashCommandInformation(parsedCommand, getParser().getNode()));
+        REMOVED_COMMANDS.add(new SlashCommandInformation(parsedCommand, node));
     }
 
     @Override

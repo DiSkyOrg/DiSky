@@ -151,8 +151,11 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
 
     @Override
     public void unregister(final @NotNull Trigger t) {
-        listener.enabled = false;
-        EventListener.removeListener(listener);
+        if (listener != null) {
+            listener.enabled = false;
+            EventListener.removeListener(listener);
+        }
+
         listener = null;
         trigger = null;
     }
