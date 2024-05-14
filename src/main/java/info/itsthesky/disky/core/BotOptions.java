@@ -83,7 +83,7 @@ public class BotOptions {
             return;
         final BotStopEvent.BukkitShutdownEvent e = new BotStopEvent.BukkitShutdownEvent(new BotStopEvent());
         e.setJDAEvent(event);
-        TriggerItem.walk(getOnGuildReady().get(0), e);
+        TriggerItem.walk(getOnShutdown().get(0), e);
     }
 
     public String getName() {
