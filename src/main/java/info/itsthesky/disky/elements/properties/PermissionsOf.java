@@ -14,17 +14,21 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Name("Discord Permissions Of")
@@ -34,7 +38,7 @@ import java.util.Set;
         "remove (administrator) from permissions of event-role"
 })
 @Since("4.0.0")
-public class PermissionsOf extends SimpleExpression<Object> {
+public class PermissionsOf extends SimpleExpression<Object> implements IAsyncChangeableExpression {
 
     static {
         try {
@@ -67,42 +71,19 @@ public class PermissionsOf extends SimpleExpression<Object> {
 
     @Override
     public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
-        if (mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.REMOVE || mode == Changer.ChangeMode.REMOVE_ALL)
+        if (mode == Changer.ChangeMode.ADD || mode == Changer.ChangeMode.REMOVE || mode == Changer.ChangeMode.REMOVE_ALL || mode == Changer.ChangeMode.RESET)
             return new Class[] {Permission[].class, Permission.class};
         return new Class[0];
     }
 
     @Override
     public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
-        if (!EasyElement.isValid(delta))
-            return;
+        change(e, delta, mode, false);
+    }
 
-        final IPermissionHolder holder = (IPermissionHolder) EasyElement.parseSingle(exprHolder, e, null);
-        final @Nullable GuildChannel channel = EasyElement.parseSingle(exprChannel, e, null);
-        final Permission[] perms = (Permission[]) delta;
-        if (EasyElement.anyNull(this, holder, perms))
-            return;
-
-        switch (mode) {
-            case ADD:
-                if (holder instanceof Role && channel == null)
-                    ((Role) holder).getManager().givePermissions(perms).queue();
-                if (channel != null)
-                    channel.getPermissionContainer().upsertPermissionOverride(holder).grant(perms).queue();
-                break;
-            case REMOVE:
-                if (holder instanceof Role && channel == null)
-                    ((Role) holder).getManager().revokePermissions(perms).queue();
-                if (channel != null)
-                    channel.getPermissionContainer().upsertPermissionOverride(holder).deny(perms).queue();
-                break;
-            case REMOVE_ALL:
-                if (holder instanceof Role && channel == null)
-                    DiSky.getInstance().getLogger().warning("You cannot clear/reset permissions of a role, without a target channel!");
-                if (channel != null)
-                    channel.getPermissionContainer().upsertPermissionOverride(holder).clear(perms).queue();
-                break;
-        }
+    @Override
+    public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+        change(e, delta, mode, true);
     }
 
     @Override
@@ -134,6 +115,44 @@ public class PermissionsOf extends SimpleExpression<Object> {
         if (channel == null)
             return holder.getPermissions().toArray(new Permission[0]);
         return holder.getPermissions(channel).toArray(new Permission[0]);
+    }
+    
+    public void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean complete) {
+        if (!EasyElement.isValid(delta))
+            return;
+
+        final IPermissionHolder holder = (IPermissionHolder) EasyElement.parseSingle(exprHolder, e, null);
+        final @Nullable GuildChannel channel = EasyElement.parseSingle(exprChannel, e, null);
+        final Permission[] perms = (Permission[]) delta;
+        if (EasyElement.anyNull(this, holder, perms))
+            return;
+
+        final List<RestAction<?>> actions = new ArrayList<>();
+        switch (mode) {
+            case ADD:
+                if (holder instanceof Role && channel == null)
+                    actions.add(((Role) holder).getManager().givePermissions(perms));
+                if (channel != null)
+                    actions.add(channel.getPermissionContainer().upsertPermissionOverride(holder).grant(perms));
+                break;
+            case REMOVE:
+                if (holder instanceof Role && channel == null)
+                    actions.add(((Role) holder).getManager().revokePermissions(perms));
+                if (channel != null)
+                    actions.add(channel.getPermissionContainer().upsertPermissionOverride(holder).deny(perms));
+                break;
+            case REMOVE_ALL:
+            case RESET:
+                if (holder instanceof Role && channel == null)
+                    DiSky.getInstance().getLogger().warning("You cannot clear/reset permissions of a role, without a target channel!");
+                if (channel != null)
+                    actions.add(channel.getPermissionContainer().upsertPermissionOverride(holder).clear(perms));
+                break;
+        }
+
+        final RestAction<?> action = RestAction.allOf(actions);
+        if (complete) action.queue();
+        else action.complete();
     }
 
     @Override

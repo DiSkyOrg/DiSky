@@ -9,7 +9,9 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
@@ -22,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
         "To be sure it will return the corresponding member, use the retrieve member effect.",
         "This expression cannot be changed"})
 @Examples({"member with id \"000\" in event-guild"})
-public class GetMember extends SimpleExpression<Member> {
+public class GetMember extends SimpleExpression<Member> implements IAsyncGettableExpression<Member> {
 
     static {
         Skript.registerExpression(
@@ -65,5 +67,29 @@ public class GetMember extends SimpleExpression<Member> {
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
         return "member with id " + exprId.toString(e, debug) +" in " + exprGuild.toString(e, debug);
+    }
+
+    @Override
+    public Member[] getAsync(Event e) {
+        DiSky.debug("Getting member async");
+        final String id = exprId.getSingle(e);
+        final Guild guild = exprGuild.getSingle(e);
+        if (EasyElement.anyNull(this, id, guild))
+            return new Member[0];
+
+        Member member = guild.getMemberById(id);
+        DiSky.debug("Member is " + (member == null ? "null" : "not null") + " for ID " + id + " in guild " + guild.getName() + " (ID: " + guild.getId() + ")");
+        if (member != null)
+            return new Member[] {member};
+
+        try {
+            member = guild.retrieveMemberById(id).complete();
+        } catch (Exception ex) {
+            DiSky.getErrorHandler().exception(e, ex);
+            return new Member[0];
+        }
+
+        DiSky.debug("Member v2 is " + (member == null ? "null" : "not null") + " for ID " + id + " in guild " + guild.getName() + " (ID: " + guild.getId() + ")");
+        return new Member[] {member};
     }
 }
