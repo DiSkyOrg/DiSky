@@ -1,6 +1,5 @@
 package info.itsthesky.disky.elements;
 
-import ch.njol.skript.registrations.Converters;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.DiSkyType;
 import info.itsthesky.disky.api.emojis.Emote;
@@ -42,6 +41,7 @@ import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
+import org.skriptlang.skript.lang.converter.Converters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +54,7 @@ public class Types {
         static {
             Converters.registerConverter(Member.class, Role[].class, member -> member.getRoles().toArray(new Role[0]));
             Converters.registerConverter(Member.class, User.class, Member::getUser);
+            Converters.registerConverter(Bot.class, User.class, bot -> bot.getInstance().getSelfUser());
 
             Converters.registerConverter(Message.class, String.class, Message::getContentRaw);
             Converters.registerConverter(Emote.class, String.class, Emote::toString);
