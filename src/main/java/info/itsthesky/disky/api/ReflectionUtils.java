@@ -5,6 +5,8 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.ExpressionInfo;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SyntaxElementInfo;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -271,6 +273,14 @@ public class ReflectionUtils {
             }
 
             exprsIndexes.setAccessible(false);
+        }
+    }
+
+    public static <T extends Enum<T>> @Nullable T parseEnum(Class<T> clazz, String input) {
+        try {
+            return Enum.valueOf(clazz, input.toUpperCase().replace(" ", "_"));
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 }
