@@ -5,6 +5,7 @@ import ch.njol.skript.classes.Parser;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
+import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +36,10 @@ public class DiSkyType<T> {
 
     public DiSkyType(Class<T> clazz, String codeName, Function<T, String> toString, @Nullable Function<String, T> parser) {
         this(clazz, codeName, codeName, toString, parser, false);
+    }
+
+    public DiSkyType(Class<T> clazz, String codeName, Function<T, String> toString, @Nullable Function<String, T> parser, boolean allowFullParsing) {
+        this(clazz, codeName, codeName, toString, parser, allowFullParsing);
     }
 
     public DiSkyType(Class<T> clazz, String codeName, String user, Function<T, String> toString, @Nullable Function<String, T> parser, boolean isEnum) {

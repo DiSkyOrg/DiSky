@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.commands.Command;
@@ -41,10 +42,13 @@ import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
+import org.skriptlang.skript.lang.comparator.Comparators;
+import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Types {
@@ -64,6 +68,24 @@ public class Types {
 
             Converters.registerConverter(Button.class, ComponentRow.class, btn -> new ComponentRow(null, null, Collections.singletonList(btn)));
             Converters.registerConverter(SelectMenu.class, ComponentRow.class, menu -> new ComponentRow(menu, null, new ArrayList<>()));
+
+            Comparators.registerComparator(Channel.class, ChannelType.class, (channel, type) -> Relation.get(channel.getType().compareTo(type)));
+
+
+            final Class[] channelClasses = new Class[] {
+                    MessageChannel.class, GuildChannel.class,
+                    AudioChannel.class, ThreadChannel.class, Category.class,
+                    NewsChannel.class, StageChannel.class, PrivateChannel.class,
+                    ForumChannel.class, MediaChannel.class,
+                    TextChannel.class, VoiceChannel.class,
+            };
+            for (Class channelClass : channelClasses) {
+                Converters.registerConverter(Channel.class, channelClass, original -> {
+                    if (channelClass.isInstance(original))
+                        return channelClass.cast(original);
+                    return null;
+                });
+            }
         }
 
     }
@@ -123,6 +145,10 @@ public class Types {
                 action -> action.getType().name(),
                 null
         ).eventExpression().register();
+        new DiSkyType<>(MessageChannel.class, "messagechannel",
+                Channel::getName,
+                null
+        ).eventExpression().register();
         new DiSkyType<>(RoleAction.class, "roleaction",
                 action -> "role action",
                 null
@@ -131,9 +157,19 @@ public class Types {
                 type -> type.name().toLowerCase().replace("_", " "),
                 input -> {
                     if (input.equalsIgnoreCase("text"))
-                        return null;
+                        return ChannelType.TEXT;
+
+                    if (input.equalsIgnoreCase("thread"))
+                        return ChannelType.GUILD_PUBLIC_THREAD;
+                    if (input.equalsIgnoreCase("public thread"))
+                        return ChannelType.GUILD_PUBLIC_THREAD;
+                    if (input.equalsIgnoreCase("private thread"))
+                        return ChannelType.GUILD_PRIVATE_THREAD;
+                    if (input.equalsIgnoreCase("news thread"))
+                        return ChannelType.GUILD_NEWS_THREAD;
+
                     return input.equalsIgnoreCase("chat") ? ChannelType.TEXT : ChannelType.valueOf(input.toUpperCase());
-                }
+                }, true
         ).eventExpression().register();
 
         /*
