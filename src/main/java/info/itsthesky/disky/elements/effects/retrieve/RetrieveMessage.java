@@ -2,12 +2,15 @@ package info.itsthesky.disky.elements.effects.retrieve;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -23,18 +26,21 @@ public class RetrieveMessage extends AsyncEffect {
     }
 
     private Expression<String> exprID;
-    private Expression<MessageChannel> exprChannel;
+    private Expression<Channel> exprChannel;
     private Expression<Bot> exprBot;
     private Expression<Object> exprResult;
+    private Node node;
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
 
         exprID = (Expression<String>) expressions[0];
-        exprChannel = (Expression<MessageChannel>) expressions[1];
+        exprChannel = (Expression<Channel>) expressions[1];
         exprBot = (Expression<Bot>) expressions[2];
         exprResult = (Expression<Object>) expressions[3];
+        node = getParser().getNode();
+
         return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
     }
 
@@ -42,9 +48,15 @@ public class RetrieveMessage extends AsyncEffect {
     protected void execute(@NotNull Event event) {
         String id = exprID.getSingle(event);
         Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
-        MessageChannel channel = exprChannel.getSingle(event);
-        if (id == null || bot == null || channel == null)
+        Channel rawChannel = exprChannel.getSingle(event);
+        if (id == null || bot == null || rawChannel == null)
             return;
+
+        if (!(rawChannel instanceof MessageChannel)) {
+            SkriptUtils.error(node, "The channel must be a message channel!");
+            return;
+        }
+        MessageChannel channel = (MessageChannel) rawChannel;
 
         channel = bot.getInstance().getChannelById(MessageChannel.class, channel.getId());
         if (channel == null)
