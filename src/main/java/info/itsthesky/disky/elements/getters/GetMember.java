@@ -78,7 +78,6 @@ public class GetMember extends SimpleExpression<Member> implements IAsyncGettabl
             return new Member[0];
 
         Member member = guild.getMemberById(id);
-        DiSky.debug("Member is " + (member == null ? "null" : "not null") + " for ID " + id + " in guild " + guild.getName() + " (ID: " + guild.getId() + ")");
         if (member != null)
             return new Member[] {member};
 
@@ -89,7 +88,6 @@ public class GetMember extends SimpleExpression<Member> implements IAsyncGettabl
             return new Member[0];
         }
 
-        DiSky.debug("Member v2 is " + (member == null ? "null" : "not null") + " for ID " + id + " in guild " + guild.getName() + " (ID: " + guild.getId() + ")");
         return new Member[] {member};
     }
 }
