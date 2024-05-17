@@ -15,7 +15,7 @@ public class MessagePoll extends SimplePropertyExpression<MessageCreateBuilder, 
                 MessagePoll.class,
                 MessagePollBuilder.class,
                 "[discord] [message] poll",
-                "message"
+                "messagecreatebuilder"
         );
     }
 
