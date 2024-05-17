@@ -47,6 +47,17 @@ public final class ReflectClassFactory {
 		}
 	}
 
+	public static class ClassResultMethodInterceptor {
+		private final Class<?> eventClass;
+		public ClassResultMethodInterceptor(Class<?> eventClass) {
+			this.eventClass = eventClass;
+		}
+		@RuntimeType
+		public Object intercept(@AllArguments Object[] allArguments) {
+			return eventClass;
+		}
+	}
+
 	public static class Documentation {
 
 		private final String name;
