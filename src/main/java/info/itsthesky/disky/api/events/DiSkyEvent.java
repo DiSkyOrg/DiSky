@@ -7,8 +7,12 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.log.SkriptLogger;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
+import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -71,6 +75,10 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
         return e -> true;
     }
 
+    protected Predicate<GuildAuditLogEntryCreateEvent> logChecker() {
+        return e -> true;
+    }
+
     @Override
      @SuppressWarnings("unchecked")
     public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, @NotNull SkriptParser.ParseResult parser) {
@@ -124,7 +132,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     @SuppressWarnings("unchecked")
     public void register(@NotNull Trigger t) {
         trigger = t;
-        listener = new EventListener<>(jdaClass, JDAEvent -> {
+        listener = new EventListener<>(jdaClass, (JDAEvent, auditLogEntryCreateEvent) -> {
             if (check(JDAEvent)) {
 
                 /* !? */
@@ -138,6 +146,8 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 event = eventWorkaround;
 
                 event.setJDAEvent(JDAEvent);
+                event.setLogEvent(auditLogEntryCreateEvent);
+
                 SkriptUtils.sync(() -> {
                     if (getTrigger() != null) {
                         getTrigger().execute(event);
@@ -145,7 +155,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 });
 
             }
-        }, checker());
+        }, checker(), logChecker(), getLogType());
         EventListener.addListener(listener);
     }
 
@@ -186,6 +196,10 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
      */
     public boolean check(D event) {
         return bot == null || bot.equalsIgnoreCase(DiSky.getManager().getJDAName(event.getJDA()));
+    }
+
+    public @Nullable ActionType getLogType() {
+        return null;
     }
 
     public Class<? extends Event> getBukkitClass() {
