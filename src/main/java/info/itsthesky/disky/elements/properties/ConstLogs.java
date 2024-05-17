@@ -24,6 +24,9 @@ public final class ConstLogs {
         register( "logentry", "logged action", ActionType.class, "log[ged] action [type]", AuditLogEntry::getType,
                 new ReflectClassFactory.Documentation("Logged Action", "The action type of the log entry.",
                         "logged action of event-logentry", "4.11.0"));
+        register( "logentry", "logged reason", String.class, "log[ged] reason", AuditLogEntry::getReason,
+                new ReflectClassFactory.Documentation("Logged Reason", "The action reason of the log entry.",
+                        "logged reason of event-logentry", "4.17.2"));
 
     }
 }
