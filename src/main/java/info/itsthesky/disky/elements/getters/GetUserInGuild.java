@@ -9,6 +9,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -21,13 +22,20 @@ import org.jetbrains.annotations.Nullable;
 "Users are common to whole Discord, two user cannot have the same instance.",
 "Members are common to guilds, but also holding an user as reference.",
 "User can have multiple instance according to which guild they are in, therefore they are considered as member."})
-public class GetUserInGuild extends SimpleExpression<Member> {
+public class GetUserInGuild extends SimpleExpression<Member> implements IAsyncGettableExpression<Member> {
 
 	static {
 		Skript.registerExpression(GetUserInGuild.class,
 				Member.class,
 				ExpressionType.COMBINED,
 				"%user% in [the] [guild] %guild%");
+	}
+
+	@Override
+	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+		exprUser = (Expression<User>) exprs[0];
+		exprGuild = (Expression<Guild>) exprs[1];
+		return true;
 	}
 
 	private Expression<User> exprUser;
@@ -58,9 +66,11 @@ public class GetUserInGuild extends SimpleExpression<Member> {
 	}
 
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
-		exprUser = (Expression<User>) exprs[0];
-		exprGuild = (Expression<Guild>) exprs[1];
-		return true;
+	public Member[] getAsync(Event e) {
+		final User user = EasyElement.parseSingle(exprUser, e, null);
+		final Guild guild = EasyElement.parseSingle(exprGuild, e, null);
+		if (EasyElement.anyNull(this, user, guild))
+			return new Member[0];
+		return new Member[] {guild.retrieveMember(user).complete()};
 	}
 }

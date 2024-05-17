@@ -71,7 +71,6 @@ public class GetMember extends SimpleExpression<Member> implements IAsyncGettabl
 
     @Override
     public Member[] getAsync(Event e) {
-        DiSky.debug("Getting member async");
         final String id = exprId.getSingle(e);
         final Guild guild = exprGuild.getSingle(e);
         if (EasyElement.anyNull(this, id, guild))

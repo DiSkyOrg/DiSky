@@ -10,12 +10,17 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Name("Get Sticker")
 @Description({"Get a cached sticker from its per-guild name",
@@ -23,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
         "If you success to get a sticker's ID, use the retrieve sticker effect instead!",
         "This expression cannot be changed"})
 @Examples({"sticker with named \"meliodas\" from event-guild"})
-public class GetSticker extends SimpleExpression<Sticker> {
+public class GetSticker extends SimpleExpression<Sticker> implements IAsyncGettableExpression<Sticker> {
 
     static {
         Skript.registerExpression(
@@ -66,5 +71,22 @@ public class GetSticker extends SimpleExpression<Sticker> {
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
         return "sticker with name " + exprId.toString(e, debug) +" in " + exprGuild.toString(e, debug);
+    }
+
+    @Override
+    public Sticker[] getAsync(Event e) {
+        final String id = exprId.getSingle(e);
+        final Guild guild = exprGuild.getSingle(e);
+        if (EasyElement.anyNull(this, id, guild))
+            return new Sticker[0];
+
+        final Sticker found = guild.getStickersByName(id, false).stream().findFirst().orElse(null);
+        if (found != null)
+            return new Sticker[] {found};
+
+        final List<GuildSticker> retrieveFound = guild.retrieveStickers().complete()
+                .stream().filter(sticker -> sticker.getName().equalsIgnoreCase(id)).collect(Collectors.toList());
+
+        return retrieveFound.isEmpty() ? new Sticker[0] : new Sticker[] {retrieveFound.get(0)};
     }
 }

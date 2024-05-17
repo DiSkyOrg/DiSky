@@ -9,12 +9,13 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"unchecked"})
-public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {
+public abstract class BaseGetterExpression<T> extends SimpleExpression<T> implements IAsyncGettableExpression<T> {
 
     protected static <T> void register(Class clazz,
                                        Class type,
@@ -33,10 +34,13 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {
                 codeName + " (with|from) [the] "+property+" %string% "+ (allowBot ? "[(with|using) [the] [bot] [(named|with name)] %-bot%]" : ""));
     }
 
-    private Expression<String> exprId;
-    private Expression<Bot> exprBot;
+    protected Expression<String> exprId;
+    protected Expression<Bot> exprBot;
 
     protected abstract T get(String id, Bot bot);
+    protected T getAsync(String id, Bot bot) {
+        return get(id, bot);
+    };
 
     @Override
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
@@ -71,5 +75,14 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> {
         return getCodeName() + " with id " + exprId.toString(e, debug) + (
                 exprBot != null ? "using the bot " + exprBot.toString(e, debug) : ""
                 );
+    }
+
+    @Override
+    public T[] getAsync(Event e) {
+        final String id = exprId.getSingle(e);
+        final Bot bot = EasyElement.parseSingle(exprBot, e, DiSky.getManager().findAny());
+        if (EasyElement.anyNull(this, id, bot))
+            return (T[]) new Object[0];
+        return (T[]) new Object[] {getAsync(id, bot)};
     }
 }
