@@ -21,6 +21,7 @@ import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import info.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
+import info.itsthesky.disky.elements.structures.slash.models.ParsedGroup;
 import info.itsthesky.disky.elements.structures.slash.models.SlashCommandInformation;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
@@ -63,6 +64,8 @@ public class StructSlashCommand extends Structure {
 
             .addSection("arguments", true)
             .addSection("name", true)
+
+            .addEntry("group", "", true)
 
             .addEntryData(new KeyValueEntryData<Timespan>("cooldown", null, true) {
                 @Override
@@ -128,10 +131,10 @@ public class StructSlashCommand extends Structure {
 
 
         // Description & Name (localizations)
-        final boolean description = parseDescription(parsedCommand);
+        final boolean description = parseDescription();
         if (!description)
             return false;
-        final boolean name = parseName(parsedCommand);
+        final boolean name = parseName();
         if (!name)
             return false;
 
@@ -142,20 +145,26 @@ public class StructSlashCommand extends Structure {
 
 
         // Registering places
-        final boolean validPlaces = parsePlaces(parsedCommand);
+        final boolean validPlaces = parsePlaces();
         if (!validPlaces)
             return false;
 
 
         // Trigger
-        final boolean trigger = parseTrigger(parsedCommand);
+        final boolean trigger = parseTrigger();
         if (!trigger)
             return false;
 
 
         // Cooldown
-        final boolean cooldown = parseCooldown(parsedCommand);
+        final boolean cooldown = parseCooldown();
         if (!cooldown)
+            return false;
+
+
+        // Parent/group
+        final boolean group = parseGroup();
+        if (!group)
             return false;
 
         //region Debug
@@ -188,6 +197,7 @@ public class StructSlashCommand extends Structure {
         DiSky.debug("------------------- Meta -------------------");
         DiSky.debug("Enabled for: " + parsedCommand.getEnabledFor());
         DiSky.debug("Disabled by default: " + parsedCommand.isDisabledByDefault());
+        DiSky.debug("Group: " + (parsedCommand.getGroup() == null ? "None" : parsedCommand.getGroup().getName()));
 
         DiSky.debug("------------------- Places -------------------");
         DiSky.debug("Bot: " + parsedCommand.getBot().getName());
@@ -386,7 +396,7 @@ public class StructSlashCommand extends Structure {
 
     //region Localizations
 
-    public Map<DiscordLocale, String> parseLocalizations(SectionNode section) {
+    public static Map<DiscordLocale, String> parseLocalizations(SectionNode section) {
         section.convertToEntries(0);
         final Map<DiscordLocale, String> localizations = new HashMap<>();
         for (Node node : section) {
@@ -413,7 +423,7 @@ public class StructSlashCommand extends Structure {
 
     //region Description & Name
 
-    public boolean parseDescription(ParsedCommand parsedCommand) {
+    public boolean parseDescription() {
         final MutexEntryData.MutexEntry<String> description = entryContainer.get("description", MutexEntryData.MutexEntry.class, true);
         if (description.isComplex()) {
             final EntryContainer subs = description.getEntryContainer();
@@ -438,7 +448,7 @@ public class StructSlashCommand extends Structure {
         return true;
     }
 
-    public boolean parseName(ParsedCommand parsedCommand) {
+    public boolean parseName() {
         final SectionNode sectionNode = entryContainer.getOptional("name", SectionNode.class, true);
         if (sectionNode == null)
             return true;
@@ -455,7 +465,7 @@ public class StructSlashCommand extends Structure {
 
     //region Places
 
-    public boolean parsePlaces(ParsedCommand parsedCommand) {
+    public boolean parsePlaces() {
         final String rawBot = entryContainer.getOptional("bot", String.class, true);
         final String rawGuilds = entryContainer.getOptional("guilds", String.class, true);
         if ((rawBot == null || rawBot.isEmpty()) && (rawGuilds == null || rawGuilds.isEmpty())) {
@@ -498,7 +508,7 @@ public class StructSlashCommand extends Structure {
 
     //region Trigger
 
-    public boolean parseTrigger(ParsedCommand parsedCommand) {
+    public boolean parseTrigger() {
         final SectionNode sectionNode = entryContainer.getOptional("trigger", SectionNode.class, true);
         if (sectionNode == null)
             return true;
@@ -513,7 +523,7 @@ public class StructSlashCommand extends Structure {
 
     //region Cooldown
 
-    public boolean parseCooldown(ParsedCommand parsedCommand) {
+    public boolean parseCooldown() {
         final Timespan cooldown = entryContainer.getOptional("cooldown", Timespan.class, true);
         if (cooldown == null)
             return true;
@@ -531,6 +541,25 @@ public class StructSlashCommand extends Structure {
 
         parsedCommand.setCooldown(cooldown.getMilliSeconds());
         parsedCommand.setOnCooldown(trigger);
+        return true;
+    }
+
+    //endregion
+
+    //region Group
+
+    public boolean parseGroup() {
+        final String group = entryContainer.getOptional("group", String.class, true);
+        if (group == null || group.isEmpty())
+            return true;
+
+        final ParsedGroup parsedGroup = SlashGroupManager.getGroup(group);
+        if (parsedGroup == null) {
+            Skript.error("Invalid group name: " + group + ", refer to the wiki in order to create a slash command group.");
+            return false;
+        }
+
+        parsedCommand.setGroup(parsedGroup);
         return true;
     }
 

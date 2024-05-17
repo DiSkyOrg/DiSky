@@ -3,9 +3,15 @@ package info.itsthesky.disky.elements.structures.slash.models;
 import net.dv8tion.jda.api.entities.User;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class RegisteredCommand extends ParsedCommand {
+public class RegisteredCommand {
+
+    private ParsedCommand parsedCommand;
+
+    private ParsedGroup group;
+    private List<ParsedCommand> subCommands;
 
     private final long commandId;
     private final String botName;
@@ -17,17 +23,7 @@ public class RegisteredCommand extends ParsedCommand {
                              long commandId,
                              String botName,
                              String guildId) {
-        setArguments(parsedCommand.getArguments());
-        setDescription(parsedCommand.getDescription());
-        setName(parsedCommand.getName());
-        setDescriptionLocalizations(parsedCommand.getDescriptionLocalizations());
-        setEnabledFor(parsedCommand.getEnabledFor());
-        setNameLocalizations(parsedCommand.getNameLocalizations());
-        setDisabledByDefault(parsedCommand.isDisabledByDefault());
-        setTrigger(parsedCommand.getTrigger());
-        setBot(parsedCommand.getBot());
-        setOnCooldown(parsedCommand.getOnCooldown());
-        setCooldown(parsedCommand.getCooldown());
+        this.parsedCommand = parsedCommand;
 
         this.commandId = commandId;
         this.botName = botName;
@@ -56,6 +52,18 @@ public class RegisteredCommand extends ParsedCommand {
     }
 
     public void setCooldown(User user) {
-        cooldowns.put(user, System.currentTimeMillis() + getCooldown());
+        cooldowns.put(user, System.currentTimeMillis() + getParsedCommand().getCooldown());
+    }
+
+    public ParsedCommand getParsedCommand() {
+        return parsedCommand;
+    }
+
+    public void setParsedCommand(ParsedCommand parsedCommand) {
+        this.parsedCommand = parsedCommand;
+    }
+
+    public String getName() {
+        return parsedCommand == null ? group.getName() : parsedCommand.getName();
     }
 }

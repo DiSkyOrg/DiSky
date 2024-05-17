@@ -147,8 +147,14 @@ public final class SlashManager extends ListenerAdapter {
 
     public void deleteLocalCommand(RegisteredCommand command) {
         registeredCommands.remove(command);
-        bot.getInstance().getGuildById(command.getGuildId())
-                .deleteCommandById(command.getCommandId()).queue();
+        final Guild guild =
+        bot.getInstance().getGuildById(command.getGuildId());
+        if (guild == null) {
+            DiSky.debug("Guild " + command.getGuildId() + " is not available, skipping command deletion");
+            return;
+        }
+
+        guild.deleteCommandById(command.getCommandId()).queue();
     }
 
     public void deleteGlobalCommand(RegisteredCommand command) {
@@ -159,8 +165,12 @@ public final class SlashManager extends ListenerAdapter {
     public void registerCommand(ParsedCommand command,
                                 Bot bot, String guildId) {
         final SlashCommandData slashCommandData = buildCommand(command);
-        final RestAction<Command> createAction
-                = bot.getInstance().getGuildById(guildId).upsertCommand(slashCommandData);
+        final Guild guild = bot.getInstance().getGuildById(guildId);
+        if (guild == null) {
+            DiSky.debug("Guild " + guildId + " is not available, skipping command registration");
+            return;
+        }
+        final RestAction<Command> createAction = guild.upsertCommand(slashCommandData);
 
         createAction.queue(cmd -> {
             final RegisteredCommand registeredCommand = new RegisteredCommand(
@@ -182,29 +192,29 @@ public final class SlashManager extends ListenerAdapter {
                               RegisteredCommand registeredCommand,
                               Bot bot, String guildId) {
         // We first must check if they were any changes in the command itself
-
-        registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway & the args
-        registeredCommand.setArguments(command.getArguments());
-        registeredCommand.setOnCooldown(command.getOnCooldown());
-        registeredCommand.setCooldown(command.getCooldown());
-
-        if (!registeredCommand.shouldUpdate(command))
+        if (!registeredCommand.getParsedCommand().shouldUpdate(command))
         {
             DiSky.debug("{UPDATE} No changes detected for command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
             return; // no changes, no need to update for Discord
         }
 
+        registeredCommand.setParsedCommand(command);
         final SlashCommandData slashCommandData = buildCommand(command);
-        bot.getInstance().getGuildById(guildId).editCommandById(registeredCommand.getCommandId()).apply(slashCommandData).queue(cmd -> {
+        final Guild guild = bot.getInstance().getGuildById(guildId);
+        if (guild == null) {
+            DiSky.debug("Guild " + guildId + " is not available, skipping command update");
+            return;
+        }
+        guild.editCommandById(registeredCommand.getCommandId()).apply(slashCommandData).queue(cmd -> {
             if (cmd.getIdLong() != registeredCommand.getCommandId())
                 throw new IllegalStateException("Command ID changed after update! (this should never happens)");
 
             DiSky.debug("{UPDATE} Updated command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
         }, ex -> {
             DiSky.debug("{UPDATE} Failed to update command " + command.getName() + " on guild " + guildId + " for bot " + bot.getName());
-            DiSky.debug("We'll register it again instead");
-            DiSky.getErrorHandler().exception(null, ex);
+            DiSky.debug("We'll register it again instead (Error: " + ex.getMessage() + ")");
 
+            registeredCommands.remove(registeredCommand);
             registerCommand(command, bot, guildId);
         });
     }
@@ -234,18 +244,13 @@ public final class SlashManager extends ListenerAdapter {
                                     RegisteredCommand registeredCommand,
                                     Bot bot) {
         // We first must check if they were any changes in the command itself
-
-        registeredCommand.setTrigger(command.getTrigger()); // we update the trigger anyway & the args
-        registeredCommand.setArguments(command.getArguments());
-        registeredCommand.setOnCooldown(command.getOnCooldown());
-        registeredCommand.setCooldown(command.getCooldown());
-
-        if (!registeredCommand.shouldUpdate(command))
+        if (!registeredCommand.getParsedCommand().shouldUpdate(command))
         {
             DiSky.debug("{UPDATE} No changes detected for command " + command.getName() + " on all guilds for bot " + bot.getName());
             return; // no changes, no need to update for Discord
         }
 
+        registeredCommand.setParsedCommand(command);
         final SlashCommandData slashCommandData = buildCommand(command);
         bot.getInstance().editCommandById(registeredCommand.getCommandId()).apply(slashCommandData).queue(cmd -> {
             if (cmd.getIdLong() != registeredCommand.getCommandId())
@@ -254,8 +259,7 @@ public final class SlashManager extends ListenerAdapter {
             DiSky.debug("{UPDATE} Updated command " + command.getName() + " on all guilds for bot " + bot.getName());
         }, ex -> {
             DiSky.debug("{UPDATE} Failed to update command " + command.getName() + " on all guilds for bot " + bot.getName());
-            DiSky.debug("We'll register it again instead");
-            DiSky.getErrorHandler().exception(null, ex);
+            DiSky.debug("We'll register it again instead (Error: " + ex.getMessage() + ")");
 
             registerGlobalCommand(command, bot);
         });
@@ -268,8 +272,12 @@ public final class SlashManager extends ListenerAdapter {
                 if (registeredCommand.getGuildId() == null) {
                     bot.getInstance().deleteCommandById(registeredCommand.getCommandId()).complete();
                 } else {
-                    bot.getInstance().getGuildById(registeredCommand.getGuildId())
-                            .deleteCommandById(registeredCommand.getCommandId()).complete();
+                    final Guild guild = bot.getInstance().getGuildById(registeredCommand.getGuildId());
+                    if (guild == null) {
+                        DiSky.debug("Guild " + registeredCommand.getGuildId() + " is not available, skipping command deletion");
+                        return;
+                    }
+                    guild.deleteCommandById(registeredCommand.getCommandId()).complete();
                 }
                 DiSky.debug("{DELETE} Deleted command " + registeredCommand.getName() + " on guild " + registeredCommand.getGuildId() + " for bot " + bot.getName());
             } catch (Exception ex) {
@@ -345,15 +353,15 @@ public final class SlashManager extends ListenerAdapter {
     private void tryExecute(RegisteredCommand command, SlashCommandInteractionEvent event) {
 
         // cooldown
-        if (command.hasCooldown()) {
+        if (command.getParsedCommand().hasCooldown()) {
             if (command.isInCooldown(event.getUser())) {
-                if (command.getOnCooldown() != null) {
+                if (command.getParsedCommand().getOnCooldown() != null) {
                     final OnCooldownEvent.BukkitCooldownEvent bukkitEvent =
                             new OnCooldownEvent.BukkitCooldownEvent(new OnCooldownEvent(),
                                     command.getCooldown(event.getUser()) - System.currentTimeMillis());
                     bukkitEvent.setJDAEvent(event);
-                    command.prepareArguments(event.getOptions());
-                    command.getOnCooldown().execute(bukkitEvent);
+                    command.getParsedCommand().prepareArguments(event.getOptions());
+                    command.getParsedCommand().getOnCooldown().execute(bukkitEvent);
 
                     if (!bukkitEvent.isCancelled())
                         return;
@@ -364,8 +372,8 @@ public final class SlashManager extends ListenerAdapter {
         }
 
         // "real" execution
-        command.prepareArguments(event.getOptions());
-        final Trigger trigger = command.getTrigger();
+        command.getParsedCommand().prepareArguments(event.getOptions());
+        final Trigger trigger = command.getParsedCommand().getTrigger();
         final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
         bukkitEvent.setJDAEvent(event);
 
@@ -381,7 +389,7 @@ public final class SlashManager extends ListenerAdapter {
                 return;
             }
             final String focusedArgument = event.getFocusedOption().getName();
-            final Trigger trigger = registeredCommand.getArguments()
+            final Trigger trigger = registeredCommand.getParsedCommand().getArguments()
                             .stream()
                             .filter(parsedArgument -> parsedArgument.getName().equals(focusedArgument))
                             .findFirst()
@@ -392,7 +400,7 @@ public final class SlashManager extends ListenerAdapter {
                 return;
             }
 
-            registeredCommand.prepareArguments(event.getOptions());
+            registeredCommand.getParsedCommand().prepareArguments(event.getOptions());
             final SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
                     new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
             bukkitEvent.setJDAEvent(event);
@@ -406,7 +414,7 @@ public final class SlashManager extends ListenerAdapter {
             }
 
             final String focusedArgument = event.getFocusedOption().getName();
-            final Trigger trigger = registeredCommand.getArguments()
+            final Trigger trigger = registeredCommand.getParsedCommand().getArguments()
                     .stream()
                     .filter(parsedArgument -> parsedArgument.getName().equals(focusedArgument))
                     .findFirst()
@@ -418,7 +426,7 @@ public final class SlashManager extends ListenerAdapter {
                 return;
             }
 
-            registeredCommand.prepareArguments(event.getOptions());
+            registeredCommand.getParsedCommand().prepareArguments(event.getOptions());
             final SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
                     new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
             bukkitEvent.setJDAEvent(event);
