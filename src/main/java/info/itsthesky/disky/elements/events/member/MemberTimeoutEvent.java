@@ -15,7 +15,7 @@ public class MemberTimeoutEvent extends DiSkyEvent<GuildMemberUpdateTimeOutEvent
 
     static {
         register("Member Timeout Event", MemberTimeoutEvent.class, BukkitMemberTimeoutEvent.class,
-                "[discord] member timeout[ed]");
+                "[discord] member time[ ]out[ed]");
 
 
         SkriptUtils.registerBotValue(BukkitMemberTimeoutEvent.class);
