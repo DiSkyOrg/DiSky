@@ -10,10 +10,10 @@ It provides more than **600** different syntax, such as:
 
 * Creating entities (roles, channels, categories, etc.)
 * Editing existing entities
-* Send advanced message with **embeds**, **polls**, **components** or **attachments**
-* Several's **utilities** syntax to let developer make their bot faster and easier.
+* Send advanced messages with **embeds**, **polls**, **components** or **attachments**
+* Several's **utilities** syntax to let developer make their bot's faster and easier.
 * Fully supports **Slash** commands, including option types, sub-commands, groups and auto-completion arguments.
-* Fully supports **Interactions** (buttons, select menus, etc.)
+* Fully supports **Interactions** (buttons, select menus, modals(text input pop-up))
 * Fully supports forums & posts!
 * And much, much more!
 
@@ -23,12 +23,17 @@ It provides more than **600** different syntax, such as:
 * [Discord Server](https://disky.me/discord)
 * [Documentation](https://disky.me/docs/docs/)
 
+## Modules
+
+* [Lavaplayer](https://disky.me/docs/modules/lavaplayer/) *Turn your bot into a private disco with music streaming.*
+* [TranSkript](https://disky.me/docs/modules/transkript/) *Website generation to re-create conversation, including the replies, attachments, colors, references, and much more!*
+
 ## Requirements
 
 * Skript **2.8.0** or higher
 * Spigot/Paper/Any fork of them **1.13.0** or higher
 
-> **Note:** Event if DiSky is only based on Skript, some features require Bukkit's or Spigot's API. The 1.13+ version is a more recommended version than a requirement.
+> **Note:** Even if DiSky is only based on Skript, some features require Bukkit's or Spigot's API. The 1.13+ version is a more recommended version than a requirement.
 
 ## Incompatibilities
 
