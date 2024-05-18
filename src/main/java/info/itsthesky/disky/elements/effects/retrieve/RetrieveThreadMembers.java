@@ -47,7 +47,7 @@ public class RetrieveThreadMembers extends AsyncEffect {
     @Override
     protected void execute(@NotNull Event event) {
         ThreadChannel channel = exprChannel.getSingle(event);
-        Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
+        Bot bot = Bot.fromContext(exprBot, event);
         if (channel == null || bot == null)
             return;
 

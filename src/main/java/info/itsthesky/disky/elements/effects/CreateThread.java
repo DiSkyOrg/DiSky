@@ -65,7 +65,7 @@ public class CreateThread extends AsyncEffect {
     public void execute(@NotNull Event e) {
         final String name = exprName.getSingle(e);
         final @Nullable Message message = parseSingle(exprMessage, e, null);
-        final Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(e);
+        final Bot bot =  Bot.fromContext(exprBot, e);
         StandardGuildMessageChannel channel = exprChannel.getSingle(e);
         if (anyNull(this, bot, name, channel))
             return;

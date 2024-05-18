@@ -47,7 +47,7 @@ public class RetrieveMessage extends AsyncEffect {
     @Override
     protected void execute(@NotNull Event event) {
         String id = exprID.getSingle(event);
-        Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
+        Bot bot = Bot.fromContext(exprBot, event);
         Channel rawChannel = exprChannel.getSingle(event);
         if (id == null || bot == null || rawChannel == null)
             return;

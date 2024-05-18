@@ -1,8 +1,10 @@
 package info.itsthesky.disky.core;
 
+import ch.njol.skript.lang.Expression;
 import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -16,6 +18,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -111,6 +115,17 @@ public class Bot {
 
     public static @Nullable Bot any() {
         return DiSky.getManager().findAny();
+    }
+
+    public static @NotNull Bot fromEvent(Event event) {
+        if (event instanceof SimpleDiSkyEvent)
+            return byJDA(((SimpleDiSkyEvent) event).getJDAEvent().getJDA());
+        return any();
+    }
+
+    public static @NotNull Bot fromContext(@Nullable Expression<Bot> expr, Event event) {
+        final Bot first = expr == null ? null : expr.getSingle(event);
+        return first == null ? fromEvent(event) : first;
     }
 
     public static @Nullable Bot byJDA(JDA instance) {

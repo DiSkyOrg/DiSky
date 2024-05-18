@@ -43,7 +43,7 @@ public class RetrieveEmotes extends AsyncEffect {
     @Override
     protected void execute(Event event) {
         Guild guild = exprGuild.getSingle(event);
-        Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
+        Bot bot =  Bot.fromContext(exprBot, event);
         if (guild == null || bot == null)
             return;
 

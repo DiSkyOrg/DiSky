@@ -53,7 +53,7 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> implem
     protected @Nullable
     T @NotNull [] get(@NotNull Event e) {
         final String id = exprId.getSingle(e);
-        final Bot bot = EasyElement.parseSingle(exprBot, e, DiSky.getManager().findAny());
+        final Bot bot = Bot.fromContext(exprBot, e);
         if (EasyElement.anyNull(this, id, bot))
             return (T[]) new Object[0];
         return (T[]) new Object[] {get(id, bot)};
@@ -80,7 +80,7 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> implem
     @Override
     public T[] getAsync(Event e) {
         final String id = exprId.getSingle(e);
-        final Bot bot = EasyElement.parseSingle(exprBot, e, DiSky.getManager().findAny());
+        final Bot bot = Bot.fromContext(exprBot, e);
         if (EasyElement.anyNull(this, id, bot))
             return (T[]) new Object[0];
         return (T[]) new Object[] {getAsync(id, bot)};

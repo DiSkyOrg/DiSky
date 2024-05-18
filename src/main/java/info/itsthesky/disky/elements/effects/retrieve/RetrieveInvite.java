@@ -43,7 +43,7 @@ public class RetrieveInvite extends AsyncEffect {
     protected void execute(@NotNull Event event) {
         String id = exprID.getSingle(event);
         Guild guild = exprGuild.getSingle(event);
-        Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
+        Bot bot = Bot.fromContext(exprBot, event);
         if (id == null || guild == null || bot == null)
             return;
 

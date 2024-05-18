@@ -47,7 +47,7 @@ public class RetrieveInterestedMembers extends AsyncEffect {
 	@Override
 	protected void execute(Event event) {
 		ScheduledEvent scheduledEvent = exprEvent.getSingle(event);
-		Bot bot = exprBot == null ? Bot.any() : exprBot.getSingle(event);
+		Bot bot = Bot.fromContext(exprBot, event);
 		if (scheduledEvent == null || bot == null)
 			return;
 
