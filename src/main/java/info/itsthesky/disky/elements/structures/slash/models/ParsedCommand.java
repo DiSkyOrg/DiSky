@@ -1,6 +1,7 @@
 package info.itsthesky.disky.elements.structures.slash.models;
 
 import ch.njol.skript.lang.Trigger;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.JDAUtils;
 import net.dv8tion.jda.api.Permission;
@@ -150,9 +151,13 @@ public class ParsedCommand {
     }
 
     public void prepareArguments(List<OptionMapping> options) {
-        for (int i = 0; i < options.size(); i++) {
-            final OptionMapping option = options.get(i);
-            final ParsedArgument argument = arguments.get(i);
+        DiSky.debug("Found '" + arguments.size() + " args' for '" + options.size() + " options'");
+        for (ParsedArgument argument : arguments) {
+            final OptionMapping option = options.stream().filter(opt -> opt.getName().equals(argument.getName())).findFirst().orElse(null);
+            if (option == null) {
+                argument.setValue(null);
+                continue;
+            }
 
             argument.setValue(JDAUtils.parseOptionValue(option));
         }
