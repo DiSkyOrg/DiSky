@@ -1,0 +1,18 @@
+name:  Publish to Modrinth
+'on':
+    release:
+        types: [ published ]
+jobs:
+  publish:
+    name: Build and Upload JARs
+    runs-on: ubuntu-latest
+    steps:  
+      - name: Upload to Modrinth
+        uses: cloudnode-pro/modrinth-publish@1.0.0
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project: 4KA72Zn8
+          file: target/DiSky-v${{ github.event.release.tag_name }}.jar
+          changelog: ${{ github.event.release.body }}
+          loaders: paper, spigot
+          api-domain: api.modrinth.com
