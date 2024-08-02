@@ -2,6 +2,7 @@ package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -15,12 +16,15 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.MessageEvent;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
@@ -50,9 +54,13 @@ public class PostMessage extends AsyncEffect {
 	private Expression<Channel> exprChannel;
 	private Expression<Message> exprReference;
 	private Expression<Object> exprResult;
+	private Node node;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+		getParser().setHasDelayBefore(Kleenean.TRUE);
+		node = getParser().getNode();
+
 		this.exprMessage = (Expression<Object>) expressions[0];
 		this.exprChannel = (Expression<Channel>) expressions[1];
 		this.exprReference = (Expression<Message>) expressions[2];
@@ -100,9 +108,9 @@ public class PostMessage extends AsyncEffect {
 
 		final Message finalMessage;
 		try {
-			finalMessage = action.complete();
+			finalMessage = action.complete(true);
 		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(e, ex);
+			DiSkyRuntimeHandler.error(ex, node);
 			return;
 		}
 
