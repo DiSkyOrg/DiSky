@@ -172,6 +172,10 @@ public class ReflectionUtils {
         return getFieldValue(getField(target, field), instance);
     }
 
+    public static <T> T getFieldValueViaInstance(Object instance, String field) {
+        return getFieldValue(instance.getClass(), field, instance);
+    }
+
     public static void setFieldValue(Field field, Object target, Object value) {
         try {
             field.setAccessible(true);
