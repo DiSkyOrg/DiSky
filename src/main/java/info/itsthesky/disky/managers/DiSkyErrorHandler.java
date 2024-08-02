@@ -5,7 +5,6 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.events.DiSkyErrorEvent;
-import info.itsthesky.disky.managers.config.Config;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.bukkit.Bukkit;
@@ -120,7 +119,7 @@ public class DiSkyErrorHandler implements ErrorHandler {
 	}
 
 	public String[] formatResponseError(ErrorResponseException ex) {
-		if (Config.getIgnoredCodes().contains(ex.getErrorCode()))
+		if (ConfigManager.getIgnoredCodes().contains(ex.getErrorCode()))
 			return null;
 
 		if (!errors.containsKey(ex.getErrorResponse()))

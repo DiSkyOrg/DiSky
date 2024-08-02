@@ -9,16 +9,15 @@ import info.itsthesky.disky.api.modules.ModuleManager;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
 import info.itsthesky.disky.core.Utils;
-import info.itsthesky.disky.elements.properties.ConstLogs;
+import info.itsthesky.disky.elements.properties.DynamicElements;
 import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import info.itsthesky.disky.managers.BotManager;
-import info.itsthesky.disky.managers.Configuration;
+import info.itsthesky.disky.managers.ConfigManager;
 import info.itsthesky.disky.managers.WebhooksManager;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.util.Objects;
 
 public final class DiSky extends JavaPlugin {
 
@@ -35,7 +33,6 @@ public final class DiSky extends JavaPlugin {
     private static SkriptAddon addonInstance;
     private static ErrorHandler errorHandler;
     private static BotManager botManager;
-    private static Configuration configuration;
     private static boolean skImageInstalled;
     private static ModuleManager moduleManager;
     private static DocBuilder builder;
@@ -70,8 +67,7 @@ public final class DiSky extends JavaPlugin {
         /*
          * Loading the configuration
          */
-        updateConfig();
-        configuration = Configuration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+        ConfigManager.loadConfig(this);
 
         /*
         Saving & loading emojis
@@ -122,7 +118,8 @@ public final class DiSky extends JavaPlugin {
         addonInstance = Skript.registerAddon(this);
         moduleManager = new ModuleManager(new File(getDataFolder(), "modules"), this, addonInstance);
         try {
-            ConstLogs.registerAll();
+            DynamicElements.registerLogs();
+            DynamicElements.registerThreadProperties();
 
             addonInstance.loadClasses("info.itsthesky.disky.elements");
             moduleManager.loadModules();
@@ -140,63 +137,12 @@ public final class DiSky extends JavaPlugin {
 
     }
 
-    public static void updateConfig() {
-        try {
-
-            final File config = new File(getInstance().getDataFolder(), "config.yml");
-            if (!config.exists())
-                Files.copy(Objects.requireNonNull(getInstance().getResource("config.yml")), config.toPath());
-
-            final InputStream currentConfig = Files.newInputStream(new File(getInstance().getDataFolder(), "config.yml").toPath());
-            final InputStream newConfig = getInstance().getResource("config.yml");
-
-            if (currentConfig == null || newConfig == null) {
-                getInstance().getLogger().severe("Could not find config file of the JAR, this should never happens :c");
-                getInstance().getServer().getPluginManager().disablePlugin(getInstance());
-                return;
-            }
-
-            final String currentConfigString = new String(Utils.readBytesFromStream(currentConfig));
-            final String newConfigString = new String(Utils.readBytesFromStream(newConfig));
-
-            currentConfig.close();
-            newConfig.close();
-
-            if (!currentConfigString.equals(newConfigString)) {
-                final YamlConfiguration currentConfigYaml = new YamlConfiguration();
-                final YamlConfiguration newConfigYaml = new YamlConfiguration();
-
-                currentConfigYaml.loadFromString(currentConfigString);
-                newConfigYaml.loadFromString(newConfigString);
-
-                boolean needUpdate = false;
-                for (String key : newConfigYaml.getKeys(true)) {
-                    if (!currentConfigYaml.contains(key)) {
-                        needUpdate = true;
-                        break;
-                    }
-                }
-                if (needUpdate) {
-                    for (String key : currentConfigYaml.getKeys(true))
-                        if (newConfigYaml.contains(key))
-                            newConfigYaml.set(key, currentConfigYaml.get(key));
-
-                    getInstance().getLogger().info("Updating config file ...");
-                    Files.delete(new File(getInstance().getDataFolder(), "config.yml").toPath());
-                    getInstance().saveResource("config.yml", false);
-                    getInstance().getLogger().info("Success!");
-                }
-            }
-        } catch (Exception ex) {
-        }
-    }
-
     public static void debug(String s) {
         getInstance().debugMessage(s);
     }
 
     private void debugMessage(String s) {
-        if (getConfiguration().getOrSetDefault("debug", false))
+        if (ConfigManager.get("debug", false))
             Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_PURPLE + "DEBUG: " + ChatColor.LIGHT_PURPLE + s);
     }
 
@@ -228,10 +174,6 @@ public final class DiSky extends JavaPlugin {
 
     public static ModuleManager getModuleManager() {
         return moduleManager;
-    }
-
-    public static Configuration getConfiguration() {
-        return configuration;
     }
 
     public static BotManager getManager() {

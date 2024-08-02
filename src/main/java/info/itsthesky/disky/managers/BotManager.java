@@ -8,7 +8,6 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.MemberRemoveEventListener;
 import info.itsthesky.disky.core.ReactionListener;
 import info.itsthesky.disky.elements.commands.CommandListener;
-import info.itsthesky.disky.elements.events.member.MemberKickEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,11 +62,11 @@ public class BotManager {
             bot.getOptions().runShutdown(new ShutdownEvent(bot.getInstance(), OffsetDateTime.now(), 0));
             final JDA jda = bot.getInstance();
 
-            if (DiSky.getConfiguration().getOrSetDefault("stop-bots-gracefully", false)) {
+            if (ConfigManager.get("stop-bots-gracefully", false)) {
                 jda.shutdown();
                 DiSky.debug("Trying to shutdown gracefully bot " + bot.getName() + "...");
                 try {
-                    if (!jda.awaitShutdown(DiSky.getConfiguration().getOrSetDefault("stop-bots-timeout", 5), TimeUnit.SECONDS)) {
+                    if (!jda.awaitShutdown(ConfigManager.get("stop-bots-timeout", 5), TimeUnit.SECONDS)) {
                         DiSky.debug("Unable to shutdown gracefully bot " + bot.getName() + "! We'll force shutdown it!");
                         jda.shutdownNow();
                     } else

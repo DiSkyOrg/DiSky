@@ -9,6 +9,7 @@ import ch.njol.util.coll.CollectionUtils;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
@@ -20,7 +21,7 @@ import java.util.Locale;
 public final class BotStatus {
 
     static {
-        if (DiSky.getConfiguration().getOrSetDefault("fix-skript-online-status", false)) {
+        if (ConfigManager.get("fix-skript-online-status", false)) {
             DiSky.debug("Fixing Skript online status");
             StringBotStatus.register(
                     StringBotStatus.class,

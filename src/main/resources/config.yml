@@ -1,6 +1,11 @@
 # This is the main configuration file of DiSky.
 # Made for v4, older configuration version won't work.
 
+# The version of the configuration file.
+# DO NOT TOUCH THIS!
+# It may erase your configuration.
+version: 2
+
 # In the DiSky error handler, which error code should not be shown in the console?
 # You can take a took at every discord error code here:
 # https://discord.com/developers/docs/topics/opcodes-and-status-codes#json

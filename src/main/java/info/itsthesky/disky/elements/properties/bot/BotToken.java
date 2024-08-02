@@ -8,8 +8,8 @@ import ch.njol.util.coll.CollectionUtils;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.changers.ChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.api.skript.NodeInformation;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.managers.ConfigManager;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class BotToken extends ChangeablePropertyExpression<Bot, String> {
 
     static {
-        if (DiSky.getConfiguration().getOrSetDefault("token-of-bot-expression", true))
+        if (ConfigManager.get("token-of-bot-expression", true))
             register(
                     BotToken.class,
                     String.class,

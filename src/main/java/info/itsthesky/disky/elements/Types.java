@@ -9,6 +9,7 @@ import info.itsthesky.disky.elements.commands.CommandObject;
 import info.itsthesky.disky.elements.components.core.ComponentRow;
 import info.itsthesky.disky.elements.properties.polls.PollAnswerData;
 import info.itsthesky.disky.elements.sections.automod.FilterType;
+import info.itsthesky.disky.managers.ConfigManager;
 import info.itsthesky.disky.managers.wrappers.AutoModRuleBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -48,7 +49,6 @@ import org.skriptlang.skript.lang.converter.Converters;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class Types {
@@ -288,7 +288,7 @@ public class Types {
         Global Entities
          */
 
-        if (!DiSky.getConfiguration().getOrSetDefault("fix-skript-online-status", false))
+        if (!ConfigManager.get("fix-skript-online-status", false))
             DiSkyType.fromEnum(OnlineStatus.class, "onlinestatus", "onlinestatus").register();
 
         DiSkyType.fromEnum(Permission.class, "permission", "permission").register();
