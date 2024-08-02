@@ -7,16 +7,17 @@ import org.jetbrains.annotations.Nullable;
 public class UserDecorationAvatar extends UserProperty<String> {
 
     static {
-        register(
+        /*register(
                 UserDecorationAvatar.class,
                 String.class,
                 "[user] (decoration[s] avatar|avatar decoration[s])"
-        );
+        );*/
     }
 
     @Override
     public @Nullable String convert(User from) {
-        return from.getAvatarDecoration() == null ? null : from.getAvatarDecoration().getDecorationAvatarUrl();
+        return null;
+        //return from.getAvatarDecoration() == null ? null : from.getAvatarDecoration().getDecorationAvatarUrl();
     }
 
     @Override
