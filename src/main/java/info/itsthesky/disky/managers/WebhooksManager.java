@@ -5,6 +5,7 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.managers.wrappers.RegisteredWebhook;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.WebhookClient;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,13 @@ public final class WebhooksManager {
 
     public RegisteredWebhook getWebhook(String name) {
         return webhooks.get(name);
+    }
+
+    public @Nullable RegisteredWebhook getWebhookById(String id) {
+        return webhooks.values()
+                .stream()
+                .filter(webhook -> webhook.getClient().getId().equals(id))
+                .findFirst().orElse(null);
     }
 
 }

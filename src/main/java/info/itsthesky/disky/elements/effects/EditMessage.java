@@ -13,6 +13,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.InteractionEvent;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.wrappers.RegisteredWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
@@ -101,7 +102,16 @@ public class EditMessage extends AsyncEffect {
 
 		try {
 			if (target instanceof Message)
-				((Message) target).editMessage(editBuilder.build()).complete();
+			{
+				final Message targetMsg = (Message) target;
+				final @Nullable RegisteredWebhook authorWebhook =
+						DiSky.getWebhooksManager().getWebhookById(targetMsg.getAuthor().getId());
+				if (authorWebhook == null) {
+					((Message) target).editMessage(editBuilder.build()).complete();
+				} else {
+					authorWebhook.getClient().editMessageById(targetMsg.getId(), editBuilder.build()).complete();
+				}
+			}
 		} catch (Exception ex) {
 			DiSky.getErrorHandler().exception(e, ex);
 		}

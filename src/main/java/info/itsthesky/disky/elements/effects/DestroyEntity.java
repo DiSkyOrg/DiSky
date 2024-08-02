@@ -9,6 +9,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.managers.wrappers.RegisteredWebhook;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
@@ -52,12 +53,19 @@ public class DestroyEntity extends AsyncEffect {
 			return;
 
 		final RestAction<Void> action;
-		if (entity instanceof Guild)
+		if (entity instanceof Message) {
+			final Message message = (Message) entity;
+			final @Nullable RegisteredWebhook webhook =
+					DiSky.getWebhooksManager().getWebhookById(message.getAuthor().getId());
+			if (webhook != null) {
+				action = webhook.getClient().deleteMessageById(message.getId());
+			} else {
+				action = message.delete();
+			}
+		} else if (entity instanceof Guild)
 			action = ((Guild) entity).delete();
 		else if (entity instanceof Role)
 			action = ((Role) entity).delete();
-		else if (entity instanceof Message)
-			action = ((Message) entity).delete();
 		else if (entity instanceof Channel)
 			action = ((Channel) entity).delete();
 		else if (entity instanceof info.itsthesky.disky.api.emojis.Emote && ((info.itsthesky.disky.api.emojis.Emote) entity).isCustom())
