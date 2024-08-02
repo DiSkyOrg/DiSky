@@ -71,7 +71,7 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 		if (builder instanceof MessageCreateBuilder)
 			((MessageCreateBuilder) builder).addComponents(rows);
 		else if (builder instanceof Modal.Builder)
-			((Modal.Builder) builder).addActionRows(rows);
+			((Modal.Builder) builder).addComponents(rows);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 		if (object instanceof MessageCreateBuilder)
 			return ((MessageCreateBuilder) object).getComponents().toArray(new LayoutComponent[0]);
 		else if (object instanceof Modal.Builder)
-			return ((Modal.Builder) object).getActionRows().toArray(new LayoutComponent[0]);
+			return ((Modal.Builder) object).getComponents().toArray(new LayoutComponent[0]);
 
 		return new Object[0];
 	}
