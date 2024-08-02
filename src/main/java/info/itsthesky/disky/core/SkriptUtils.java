@@ -24,6 +24,7 @@ import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
 import info.itsthesky.disky.elements.events.member.MemberKickEvent;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -252,6 +253,8 @@ public final class SkriptUtils {
     }
 
     public static void error(Node node, String message) {
+        DiSkyRuntimeHandler.error(new Exception(message), node);
+
         final Node previous = ParserInstance.get().getNode();
         ParserInstance.get().setNode(node);
         Skript.error(message);
@@ -280,5 +283,20 @@ public final class SkriptUtils {
         return EntryValidator.builder()
                 .unexpectedNodeTester(node -> false)
                 .build();
+    }
+
+    public static boolean validateSnowflake(@Nullable String input, @Nullable Node node) {
+        @Nullable String errorMess = null;
+        if (input == null)
+            errorMess = "The provided ID is null!";
+        else if (!input.matches("\\d{17,20}"))
+            errorMess = "The provided ID is not a valid snowflake!";
+
+        if (errorMess == null)
+            return true;
+
+        final String message = "Unable to validate the snowflake ID '" + input + "': " + errorMess;
+        DiSkyRuntimeHandler.error(new Exception(message), node);
+        return false;
     }
 }
