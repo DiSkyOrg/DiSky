@@ -3,6 +3,7 @@ package info.itsthesky.disky.elements.structures.slash;
 import ch.njol.skript.lang.Trigger;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
 import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import info.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
@@ -22,6 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.RestAction;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -352,32 +354,34 @@ public final class SlashManager extends ListenerAdapter {
 
     private void tryExecute(RegisteredCommand command, SlashCommandInteractionEvent event) {
 
-        // cooldown
-        if (command.getParsedCommand().hasCooldown()) {
-            if (command.isInCooldown(event.getUser())) {
-                if (command.getParsedCommand().getOnCooldown() != null) {
-                    final OnCooldownEvent.BukkitCooldownEvent bukkitEvent =
-                            new OnCooldownEvent.BukkitCooldownEvent(new OnCooldownEvent(),
-                                    command.getCooldown(event.getUser()) - System.currentTimeMillis());
-                    bukkitEvent.setJDAEvent(event);
-                    command.getParsedCommand().prepareArguments(event.getOptions());
-                    command.getParsedCommand().getOnCooldown().execute(bukkitEvent);
+        SkriptUtils.sync(() -> {
+            // cooldown
+            if (command.getParsedCommand().hasCooldown()) {
+                if (command.isInCooldown(event.getUser())) {
+                    if (command.getParsedCommand().getOnCooldown() != null) {
+                        final OnCooldownEvent.BukkitCooldownEvent bukkitEvent =
+                                new OnCooldownEvent.BukkitCooldownEvent(new OnCooldownEvent(),
+                                        command.getCooldown(event.getUser()) - System.currentTimeMillis());
+                        bukkitEvent.setJDAEvent(event);
+                        command.getParsedCommand().prepareArguments(event.getOptions());
+                        command.getParsedCommand().getOnCooldown().execute(bukkitEvent);
 
-                    if (!bukkitEvent.isCancelled())
-                        return;
+                        if (!bukkitEvent.isCancelled())
+                            return;
+                    }
                 }
+
+                command.setCooldown(event.getUser());
             }
 
-            command.setCooldown(event.getUser());
-        }
+            // "real" execution
+            command.getParsedCommand().prepareArguments(event.getOptions());
+            final Trigger trigger = command.getParsedCommand().getTrigger();
+            final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
+            bukkitEvent.setJDAEvent(event);
 
-        // "real" execution
-        command.getParsedCommand().prepareArguments(event.getOptions());
-        final Trigger trigger = command.getParsedCommand().getTrigger();
-        final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent = new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
-        bukkitEvent.setJDAEvent(event);
-
-        trigger.execute(bukkitEvent);
+            trigger.execute(bukkitEvent);
+        });
     }
 
     @Override
