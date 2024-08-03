@@ -27,6 +27,7 @@ import info.itsthesky.disky.elements.events.member.MemberKickEvent;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.guild.GenericGuildEvent;
@@ -38,8 +39,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryValidator;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -298,5 +304,29 @@ public final class SkriptUtils {
         final String message = "Unable to validate the snowflake ID '" + input + "': " + errorMess;
         DiSkyRuntimeHandler.error(new Exception(message), node);
         return false;
+    }
+
+    public static Icon parseIcon(String input) {
+        if (input == null)
+            return null;
+
+        if (Utils.isURL(input)) {
+            try {
+                return Icon.from(new URL(input).openStream());
+            } catch (IOException ex) {
+                DiSky.getErrorHandler().exception(null, ex);
+                return null;
+            }
+        } else {
+            final File iconFile = new File(input);
+            if (iconFile == null || !iconFile.exists())
+                return null;
+            try {
+                return Icon.from(new FileInputStream(iconFile));
+            } catch (IOException ex) {
+                DiSky.getErrorHandler().exception(null, ex);
+                return null;
+            }
+        }
     }
 }
