@@ -1,17 +1,25 @@
 package info.itsthesky.disky.elements.properties;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.emojis.Emote;
+import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.*;
 import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
         "You can change name of every entity except member and user by defining a new text.",
         "Check for 'nickname of member' if you want to check / change custom member's name."})
 @Examples("discord name of event-guild")
-public class DiscordName extends SimplePropertyExpression<Object, String> {
+public class DiscordName extends SimplePropertyExpression<Object, String> implements IAsyncChangeableExpression {
 
     static {
         register(
@@ -30,6 +38,14 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
                 "[the] discord name",
                 "channel/user/member/sticker/scheduledevent/emote/threadchannel/role/guild/embedfield/applicationinfo/webhook"
         );
+    }
+
+    private Node node;
+
+    @Override
+    public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+        node = getParser().getNode();
+        return super.init(expressions, matchedPattern, isDelayed, parseResult);
     }
 
     @Override
@@ -44,15 +60,41 @@ public class DiscordName extends SimplePropertyExpression<Object, String> {
 
     @Override
     public void change(@NotNull Event e, @Nullable @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
-        final Object entity = getExpr().getSingle(e);
+        change(e, delta, mode, false);
+    }
+
+    @Override
+    public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+        change(e, delta, mode, true);
+    }
+
+    private void change(Event event, Object[] delta, Changer.ChangeMode mode, boolean async) {
+        final Object entity = getExpr().getSingle(event);
         final @Nullable String name = delta.length == 0 ? null : (String) delta[0];
         if (name == null || entity == null)
             return;
 
+        final RestAction<Void> action;
         if (entity instanceof GuildChannel) {
-            ((GuildChannel) entity).getManager().setName(name).queue();
+            action = ((GuildChannel) entity).getManager().setName(name);
         } else if (entity instanceof Role) {
-            ((Role) entity).getManager().setName(name).queue();
+            action = ((Role) entity).getManager().setName(name);
+        } else if (entity instanceof Bot) {
+            action = ((Bot) entity).getInstance().getSelfUser().getManager().setName(name);
+        } else {
+            action = null;
+        }
+
+        if (action != null) {
+            try {
+                if (async) {
+                    action.queue();
+                } else {
+                    action.complete();
+                }
+            } catch (Exception ex) {
+                DiSkyRuntimeHandler.error(ex, node);
+            }
         }
     }
 
