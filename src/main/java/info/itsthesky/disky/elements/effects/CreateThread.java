@@ -32,7 +32,7 @@ public class CreateThread extends AsyncEffect {
     static {
         Skript.registerEffect(
                 CreateThread.class,
-                "(make|create) [the] [new] [1:private] thread (named|with name) %string% in [the] [channel] %channel/textchannel% [(with|using) [the] [message] [as reference] %-message%] [(with|using) [the] [bot] %-bot%] and store (it|the thread) in %~objects%"
+                "(make|create) [the] [new] [1:private] thread (named|with name) %string% in [the] [channel] %channel/textchannel% [(with|using) [the] [message] [as reference] %-message%] [(with|using) [the] [bot] %-bot%] [and store (it|the thread) in %-~objects%]"
         );
     }
 
@@ -58,7 +58,7 @@ public class CreateThread extends AsyncEffect {
         exprBot = (Expression<Bot>) exprs[3];
         exprResult = (Expression<Object>) exprs[4];
         isPrivate = parseResult.hasTag("1");
-        return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, ThreadChannel.class);
+        return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, ThreadChannel.class);
     }
 
     @Override
@@ -93,6 +93,7 @@ public class CreateThread extends AsyncEffect {
             return;
         }
 
-        exprResult.change(e, new ThreadChannel[] {threadChannel}, Changer.ChangeMode.SET);
+        if (exprResult != null)
+            exprResult.change(e, new ThreadChannel[] {threadChannel}, Changer.ChangeMode.SET);
     }
 }
