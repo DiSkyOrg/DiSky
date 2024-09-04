@@ -9,6 +9,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -210,5 +211,12 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
         return jdaClass;
     }
 
+    public static Class<? extends net.dv8tion.jda.api.events.Event> getDiSkyEventType(Class<DiSkyEvent<?>> clazz) {
+        try {
+            return (Class<? extends net.dv8tion.jda.api.events.Event>) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+        } catch (ClassCastException e) {
+            throw new RuntimeException(clazz.getCanonicalName() + " doesn't use the same JDA event as it's parent class.");
+        }
+    }
 
 }
