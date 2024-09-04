@@ -41,7 +41,7 @@ public class CreatePost extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				CreatePost.class,
-				"create [a] [new] post in [channel] %forumchannel% (with name|named) %string% [with message] %string/messagecreatebuilder/embedbuilder% [with [the] tags %-strings%] [and store (it|the thread) in %~objects%]"
+				"create [a] [new] post in [channel] %forumchannel% (with name|named) %string% [with message] %string/messagecreatebuilder/embedbuilder% [with [the] tags %-strings%] [and store (it|the thread) in %~-objects%]"
 		);
 	}
 
@@ -61,7 +61,7 @@ public class CreatePost extends AsyncEffect {
 		exprTags = (Expression<String>) expressions[3];
 		exprResult = (Expression<Object>) expressions[4];
 
-		return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, ThreadChannel.class);
+		return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, ThreadChannel.class);
 	}
 
 	@Override
