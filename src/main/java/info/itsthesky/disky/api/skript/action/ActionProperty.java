@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 
 public abstract class ActionProperty<E, T extends AuditableRestAction, O> extends ChangeablePropertyExpression<Object, O> {
@@ -25,10 +26,16 @@ public abstract class ActionProperty<E, T extends AuditableRestAction, O> extend
             return;
         final O value = (O) delta[0];
         final Object entity = EasyElement.parseSingle(getExpr(), e, null);
-        try {
+        /*try {
             change((E) entity, value);
         } catch (ClassCastException ex) {
             updateEntity(change((T) entity, value), e);
+        }*/
+        // Check if entity is E or T
+        if (entity instanceof AuditableRestAction) {
+            updateEntity(change((T) entity, value), e);
+        } else {
+            change((E) entity, value);
         }
     }
 
@@ -47,6 +54,16 @@ public abstract class ActionProperty<E, T extends AuditableRestAction, O> extend
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         setExpr(exprs[0]);
         return true;
+    }
+
+    public Class<E> getEntityClass() {
+        return (Class<E>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    public Class<T> getActionClass() {
+        return (Class<T>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[1];
     }
     
 }
