@@ -68,6 +68,9 @@ public class CommandFactory {
             e.printStackTrace();
         }
         List<Argument<?>> arguments = command.getArguments();
+        if (res == null)
+            return false;
+
         /* if (res == null)
         {
             // try custom parser
