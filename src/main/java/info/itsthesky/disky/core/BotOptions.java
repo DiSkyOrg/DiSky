@@ -80,9 +80,13 @@ public class BotOptions {
 
     public void runShutdown(ShutdownEvent event) {
         if (getOnShutdown().isEmpty())
+        {
+            DiSky.debug("No shutdown event defined for bot " + getName());
             return;
+        }
         final BotStopEvent.BukkitShutdownEvent e = new BotStopEvent.BukkitShutdownEvent(new BotStopEvent());
         e.setJDAEvent(event);
+        DiSky.debug("Running shutdown event for bot " + getName());
         TriggerItem.walk(getOnShutdown().get(0), e);
     }
 

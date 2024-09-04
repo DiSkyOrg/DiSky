@@ -59,24 +59,13 @@ public class BotManager {
     public void shutdown() {
         // TODO: 04/03/2023 Better way to shutdown bots (JDA's awaitShutdown implementation)
         this.bots.forEach(bot -> {
+            DiSky.debug("1. Running shut down bot " + bot.getName());
             bot.getOptions().runShutdown(new ShutdownEvent(bot.getInstance(), OffsetDateTime.now(), 0));
-            final JDA jda = bot.getInstance();
-
-            if (ConfigManager.get("stop-bots-gracefully", false)) {
-                jda.shutdown();
-                DiSky.debug("Trying to shutdown gracefully bot " + bot.getName() + "...");
-                try {
-                    if (!jda.awaitShutdown(ConfigManager.get("stop-bots-timeout", 5), TimeUnit.SECONDS)) {
-                        DiSky.debug("Unable to shutdown gracefully bot " + bot.getName() + "! We'll force shutdown it!");
-                        jda.shutdownNow();
-                    } else
-                        DiSky.debug("Bot " + bot.getName() + " has been shutdown gracefully!");
-                } catch (InterruptedException e) {
-                    jda.shutdownNow();
-                    DiSky.debug("Unable to await shutdown of bot " + bot.getName() + "! We'll block the thread until it's done!");
-                }
-            } else
-                jda.shutdownNow();
+            DiSky.debug("2. Finished shut down bot " + bot.getName());
+        });
+        this.bots.forEach(bot -> {
+            DiSky.debug("3. Shutting down bot " + bot.getName());
+            bot.getInstance().shutdown();
         });
     }
 

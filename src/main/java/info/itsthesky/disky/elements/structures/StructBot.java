@@ -228,8 +228,8 @@ public class StructBot extends Structure {
 					parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
 				else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
 					parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
-				else if (event instanceof net.dv8tion.jda.api.events.session.ShutdownEvent)
-					parsedEntity.runShutdown((net.dv8tion.jda.api.events.session.ShutdownEvent) event);
+				/*else if (event instanceof net.dv8tion.jda.api.events.session.ShutdownEvent)
+					parsedEntity.runShutdown((net.dv8tion.jda.api.events.session.ShutdownEvent) event);*/
 			};
 
 			jda = parsedEntity
