@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.util.Timespan;
+import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
@@ -17,9 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import static info.itsthesky.disky.core.SkriptUtils.async;
 
@@ -41,6 +45,8 @@ public class SecListenOnce extends Section {
 
     private Trigger trigger;
     private @Nullable Trigger timeoutTrigger;
+    private @Nullable Event originalEvent;
+    private @Nullable Class<? extends Event>[] currentEvents;
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> list) {
@@ -49,6 +55,7 @@ public class SecListenOnce extends Section {
             Skript.error("The event name in a listen once section must be a literal string!");
             return false;
         }
+        currentEvents = getParser().getCurrentEvents();
 
         final String rawEvent = ((VariableString) expressions[0]).toString().replace("\"", "");
         final Object result = SkriptParser.parseStatic(rawEvent, Skript.getEvents().iterator(), ParseContext.EVENT, "Cannot parse the given event: " + rawEvent);
@@ -71,6 +78,7 @@ public class SecListenOnce extends Section {
         boolean deep;
         if (exprTimeout == null) {
             deep = false;
+            getParser().getCurrentSections().add(this);
             final List<TriggerItem> items = SkriptUtils.loadCode(sectionNode);
             trigger =  new Trigger(getParser().getCurrentScript(), eventClass.getSimpleName(),
                     skriptEvent, items);
@@ -88,7 +96,19 @@ public class SecListenOnce extends Section {
                 return false;
             }
 
-            // now we parse
+            // prepare stuff
+            getParser().getCurrentSections().add(this);
+
+            // We can't allow event-related expressions or effects inside
+            // the section. Although the given element will parse correctly,
+            // the given event upon execution will be the subscribe event, and
+            // not the 'outer' event.
+            /*var events = new ArrayList<>(Arrays.asList(currentEvents));
+            events.add((Class<? extends Event>) eventClass);
+            getParser().setCurrentEvents(events.toArray(new Class[0]));*/
+            getParser().setCurrentEvent("subscribe event", simpleEventClass);
+
+            // parse the code
             final List<TriggerItem> items = SkriptUtils.loadCode((SectionNode) subNode);
             trigger = new Trigger(getParser().getCurrentScript(), eventClass.getSimpleName(),
                     skriptEvent, items);
@@ -108,6 +128,7 @@ public class SecListenOnce extends Section {
     @Nullable
     protected TriggerItem walk(@NotNull Event event) {
         Timespan timeout = exprTimeout == null ? null : exprTimeout.getSingle(event);
+        originalEvent = event;
 
         final Bot bot = Bot.fromContext(exprBot, event);
         async(() -> {
@@ -130,8 +151,10 @@ public class SecListenOnce extends Section {
                     final SimpleDiSkyEvent simpleDiSkyEvent = simpleEventClass.getConstructor(newDiSkyEvent.getClass()).newInstance(newDiSkyEvent);
                     simpleDiSkyEvent.setJDAEvent((net.dv8tion.jda.api.events.Event) e);
 
+                    Variables.setLocalVariables(simpleDiSkyEvent, Variables.copyLocalVariables(event));
                     trigger.execute(simpleDiSkyEvent);
                 } catch (Exception ex) {
+                    System.out.println("Error while executing the event: ");
                     throw new RuntimeException(ex);
                 }
 
@@ -151,5 +174,23 @@ public class SecListenOnce extends Section {
     @Override
     public @NotNull String toString(@Nullable Event event, boolean b) {
         return "listen once to " + eventClass.getSimpleName() + " with timeout " + exprTimeout.toString(event, b);
+    }
+
+    public Event getOuterEvent() {
+        return originalEvent;
+    }
+
+    public @Nullable Class<? extends Event>[] getCurrentEvents() {
+        return currentEvents;
+    }
+
+    public <T> T executeInOuter(@NotNull Supplier<T> supplier) {
+        var oldEvents = getParser().getCurrentEvents();
+        getParser().setCurrentEvents(currentEvents);
+
+        final T result = supplier.get();
+
+        getParser().setCurrentEvents(oldEvents);
+        return result;
     }
 }
