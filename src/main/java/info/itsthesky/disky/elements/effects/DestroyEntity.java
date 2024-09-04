@@ -1,6 +1,7 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -9,6 +10,8 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.events.specific.InteractionEvent;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import info.itsthesky.disky.managers.wrappers.RegisteredWebhook;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -37,10 +40,12 @@ public class DestroyEntity extends AsyncEffect {
 	}
 
 	private Expression<Object> exprEntity;
+	private Node node;
 
 	@Override
 	public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
 		getParser().setHasDelayBefore(Kleenean.TRUE);
+		node = getParser().getNode();
 
 		exprEntity = (Expression<Object>) expressions[0];
 		return true;
@@ -58,8 +63,10 @@ public class DestroyEntity extends AsyncEffect {
 			final @Nullable RegisteredWebhook webhook =
 					DiSky.getWebhooksManager().getWebhookById(message.getAuthor().getId());
 			if (webhook != null) {
+				DiSky.debug("Deleting message with webhook");
 				action = webhook.getClient().deleteMessageById(message.getId());
 			} else {
+				DiSky.debug("Deleting message without webhook");
 				action = message.delete();
 			}
 		} else if (entity instanceof Guild)
@@ -80,7 +87,11 @@ public class DestroyEntity extends AsyncEffect {
 		try {
 			action.complete();
 		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(e, ex);
+			if (e instanceof InteractionEvent && entity instanceof Message && ex instanceof IllegalStateException) {
+				DiSkyRuntimeHandler.error(new Exception("When deleting a message in an interaction, you must first DEFER the interaction!"), node);
+				return;
+			}
+			DiSkyRuntimeHandler.error(ex, node);
 		}
 	}
 
