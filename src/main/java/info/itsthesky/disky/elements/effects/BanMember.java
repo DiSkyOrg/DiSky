@@ -1,6 +1,7 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -13,7 +14,10 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.TimeUnit;
 
 @Name("Ban Member")
-@Description({"Bans a member from a guild."})
+@Description({"Bans a member or the given user ID from a guild."})
 @Examples({"ban discord event-member because of \"being lame\" and delete 10 days worth of messages"})
 
 public class BanMember extends AsyncEffect {
@@ -29,43 +33,73 @@ public class BanMember extends AsyncEffect {
     static {
         Skript.registerEffect(
                 BanMember.class,
-                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %-timespan% [worth ]of messages]"
+                "[discord] ban [the] discord [member] %member% [(due to|because of|with [the] reason) %-string%] [and (delete|remove) %-timespan% [worth ]of messages]",
+                "[discord] ban [the] discord [member] %string% (from|of) [the] [guild] %guild% [(due to|because of|with [the] reason) %-string%]"
         );
     }
 
-    private Expression<Member> exprMember;
+    private Node node;
+    private boolean usingUserId;
+    private Expression<Object> exprTarget;
     private Expression<String> exprReason;
+
+    // Member
     private Expression<Timespan> exprDays;
+    // User ID
+    private Expression<Guild> exprGuild;
 
     @Override
-    public boolean init(Expression[] expr, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression[] expr, int matchedPattern, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
+        usingUserId = matchedPattern == 1;
+        node = getParser().getNode();
 
-        exprMember = (Expression<Member>) expr[0];
-        exprReason = (Expression<String>) expr[1];
-        exprDays = (Expression<Timespan>) expr[2];
+        exprTarget = (Expression<Object>) expr[0];
+
+        if (usingUserId) {
+            exprGuild = (Expression<Guild>) expr[1];
+            exprReason = (Expression<String>) expr[2];
+        } else {
+            exprReason = (Expression<String>) expr[1];
+            exprDays = (Expression<Timespan>) expr[2];
+        }
 
         return true;
     }
 
     @Override
     public void execute(@NotNull Event e) {
-        final Member member = exprMember.getSingle(e);
+        final Object target = exprTarget.getSingle(e);
         final @Nullable String reason = exprReason == null ? null : exprReason.getSingle(e);
-        final Timespan timespan = exprDays == null ? null : exprDays.getSingle(e);
-
-        if (member == null)
+        if (target == null)
             return;
 
-        try {
-            member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).reason(reason).complete();
-        } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+        if (usingUserId) {
+            final Guild guild = exprGuild.getSingle(e);
+            if (guild == null) {
+                DiSkyRuntimeHandler.error(new NullPointerException("DiSky cannot ban the user ID '"+target+"' because the given guild is null!"), node);
+                return;
+            }
+
+            guild.ban(UserSnowflake.fromId((String) target), 0, TimeUnit.MILLISECONDS).reason(reason).queue();
+        } else {
+            final Member member = (Member) target;
+            final Timespan timespan = exprDays.getSingle(e);
+            member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).reason(reason).queue();
         }
     }
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "ban " + exprMember.toString(e, debug) + " with reason " + exprReason.toString(e, debug) + " with" + (exprDays == null ? 0 : exprDays) + " days of messages deleted";
+        if (usingUserId) {
+            return "ban member " + exprTarget.toString(e, debug)
+                    + " from guild " + exprGuild.toString(e, debug)
+                    + (exprReason == null ? "" : " with reason " + exprReason.toString(e, debug));
+        } else {
+            return "ban member " + exprTarget.toString(e, debug)
+                    + (exprReason == null ? "" : " with reason " + exprReason.toString(e, debug))
+                    + " and delete " + exprDays.toString(e, debug)
+                    + " worth of messages";
+        }
     }
 }
