@@ -26,8 +26,10 @@ public class ChannelName extends ActionProperty<GuildChannel, ChannelAction, Str
     }
 
     @Override
-    public void change(GuildChannel role, String value) {
-        role.getManager().setName(value).queue();
+    public void change(GuildChannel role, String value, boolean async) {
+        var action = role.getManager().setName(value);
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -36,7 +38,7 @@ public class ChannelName extends ActionProperty<GuildChannel, ChannelAction, Str
     }
 
     @Override
-    public String get(GuildChannel role) {
+    public String get(GuildChannel role, boolean async) {
         return role.getName();
     }
 

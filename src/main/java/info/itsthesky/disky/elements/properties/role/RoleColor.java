@@ -32,8 +32,11 @@ public class RoleColor extends ActionProperty<Role, RoleAction, Color> {
     }
 
     @Override
-    public void change(Role role, Color value) {
-        role.getManager().setColor(value.asBukkitColor().asRGB()).queue();
+    public void change(Role role, Color value, boolean async) {
+        var action = role.getManager().setColor(value.asBukkitColor().asRGB());
+
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -42,7 +45,7 @@ public class RoleColor extends ActionProperty<Role, RoleAction, Color> {
     }
 
     @Override
-    public Color get(Role role) {
+    public Color get(Role role, boolean async) {
         return SkriptUtils.convert(role.getColor());
     }
 

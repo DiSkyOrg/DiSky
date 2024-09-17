@@ -28,8 +28,11 @@ public class ChannelParent extends ActionProperty<GuildChannel, ChannelAction, C
     }
 
     @Override
-    public void change(GuildChannel role, Category value) {
-        ((ICategorizableChannel) role).getManager().setParent(value).queue();
+    public void change(GuildChannel role, Category value, boolean async) {
+        var action = ((ICategorizableChannel) role).getManager().setParent(value);
+
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -38,7 +41,7 @@ public class ChannelParent extends ActionProperty<GuildChannel, ChannelAction, C
     }
 
     @Override
-    public Category get(GuildChannel role) {
+    public Category get(GuildChannel role, boolean async) {
         return ((ICategorizableChannel) role).getParentCategory();
     }
 

@@ -10,6 +10,7 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.changers.ChangeableSimplePropertyExpression;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,8 @@ import org.jetbrains.annotations.Nullable;
 })
 @Examples({"emote name of event-emote",
         "set emote name of reaction \"disky\" to \"disky2\" # Will now be 'reaction \"disky2\"' to get it back"})
-public class EmoteName extends ChangeableSimplePropertyExpression<Emote, String> {
+public class EmoteName extends ChangeableSimplePropertyExpression<Emote, String>
+    implements IAsyncChangeableExpression {
 
     static {
         register(
@@ -50,6 +52,15 @@ public class EmoteName extends ChangeableSimplePropertyExpression<Emote, String>
 
     @Override
     public void change(Event e, Object[] delta, Bot bot, Changer.ChangeMode mode) {
+        change(e, delta, mode, false);
+    }
+
+    @Override
+    public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+        change(e, delta, mode, true);
+    }
+
+    private void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean async) {
         final @Nullable Emote emote = getExpr().getSingle(e);
         if (emote == null || delta == null || delta.length == 0 || delta[0] == null)
             return;
@@ -59,8 +70,11 @@ public class EmoteName extends ChangeableSimplePropertyExpression<Emote, String>
         if (!emote.isCustom())
             return;
 
-        emote.getEmote().getManager().setName(newName).queue(null);
+        var action = emote.getEmote().getManager().setName(newName);
+        if (async) action.complete();
+        else action.queue();
     }
+
 
     @Override
     public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {

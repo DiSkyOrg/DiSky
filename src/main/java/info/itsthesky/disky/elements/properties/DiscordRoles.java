@@ -9,9 +9,11 @@ import ch.njol.util.coll.CollectionUtils;
 import info.itsthesky.disky.api.changers.MultipleChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +24,8 @@ import org.jetbrains.annotations.NotNull;
 @Examples({"add role with id \"000\" to roles of event-member",
         "remove event-role from roles of event-member",
         "reply with \"Amount of roles in the guild: %size of roles of event-guild%\""})
-public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, Role> {
+public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, Role>
+        implements IAsyncChangeableExpression {
 
     static {
         register(
@@ -35,17 +38,7 @@ public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, R
 
     @Override
     public void change(Event e, @NotNull Object[] delta, Bot bot, Changer.ChangeMode mode) {
-        final Role role = bot.getInstance().getRoleById(((Role) delta[0]).getId());
-        final Object entity = getExpr().getSingle(e);
-        if (EasyElement.anyNull(this, role, entity))
-            return;
-
-        if (!(entity instanceof Member))
-            return;
-        if (mode == Changer.ChangeMode.ADD)
-            ((Member) entity).getGuild().addRoleToMember((Member) entity, role).queue();
-        else
-            ((Member) entity).getGuild().removeRoleFromMember((Member) entity, role).queue();
+        change(e, delta, mode, false);
     }
 
     @Override
@@ -72,5 +65,28 @@ public class DiscordRoles extends MultipleChangeablePropertyExpression<Object, R
     @Override
     protected String getPropertyName() {
         return "roles";
+    }
+
+    @Override
+    public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+        change(e, delta, mode, true);
+    }
+
+    private void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean async) {
+        final Role role = ((Role) delta[0]);
+        final Object entity = getExpr().getSingle(e);
+        if (EasyElement.anyNull(this, role, entity))
+            return;
+
+        if (!(entity instanceof Member))
+            return;
+        RestAction<?> action;
+        if (mode == Changer.ChangeMode.ADD)
+            action = ((Member) entity).getGuild().addRoleToMember((Member) entity, role);
+        else
+            action = ((Member) entity).getGuild().removeRoleFromMember((Member) entity, role);
+
+        if (async) action.complete();
+        else action.queue();
     }
 }

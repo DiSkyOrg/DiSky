@@ -27,8 +27,11 @@ public class ChannelMaxUser extends ActionProperty<GuildChannel, ChannelAction, 
     }
 
     @Override
-    public void change(GuildChannel role, Number value) {
-        ((VoiceChannel) role).getManager().setUserLimit(value.intValue()).queue();
+    public void change(GuildChannel role, Number value, boolean async) {
+        var action = ((VoiceChannel) role).getManager().setUserLimit(value.intValue());
+
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ChannelMaxUser extends ActionProperty<GuildChannel, ChannelAction, 
     }
 
     @Override
-    public Number get(GuildChannel role) {
+    public Number get(GuildChannel role, boolean async) {
         return ((VoiceChannel) role).getUserLimit();
     }
 

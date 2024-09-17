@@ -8,13 +8,15 @@ import ch.njol.util.coll.CollectionUtils;
 import info.itsthesky.disky.api.changers.ChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GuildAFKChannel extends ChangeablePropertyExpression<Guild, VoiceChannel> {
+public class GuildAFKChannel extends ChangeablePropertyExpression<Guild, VoiceChannel>
+        implements IAsyncChangeableExpression {
 
     static {
         register(
@@ -34,14 +36,23 @@ public class GuildAFKChannel extends ChangeablePropertyExpression<Guild, VoiceCh
 
     @Override
     public void change(Event e, Object[] delta, Bot bot, Changer.ChangeMode mode) {
+        change(e, delta, mode, false);
+    }
+
+    @Override
+    public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+        change(e, delta, mode, true);
+    }
+
+    private void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean async) {
         if (delta == null || delta.length == 0 || delta[0] == null) return;
         Guild guild = EasyElement.parseSingle(getExpr(), e, null);
         final VoiceChannel value = (VoiceChannel) delta[0];
         if (value == null || guild == null) return;
-        
 
-        guild = bot.getInstance().getGuildById(guild.getId());
-        guild.getManager().setAfkChannel(value).queue();
+        var action = guild.getManager().setAfkChannel(value);
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override

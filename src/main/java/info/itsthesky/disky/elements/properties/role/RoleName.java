@@ -30,8 +30,10 @@ public class RoleName extends ActionProperty<Role, RoleAction, String> {
     }
 
     @Override
-    public void change(Role role, String value) {
-        role.getManager().setName(value).queue();
+    public void change(Role role, String value, boolean async) {
+        var action = role.getManager().setName(value);
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -40,7 +42,7 @@ public class RoleName extends ActionProperty<Role, RoleAction, String> {
     }
 
     @Override
-    public String get(Role role) {
+    public String get(Role role, boolean async) {
         return role.getName();
     }
 

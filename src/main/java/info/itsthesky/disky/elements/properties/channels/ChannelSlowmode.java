@@ -27,8 +27,11 @@ public class ChannelSlowmode extends ActionProperty<GuildChannel, ChannelAction,
     }
 
     @Override
-    public void change(GuildChannel role, Number value) {
-        ((TextChannel) role).getManager().setSlowmode(value.intValue()).queue();
+    public void change(GuildChannel role, Number value, boolean async) {
+        var action = ((TextChannel) role).getManager().setSlowmode(value.intValue());
+
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ChannelSlowmode extends ActionProperty<GuildChannel, ChannelAction,
     }
 
     @Override
-    public Number get(GuildChannel role) {
+    public Number get(GuildChannel role, boolean async) {
         return ((TextChannel) role).getSlowmode();
     }
 

@@ -27,8 +27,11 @@ public class ChannelNSFW extends ActionProperty<GuildChannel, ChannelAction, Boo
     }
 
     @Override
-    public void change(GuildChannel role, Boolean value) {
-        ((StandardGuildMessageChannel) role).getManager().setNSFW(value).queue();
+    public void change(GuildChannel role, Boolean value, boolean async) {
+        var action = ((StandardGuildMessageChannel) role).getManager().setNSFW(value);
+
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
@@ -37,7 +40,7 @@ public class ChannelNSFW extends ActionProperty<GuildChannel, ChannelAction, Boo
     }
 
     @Override
-    public Boolean get(GuildChannel role) {
+    public Boolean get(GuildChannel role, boolean async) {
         return ((StandardGuildMessageChannel) role).isNSFW();
     }
 
