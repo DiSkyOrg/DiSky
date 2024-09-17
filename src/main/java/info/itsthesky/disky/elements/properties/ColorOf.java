@@ -12,6 +12,7 @@ import info.itsthesky.disky.api.changers.ChangeableSimplePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import info.itsthesky.disky.elements.sections.EmbedSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
@@ -23,7 +24,8 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Get or change the color of an embed builder.",
 		"The color input must come from Skript, and will be converted by DiSky."})
 @Examples({"set embed color of embed to red"})
-public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
+public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color>
+		implements IAsyncChangeableExpression {
 
 	static {
 		register(ColorOf.class,
@@ -32,35 +34,47 @@ public class ColorOf extends ChangeableSimplePropertyExpression<Object, Color> {
 				"embedbuilder");
 	}
 
-
 	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
-		return super.init(exprs, matchedPattern, isDelayed, parseResult);
+	public void change(@NotNull Event e, @NotNull Object[] delta, Bot bot, @NotNull Changer.ChangeMode mode) {
+		change(e, delta, mode, false);
 	}
 
 	@Override
-	public void change(@NotNull Event e, @NotNull Object[] delta, Bot bot, @NotNull Changer.ChangeMode mode) {
+	public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+		change(e, delta, mode, true);
+	}
+
+	public void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean async) {
 		if (!EasyElement.isValid(delta))
 			return;
-		final Color color = (Color) delta[0];
 		final Object entity = EasyElement.parseSingle(getExpr(), e, null);
 		if (entity == null)
 			return;
-		if (entity instanceof Role) {
-			Role role = (Role) entity;
-			if (!bot.coreIsEquals(role.getJDA()))
-				role = bot.getInstance().getRoleById(role.getId());
-			if (role != null)
-				role.getManager().setColor(new java.awt.Color(color.asBukkitColor().asRGB())).queue();
-		} else if (entity instanceof EmbedBuilder) {
-			((EmbedBuilder) entity).setColor(new java.awt.Color(color.asBukkitColor().asRGB()));
+
+		@Nullable java.awt.Color target = null;
+		if (mode == Changer.ChangeMode.SET) {
+			final Color color = (Color) delta[0];
+			target = new java.awt.Color(color.asBukkitColor().asRGB());
 		}
 
+		if (entity instanceof Role) {
+			Role role = (Role) entity;
+
+
+			var action = role.getManager().setColor(target);
+
+			if (async) action.complete();
+			else action.queue();
+		} else if (entity instanceof EmbedBuilder) {
+			((EmbedBuilder) entity).setColor(target);
+		}
 	}
 
 	@Override
-	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
-		return new Class[] {Color.class};
+	public Class<?> @Nullable [] acceptChange(@NotNull Changer.ChangeMode mode) {
+		if (mode == Changer.ChangeMode.SET || mode == Changer.ChangeMode.RESET)
+			return new Class[] {Color.class};
+		return null;
 	}
 
 	@Override
