@@ -28,7 +28,7 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Help Page &b------"));
             sender.sendMessage(Utils.colored(""));
             sender.sendMessage(Utils.colored("&b/disky &7- &9Show this help page."));
-            sender.sendMessage(Utils.colored("&b/disky docs <include time> &7- &9Generate the full documentation of DiSky, including or not event-value's time."));
+            sender.sendMessage(Utils.colored("&b/disky docs [include time] [module name] &7- &9Generate the full documentation of DiSky, including or not event-value's time."));
             sender.sendMessage(Utils.colored("&b/disky modules &7- &9Show the list of modules."));
             sender.sendMessage(Utils.colored("&b/disky bots &7- &9Show the list of loaded bots."));
             sender.sendMessage(Utils.colored("&b/disky bot <bot> &7- &9Show info about a specific bot."));
@@ -38,9 +38,11 @@ public class DiSkyCommand implements CommandExecutor {
             return true;
         } else if (args[0].equalsIgnoreCase("docs")) {
             final boolean includeTime = args.length > 1 && args[1].equalsIgnoreCase("true");
+            final String moduleName = args.length > 2 ? args[2] : null;
+
             sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Documentation &b------"));
             long before = System.currentTimeMillis();
-            DiSky.getDocBuilder().generate(includeTime);
+            DiSky.getDocBuilder().generate(includeTime, moduleName);
             sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2" + (System.currentTimeMillis() - before) + "ms! &b------"));
             return true;
         } else if (args[0].equalsIgnoreCase("debug")) {

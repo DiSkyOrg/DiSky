@@ -35,7 +35,7 @@ public class DocBuilder {
         this.gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     }
 
-    public void generate(boolean includeTypesInEventValues) {
+    public void generate(boolean includeTypesInEventValues, @Nullable String specificModule) {
         getInstance().getLogger().info("Generating documentation...");
         final List<SimpleDocElement> effects = new ArrayList<>();
         for (final SyntaxElementInfo<? extends Effect> doc : Skript.getEffects())
@@ -63,10 +63,20 @@ public class DocBuilder {
             if (isFromDiSky(doc)) expressions.add(new ExpressionDocElement(doc));
         }
 
+        // Filter by module
+        if (specificModule != null) {
+            effects.removeIf(element -> !specificModule.equals(element.getModule()));
+            conditions.removeIf(element -> !specificModule.equals(element.getModule()));
+            sections.removeIf(element -> !specificModule.equals(element.getModule()));
+            events.removeIf(element -> !specificModule.equals(element.getRequiredPlugins()[0]));
+            expressions.removeIf(element -> !specificModule.equals(element.getModule()));
+        }
+
         final DocDocument doc = new DocDocument(effects, conditions, sections, types, events, expressions);
         final String json = gson.toJson(doc);
         try {
-            Files.write(new File(getInstance().getDataFolder(), "doc.json").toPath(), json.getBytes());
+            final String fileName = specificModule == null ? "doc.json" : specificModule + ".json";
+            Files.write(new File(getInstance().getDataFolder(), fileName).toPath(), json.getBytes());
         } catch (IOException e) {
             getInstance().getLogger().severe("Could not write documentation to file!");
             e.printStackTrace();
