@@ -8,10 +8,10 @@ group = 'info.itsthesky'
 // Semantic Versioning
 def major = '4'
 def minor = '19'
-def patch = '0'
+def patch = '1'
 
-def channel = ''
-def channelVersion = ''
+def channel = 'beta'
+def channelVersion = '2'
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
@@ -34,7 +34,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.1.0'
+    implementation 'net.dv8tion:JDA:5.1.1'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
@@ -46,7 +46,7 @@ shadowJar {
     archiveName = 'DiSky ' + version + '.jar'
 }
 
-def targetJavaVersion = 11
+def targetJavaVersion = 16
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
