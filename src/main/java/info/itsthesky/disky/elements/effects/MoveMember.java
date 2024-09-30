@@ -34,13 +34,16 @@ public class MoveMember extends AsyncEffect {
 
     private Expression<Member> exprMember;
     private Expression<VoiceChannel> exprVoiceChannel;
+    private boolean isDisconnect = false;
 
     @Override
     public boolean init(Expression[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
+        isDisconnect = i == 1;
 
         exprMember = (Expression<Member>) exprs[0];
-        exprVoiceChannel = (Expression<VoiceChannel>) exprs[1];
+        if (!isDisconnect)
+            exprVoiceChannel = (Expression<VoiceChannel>) exprs[1];
 
         return true;
     }
@@ -50,9 +53,8 @@ public class MoveMember extends AsyncEffect {
         final Member member = parseSingle(exprMember, e, null);
         final VoiceChannel voice = parseSingle(exprVoiceChannel, e, null);
 
-        if (member == null) {
+        if (member == null)
             return;
-        }
 
         try {
             member.getGuild().moveVoiceMember(member, voice).complete();
