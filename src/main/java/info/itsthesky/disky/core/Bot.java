@@ -77,16 +77,8 @@ public class Bot {
         return original;
     }
 
-    public MessageChannel findMessageChannel(MessageChannel original) {
-        if (original instanceof TextChannel)
-            return getInstance().getTextChannelById(original.getId());
-        if (original instanceof NewsChannel)
-            return getInstance().getNewsChannelById(original.getId());
-        if (original instanceof ThreadChannel)
-            return getInstance().getThreadChannelById(original.getId());
-        if (original instanceof PrivateChannel)
-            return getInstance().getPrivateChannelById(original.getId());
-        return original;
+    public <C extends Channel> C findMessageChannel(C original) {
+        return (C) instance.getChannelById(original.getClass(), original.getId());
     }
 
 	public boolean coreIsEquals(JDA core) {
