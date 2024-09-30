@@ -16,6 +16,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.specific.MessageEvent;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -46,12 +47,13 @@ public class PostMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% (in|to) [the] %channel% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]"
+				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% (in|to) [the] %channel% [(using|with) [the] [bot] %-bot%] [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]"
 		);
 	}
 
 	private Expression<Object> exprMessage;
 	private Expression<Channel> exprChannel;
+	private Expression<Bot> exprBot;
 	private Expression<Message> exprReference;
 	private Expression<Object> exprResult;
 	private Node node;
@@ -63,18 +65,21 @@ public class PostMessage extends AsyncEffect {
 
 		this.exprMessage = (Expression<Object>) expressions[0];
 		this.exprChannel = (Expression<Channel>) expressions[1];
-		this.exprReference = (Expression<Message>) expressions[2];
-		this.exprResult = (Expression<Object>) expressions[3];
+		this.exprBot = (Expression<Bot>) expressions[2];
+		this.exprReference = (Expression<Message>) expressions[3];
+		this.exprResult = (Expression<Object>) expressions[4];
 		return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);
 	}
 
 	@Override
 	public void execute(@NotNull Event e) {
 		final Object message = parseSingle(exprMessage, e);
-		final Channel channel = parseSingle(exprChannel, e);
+		Channel channel = parseSingle(exprChannel, e);
 		final @Nullable Message reference = parseSingle(exprReference, e);
+		final Bot bot = Bot.fromContext(exprBot, e);
 		if (message == null || channel == null)
 			return;
+		channel = bot.findMessageChannel(channel);
 
 		if (!MessageChannel.class.isAssignableFrom(channel.getClass())) {
 			Skript.error("The specified channel must be a message channel.");
