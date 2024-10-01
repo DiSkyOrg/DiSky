@@ -1,17 +1,26 @@
 package info.itsthesky.disky.elements.properties;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.changers.ChangeableSimplePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.api.skript.INodeHolder;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.core.Utils;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +32,8 @@ import java.net.URL;
 @Description({"Return the avatar URL of any user, guild or bot.",
 "This can be changed for guilds and bots only!"})
 @Examples({"avatar of event-guild", "avatar of event-user"})
-public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String> {
+public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String>
+		implements IAsyncChangeableExpression, INodeHolder {
 
 	static {
 		register(
@@ -34,58 +44,18 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 		);
 	}
 
+	private Node node;
+
 	@Override
-	public void change(Event e, Object[] delta, Bot bot, Changer.ChangeMode mode) {
-		if (!EasyElement.isValid(delta))
-			return;
-		final String value = (String) delta[0];
-		final Object entity = EasyElement.parseSingle(getExpr(), e, null);
-		if (entity == null || entity instanceof User)
-			return;
+	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+		node = getParser().getNode();
+		return super.init(expressions, matchedPattern, isDelayed, parseResult);
+	}
 
-		if (mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.DELETE) {
-			if (entity instanceof Guild)
-				Utils.catchAction(((Guild) entity).getManager().setIcon(null), e);
-			if (entity instanceof Bot)
-				Utils.catchAction(((Bot) entity).getInstance().getSelfUser().getManager().setAvatar(null), e);
-			return;
-		}
-
-		if (entity instanceof Guild || entity instanceof Bot) {
-
-			final InputStream iconStream;
-			if (Utils.isURL(value)) {
-				try {
-					iconStream = new URL(value).openStream();
-				} catch (IOException ioException) {
-					DiSky.getErrorHandler().exception(e, ioException);
-					return;
-				}
-			} else {
-				final File iconFile = new File(value);
-				if (iconFile == null || !iconFile.exists())
-					return;
-				try {
-					iconStream = new FileInputStream(iconFile);
-				} catch (FileNotFoundException ex) {
-					DiSky.getErrorHandler().exception(e, ex);
-					return;
-				}
-			}
-
-			final Icon icon;
-			try {
-				icon = Icon.from(iconStream);
-			} catch (IOException ioException) {
-				DiSky.getErrorHandler().exception(e, ioException);
-				return;
-			}
-
-			if (entity instanceof Guild)
-				Utils.catchAction(((Guild) entity).getManager().setIcon(icon), e);
-			else
-				Utils.catchAction(((Bot) entity).getInstance().getSelfUser().getManager().setAvatar(icon), e);
-		}
+	@Override
+	@NotNull
+	public Node getNode() {
+		return node;
 	}
 
 	@Override
@@ -120,5 +90,49 @@ public class AvatarURL extends ChangeableSimplePropertyExpression<Object, String
 	@Override
 	public @NotNull Class<? extends String> getReturnType() {
 		return String.class;
+	}
+
+	@Override
+	public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+		change(e, delta, mode, true);
+	}
+
+	@Override
+	public void change(Event e, Object[] delta, Bot bot, Changer.ChangeMode mode) {
+		change(e, delta, mode, false);
+	}
+
+	public void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean async) {
+		if (!EasyElement.isValid(delta))
+			return;
+		final String value = (String) delta[0];
+		final Object entity = EasyElement.parseSingle(getExpr(), e, null);
+		if (entity == null || entity instanceof User)
+			return;
+
+		RestAction<?> action = null;
+
+		if (mode == Changer.ChangeMode.RESET || mode == Changer.ChangeMode.DELETE) {
+			if (entity instanceof final Guild guild)
+				action = guild.getManager().setIcon(null);
+			if (entity instanceof final Bot bot)
+				action = bot.getInstance().getSelfUser().getManager().setAvatar(null);
+		} else {
+			final var parsedIcon = SkriptUtils.parseIcon(value);
+			if (parsedIcon == null) {
+				DiSkyRuntimeHandler.error(new IllegalArgumentException("Cannot parse the given icon URL: " + value), node);
+				return;
+			}
+
+			if (entity instanceof final Guild guild)
+				action = guild.getManager().setIcon(parsedIcon);
+			else if (entity instanceof final Bot bot)
+				action = bot.getInstance().getSelfUser().getManager().setAvatar(parsedIcon);
+		}
+
+		if (action != null) {
+			if (async) action.complete();
+			else action.queue();
+		}
 	}
 }
