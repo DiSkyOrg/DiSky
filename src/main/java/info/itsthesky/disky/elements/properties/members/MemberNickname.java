@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Utils;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
 "USe 'effective name' expression to get member's name of its nickname is not set."})
 @Examples({"reply with member nickname of event-member",
 "set member nickname of event-member to \"ayo?!\""})
-public class MemberNickname extends MemberProperty<String> {
+public class MemberNickname extends MemberProperty<String>
+        implements IAsyncChangeableExpression {
 
     static {
         register(
@@ -44,8 +46,7 @@ public class MemberNickname extends MemberProperty<String> {
         return new Class[0];
     }
 
-    @Override
-    public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
+    public void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean async) {
         if (!EasyElement.isValid(delta))
             return;
         final Member member = EasyElement.parseSingle(getExpr(), e, null);
@@ -59,7 +60,18 @@ public class MemberNickname extends MemberProperty<String> {
             return;
         }
 
-        member.modifyNickname(name).queue(null, ex -> DiSky.getErrorHandler().exception(e, ex));
+        final var action = member.modifyNickname(name);
+        if (async) action.complete();
+        else action.queue();
     }
 
+    @Override
+    public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
+        change(e, delta, mode, false);
+    }
+
+    @Override
+    public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+        change(e, delta, mode, true);
+    }
 }
