@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'idea'
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
@@ -34,7 +35,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.1.1'
+    implementation 'net.dv8tion:JDA:5.1.2'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
@@ -73,6 +74,13 @@ processResources {
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 1, 'minutes'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 compileJava.options.encoding = 'UTF-8'
