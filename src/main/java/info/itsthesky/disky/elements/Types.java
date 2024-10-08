@@ -157,6 +157,9 @@ public class Types {
                 type -> type.name().toLowerCase().replace("_", " "),
                 input -> {
                     if (input.equalsIgnoreCase("text"))
+                        return null; // see https://github.com/DiSkyOrg/DiSky/issues/223
+
+                    if (input.equalsIgnoreCase("chat"))
                         return ChannelType.TEXT;
 
                     if (input.equalsIgnoreCase("thread"))
@@ -168,7 +171,7 @@ public class Types {
                     if (input.equalsIgnoreCase("news thread"))
                         return ChannelType.GUILD_NEWS_THREAD;
 
-                    return input.equalsIgnoreCase("chat") ? ChannelType.TEXT : ChannelType.valueOf(input.toUpperCase());
+                    return ChannelType.valueOf(input.toUpperCase());
                 }, true
         ).eventExpression().register();
 
