@@ -1,6 +1,7 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -19,21 +20,25 @@ public class ForwardMessage extends AsyncEffect implements INodeHolder {
     static {
         Skript.registerEffect(
             ForwardMessage.class,
-                "forward [the] [message] %message% to %channel/textchannel%"
+                "forward [the] [message] %message% to %channel/textchannel% [and store (it|the message) in %-object%]"
         );
     }
 
     private Expression<Message> exprMessage;
     private Expression<Object> exprChannel;
+    private Expression<Object> exprVariable;
     private Node node;
 
     @Override
     public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
+        node = getParser().getNode();
 
         exprMessage = (Expression<Message>) expressions[0];
         exprChannel = (Expression<Object>) expressions[1];
-        return true;
+        exprVariable = (Expression<Object>) expressions[2];
+
+        return exprVariable == null || Changer.ChangerUtils.acceptsChange(exprVariable, Changer.ChangeMode.SET, Message.class);
     }
 
     @Override
@@ -45,7 +50,10 @@ public class ForwardMessage extends AsyncEffect implements INodeHolder {
 
         if (rawChannel instanceof final MessageChannel channel) {
             try {
-                message.forwardTo(channel).complete();
+                final var msg = message.forwardTo(channel).complete();
+
+                if (exprVariable != null)
+                    exprVariable.change(event, new Object[] {msg}, Changer.ChangeMode.SET);
             } catch (Exception ex) {
                 DiSkyRuntimeHandler.error(ex, node);
             }
@@ -56,7 +64,8 @@ public class ForwardMessage extends AsyncEffect implements INodeHolder {
 
     @Override
     public @NotNull String toString(@Nullable Event event, boolean debug) {
-        return "forward message " + exprMessage.toString(event, debug) + " to " + exprChannel.toString(event, debug);
+        return "forward message " + exprMessage.toString(event, debug) + " to " + exprChannel.toString(event, debug)
+                + (exprVariable == null ? "" : " and store it in " + exprVariable.toString(event, debug));
     }
 
     @Override
