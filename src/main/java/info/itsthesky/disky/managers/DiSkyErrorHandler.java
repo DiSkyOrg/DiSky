@@ -56,6 +56,14 @@ public class DiSkyErrorHandler implements ErrorHandler {
 				previous = m;
 			}
 
+			if (ConfigManager.get("debug", false)) {
+				msg.add("");
+				msg.add("&4Full Stacktrace:");
+				msg.add("");
+				for (StackTraceElement line : ex.getStackTrace())
+					msg.add(line.toString());
+			}
+
 			return msg.toArray(new String[0]);
 		});
 
