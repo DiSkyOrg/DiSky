@@ -58,7 +58,7 @@ public final class DiSky extends JavaPlugin {
         builder = new DocBuilder(this);
         webhooksManager = new WebhooksManager(this);
         errorHandler = botManager.errorHandler();
-        skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage");
+        skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage2");
 
         getCommand("disky").setExecutor(new DiSkyCommand());
         if (!getDataFolder().exists())

@@ -27,10 +27,12 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.callbacks.IPremiumRequiredReplyCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
 import net.dv8tion.jda.api.utils.messages.MessagePollData;
+import net.dv8tion.jda.internal.requests.RestActionImpl;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -169,8 +171,9 @@ public class ReplyWith extends AsyncEffect {
 			} else {
 				final MessageEvent event = (MessageEvent) e;
 				messageRestAction = event.getMessageChannel().sendMessage(builder.build())
-						.setPoll(poll)
-						.setMessageReference(reference);
+						.setPoll(poll);
+				if (reference != null)
+					((MessageCreateAction) messageRestAction).setMessageReference(reference);
 			}
 		}
 
