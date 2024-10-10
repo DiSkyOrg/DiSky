@@ -302,7 +302,7 @@ public final class SkriptUtils {
             return true;
 
         final String message = "Unable to validate the snowflake ID '" + input + "': " + errorMess;
-        DiSkyRuntimeHandler.error(new Exception(message), node);
+        DiSkyRuntimeHandler.error(new IllegalArgumentException(message), node);
         return false;
     }
 

@@ -22,7 +22,7 @@ public class DiSkyRuntimeHandler {
 
     public static void error(Exception error, Node node) {
         if (!isHandling) {
-            DiSky.getErrorHandler().exception(null, error);
+            DiSky.getErrorHandler().exception(null, error, node);
             return;
         }
 

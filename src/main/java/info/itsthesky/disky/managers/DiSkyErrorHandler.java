@@ -1,5 +1,6 @@
 package info.itsthesky.disky.managers;
 
+import ch.njol.skript.config.Node;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.SkriptUtils;
@@ -81,7 +82,7 @@ public class DiSkyErrorHandler implements ErrorHandler {
 	}
 	
 	@Override
-	public void exception(@Nullable Event event, @Nullable Throwable ex) {
+	public void exception(@Nullable Event event, @Nullable Throwable ex, @Nullable Node node) {
 		insertErrorValue(event, ex);
 		send("&4[&c!&4] &c");
 		send("&4[&c!&4] &4DiSky Internal Error (version: "+ DiSky.getInstance().getDescription().getVersion()+")");
@@ -108,6 +109,14 @@ public class DiSkyErrorHandler implements ErrorHandler {
 
 		for (String line : lines)
 			send("&4[&c!&4] &c" + line);
+
+		if (node != null) {
+			send("&4[&c!&4] &c");
+			send("&4[&c!&4] &4Error occurred in the following node:");
+			send("&4[&c!&4] &c");
+			send("&4[&c!&4] &c" + node.getKey() + " &6(" + node.getConfig().getFileName() + ", line " + node.getLine() + ")");
+			send("&4[&c!&4] &c");
+		}
 
 		send("&4[&c!&4] &c");
 		sendAll();
