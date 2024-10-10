@@ -42,11 +42,10 @@ public class RetrieveThreadMessage extends AsyncEffect {
 
         final Message message;
         try {
-            message = (
-                    start ?
-                            thread.retrieveStartMessage() :
-                            thread.retrieveParentMessage()
-                    ).complete();
+            message = (start ?
+                    thread.retrieveStartMessage() :
+                    thread.retrieveParentMessage()
+            ).complete();
         } catch (Exception ex) {
             DiSky.getErrorHandler().exception(event, ex);
             return;

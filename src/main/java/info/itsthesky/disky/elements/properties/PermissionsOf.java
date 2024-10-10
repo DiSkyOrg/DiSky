@@ -117,7 +117,7 @@ public class PermissionsOf extends SimpleExpression<Object> implements IAsyncCha
         return holder.getPermissions(channel).toArray(new Permission[0]);
     }
     
-    public void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean complete) {
+    public void change(Event e, Object[] delta, Changer.ChangeMode mode, boolean async) {
         if (!EasyElement.isValid(delta))
             return;
 
@@ -150,9 +150,12 @@ public class PermissionsOf extends SimpleExpression<Object> implements IAsyncCha
                 break;
         }
 
+        if (actions.isEmpty())
+            return;
+
         final RestAction<?> action = RestAction.allOf(actions);
-        if (complete) action.queue();
-        else action.complete();
+        if (async) action.complete();
+        else action.queue();
     }
 
     @Override
