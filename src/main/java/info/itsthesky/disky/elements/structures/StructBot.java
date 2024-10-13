@@ -18,9 +18,11 @@ import info.itsthesky.disky.elements.events.bots.ReadyEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -206,41 +208,43 @@ public class StructBot extends Structure {
 		options.setIntents(container.getOptional("intents", GatewayIntent[].class, true));
 
 		// -------------------------------------------------------------------------------------------------
-
-
 		if (options == null)
 			throw new IllegalStateException("The options of the bot '" + name + "' are null! This is a bug, please report it on the DiSky GitHub!");
-		final BotOptions parsedEntity = options;
 
-		final String name = parsedEntity.getName();
-		if (DiSky.getManager().exist(name)) {
-			final Bot bot = DiSky.getManager().fromName(name);
-			if (bot.isForceReload())
-				bot.getInstance().shutdownNow();
-			else
-				return true;
-		}
-		final JDA jda;
-		try {
+		Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), () -> {
+			final BotOptions parsedEntity = options;
 
-			final EventListener listener = event -> {
-				if (event instanceof net.dv8tion.jda.api.events.session.ReadyEvent)
-					parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
-				else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
-					parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
+			final String name = parsedEntity.getName();
+			if (DiSky.getManager().exist(name)) {
+				final Bot bot = DiSky.getManager().fromName(name);
+				if (bot.isForceReload())
+					bot.getInstance().shutdownNow();
+				else
+					return;
+			}
+			final JDA jda;
+			try {
+
+				final EventListener listener = event -> {
+					if (event instanceof net.dv8tion.jda.api.events.session.ReadyEvent)
+						parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
+					else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
+						parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
 				/*else if (event instanceof net.dv8tion.jda.api.events.session.ShutdownEvent)
 					parsedEntity.runShutdown((net.dv8tion.jda.api.events.session.ShutdownEvent) event);*/
-			};
+				};
 
-			jda = parsedEntity
-					.toBuilder()
-					.addEventListeners(listener)
-					.build();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		}
-		DiSky.getManager().addBot(parsedEntity.asBot(jda, parsedEntity));
+				jda = parsedEntity
+						.toBuilder()
+						.addEventListeners(listener)
+						.build();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				return;
+			}
+
+			DiSky.getManager().addBot(parsedEntity.asBot(jda, parsedEntity));
+		});
 
 		return true;
 	}
