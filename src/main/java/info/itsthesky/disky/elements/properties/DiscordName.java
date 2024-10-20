@@ -85,11 +85,8 @@ public class DiscordName extends SimplePropertyExpression<Object, String> implem
 
         if (action != null) {
             try {
-                if (async) {
-                    action.queue();
-                } else {
-                    action.complete();
-                }
+                if (async) action.complete();
+                else action.queue();
             } catch (Exception ex) {
                 DiSkyRuntimeHandler.error(ex, node);
             }

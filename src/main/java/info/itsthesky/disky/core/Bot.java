@@ -4,7 +4,9 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.events.EventListener;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import info.itsthesky.disky.elements.structures.slash.BotReadyWaiter;
 import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -48,6 +50,8 @@ public class Bot {
         this.options = options;
 
         this.slashManager = SlashManager.getManager(this);
+        BotReadyWaiter.onBotLoaded(this);
+        EventListener.registerAll(this);
     }
 
     public String getName() {

@@ -99,11 +99,8 @@ public class ProfileBanner extends SimplePropertyExpression<Object, String>
                 final AccountManager manager = ((Bot) entity).getInstance().getSelfUser().getManager();
                 final RestAction<Void> action = manager.setBanner(banner);
                 try {
-                    if (async) {
-                        action.queue();
-                    } else {
-                        action.complete();
-                    }
+                    if (async) action.complete();
+                    else action.queue();
                 } catch (Exception ex) {
                     DiSkyRuntimeHandler.error(ex, node);
                 }

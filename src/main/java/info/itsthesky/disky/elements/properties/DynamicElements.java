@@ -41,8 +41,8 @@ public final class DynamicElements {
                             ? entity.getManager().setLocked(value)
                             : entity.getManager().setLocked(false);
 
-                    if (async) rest.queue();
-                    else rest.complete();
+                    if (async) rest.complete();
+                    else rest.queue();
                 }
         );
 
@@ -54,8 +54,8 @@ public final class DynamicElements {
                             ? entity.getManager().setArchived(value)
                             : entity.getManager().setArchived(false);
 
-                    if (async) rest.queue();
-                    else rest.complete();
+                    if (async) rest.complete();
+                    else rest.queue();
                 }
         );
 
@@ -67,8 +67,8 @@ public final class DynamicElements {
                             ? entity.getManager().setPinned(value)
                             : entity.getManager().setPinned(false);
 
-                    if (async) rest.queue();
-                    else rest.complete();
+                    if (async) rest.complete();
+                    else rest.queue();
                 }
         );
 
@@ -80,8 +80,8 @@ public final class DynamicElements {
                             ? entity.getManager().setInvitable(value)
                             : entity.getManager().setInvitable(false);
 
-                    if (async) rest.queue();
-                    else rest.complete();
+                    if (async) rest.complete();
+                    else rest.queue();
                 }
         );
 

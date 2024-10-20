@@ -27,6 +27,7 @@ public class ParsedCommand {
     private List<Permission> enabledFor = new ArrayList<>();
     private boolean disabledByDefault = false;
 
+    private String rawBot; // it's bot's name
     private Bot bot;
     private List<String> guilds = new ArrayList<>();
 
@@ -124,6 +125,14 @@ public class ParsedCommand {
 
     public void setTrigger(Trigger trigger) {
         this.trigger = trigger;
+    }
+
+    public String getRawBot() {
+        return rawBot;
+    }
+
+    public void setRawBot(String rawBot) {
+        this.rawBot = rawBot;
     }
 
     public long getCooldown() {

@@ -200,7 +200,7 @@ public class StructSlashCommand extends Structure {
         DiSky.debug("Group: " + (parsedCommand.getGroup() == null ? "None" : parsedCommand.getGroup().getName()));
 
         DiSky.debug("------------------- Places -------------------");
-        DiSky.debug("Bot: " + parsedCommand.getBot().getName());
+        DiSky.debug("Pre-bot (name): " + parsedCommand.getRawBot());
         for (String guild : parsedCommand.getGuilds())
             DiSky.debug("- Guild: " + guild);
 
@@ -228,9 +228,13 @@ public class StructSlashCommand extends Structure {
         DiSky.debug("------------------- End -------------------");
         //endregion
 
-        parsedCommand.getBot().getSlashManager().registerCommand(parsedCommand);
-        REMOVED_COMMANDS.removeIf(info -> info.getCommand().equals(parsedCommand.getName()));
+        final var bot = DiSky.getManager().getBotByName(parsedCommand.getRawBot());
+        if (bot == null)
+            BotReadyWaiter.WaitingCommands.computeIfAbsent(parsedCommand.getRawBot(), k -> new ArrayList<>()).add(parsedCommand);
+        else
+            bot.getSlashManager().registerCommand(parsedCommand);
 
+        REMOVED_COMMANDS.removeIf(info -> info.getCommand().equals(parsedCommand.getName()));
         return true;
     }
 
@@ -480,13 +484,7 @@ public class StructSlashCommand extends Structure {
             return false;
         }
 
-        final Bot bot = DiSky.getManager().getBotByName(rawBot);
-        if (bot == null) {
-            getParser().setNode(structure);
-            Skript.error("Invalid bot name: " + rawBot);
-            return false;
-        }
-        parsedCommand.setBot(bot);
+        parsedCommand.setRawBot(rawBot);
 
         if (!rawGuilds.isEmpty()) {
             final String[] guildIds = rawGuilds.split(LIST.pattern());

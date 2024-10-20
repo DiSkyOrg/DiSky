@@ -1,6 +1,7 @@
 package info.itsthesky.disky.api.events;
 
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -53,6 +54,11 @@ public class EventListener<T> extends ListenerAdapter {
     public static void removeListener(EventListener<?> listener) {
         listeners.remove(listener);
         DiSky.getManager().execute(bot -> bot.getInstance().removeEventListener(listener));
+    }
+
+    public static void registerAll(Bot bot) {
+        listeners.forEach(listener -> bot.getInstance().removeEventListener(listener));
+        listeners.forEach(listener -> bot.getInstance().addEventListener(listener));
     }
 
     @Override
