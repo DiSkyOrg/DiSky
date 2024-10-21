@@ -26,6 +26,7 @@ public class EventListener<T> extends ListenerAdapter {
     private final BiConsumer<T, GuildAuditLogEntryCreateEvent> consumer;
     private final Predicate<T> checker;
 
+    private final @Nullable String specificBotName;
     private final boolean isWaitingLogEvent;
     private final @Nullable ActionType logType;
     private final Predicate<GuildAuditLogEntryCreateEvent> logChecker;
@@ -35,11 +36,12 @@ public class EventListener<T> extends ListenerAdapter {
     public EventListener(Class<T> paramClass,
                          BiConsumer<T, GuildAuditLogEntryCreateEvent> consumer,
                          Predicate<T> checker, Predicate<GuildAuditLogEntryCreateEvent> logChecker,
-                         @Nullable ActionType actionType) {
+                         @Nullable ActionType actionType, @Nullable String specificBotName) {
         this.clazz = paramClass;
         this.consumer = consumer;
         this.checker = checker;
         this.logChecker = logChecker;
+        this.specificBotName = specificBotName;
 
         this.isWaitingLogEvent = actionType != null;
         this.logType = actionType;
@@ -48,7 +50,6 @@ public class EventListener<T> extends ListenerAdapter {
     public static void addListener(EventListener<?> listener) {
         removeListener(listener);
         listeners.add(listener);
-        DiSky.getManager().registerGlobalListener(listener);
     }
 
     public static void removeListener(EventListener<?> listener) {
@@ -57,8 +58,13 @@ public class EventListener<T> extends ListenerAdapter {
     }
 
     public static void registerAll(Bot bot) {
-        listeners.forEach(listener -> bot.getInstance().removeEventListener(listener));
-        listeners.forEach(listener -> bot.getInstance().addEventListener(listener));
+        listeners.forEach(listener -> {
+            if (listener.specificBotName != null && !listener.specificBotName.equalsIgnoreCase(bot.getName()))
+                return;
+
+            DiSky.debug("Registering event listener " + listener.clazz.getSimpleName() + " for bot " + bot.getName() + listener.hash());
+            bot.getInstance().addEventListener(listener);
+        });
     }
 
     @Override
@@ -94,8 +100,11 @@ public class EventListener<T> extends ListenerAdapter {
         }
     }
 
-    private String hash() {
+    public String hash() {
         return " [class hash: " + this.hashCode() + "]";
     }
 
+    public Class<T> getClazz() {
+        return clazz;
+    }
 }

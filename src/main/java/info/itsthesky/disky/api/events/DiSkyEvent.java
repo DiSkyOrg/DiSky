@@ -156,7 +156,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                 });
 
             }
-        }, checker(), logChecker(), getLogType());
+        }, checker(), logChecker(), getLogType(), bot);
         EventListener.addListener(listener);
     }
 
