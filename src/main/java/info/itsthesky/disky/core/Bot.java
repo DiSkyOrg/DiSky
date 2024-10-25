@@ -4,27 +4,17 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.events.EventListener;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.elements.structures.slash.BotReadyWaiter;
 import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
-import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Method;
 
 /**
  * Class that will handle every information about a bot.
@@ -51,7 +41,6 @@ public class Bot {
 
         this.slashManager = SlashManager.getManager(this);
         BotReadyWaiter.onBotLoaded(this);
-        EventListener.registerAll(this);
     }
 
     public String getName() {

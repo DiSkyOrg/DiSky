@@ -16,11 +16,10 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
- * Made by Blitz, minor edit by Sky for DiSky
+ * Made by Blitz, edited by Sky for DiSky
  */
-public class EventListener<T> extends ListenerAdapter {
+public class EventListener<T> {
 
-    public final static ArrayList<EventListener<?>> listeners = new ArrayList<>();
     public boolean enabled = true;
     private final Class<T> clazz;
     private final BiConsumer<T, GuildAuditLogEntryCreateEvent> consumer;
@@ -47,27 +46,6 @@ public class EventListener<T> extends ListenerAdapter {
         this.logType = actionType;
     }
 
-    public static void addListener(EventListener<?> listener) {
-        removeListener(listener);
-        listeners.add(listener);
-    }
-
-    public static void removeListener(EventListener<?> listener) {
-        listeners.remove(listener);
-        DiSky.getManager().execute(bot -> bot.getInstance().removeEventListener(listener));
-    }
-
-    public static void registerAll(Bot bot) {
-        listeners.forEach(listener -> {
-            if (listener.specificBotName != null && !listener.specificBotName.equalsIgnoreCase(bot.getName()))
-                return;
-
-            DiSky.debug("Registering event listener " + listener.clazz.getSimpleName() + " for bot " + bot.getName() + listener.hash());
-            bot.getInstance().addEventListener(listener);
-        });
-    }
-
-    @Override
     public void onGuildAuditLogEntryCreate(GuildAuditLogEntryCreateEvent event) {
         DiSky.debug("received log event " + event.getEntry().getType() + " by DiSky.");
         if (isWaitingLogEvent && event.getEntry().getType() == logType) {
@@ -85,7 +63,6 @@ public class EventListener<T> extends ListenerAdapter {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public void onGenericEvent(@NotNull GenericEvent event) {
         if (enabled && clazz.isInstance(event)) {
             DiSky.debug("Event " + event.getClass().getSimpleName() + " received by DiSky. Is it valid? " + checker.test((T) event) + "." + hash());

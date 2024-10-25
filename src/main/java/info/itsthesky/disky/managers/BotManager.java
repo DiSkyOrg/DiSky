@@ -51,6 +51,7 @@ public class BotManager {
         bot.getInstance().addEventListener(new ReactionListener());
         bot.getInstance().addEventListener(new MessageManager(bot));
         bot.getInstance().addEventListener(new MemberRemoveEventListener());
+        bot.getInstance().addEventListener(new CoreEventListener(bot));
     }
 
     public void shutdown() {

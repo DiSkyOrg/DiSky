@@ -7,9 +7,8 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.log.SkriptLogger;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
+import info.itsthesky.disky.managers.CoreEventListener;
 import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -157,14 +156,14 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
 
             }
         }, checker(), logChecker(), getLogType(), bot);
-        EventListener.addListener(listener);
+        CoreEventListener.addListener(listener);
     }
 
     @Override
     public void unregister(final @NotNull Trigger t) {
         if (listener != null) {
             listener.enabled = false;
-            EventListener.removeListener(listener);
+            CoreEventListener.removeListener(listener);
         }
 
         listener = null;
