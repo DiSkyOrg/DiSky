@@ -29,6 +29,24 @@ public class ComponentRow {
 		buttons = new ArrayList<>();
 	}
 
+	public ComponentRow(List<Object> components) {
+		this();
+
+		for (Object component : components) {
+			if (component instanceof final SelectMenu menu)
+				setMenu(menu);
+			else if (component instanceof final Button button)
+				add(button);
+			else if (component instanceof final TextInput input)
+				setInput(input);
+
+			else if (component instanceof final SelectMenu.Builder<?, ?> menuBuilder)
+				setMenu(menuBuilder.build());
+			else if (component instanceof final TextInput.Builder inputBuilder)
+				setInput(inputBuilder.build());
+		}
+	}
+
 	public TextInput getInput() {
 		return input;
 	}
@@ -74,5 +92,9 @@ public class ComponentRow {
 			else if (component instanceof TextInput)
 				setInput((TextInput) component);
 		}
+	}
+
+	public boolean isEmpty() {
+		return menu == null && input == null && buttons.isEmpty();
 	}
 }
