@@ -7,6 +7,7 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.util.Timespan;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
+import ch.njol.util.coll.iterator.ConsumingIterator;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
@@ -16,10 +17,10 @@ import net.dv8tion.jda.api.events.GenericEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.structure.Structure;
+import org.skriptlang.skript.lang.structure.StructureInfo;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.TimeoutException;
@@ -50,7 +51,12 @@ public class SecListenOnce extends Section {
 
     @Override
     public boolean init(Expression<?>[] expressions, int i, @NotNull Kleenean kleenean, SkriptParser.@NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> list) {
-        DiSky.debug("Starting to parse listen once section ...");
+        if (true) {
+            Skript.warning("The 'listen once' section is currently unavailable in Skript 2.9.1 and +. It'll come back once a fix from SkriptLang has been made about parsing an event.");
+            return false;
+        }
+
+        //DiSky.debug("Starting to parse listen once section ...");
         if (!(expressions[0] instanceof VariableString)) {
             Skript.error("The event name in a listen once section must be a literal string!");
             return false;
@@ -58,8 +64,23 @@ public class SecListenOnce extends Section {
         currentEvents = getParser().getCurrentEvents();
 
         final String rawEvent = ((VariableString) expressions[0]).toString().replace("\"", "");
-        final Object result = SkriptParser.parseStatic(rawEvent, Skript.getEvents().iterator(), ParseContext.EVENT, "Cannot parse the given event: " + rawEvent);
-        // DiSky.debug("debug 2: " + rawEvent + " / " + result + " / " + (result != null ? result.getClass().getSimpleName() : "null"));
+        final var events = new ConsumingIterator<>(Skript.getEvents().stream()
+                .filter(e -> DiSkyEvent.class.isAssignableFrom(e.elementClass))
+                .iterator(), event -> {
+            final Structure.StructureData structureData = getParser().getData(Structure.StructureData.class);
+
+            try {
+                final var field = structureData.getClass().getDeclaredField("structureInfo");
+                final var structInfo = new StructureInfo(event.patterns, event.elementClass, event.originClassPath, event.entryValidator);
+                field.setAccessible(true);
+                field.set(structureData, structInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        final Object result = SkriptParser.parseStatic(rawEvent, events,
+                ParseContext.EVENT, "Cannot parse the given event: " + rawEvent);
         if (!(result instanceof SkriptEvent))
             return false;
         final SkriptEvent skriptEvent = (SkriptEvent) result;
