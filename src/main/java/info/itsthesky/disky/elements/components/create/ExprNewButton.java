@@ -1,6 +1,7 @@
 package info.itsthesky.disky.elements.components.create;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -12,6 +13,9 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.Debug;
+import info.itsthesky.disky.core.JDAUtils;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
+import net.dv8tion.jda.api.entities.SkuSnowflake;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import org.bukkit.event.Event;
@@ -24,8 +28,14 @@ public class ExprNewButton extends SimpleExpression<Button> {
     
     static {
         Skript.registerExpression(ExprNewButton.class, Button.class, ExpressionType.SIMPLE,
-                "[a] new [(enabled|disabled)] %buttonstyle% [link] button [with (id|url)] %string% [(named|with label) %-string%][,] [with [emoji] %-emote%]");
+                "[a] new [(enabled|disabled)] %buttonstyle% [link] button [with (id|url)] %string% [(named|with label) %-string%][,] [with [emoji] %-emote%]",
+                "[a] new [disabled] premium button (with|using) sku [id] %string%");
     }
+
+    private Node node;
+
+    private boolean isPremium;
+    private Expression<String> exprSkuId;
 
     private Expression<String> exprIdOrURL;
     private Expression<ButtonStyle> exprStyle;
@@ -37,11 +47,20 @@ public class ExprNewButton extends SimpleExpression<Button> {
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+        isPremium = matchedPattern == 1;
+        isEnabled = !parseResult.expr.contains("new disabled");
+        node = getParser().getNode();
+
+        if (isPremium)
+        {
+            exprSkuId = (Expression<String>) exprs[0];
+            return true;
+        }
+
         exprStyle = (Expression<ButtonStyle>) exprs[0];
         exprIdOrURL = (Expression<String>) exprs[1];
         exprContent = (Expression<String>) exprs[2];
         exprEmoji = (Expression<Emote>) exprs[3];
-        isEnabled = !parseResult.expr.contains("new disabled");
         isLink = parseResult.expr.contains("new link") ||
                 parseResult.expr.contains("link button");
         return true;
@@ -49,15 +68,32 @@ public class ExprNewButton extends SimpleExpression<Button> {
 
     @Override
     protected Button @NotNull [] get(@NotNull Event e) {
+        if (isPremium) {
+            String skuId = exprSkuId.getSingle(e);
+
+            if (!DiSkyRuntimeHandler.checkSet(node, skuId, exprSkuId))
+                return new Button[0];
+
+            if (!DiSkyRuntimeHandler.checkSnowflake(node, skuId))
+                return new Button[0];
+
+            return new Button[] {Button.premium(SkuSnowflake.fromId(skuId)).withDisabled(!isEnabled)};
+        }
+
         String idOrURL = exprIdOrURL.getSingle(e);
         ButtonStyle style = exprStyle.getSingle(e);
+
+        if (!DiSkyRuntimeHandler.checkSet(node,
+                idOrURL, exprIdOrURL,
+                style, exprStyle)) {
+            return new Button[0];
+        }
 
         String content = exprContent == null ? null : exprContent.getSingle(e);
         Emote emoji = exprEmoji == null ? null : exprEmoji.getSingle(e);
 
-        if (EasyElement.anyNull(this, style, idOrURL)) return new Button[0];
-        if (EasyElement.anyNull(emoji, content)) {
-            Debug.debug(this, Debug.Type.INCOMPATIBLE_TYPE, "You must provide at least an emoji or a content.");
+        if (emoji == null && content == null) {
+            DiSkyRuntimeHandler.error(new IllegalArgumentException("You need to specify a content OR an emoji for the button!"), node, false);
             return new Button[0];
         }
 
@@ -87,6 +123,9 @@ public class ExprNewButton extends SimpleExpression<Button> {
 
     @Override
     public @NotNull String toString(Event e, boolean debug) {
-        return "new button with id or url " + exprIdOrURL.toString(e, debug);
+        if (isPremium)
+            return "new premium button with sku id " + exprSkuId.toString(e, debug);
+        else
+            return "new " + (isEnabled ? "enabled" : "disabled") + " " + exprStyle.toString(e, debug) + " button with id " + exprIdOrURL.toString(e, debug) + (exprContent == null ? "" : " named " + exprContent.toString(e, debug)) + (exprEmoji == null ? "" : " with emoji " + exprEmoji.toString(e, debug));
     }
 }
