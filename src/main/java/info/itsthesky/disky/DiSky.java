@@ -2,6 +2,8 @@ package info.itsthesky.disky;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import info.itsthesky.disky.api.datastruct.DataStructureFactory;
+import info.itsthesky.disky.api.datastruct.structures.EmbedStructure;
 import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.generator.DocBuilder;
 import info.itsthesky.disky.api.modules.DiSkyModule;
@@ -68,6 +70,15 @@ public final class DiSky extends JavaPlugin {
          * Loading the configuration
          */
         ConfigManager.loadConfig(this);
+
+        /*
+         * Data Structures
+         */
+        try {
+            DataStructureFactory.getInstance().registerDataStructure(EmbedStructure.class);
+        } catch (Exception e) {
+            errorHandler.exception(null, e);
+        }
 
         /*
         Saving & loading emojis

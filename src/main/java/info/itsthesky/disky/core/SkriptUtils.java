@@ -238,6 +238,12 @@ public final class SkriptUtils {
         return new ColorRGB(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
+    public static java.awt.Color convert(Color color) {
+        if (color == null)
+            return null;
+        return new java.awt.Color(color.asBukkitColor().getRed(), color.asBukkitColor().getGreen(), color.asBukkitColor().getBlue());
+    }
+
 	@SafeVarargs
     public static Class<? extends Event>[] addEventClasses(Class<? extends Event>... classes) {
         final List<Class<? extends Event>> current = new ArrayList<>(Arrays.asList(ParserInstance.get().getCurrentEvents()));
