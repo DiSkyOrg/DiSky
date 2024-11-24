@@ -5,6 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
+import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.attribute.IMemberContainer;
@@ -12,6 +13,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @Name("Discord Members of Guild / Channel")
 @Description({"Returns a list of members.",
@@ -22,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"members of event-channel",
         "members of voice channel with id \"0000\"",
 "add event-member to discord members of thread channel with id \"000\""})
-public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member> {
+public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member> implements IAsyncGettableExpression<Member> {
 
     static {
         register(
@@ -35,10 +38,30 @@ public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member>
 
     @Override
     public @Nullable Member[] convert(Object entity) {
-        if (entity instanceof IMemberContainer)
-            return ((IMemberContainer) entity).getMembers().toArray(new Member[0]);
-        if (entity instanceof Guild)
-            return ((Guild) entity).getMembers().toArray(new Member[0]);
+        return get(entity, false);
+    }
+
+    @Override
+    public Member[] getAsync(Event e) {
+        final Object entity = getExpr().getSingle(e);
+        if (entity == null)
+            return new Member[0];
+
+        return get(entity, true);
+    }
+
+    public Member[] get(Object entity, boolean async) {
+        if (entity instanceof final IMemberContainer memberContainer)
+            return memberContainer.getMembers().toArray(new Member[0]);
+
+        if (entity instanceof final Guild guild) {
+            if (async) {
+                return guild.loadMembers().get().toArray(new Member[0]);
+            } else {
+                return guild.getMembers().toArray(new Member[0]);
+            }
+        }
+
         return new Member[0];
     }
 
@@ -82,5 +105,6 @@ public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member>
 
     @Override
     protected String getPropertyName() {
-        return "discord members of " + getExpr().toString(null, false);
-    }}
+        return "discord members";
+    }
+}
