@@ -4,6 +4,7 @@ import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Config;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.log.SkriptLogger;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.SkriptUtils;
@@ -81,7 +82,7 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
 
     @Override
      @SuppressWarnings("unchecked")
-    public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, @NotNull SkriptParser.ParseResult parser) {
+    public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, @NotNull ParseResult parser) {
         bot = (String) (exprs[0] == null ? null : exprs[0].getSingle());
 
         bukkitClass = (Class<? extends Event>) Arrays.stream(this.getClass().getDeclaredClasses())

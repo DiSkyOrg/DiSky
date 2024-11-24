@@ -1,7 +1,7 @@
 package info.itsthesky.disky.api.skript.action;
 
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
@@ -45,7 +45,7 @@ public abstract class AbstractNewAction<T, E> extends SimpleExpression<T> {
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
         exprGuild = (Expression<E>) exprs[0];
         exprBot = (Expression<Bot>) exprs[1];
         return true;

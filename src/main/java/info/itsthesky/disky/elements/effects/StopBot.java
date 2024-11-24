@@ -5,9 +5,8 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.WaiterEffect;
 import info.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
@@ -34,7 +33,7 @@ public class StopBot extends WaiterEffect {
 	boolean force;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
 		exprBot = (Expression<Bot>) expressions[0];
 		force = parseResult.expr.contains("force");
 		return true;

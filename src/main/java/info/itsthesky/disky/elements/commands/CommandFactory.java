@@ -6,6 +6,7 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.classes.Parser;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.StringMode;
@@ -13,10 +14,8 @@ import ch.njol.skript.util.Timespan;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
 import ch.njol.util.StringUtils;
-import info.itsthesky.disky.api.DiSkyType;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 
 import java.lang.reflect.InvocationTargetException;
@@ -61,9 +60,9 @@ public class CommandFactory {
 
     public boolean parseArguments(String args, CommandObject command, Event event) {
         SkriptParser parser = new SkriptParser(args, SkriptParser.PARSE_LITERALS, ParseContext.COMMAND);
-        SkriptParser.ParseResult res = null;
+        ParseResult res = null;
         try {
-            res = (SkriptParser.ParseResult) PARSE_I.invoke(parser, command.getPattern());
+            res = (ParseResult) PARSE_I.invoke(parser, command.getPattern());
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

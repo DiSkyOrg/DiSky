@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
@@ -45,7 +45,7 @@ public class TimeOutMember extends SpecificBotEffect {
 	private int matchedPattern;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int matchedPattern, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean initEffect(Expression[] expressions, int matchedPattern, Kleenean kleenean, ParseResult parseResult) {
 		this.matchedPattern = matchedPattern;
 		exprMember = (Expression<Member>) expressions[0];
 		if (matchedPattern == 2) return true;

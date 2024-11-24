@@ -3,6 +3,7 @@ package info.itsthesky.disky.elements.sections;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.api.skript.EasyElement;
@@ -36,7 +37,7 @@ public class ReactSection extends EffectSection {
 	public boolean init(Expression<?> @NotNull [] exprs,
 						int matchedPattern,
 						@NotNull Kleenean isDelayed,
-						@NotNull SkriptParser.ParseResult parseResult,
+						@NotNull ParseResult parseResult,
 						@Nullable SectionNode sectionNode,
 						@Nullable List<TriggerItem> triggerItems) {
 		exprMessage = (Expression<Message>) exprs[0];

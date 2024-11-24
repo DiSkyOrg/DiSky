@@ -3,7 +3,7 @@ package info.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -27,7 +27,7 @@ public class RetrieveThreadMessage extends AsyncEffect {
     private boolean start = false;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, ParseResult parseResult) {
         exprThread = (Expression<ThreadChannel>) expressions[0];
         exprResult = (Expression<Object>) expressions[1];
         start = parseResult.hasTag("start");

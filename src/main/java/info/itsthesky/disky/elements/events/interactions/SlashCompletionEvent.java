@@ -5,6 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.sections.SecLoop;
 import ch.njol.skript.sections.SecWhile;
 import ch.njol.util.Kleenean;
@@ -16,8 +17,6 @@ import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.core.JDAUtils;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
 import net.dv8tion.jda.api.entities.channel.middleman.*;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
@@ -111,7 +110,7 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 		}
 
 		@Override
-		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
 			if (!EasyElement.containsEvent(BukkitSlashCompletionEvent.class))
 				return false;
 			exprChoices = (Expression<Command.Choice>) exprs[0];
@@ -178,7 +177,7 @@ public class SlashCompletionEvent extends DiSkyEvent<CommandAutoCompleteInteract
 
 		@Override
 		@SuppressWarnings("ALL")
-		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+		public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
 			if (!super.init(exprs, matchedPattern, isDelayed, parseResult))
 				return false;
 

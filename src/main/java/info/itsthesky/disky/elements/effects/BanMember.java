@@ -6,14 +6,10 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -49,7 +45,7 @@ public class BanMember extends AsyncEffect {
     private Expression<Guild> exprGuild;
 
     @Override
-    public boolean init(Expression[] expr, int matchedPattern, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression[] expr, int matchedPattern, Kleenean kleenean, ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
         usingUserId = matchedPattern == 1;
         node = getParser().getNode();

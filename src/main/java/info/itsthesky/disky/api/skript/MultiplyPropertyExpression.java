@@ -3,7 +3,7 @@ package info.itsthesky.disky.api.skript;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
@@ -29,7 +29,7 @@ public abstract class MultiplyPropertyExpression<F, T> extends SimpleExpression<
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean init(final Expression<?> @NotNull [] expr, final int matchedPattern, final @NotNull Kleenean isDelayed, @NotNull final SkriptParser.ParseResult parseResult) {
+    public boolean init(final Expression<?> @NotNull [] expr, final int matchedPattern, final @NotNull Kleenean isDelayed, @NotNull final ParseResult parseResult) {
         this.expr = (Expression<? extends F>) expr[0];
         return true;
     }

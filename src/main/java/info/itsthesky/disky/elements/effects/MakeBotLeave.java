@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -24,7 +24,7 @@ public class MakeBotLeave extends AsyncEffect {
     private Expression<Guild> exprGuild;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
         exprBot = (Expression<Bot>) expressions[0];
         exprGuild = (Expression<Guild>) expressions[1];
         return true;

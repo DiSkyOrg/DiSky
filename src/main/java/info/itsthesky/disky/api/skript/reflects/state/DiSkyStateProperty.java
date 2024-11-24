@@ -4,7 +4,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.INodeHolder;
 import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
@@ -18,7 +18,7 @@ public class DiSkyStateProperty extends SimplePropertyExpression<Object, Boolean
     public Node node;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
         node = getParser().getNode();
         return super.init(expressions, matchedPattern, isDelayed, parseResult);
     }

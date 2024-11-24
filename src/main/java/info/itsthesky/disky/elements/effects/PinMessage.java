@@ -3,7 +3,7 @@ package info.itsthesky.disky.elements.effects;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -28,7 +28,7 @@ public class PinMessage extends AsyncEffect {
     private Expression<Message> exprMessage;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
 
         node = getParser().getNode();

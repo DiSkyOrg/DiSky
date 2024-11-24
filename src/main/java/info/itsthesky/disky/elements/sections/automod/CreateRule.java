@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.sections.automod;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
@@ -25,7 +25,7 @@ public class CreateRule extends SpecificBotEffect {
 	private Expression<Guild> exprGuild;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
 		exprRule = (Expression<AutoModRuleBuilder>) expressions[0];
 		exprGuild = (Expression<Guild>) expressions[1];
 		return true;

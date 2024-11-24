@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
@@ -31,7 +31,7 @@ public class BaseBotEffect extends WaiterEffect<Object> {
     private SpecificBotEffect<Object> effect;
 
     @Override
-    public boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
         exprBot = (Expression<Bot>) expressions[0];
         final String rawEffect = parseResult.regexes.get(0).group();
         final Effect unparsedEffect = Effect.parse(rawEffect, "Can't understand this effect: " + rawEffect);

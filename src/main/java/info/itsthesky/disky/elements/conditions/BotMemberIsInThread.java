@@ -3,7 +3,7 @@ package info.itsthesky.disky.elements.conditions;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyPropertyCondition;
 import info.itsthesky.disky.api.skript.PropertyCondition;
@@ -45,7 +45,7 @@ public class BotMemberIsInThread extends EasyPropertyCondition<Object> {
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
         exprThread = (Expression<ThreadChannel>) exprs[0];
         return super.init(exprs, matchedPattern, isDelayed, parseResult);
     }

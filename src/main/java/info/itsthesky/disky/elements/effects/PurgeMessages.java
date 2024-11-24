@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
@@ -52,7 +52,7 @@ public class PurgeMessages extends SpecificBotEffect {
     }
 
     @Override
-    public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
         exprMessages = (Expression<Message>) expressions[0];
         return true;
     }
