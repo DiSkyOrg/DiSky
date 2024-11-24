@@ -57,6 +57,14 @@ public final class ConfigManager {
         }
     }
 
+    public static void reloadConfig(DiSky instance) {
+        final File localConfig = new File(instance.getDataFolder(), CONFIG_FILE);
+        if (!localConfig.exists())
+            instance.saveResource(CONFIG_FILE, false);
+
+        CONFIG = YamlConfiguration.loadConfiguration(localConfig);
+    }
+
     public static <T> T get(String path, T def) {
         return (T) CONFIG.get(path, def);
     }

@@ -5,6 +5,7 @@ import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.util.Date;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.modules.DiSkyModule;
+import info.itsthesky.disky.managers.ConfigManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -33,6 +34,7 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored("&b/disky bots &7- &9Show the list of loaded bots."));
             sender.sendMessage(Utils.colored("&b/disky bot <bot> &7- &9Show info about a specific bot."));
             sender.sendMessage(Utils.colored("&b/disky debug &7- &9Store the debug information inside the 'plugins/DiSky/debug.txt' file."));
+            sender.sendMessage(Utils.colored("&b/disky reloadconfig &7- &9Reload DiSky's configuration"));
             sender.sendMessage(Utils.colored("&b/disky reload <module name> &7- &4&lBETA &9Reload a specific module."));
             sender.sendMessage(Utils.colored(""));
             return true;
@@ -190,6 +192,15 @@ public class DiSkyCommand implements CommandExecutor {
                 }
                 sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2"+( System.currentTimeMillis() - before )+"ms! &b------"));
             }
+            return true;
+        } else if (args[0].equalsIgnoreCase("reloadconfig")) {
+            sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Configuration Reloading &b------"));
+            boolean wasDebug = ConfigManager.get("debug", false);
+            long before = System.currentTimeMillis();
+            ConfigManager.reloadConfig(DiSky.getInstance());
+            sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2"+( System.currentTimeMillis() - before )+"ms! &b------"));
+            if (wasDebug != ConfigManager.get("debug", false) && ConfigManager.get("debug", false))
+                sender.sendMessage(Utils.colored("&5--------> &dDebug mode has been enabled!"));
             return true;
         }
         return onCommand(sender, command, label, new String[0]);
