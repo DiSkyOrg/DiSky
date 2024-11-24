@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.components.Component;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+import net.dv8tion.jda.internal.utils.Helpers;
 
 import java.io.*;
 import java.net.URL;
@@ -130,5 +131,9 @@ public final class JDAUtils {
 		} catch (IllegalStateException ex) {
 			return null;
 		}
+	}
+
+	public static boolean isSnowflake(String snowflake) {
+		return snowflake.length() <= 20 && Helpers.isNumeric(snowflake);
 	}
 }
