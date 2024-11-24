@@ -3,7 +3,7 @@ package info.itsthesky.disky.elements.components.commands;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -36,7 +36,7 @@ public class EditMessageComponent extends AsyncEffect {
     private Expression<Object> exprComponent;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
         node = getParser().getNode();
         exprID = (Expression<String>) expressions[0];
         exprMessage = (Expression<Message>) expressions[1];

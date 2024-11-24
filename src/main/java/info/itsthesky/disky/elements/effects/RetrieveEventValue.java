@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -36,7 +36,7 @@ public class RetrieveEventValue extends WaiterEffect<Object> {
 	private String id;
 
 	@Override
-	public boolean initEffect(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean initEffect(Expression<?>[] exprs, int i, Kleenean kleenean, ParseResult parseResult) {
 		final String rawId;
 		try {
 			rawId = ((Expression<String>) exprs[0]).getSingle(null);

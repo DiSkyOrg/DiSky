@@ -6,7 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.emojis.Emote;
@@ -43,7 +43,7 @@ public class SuppressReaction extends SpecificBotEffect {
 	private Expression<Message> exprMessage;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
 		exprEmote = (Expression<Emote>) expressions[0];
 		exprUser = (Expression<User>) expressions[1];
 		exprMessage = (Expression<Message>) expressions[2];

@@ -8,7 +8,7 @@ import ch.njol.skript.expressions.base.WrapperExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.Getter;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
@@ -33,7 +33,7 @@ public class ExprSubEventExpression extends WrapperExpression<Object> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parser) {
+    public boolean init(Expression<?>[] exprs, int matchedPattern, @NotNull Kleenean isDelayed, ParseResult parser) {
         secListenOnce = getParser().getCurrentSection(SecListenOnce.class);
         if (secListenOnce == null) {
             Skript.error("The 'outer event' expression can only be used in a 'listen once' section.");

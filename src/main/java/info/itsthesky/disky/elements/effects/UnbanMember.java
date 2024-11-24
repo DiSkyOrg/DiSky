@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
@@ -33,7 +34,7 @@ public class UnbanMember extends SpecificBotEffect {
     private Expression<Guild> exprGuild;
 
     @Override
-    public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, ParseResult parseResult) {
         exprUser = (Expression<User>) expr[0];
         exprGuild = (Expression<Guild>) expr[1];
         return true;

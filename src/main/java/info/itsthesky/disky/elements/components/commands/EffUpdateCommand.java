@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.components.commands;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.WaiterEffect;
@@ -29,7 +29,7 @@ public class EffUpdateCommand extends WaiterEffect {
 	private Expression<Object> exprEntity;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
 		exprCommands = (Expression<SlashCommandData>) expressions[0];
 		exprEntity = (Expression<Object>) expressions[1];
 		isGlobal = (parseResult.mark & 1) != 0;

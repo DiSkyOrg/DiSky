@@ -3,7 +3,7 @@ package info.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
@@ -30,7 +30,7 @@ public class RetrieveEmotes extends AsyncEffect {
     private Expression<Object> exprResult;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
 
         exprGuild = (Expression<Guild>) expressions[0];

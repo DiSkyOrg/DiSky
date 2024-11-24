@@ -7,13 +7,10 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.emojis.Emote;
-import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.core.Debug;
-import info.itsthesky.disky.core.JDAUtils;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.SkuSnowflake;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -46,7 +43,7 @@ public class ExprNewButton extends SimpleExpression<Button> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, ParseResult parseResult) {
         isPremium = matchedPattern == 1;
         isEnabled = !parseResult.expr.contains("new disabled");
         node = getParser().getNode();

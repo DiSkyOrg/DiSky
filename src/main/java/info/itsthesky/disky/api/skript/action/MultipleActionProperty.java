@@ -2,7 +2,7 @@ package info.itsthesky.disky.api.skript.action;
 
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.changers.ChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
@@ -45,7 +45,7 @@ public abstract class MultipleActionProperty<E, T extends AuditableRestAction<E>
     }
 
     @Override
-    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
         setExpr(exprs[0]);
         return true;
     }

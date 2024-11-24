@@ -3,7 +3,7 @@ package info.itsthesky.disky.elements.events;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SelfRegisteringSkriptEvent;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Trigger;
 import info.itsthesky.disky.api.events.BukkitEvent;
 import info.itsthesky.disky.core.SkriptUtils;
@@ -35,7 +35,7 @@ public class DiSkyErrorEvent extends SelfRegisteringSkriptEvent {
 	public void unregisterAll() {}
 
 	@Override
-	public boolean init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult) {
+	public boolean init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull ParseResult parseResult) {
 		return true;
 	}
 

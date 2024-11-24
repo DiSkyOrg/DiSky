@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
@@ -39,7 +39,7 @@ public class UnregisterCommand extends SpecificBotEffect {
     private Expression<Object> exprEntity;
 
     @Override
-    public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
         exprNames = (Expression<String>) expressions[0];
         exprEntity = (Expression<Object>) expressions[1];
         isGlobal = (parseResult.mark & 1) != 0;
