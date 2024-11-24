@@ -1,6 +1,7 @@
 package info.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -9,9 +10,12 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.emojis.Emoji;
 import info.itsthesky.disky.api.emojis.Emojis;
 import info.itsthesky.disky.api.emojis.Emote;
+import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import org.bukkit.event.Event;
@@ -36,7 +40,7 @@ import java.util.regex.Pattern;
         "emoji \"sparkles\"",
         "emote \"disky\" in event-guild",
 })
-public class ExprEmoji extends SimpleExpression<Emote> {
+public class ExprEmoji extends SimpleExpression<Emote> implements IAsyncGettableExpression<Emote> {
     static {
         Skript.registerExpression(ExprEmoji.class, Emote.class, ExpressionType.SIMPLE,
                 "(emoji|emote|reaction)[s] %strings% [(from|in) %-guild%]");
@@ -47,49 +51,57 @@ public class ExprEmoji extends SimpleExpression<Emote> {
     private static final Pattern SIMPLE_CUSTOM = Pattern.compile("^[0-9]{5,}$");
     private static final Pattern NAMED = Pattern.compile("^:([a-zA-Z0-9_]+):$");
 
+    private Node node;
     private Expression<String> name;
     private Expression<Guild> guild;
 
     @Override
-    protected Emote @NotNull [] get(@NotNull Event e) {
+    protected Emote @NotNull [] get(@NotNull Event e) { return get(e, false); }
+    @Override
+    public Emote[] getAsync(Event e) { return get(e, true); }
+
+    public Emote[] get(@NotNull Event e, boolean async) {
         String[] emotes = name.getAll(e);
         Guild guild = this.guild == null ? null : this.guild.getSingle(e);
         if (emotes.length == 0) return new Emote[0];
 
         final List<Emote> parsed = new ArrayList<>();
         for (String input : emotes)
-            parsed.add(parse(guild, input));
+            parsed.add(parse(guild, input, async));
 
         return parsed.toArray(new Emote[0]);
     }
 
-    public Emote parse(@Nullable Guild guild, String input) {
+    public Emote parse(@Nullable Guild guild, String input, boolean async) {
 
-        final Matcher complexCustom = COMPLEX_CUSTOM.matcher(input);
-        if (complexCustom.matches()) {
-            final String id = complexCustom.group(1);
-            if (guild == null) {
-                Skript.warning("You must specify a guild when retrieving an emote by its ID!");
-                return null;
-            }
-            final RichCustomEmoji emote = guild.getEmojiById(id);
-            if (emote == null) {
-                Skript.warning("The emote with ID '" + id + "' doesn't exist in the guild '" + guild.getName() + "'!");
-                return null;
-            }
-            return new Emote(emote);
-        }
+        DiSky.debug("Parsing emoji: " + input);
 
         final Matcher simpleCustom = SIMPLE_CUSTOM.matcher(input);
-        if (simpleCustom.matches()) {
-            final String id = simpleCustom.group(1);
+        final Matcher complexCustom = COMPLEX_CUSTOM.matcher(input);
+
+        if (simpleCustom.matches() || complexCustom.matches()) {
+            DiSky.debug("  - Emoji is simple/complex custom");
+            final String id = simpleCustom.matches() ? simpleCustom.group() : complexCustom.group(1);
             if (guild == null) {
-                Skript.warning("You must specify a guild when retrieving an emote by its ID!");
-                return null;
+                final @Nullable RichCustomEmoji emoji = DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getEmojiById(id));
+                if (emoji == null && !async) {
+                    DiSkyRuntimeHandler.error(new IllegalArgumentException(("Unable to find the emote with ID '" + id + "' in any loaded bot. If you want to get an id from a GUILD, then you must specify that guild.")), node, false);
+                    return null;
+                } else if (emoji == null) {
+                    final var retrievedEmoji = DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().retrieveApplicationEmojiById(id).complete());
+                    if (retrievedEmoji == null) {
+                        DiSkyRuntimeHandler.error(new IllegalArgumentException(("The emote with ID '" + id + "' doesn't exist!") + " (neither as unicode or shortcode)"), node, false);
+                        return null;
+                    }
+
+                    return new Emote(retrievedEmoji);
+                }
+
+                return new Emote(emoji);
             }
             final RichCustomEmoji emote = guild.getEmojiById(id);
             if (emote == null) {
-                Skript.warning("The emote with ID '" + id + "' doesn't exist in the guild '" + guild.getName() + "'!");
+                DiSkyRuntimeHandler.error(new IllegalArgumentException(("The emote with ID '" + id + "' doesn't exist in the guild '" + guild.getName() + "'!")), node, false);
                 return null;
             }
             return new Emote(emote);
@@ -108,7 +120,7 @@ public class ExprEmoji extends SimpleExpression<Emote> {
             if (emoji == null) {
                 final Emoji unicodeEmoji = Emojis.ofUnicode(name);
                 if (unicodeEmoji == null) {
-                    Skript.warning("The emoji '" + name + "' doesn't exist!");
+                    DiSkyRuntimeHandler.error(new IllegalArgumentException(("The emoji '" + name + "' doesn't exist!") + " (neither as unicode or shortcode)"), node, false);
                     return null;
                 }
                 return new Emote(net.dv8tion.jda.api.entities.emoji.Emoji.fromUnicode(unicodeEmoji.unicode()));
@@ -117,20 +129,12 @@ public class ExprEmoji extends SimpleExpression<Emote> {
         } else {
             final RichCustomEmoji emote = guild.getEmojisByName(name, true).stream().findFirst().orElse(null);
             if (emote == null) {
-                Skript.warning("The emote with name '" + name + "' doesn't exist in the guild '" + guild.getName() + "'!");
+                DiSkyRuntimeHandler.error(new IllegalArgumentException(("The emote with name '" + name + "' doesn't exist in the guild '" + guild.getName() + "'!") + " (neither as unicode or shortcode)"), node, false);
                 return null;
             }
             return new Emote(emote);
         }
 
-    }
-
-    public @Nullable RichCustomEmoji getFromGuild(Guild guild, String input) {
-        for (RichCustomEmoji richCustomEmoji : guild.getEmojis())
-            if (richCustomEmoji.getName().equalsIgnoreCase(input))
-                return richCustomEmoji;
-
-        return null;
     }
 
     @Override
@@ -153,6 +157,7 @@ public class ExprEmoji extends SimpleExpression<Emote> {
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         name = (Expression<String>) exprs[0];
         guild = (Expression<Guild>) exprs[1];
+        node = getParser().getNode();
         return true;
     }
 }
