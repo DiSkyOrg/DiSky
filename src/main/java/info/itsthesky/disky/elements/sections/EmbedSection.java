@@ -1,19 +1,16 @@
 package info.itsthesky.disky.elements.sections;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.*;
-import ch.njol.skript.lang.parser.ParserInstance;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.EmbedManager;
 import info.itsthesky.disky.api.skript.ReturningSection;
-import info.itsthesky.disky.elements.sections.message.CreateMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,7 +74,7 @@ public class EmbedSection extends ReturningSection<EmbedBuilder> {
     public boolean init(Expression<?>[] exprs,
                         int matchedPattern,
                         @NotNull Kleenean isDelayed,
-                        @NotNull SkriptParser.ParseResult parseResult,
+                        @NotNull ParseResult parseResult,
                         @Nullable SectionNode sectionNode,
                         @Nullable List<TriggerItem> triggerItems) {
         exprID = (Expression<String>) exprs[0];

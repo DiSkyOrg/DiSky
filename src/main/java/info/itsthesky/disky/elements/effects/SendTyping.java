@@ -5,7 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
@@ -32,7 +32,7 @@ public class SendTyping extends SpecificBotEffect {
     private Expression<Channel> exprChannel;
 
     @Override
-    public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, ParseResult parseResult) {
         exprChannel = (Expression<Channel>) expr[0];
         return true;
     }

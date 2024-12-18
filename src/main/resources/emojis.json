@@ -14901,6 +14901,14 @@
         "fleur_de_lis"
       ],
       "supportsFitzpatrick": false
+    },
+    {
+      "subpage": "pink-heart",
+      "unicode": "\uD83E\uDE77",
+      "shortcodes": [
+        "pink_heart"
+      ],
+      "supportsFitzpatrick": false
     }
   ]
 }

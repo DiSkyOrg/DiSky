@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.commands;
 
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.Getter;
 import info.itsthesky.disky.DiSky;
@@ -76,7 +76,7 @@ public class DiSkyCommand extends SkriptEvent {
     }
 
     @Override
-    public boolean init(Literal<?> @NotNull [] exprs, int i, @NotNull SkriptParser.ParseResult parseResult) {
+    public boolean init(Literal<?> @NotNull [] exprs, int i, @NotNull ParseResult parseResult) {
         return true;
     }
 

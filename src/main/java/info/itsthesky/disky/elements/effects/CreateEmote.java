@@ -6,14 +6,11 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.Variable;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.emojis.Emote;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.JDAUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Icon;
@@ -54,7 +51,7 @@ public class CreateEmote extends AsyncEffect {
     }
 
     @Override
-    public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
 
         exprName = (Expression<String>) exprs[0];

@@ -5,6 +5,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.util.StringMode;
@@ -31,7 +32,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
 
     public abstract @Nullable String validate(@Nullable T parsedEntity);
 
-    public void init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, SectionNode node) {};
+    public void init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull ParseResult parseResult, SectionNode node) {};
 
     public String parseEntry(SectionNode node, String key) {
         return parseEntry(node, key, "");
@@ -91,7 +92,7 @@ public abstract class BaseScope<T> extends SelfRegisteringSkriptEvent {
     }
 
     @Override
-    public boolean init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult) {
+    public boolean init(Literal<?> @NotNull [] args, int matchedPattern, @NotNull ParseResult parseResult) {
         final Node node = SkriptLogger.getNode();
         if (!(node instanceof SectionNode))
             return false;

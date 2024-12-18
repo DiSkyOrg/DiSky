@@ -4,19 +4,15 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.lang.Variable;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.SpecificBotEffect;
-import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.channel.attribute.IInviteContainer;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.requests.restaction.InviteAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +45,7 @@ public class CreateInvite extends AsyncEffect {
     }
 
     @Override
-    public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
 
         exprEntity = (Expression<Object>) exprs[0];

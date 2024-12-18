@@ -3,6 +3,7 @@ package info.itsthesky.disky.api.skript;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.lang.*;
+import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
@@ -28,9 +29,9 @@ public abstract class WaiterEffect<T> extends EasyElement {
     @Nullable protected Variable<T> changedVariable = null;
     private boolean isStopped;
 
-    public abstract boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult);
+    public abstract boolean initEffect(Expression<?>[] expressions, int i, Kleenean kleenean, ParseResult parseResult);
 
-    public boolean init(Expression<?> @NotNull [] expressions, int i, @NotNull Kleenean kleenean, @NotNull SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression<?> @NotNull [] expressions, int i, @NotNull Kleenean kleenean, @NotNull ParseResult parseResult) {
         ParserInstance.get().setHasDelayBefore(Kleenean.TRUE);
         node = new NodeInformation();
         return initEffect(expressions, i, kleenean, parseResult);
