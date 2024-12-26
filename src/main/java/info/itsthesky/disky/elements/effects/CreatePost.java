@@ -118,8 +118,9 @@ public class CreatePost extends AsyncEffect {
 			DiSky.getErrorHandler().exception(e, ex);
 			return;
 		}
-
-		exprResult.change(e, new ThreadChannel[] {threadChannel}, Changer.ChangeMode.SET);
+		
+		if(exprResult != null)
+			exprResult.change(e, new ThreadChannel[] {threadChannel}, Changer.ChangeMode.SET);
 	}
 
 	@Override
