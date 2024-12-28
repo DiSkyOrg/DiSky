@@ -1,5 +1,6 @@
 package info.itsthesky.disky.api.events;
 
+import ch.njol.skript.config.Node;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.managers.BotManager;
@@ -29,13 +30,15 @@ public class EventListener<T> {
     private final boolean isWaitingLogEvent;
     private final @Nullable ActionType logType;
     private final Predicate<GuildAuditLogEntryCreateEvent> logChecker;
+    private final Node attachedNode;
 
     private @Nullable T lastEvent;
 
     public EventListener(Class<T> paramClass,
                          BiConsumer<T, GuildAuditLogEntryCreateEvent> consumer,
                          Predicate<T> checker, Predicate<GuildAuditLogEntryCreateEvent> logChecker,
-                         @Nullable ActionType actionType, @Nullable String specificBotName) {
+                         @Nullable ActionType actionType, @Nullable String specificBotName,
+                         Node attachedNode) {
         this.clazz = paramClass;
         this.consumer = consumer;
         this.checker = checker;
@@ -44,6 +47,8 @@ public class EventListener<T> {
 
         this.isWaitingLogEvent = actionType != null;
         this.logType = actionType;
+
+        this.attachedNode = attachedNode;
     }
 
     public void onGuildAuditLogEntryCreate(GuildAuditLogEntryCreateEvent event) {
@@ -84,4 +89,46 @@ public class EventListener<T> {
     public Class<T> getClazz() {
         return clazz;
     }
+
+    //region Getters
+
+
+    public Node getAttachedNode() {
+        return attachedNode;
+    }
+
+    public @Nullable String getSpecificBotName() {
+        return specificBotName;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public BiConsumer<T, GuildAuditLogEntryCreateEvent> getConsumer() {
+        return consumer;
+    }
+
+    public Predicate<T> getChecker() {
+        return checker;
+    }
+
+    public boolean isWaitingLogEvent() {
+        return isWaitingLogEvent;
+    }
+
+    public @Nullable ActionType getLogType() {
+        return logType;
+    }
+
+    public Predicate<GuildAuditLogEntryCreateEvent> getLogChecker() {
+        return logChecker;
+    }
+
+    @Nullable
+    public T getLastEvent() {
+        return lastEvent;
+    }
+
+    //endregion
 }
