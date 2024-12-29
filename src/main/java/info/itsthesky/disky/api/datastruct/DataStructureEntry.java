@@ -18,5 +18,11 @@ public @interface DataStructureEntry {
      */
     boolean optional() default false;
 
+    /**
+     * In case of an array/list of object,
+     * the key (usually singular) used to represent a new instance of that object.
+     * @return The key used to represent a new instance of that object
+     */
+    String singleKey() default "";
 
 }

@@ -3,17 +3,16 @@ package info.itsthesky.disky.api.datastruct.structures;
 import ch.njol.skript.util.Color;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.SkriptColor;
-import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.api.datastruct.DataStructure;
 import info.itsthesky.disky.api.datastruct.DataStructureEntry;
+import info.itsthesky.disky.api.datastruct.base.DataStruct;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.time.Instant;
-import java.time.temporal.TemporalAccessor;
 
 @DataStructure(value = "embed", clazz = EmbedBuilder.class)
-public class EmbedStructure {
+public class EmbedStructure implements DataStruct<EmbedBuilder> {
 
     @DataStructureEntry(value = "title", optional = true)
     public String title;
@@ -46,6 +45,7 @@ public class EmbedStructure {
     @DataStructureEntry(value = "color", optional = true)
     public Color color = SkriptColor.YELLOW;
 
+    @Override
     public EmbedBuilder build() {
         EmbedBuilder builder = new EmbedBuilder();
         if (title != null) builder.setTitle(title);
