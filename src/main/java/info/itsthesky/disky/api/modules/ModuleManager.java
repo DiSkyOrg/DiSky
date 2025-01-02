@@ -3,26 +3,14 @@ package info.itsthesky.disky.api.modules;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.classes.Parser;
-import ch.njol.skript.classes.Serializer;
-import ch.njol.skript.classes.data.JavaClasses;
 import ch.njol.skript.lang.ExpressionInfo;
-import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.SyntaxElementInfo;
-import ch.njol.skript.lang.VariableString;
 import ch.njol.skript.registrations.Classes;
-import ch.njol.skript.registrations.Converters;
-import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Utils;
-import ch.njol.yggdrasil.Fields;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.generator.DocBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,7 +26,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class ModuleManager {
 
