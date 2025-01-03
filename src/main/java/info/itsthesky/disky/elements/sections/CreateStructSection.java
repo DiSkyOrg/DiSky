@@ -2,20 +2,22 @@ package info.itsthesky.disky.elements.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Section;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.TriggerItem;
-import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.datastruct.BetterEntryContainer;
 import info.itsthesky.disky.api.datastruct.DataStructureFactory;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.skriptlang.skript.lang.entry.EntryContainer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,11 +33,12 @@ public class CreateStructSection extends Section {
     private Expression<?> exprVariable;
     private DataStructureFactory.DataStructureInfo structureInfo;
 
-    private EntryContainer container;
-    private Map<String, Expression<?>> entries = new java.util.HashMap<>();
+    private BetterEntryContainer container;
+    private Map<String, List<Expression<?>>> entries = new java.util.HashMap<>();
 
     @Override
     public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
+        DiSky.debug("Init section called from CreateStructSection");
         exprVariable = expressions[0];
 
         final String name = parseResult.regexes.get(0).group();
@@ -45,55 +48,41 @@ public class CreateStructSection extends Section {
             return false;
         }
 
+        DiSky.debug("Structure info found: " + structureInfo.name() + " (" + structureInfo.structureClazz().getName() + "), now validating ...");
         final var validator = structureInfo.validator();
-        container = validator.validate(sectionNode);
+        container = DataStructureFactory.validate(validator, sectionNode);
         if (container == null) {
             Skript.error("The data structure '" + name + "' is not correctly defined!");
             return false;
         }
 
         for (var entry : structureInfo.entries()) {
-            @Nullable Expression<?> rawValue;
-            try {
-                rawValue = (Expression<?>) container.getOptional(entry.name(), false);
-            } catch (Exception e) {
-                Skript.error("The entry '" + entry.name() + "' throw an error while parsing in the data structure '" + structureInfo.name() + "':");
-                e.printStackTrace();
-                return false;
+            if (!container.hasEntry(entry.entry().value()))
+                continue;
+
+            List<Expression<?>> exprs = new ArrayList<>();
+            var nodesForEntry = container.getNodesForEntry(entry.entry().value());
+            for (int nodeIndex = 0; nodeIndex < nodesForEntry.size(); nodeIndex++) {
+                var ignored = nodesForEntry.get(nodeIndex);
+                @Nullable Expression<?> rawValue;
+                try {
+                    rawValue = (Expression<?>) container.getOptional(entry.entry().value(), nodeIndex, false);
+                } catch (Exception e) {
+                    Skript.error("The entry '" + entry.entry().value() + "' throw an error while parsing in the data structure '" + structureInfo.name() + "':");
+                    e.printStackTrace();
+                    return false;
+                }
+
+                if (rawValue == null && !entry.entry().optional()) {
+                    Skript.error("The entry '" + entry.entry().value() + "' is required in the data structure '" + structureInfo.name() + "'!");
+                    return false;
+                }
+
+                if (rawValue == null && entry.defaultValue() != null)
+                    rawValue = new SimpleLiteral<>(entry.defaultValue(), false);
+
+                exprs.add(rawValue);
             }
-
-            if (rawValue == null && !entry.optional()) {
-                Skript.error("The entry '" + entry.name() + "' is required in the data structure '" + structureInfo.name() + "'!");
-                return false;
-            }
-
-            if (rawValue == null && entry.defaultValue() != null)
-                rawValue = new SimpleLiteral<>(entry.defaultValue(), false);
-
-            entries.put(entry.name(), rawValue);
-
-                /*@Nullable Object value;
-                if (rawValue instanceof final Expression expression) {
-                    value = expression.getSingle(event);
-                } else if (rawValue instanceof final List list) {
-                    // it's a list of expressions, we have to construct a new list with the parsed stuff
-                    value = (List<Object>) list.stream()
-                            .map(expr -> ((Expression<?>) expr).getSingle(event))
-                            .toList();
-                } else {
-                    value = null;
-                }
-
-                if (value == null && !entry.optional()) {
-                    Skript.error("The entry '" + entry.name() + "' is required in the data structure '" + structureInfo.name() + "'!");
-                    return getNext();
-                }
-
-                if (value == null && entry.defaultValue() != null) {
-                    value = entry.defaultValue();
-                }
-
-                field.set(instance, value);*/
         }
 
         return Changer.ChangerUtils.acceptsChange(exprVariable, Changer.ChangeMode.SET, structureInfo.returnedClazz());
@@ -108,30 +97,40 @@ public class CreateStructSection extends Section {
         try {
             final Object instance = structureInfo.structureClazz().newInstance();
             for (var entry : structureInfo.entries()) {
-                final Expression<?> rawValue = entries.get(entry.name());
-                Object value;
-                /*if (rawValue instanceof final Expression expression) {
-                    value = expression.getSingle(event);
-                } else if (rawValue instanceof final List list) {
-                    // it's a list of expressions, we have to construct a new list with the parsed stuff
-                    value = (List<Object>) list.stream()
-                            .map(expr -> ((Expression<?>) expr).getSingle(event))
-                            .toList();
+                var array = entries.get(entry.entry().value());
+                if (array.size() == 1) {
+                    final Expression<?> rawValue = entries.get(entry.entry().value()).stream().findFirst().orElse(null);
+                    Object value;
+
+                    value = rawValue == null ? null : rawValue.getSingle(event);
+                    if (value == null && !entry.entry().optional()) {
+                        Skript.error("The entry '" + entry.entry().value() + "' is required in the data structure '" + structureInfo.name() + "'!");
+                        return getNext();
+                    }
+
+                    if (value == null && entry.defaultValue() != null)
+                        value = entry.defaultValue();
+
+                    final var field = structureInfo.structureClazz().getField(entry.fieldName());
+                    field.set(instance, value);
                 } else {
-                    value = null;
-                }*/
+                    final List<Object> values = new ArrayList<>();
+                    for (var rawValue : entries.get(entry.entry().value())) {
+                        Object value = rawValue.getSingle(event);
+                        if (value == null && !entry.entry().optional()) {
+                            Skript.error("The entry '" + entry.entry().value() + "' is required in the data structure '" + structureInfo.name() + "'!");
+                            return getNext();
+                        }
 
-                value = rawValue == null ? null : rawValue.getSingle(event);
-                if (value == null && !entry.optional()) {
-                    Skript.error("The entry '" + entry.name() + "' is required in the data structure '" + structureInfo.name() + "'!");
-                    return getNext();
+                        if (value == null && entry.defaultValue() != null)
+                            value = entry.defaultValue();
+
+                        values.add(value);
+                    }
+
+                    final var field = structureInfo.structureClazz().getField(entry.fieldName());
+                    field.set(instance, values);
                 }
-
-                if (value == null && entry.defaultValue() != null)
-                    value = entry.defaultValue();
-
-                final var field = structureInfo.structureClazz().getField(entry.fieldName());
-                field.set(instance, value);
             }
 
             final var buildMethod = structureInfo.structureClazz().getDeclaredMethod("build");

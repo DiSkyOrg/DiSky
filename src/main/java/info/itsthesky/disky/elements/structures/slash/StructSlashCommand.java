@@ -21,8 +21,8 @@ import info.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import info.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import info.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
-import info.itsthesky.disky.elements.structures.slash.models.ParsedGroup;
 import info.itsthesky.disky.elements.structures.slash.models.SlashCommandInformation;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -47,9 +47,12 @@ public class StructSlashCommand extends Structure {
     public static final Priority PRIORITY = new Priority(800);
     public static final Set<SlashCommandInformation> REMOVED_COMMANDS = new HashSet<>();
 
-    private static final Pattern ARGUMENT = Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>\\w+)\">(\\])?");
-    private static final Pattern STRUCTURE = Pattern.compile("slash command ([A-z]+)( )?(.+)?");
-    private static final Pattern LIST = Pattern.compile("\\s*,\\s*/?");
+    private static final Pattern ARGUMENT =
+            Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>\\w+)\">(\\])?");
+    private static final Pattern STRUCTURE =
+            Pattern.compile("slash command ((([A-Za-z]+) )?(([A-Za-z]+) )?(([A-Za-z]+)( )?)?)([^<]*<.+)?");
+    private static final Pattern LIST =
+            Pattern.compile("\\s*,\\s*/?");
 
     private static final EntryValidator CORE_VALIDATOR = EntryValidator.builder()
 
@@ -162,11 +165,6 @@ public class StructSlashCommand extends Structure {
             return false;
 
 
-        // Parent/group
-        final boolean group = parseGroup();
-        if (!group)
-            return false;
-
         //region Debug
         DiSky.debug("------------------- Name -------------------");
         DiSky.debug("Default: " + parsedCommand.getName());
@@ -197,7 +195,6 @@ public class StructSlashCommand extends Structure {
         DiSky.debug("------------------- Meta -------------------");
         DiSky.debug("Enabled for: " + parsedCommand.getEnabledFor());
         DiSky.debug("Disabled by default: " + parsedCommand.isDisabledByDefault());
-        DiSky.debug("Group: " + (parsedCommand.getGroup() == null ? "None" : parsedCommand.getGroup().getName()));
 
         DiSky.debug("------------------- Places -------------------");
         DiSky.debug("Pre-bot (name): " + parsedCommand.getRawBot());
@@ -229,7 +226,7 @@ public class StructSlashCommand extends Structure {
         //endregion
 
         final var bot = DiSky.getManager().getBotByName(parsedCommand.getRawBot());
-        if (bot == null)
+        if (bot == null || bot.getInstance().getStatus() != JDA.Status.CONNECTED)
             BotReadyWaiter.WaitingCommands.computeIfAbsent(parsedCommand.getRawBot(), k -> new ArrayList<>()).add(parsedCommand);
         else
             bot.getSlashManager().registerCommand(parsedCommand);
@@ -261,12 +258,17 @@ public class StructSlashCommand extends Structure {
             return null;
         }
 
-        final String rawArguments = argsMatcher.group(3);
-        if (rawArguments == null)
+        final String rawArguments = argsMatcher.group(9); // Get the arguments part
+        if (rawArguments == null || rawArguments.trim().isEmpty())
             return arguments;
 
-        final String[] args = rawArguments.split(" ");
+        // Split arguments while preserving optional brackets
+        final String[] args = rawArguments.trim().split("\\s+(?=(?:\\[)?<)");
+
         for (String arg : args) {
+            arg = arg.trim();
+            if (arg.isEmpty()) continue;
+
             final Matcher matcher = ARGUMENT.matcher(arg);
             if (!matcher.matches()) {
                 Skript.error("Invalid argument pattern: " + arg);
@@ -287,7 +289,7 @@ public class StructSlashCommand extends Structure {
             arguments.add(new ParsedArgument(type, name, !optional));
         }
 
-        // Be sure there's no duplicated argument
+        // Check for duplicated arguments
         for (int i = 0; i < arguments.size(); i++) {
             final ParsedArgument arg = arguments.get(i);
             for (int j = i + 1; j < arguments.size(); j++) {
@@ -320,7 +322,7 @@ public class StructSlashCommand extends Structure {
 
                 final String description = container.get("description", String.class, true);
 
-                // Choices, if applicable
+                // Handle choices if present
                 final SectionNode choiceNode = container.getOptional("choices", SectionNode.class, true);
                 if (choiceNode != null) {
                     final OptionType type = argument.getType();
@@ -331,43 +333,47 @@ public class StructSlashCommand extends Structure {
 
                     choiceNode.convertToEntries(0);
                     for (Node choice : choiceNode) {
-                        final String name = choice.getKey();
-                        final String value = choiceNode.get(name, "");
+                        final String choiceName = choice.getKey();
+                        final String value = choiceNode.get(choiceName, "");
                         if (value.isEmpty()) {
-                            Skript.error("Empty value for choice: " + name);
+                            Skript.error("Empty value for choice: " + choiceName);
                             return null;
                         }
 
-                        final Object arg;
-                        if (type.equals(OptionType.NUMBER) || type.equals(OptionType.INTEGER)) {
-                            try {
-                                arg = Integer.parseInt(value);
-                            } catch (NumberFormatException ex) {
-                                Skript.error("Invalid number value for choice: " + name);
+                        Object parsedValue;
+                        try {
+                            if (type.equals(OptionType.NUMBER) || type.equals(OptionType.INTEGER)) {
+                                parsedValue = Integer.parseInt(value);
+                            } else if (type.equals(OptionType.STRING)) {
+                                parsedValue = value;
+                            } else {
+                                Skript.error("Invalid choice type: " + type);
                                 return null;
                             }
-                        } else if (type.equals(OptionType.STRING)) {
-                            arg = value;
-                        } else {
-                            Skript.error("Invalid choice type: " + type);
+                        } catch (NumberFormatException ex) {
+                            Skript.error("Invalid number value for choice: " + choiceName);
                             return null;
                         }
 
-                        argument.addChoice(name, arg);
+                        argument.addChoice(choiceName, parsedValue);
                     }
                 }
 
-                //  auto completion
+                // Handle auto completion
                 final SectionNode completionNode = container.getOptional("on completion request", SectionNode.class, true);
                 if (completionNode != null) {
-                    final Trigger trigger = new Trigger(getParser().getCurrentScript(), "completion for argument " + argument.getName(), new SimpleEvent(),
-                            SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class));
-                    argument.setOnCompletionRequest(trigger);
-                }
+                    if (argument.hasChoices()) {
+                        Skript.error("You can't have both auto completion and choices for the same argument.");
+                        return null;
+                    }
 
-                if (argument.hasChoices() && argument.isAutoCompletion()) {
-                    Skript.error("You can't have both auto completion and choices for the same argument.");
-                    return null;
+                    final Trigger trigger = new Trigger(
+                            getParser().getCurrentScript(),
+                            "completion for argument " + argument.getName(),
+                            new SimpleEvent(),
+                            SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class)
+                    );
+                    argument.setOnCompletionRequest(trigger);
                 }
 
                 argument.setDescription(description);
@@ -375,10 +381,73 @@ public class StructSlashCommand extends Structure {
                 final String description = node.getValue(argument.getName());
                 argument.setDescription(description);
             }
-
         }
 
         return arguments;
+    }
+
+    private void parseChoices(ParsedArgument argument, EntryContainer container) {
+        final SectionNode choiceNode = container.getOptional("choices", SectionNode.class, true);
+        if (choiceNode != null) {
+            final OptionType type = argument.getType();
+            if (!type.canSupportChoices()) {
+                Skript.error("Choices are not supported for the argument type: " + type);
+                return;
+            }
+
+            choiceNode.convertToEntries(0);
+            for (Node choice : choiceNode) {
+                final String name = choice.getKey();
+                final String value = choiceNode.get(name, "");
+                if (value.isEmpty()) {
+                    Skript.error("Empty value for choice: " + name);
+                    return;
+                }
+
+                parseAndAddChoice(argument, type, name, value);
+            }
+        }
+    }
+
+    private void parseAndAddChoice(ParsedArgument argument, OptionType type, String name, String value) {
+        try {
+            Object parsedValue;
+            switch (type) {
+                case INTEGER:
+                    parsedValue = Integer.parseInt(value);
+                    break;
+                case NUMBER:
+                    parsedValue = Double.parseDouble(value);
+                    break;
+                case STRING:
+                    parsedValue = value;
+                    break;
+                default:
+                    Skript.error("Unsupported choice type: " + type);
+                    return;
+            }
+            argument.addChoice(name, parsedValue);
+        } catch (NumberFormatException ex) {
+            Skript.error("Invalid number value for choice: " + name);
+        }
+    }
+
+    private void parseAutoCompletion(ParsedArgument argument, EntryContainer container) {
+        final SectionNode completionNode = container.getOptional("on completion request", SectionNode.class, true);
+        if (completionNode != null) {
+            if (argument.hasChoices()) {
+                Skript.error("You can't have both auto completion and choices for the same argument.");
+                return;
+            }
+
+            final Trigger trigger = new Trigger(
+                    getParser().getCurrentScript(),
+                    "completion for argument " + argument.getName(),
+                    new SimpleEvent(),
+                    SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class)
+            );
+            argument.setOnCompletionRequest(trigger);
+        }
     }
 
     //endregion
@@ -393,7 +462,23 @@ public class StructSlashCommand extends Structure {
             return null;
         }
 
-        return matcher.group(1);
+        String commandName = matcher.group(1).trim();
+        // Validate command name format (1-3 parts separated by spaces)
+        String[] parts = commandName.split("\\s+");
+        if (parts.length > 3) {
+            Skript.error("Command can only have up to 3 levels (command, group, and subcommand). Got: " + commandName);
+            return null;
+        }
+
+        // Validate each part
+        for (String part : parts) {
+            if (!part.matches("[A-Za-z][A-Za-z0-9_-]*")) {
+                Skript.error("Invalid command name part: '" + part + "'. Must start with a letter and contain only letters, numbers, underscores, and hyphens.");
+                return null;
+            }
+        }
+
+        return commandName;
     }
 
     //endregion
@@ -539,25 +624,6 @@ public class StructSlashCommand extends Structure {
 
         parsedCommand.setCooldown(cooldown.getAs(Timespan.TimePeriod.MILLISECOND));
         parsedCommand.setOnCooldown(trigger);
-        return true;
-    }
-
-    //endregion
-
-    //region Group
-
-    public boolean parseGroup() {
-        final String group = entryContainer.getOptional("group", String.class, true);
-        if (group == null || group.isEmpty())
-            return true;
-
-        final ParsedGroup parsedGroup = SlashGroupManager.getGroup(group);
-        if (parsedGroup == null) {
-            Skript.error("Invalid group name: " + group + ", refer to the wiki in order to create a slash command group.");
-            return false;
-        }
-
-        parsedCommand.setGroup(parsedGroup);
         return true;
     }
 

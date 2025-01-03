@@ -21,6 +21,7 @@ public class ParsedCommand {
     private String description;
     private Map<DiscordLocale, String> descriptionLocalizations = new HashMap<>();
 
+    private String originalName; // Store the original command path
     private String name;
     private Map<DiscordLocale, String> nameLocalizations = new HashMap<>();
 
@@ -35,9 +36,16 @@ public class ParsedCommand {
     private Trigger onCooldown;
 
     private Trigger trigger;
-    private @Nullable ParsedGroup group;
 
     // ------------------------------------------------------------
+
+    public String getOriginalName() {
+        return originalName != null ? originalName : name;
+    }
+
+    public void setOriginalName(String originalName) {
+        this.originalName = originalName;
+    }
 
     public List<ParsedArgument> getArguments() {
         return arguments;
@@ -45,14 +53,6 @@ public class ParsedCommand {
 
     public void setArguments(List<ParsedArgument> arguments) {
         this.arguments = arguments;
-    }
-
-    public @Nullable ParsedGroup getGroup() {
-        return group;
-    }
-
-    public void setGroup(@Nullable ParsedGroup group) {
-        this.group = group;
     }
 
     public String getDescription() {
