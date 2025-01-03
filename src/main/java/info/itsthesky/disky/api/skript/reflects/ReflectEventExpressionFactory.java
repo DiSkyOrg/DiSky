@@ -3,12 +3,17 @@ package info.itsthesky.disky.api.skript.reflects;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.ExpressionType;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.DiSkyRegistry;
 import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.elements.events.interactions.MessageCommandEvent;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.dv8tion.jda.api.entities.Message;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxOrigin;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -28,6 +33,9 @@ public class ReflectEventExpressionFactory {
             Class<T> expressionClass,
             Function<E, T> converter
     ) {
+        if (true)
+            return;
+
         COUNT.incrementAndGet();
         try {
 
@@ -45,7 +53,7 @@ public class ReflectEventExpressionFactory {
                     .load(ReflectGetterExpression.class.getClassLoader())
                     .getLoaded();
 
-            Skript.registerExpression(
+            DiSkyRegistry.registerExpression(
                     (Class) elementClass,
                     expressionClass,
                     ExpressionType.SIMPLE,

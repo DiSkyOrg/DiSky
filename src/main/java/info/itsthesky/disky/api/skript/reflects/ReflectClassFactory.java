@@ -7,6 +7,7 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.DiSkyRegistry;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -114,7 +115,7 @@ public final class ReflectClassFactory {
 					.load(ReflectProperty.class.getClassLoader())
 					.getLoaded();
 
-			SimplePropertyExpression.register((Class<? extends Expression<T>>) elementClass,
+			DiSkyRegistry.registerProperty((Class<? extends Expression<T>>) elementClass,
 					toType, property, fromTypeName);
 			DiSky.debug("Registered property expression: " + elementClass.getName() + " (" + fromTypeName + " -> " + toType.getSimpleName() + ")");
 
