@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
@@ -237,6 +238,10 @@ public class Types {
         ).eventExpression().register();
         new DiSkyType<>(Webhook.class, "webhook",
                 Webhook::getName,
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(AutoModExecution.class, "automod",
+                am -> "auto mod rule with id " + am.getRuleId(),
                 null
         ).eventExpression().register();
 
