@@ -1,15 +1,25 @@
 package info.itsthesky.disky.api.datastruct;
 
+import ch.njol.skript.ScriptLoader;
+import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
+import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.ReflectionUtils;
+import info.itsthesky.disky.api.datastruct.base.DataStruct;
 import info.itsthesky.disky.api.skript.BetterExpressionEntryData;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.entry.EntryContainer;
+import org.skriptlang.skript.lang.entry.EntryData;
 import org.skriptlang.skript.lang.entry.EntryValidator;
 import org.skriptlang.skript.lang.entry.util.ExpressionEntryData;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class DataStructureFactory {
 
@@ -32,10 +42,11 @@ public final class DataStructureFactory {
                                     String name,
                                     List<DataStructureEntryInfo> entries,
                                     EntryValidator validator) {};
-    public record DataStructureEntryInfo(String name, String fieldName,
-                                          Class<?> returnType,
-                                          boolean optional,
-                                          @Nullable Object defaultValue) {};
+    public record DataStructureEntryInfo(DataStructureEntry entry,
+                                         String fieldName,
+                                         Class<?> returnType,
+                                         boolean array,
+                                         @Nullable Object defaultValue) {};
 
     private List<DataStructureInfo> registeredStructures;
 
@@ -63,21 +74,88 @@ public final class DataStructureFactory {
             }
 
             DataStructureEntry entry = field.getAnnotation(DataStructureEntry.class);
-            entries.add(new DataStructureEntryInfo(entry.value(), field.getName(), field.getType(),
-                    entry.optional(), defaultValue));
+            entries.add(new DataStructureEntryInfo(entry, field.getName(),
+                    field.getType(), field.getType().isArray() || List.class.isAssignableFrom(field.getType()), defaultValue));
         }
 
         var entryValidatorBuilder = EntryValidator.builder();
         for (var entry : entries) {
-            // TODO: Handle lists/arrays
-            entryValidatorBuilder.addEntryData(new ExpressionEntryData<Object>(entry.name(),
-                    null, entry.optional(), (Class) entry.returnType));
+
+            // FIRST CASE: it's not an array, and requires a data structure
+            if (!entry.array() && DataStruct.class.isAssignableFrom(entry.returnType())) { {
+
+                entryValidatorBuilder.addEntryData(new ExpressionEntryData<Object>(entry.entry().value(),
+                        null, entry.entry().optional(), (Class) entry.returnType));
+
+            }}
+
+            // SECOND CASE: it's an array, and requires a data structure
+            else if (entry.array() && DataStruct.class.isAssignableFrom(entry.returnType())) {
+
+                entryValidatorBuilder.addEntryData(new BetterExpressionEntryData<Object>(entry.entry().value(),
+                        null, entry.entry().optional(), (Class) entry.returnType));
+
+            }
+
         }
 
         var structInfo = new DataStructureInfo(clazz, annotation.clazz(), annotation.value(), entries, entryValidatorBuilder.build());
         this.registeredStructures.add(structInfo);
 
         DiSky.debug("Registered data structure " + annotation.value() + " with " + entries.size() + " entries.");
+    }
+
+    @Nullable
+    public static BetterEntryContainer validate(EntryValidator entryValidator, SectionNode sectionNode) {
+        List<EntryData<?>> entries = new ArrayList<>(entryValidator.getEntryData());
+        Map<String, List<Node>> handledNodes = new HashMap<>();
+        List<Node> unhandledNodes = new ArrayList<>();
+
+        var unexpectedNodeTester = (Predicate<Node>) ReflectionUtils.getFieldValueViaInstance(entryValidator, "unexpectedNodeTester");
+        var unexpectedEntryMessage = (Function<String, String>) ReflectionUtils.getFieldValueViaInstance(entryValidator, "unexpectedEntryMessage");
+        var missingRequiredEntryMessage = (Function<String, String>) ReflectionUtils.getFieldValueViaInstance(entryValidator, "missingRequiredEntryMessage");
+
+        boolean ok = true;
+        nodeLoop: for (Node node : sectionNode) {
+            if (node.getKey() == null)
+                continue;
+
+            // Le premier pas est de déterminer si le node est présent dans la liste entryData
+            boolean foundMatch = false;
+            for (EntryData<?> data : entries) {
+                if (data.canCreateWith(node)) {
+                    // C'est un node connu, on l'ajoute à la liste correspondante
+                    handledNodes.computeIfAbsent(data.getKey(), k -> new ArrayList<>()).add(node);
+                    foundMatch = true;
+                    // Ne pas retirer l'EntryData car on peut avoir plusieurs nodes correspondants
+                    continue nodeLoop;
+                }
+            }
+
+            // Aucun EntryData correspondant trouvé
+            if (!foundMatch) {
+                if (unexpectedNodeTester == null || unexpectedNodeTester.test(node)) {
+                    ok = false;
+                    Skript.error(unexpectedEntryMessage.apply(ScriptLoader.replaceOptions(node.getKey())));
+                } else {
+                    unhandledNodes.add(node);
+                }
+            }
+        }
+
+        // Vérification des entrées requises
+        for (EntryData<?> entryData : entries) {
+            List<Node> matchingNodes = handledNodes.getOrDefault(entryData.getKey(), Collections.emptyList());
+            if (!entryData.isOptional() && matchingNodes.isEmpty()) {
+                Skript.error(missingRequiredEntryMessage.apply(entryData.getKey()));
+                ok = false;
+            }
+        }
+
+        if (!ok)
+            return null;
+
+        return new BetterEntryContainer(sectionNode, entryValidator, handledNodes, unhandledNodes);
     }
 
 }

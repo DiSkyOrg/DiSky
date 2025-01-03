@@ -20,4 +20,10 @@ public @interface DataStructure {
      */
     Class<?> clazz();
 
+    /**
+     * Whether this structure can be made from a {@link info.itsthesky.disky.elements.sections.CreateStructSection create structure section}.
+     * A data structure may only serve as "sub-data structure" for other structures (like {@link info.itsthesky.disky.api.datastruct.structures.EmbedFieldStructure} for {@link info.itsthesky.disky.api.datastruct.structures.EmbedStructure}).
+     */
+    boolean canBeCreated() default true;
+
 }

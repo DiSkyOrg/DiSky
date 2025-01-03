@@ -19,10 +19,17 @@ public @interface DataStructureEntry {
     boolean optional() default false;
 
     /**
-     * In case of an array/list of object,
-     * the key (usually singular) used to represent a new instance of that object.
-     * @return The key used to represent a new instance of that object
+     * The minimum amount of this entry, in case it's
+     * an array or a list.
+     * @return The minimum amount of this entry
      */
-    String singleKey() default "";
+    int minimum() default 0;
+
+    /**
+     * The maximum amount of this entry, in case it's
+     * an array or a list.
+     * @return The maximum amount of this entry
+     */
+    int maximum() default 0;
 
 }

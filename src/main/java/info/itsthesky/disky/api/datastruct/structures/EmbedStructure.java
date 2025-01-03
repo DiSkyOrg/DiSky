@@ -8,8 +8,10 @@ import info.itsthesky.disky.api.datastruct.DataStructureEntry;
 import info.itsthesky.disky.api.datastruct.base.DataStruct;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.time.Instant;
+import java.util.List;
 
 @DataStructure(value = "embed", clazz = EmbedBuilder.class)
 public class EmbedStructure implements DataStruct<EmbedBuilder> {
@@ -44,6 +46,10 @@ public class EmbedStructure implements DataStruct<EmbedBuilder> {
 
     @DataStructureEntry(value = "color", optional = true)
     public Color color = SkriptColor.YELLOW;
+
+    @DataStructureEntry(value = "field", optional = true,
+            maximum = MessageEmbed.MAX_FIELD_AMOUNT)
+    public List<EmbedFieldStructure> fields;
 
     @Override
     public EmbedBuilder build() {
@@ -80,6 +86,12 @@ public class EmbedStructure implements DataStruct<EmbedBuilder> {
         if (image != null) builder.setImage(image);
 
         if (timestamp != null) builder.setTimestamp(Instant.ofEpochMilli(timestamp.getTimestamp()));
+
+        if (fields != null) {
+            for (EmbedFieldStructure field : fields) {
+                builder.addField(field.build());
+            }
+        }
 
         return builder;
     }
