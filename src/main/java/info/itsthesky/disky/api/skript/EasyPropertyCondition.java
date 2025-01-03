@@ -2,6 +2,7 @@ package info.itsthesky.disky.api.skript;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;

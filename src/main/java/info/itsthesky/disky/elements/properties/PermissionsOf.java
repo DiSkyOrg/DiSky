@@ -6,12 +6,14 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
+import ch.njol.skript.expressions.ExprPermissions;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.DiSkyRegistry;
 import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
@@ -25,6 +27,7 @@ import org.bukkit.event.Event;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,13 +44,10 @@ import java.util.Set;
 public class PermissionsOf extends SimpleExpression<Object> implements IAsyncChangeableExpression {
 
     static {
-        try {
-            ReflectionUtils.removeElement("ch.njol.skript.expressions.ExprPermissions",
-                    "expressions");
-            DiSky.debug("Removed original 'permissions' expression, to replace it with a new one.");
-        } catch (Exception e) {
-            Skript.error("DiSky were unable to remove the original 'permissions' expression, please report this error to the developer, with the following error.");
-            e.printStackTrace();
+        if (DiSkyRegistry.unregisterElement(SyntaxRegistry.EXPRESSION, ExprPermissions.class)) {
+            DiSky.debug("Unregistered the original 'permissions' expression, to replace it with a new one.");
+        } else {
+            Skript.error("DiSky were unable to unregister the original 'permissions' expression, please report this error to the developer.");
         }
 
         Skript.registerExpression(PermissionsOf.class,

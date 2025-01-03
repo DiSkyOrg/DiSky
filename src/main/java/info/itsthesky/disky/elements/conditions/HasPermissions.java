@@ -8,7 +8,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.EasyPropertyCondition;
-import info.itsthesky.disky.api.skript.PropertyCondition;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;

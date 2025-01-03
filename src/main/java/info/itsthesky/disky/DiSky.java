@@ -67,18 +67,23 @@ public final class DiSky extends JavaPlugin {
             getDataFolder().mkdirs();
 
         /*
+         * Check for Skript
+         */
+        if (!getServer().getPluginManager().isPluginEnabled("Skript")) {
+            errorHandler.exception(null, new RuntimeException("Skript is not found, cannot start DiSky."));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        if (!Skript.isAcceptRegistrations()) {
+            errorHandler.exception(null, new RuntimeException("Skript found, but it doesn't accept registration. Cannot start DiSky."));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        /*
          * Loading the configuration
          */
         ConfigManager.loadConfig(this);
-
-        /*
-         * Data Structures
-         */
-        try {
-            DataStructureFactory.getInstance().registerDataStructure(EmbedStructure.class);
-        } catch (Exception e) {
-            errorHandler.exception(null, e);
-        }
 
         /*
         Saving & loading emojis
@@ -116,16 +121,6 @@ public final class DiSky extends JavaPlugin {
 
         if (skImageInstalled)
             getLogger().info("SkImage has been found! Enabling images syntax.");
-        if (!getServer().getPluginManager().isPluginEnabled("Skript")) {
-            errorHandler.exception(null, new RuntimeException("Skript is not found, cannot start DiSky."));
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        if (!Skript.isAcceptRegistrations()) {
-            errorHandler.exception(null, new RuntimeException("Skript found, but it doesn't accept registration. Cannot start DiSky."));
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
         addonInstance = Skript.registerAddon(this);
         moduleManager = new ModuleManager(new File(getDataFolder(), "modules"), this, addonInstance);
         try {
@@ -140,6 +135,15 @@ public final class DiSky extends JavaPlugin {
             return;
         } catch (ClassNotFoundException | InvalidConfigurationException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
+        }
+
+        /*
+         * Data Structures
+         */
+        try {
+            DataStructureFactory.getInstance().registerDataStructure(EmbedStructure.class);
+        } catch (Exception e) {
+            errorHandler.exception(null, e);
         }
 
         /*

@@ -1,7 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java'
     id 'idea'
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.gradleup.shadow" version "9.0.0-beta4"
 }
 
 group = 'info.itsthesky'
@@ -19,7 +21,7 @@ version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channel
 repositories {
     mavenCentral()
     mavenLocal()
-    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://maven.enginehub.org/repo/' }
@@ -28,14 +30,14 @@ repositories {
 }
 
 dependencies {
-    shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
+    shadow 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
     shadow 'com.github.SkriptLang:Skript:2.10.0-pre1'
     // Jetbrains Annotations
     shadow 'org.jetbrains:annotations:23.0.0'
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.2.0'
+    implementation 'net.dv8tion:JDA:5.2.2'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
@@ -44,10 +46,46 @@ dependencies {
 shadowJar {
     minimize()
 
-    archiveName = 'DiSky ' + version + '.jar'
+    setArchiveFileName('DiSky ' + version + '.jar')
 }
 
-def targetJavaVersion = 16
+task removeClassPath {
+    doLast {
+        def jarFile = file("${buildDir}/libs/DiSky ${version}.jar")
+
+        // Créer un jar temporaire
+        def tempJar = new File(temporaryDir, "temp.jar")
+        def manifestFile = new File(temporaryDir, "MANIFEST.MF")
+        manifestFile.parentFile.mkdirs()
+
+        // Lire le manifest existant
+        def origManifest = new java.util.jar.JarFile(jarFile).manifest
+
+        // Créer un nouveau manifest sans Class-Path
+        def newManifest = new StringBuilder()
+        origManifest.mainAttributes.entrySet().each { entry ->
+            if (entry.key.toString() != "Class-Path") {
+                newManifest.append("${entry.key}: ${entry.value}\n")
+            }
+        }
+        manifestFile.text = newManifest.toString()
+
+        // Créer le nouveau jar avec le manifest modifié
+        ant.jar(destfile: tempJar.path, manifest: manifestFile) {
+            zipfileset(src: jarFile) {
+                exclude(name: 'META-INF/MANIFEST.MF')
+            }
+        }
+
+        // Remplacer le jar original
+        jarFile.delete()
+        tempJar.renameTo(jarFile)
+    }
+}
+
+shadowJar.finalizedBy removeClassPath
+
+def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -70,10 +108,6 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
-}
-
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 1, 'minutes'
 }
 
 idea {

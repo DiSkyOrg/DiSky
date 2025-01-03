@@ -32,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.entry.EntryValidator;
 
 import java.io.File;
@@ -92,14 +93,14 @@ public final class SkriptUtils {
     public static <T> Expression<T> defaultToEventValue(Expression expr, Class<T> clazz) {
         if (expr != null)
             return (Expression<T>) expr;
-        Class<? extends Event>[] events = ScriptLoader.getCurrentEvents();
+        Class<? extends Event>[] events = ParserInstance.get().getCurrentEvents();
         for (Class<? extends Event> e : events == null ? new Class[0] : events) {
-            Getter getter = EventValues.getEventValueGetter(e, clazz, 0);
+            Converter<Event, ? extends T> getter = (Converter<Event, ? extends T>) EventValues.getEventValueGetter(e, clazz, 0);
             if (getter != null) {
                 return new SimpleExpression<T>() {
                     @Override
                     protected T @NotNull [] get(@NotNull Event e) {
-                        T value = (T) getter.get(e);
+                        T value = (T) getter.convert(e);
                         if (value == null)
                             return null;
                         T[] arr = (T[]) Array.newInstance(clazz, 1);

@@ -3,8 +3,10 @@ package info.itsthesky.disky.api.skript.reflects.state;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Condition;
+import ch.njol.skript.lang.ExpressionType;
+import info.itsthesky.disky.api.DiSkyRegistry;
 import info.itsthesky.disky.api.skript.INodeHolder;
-import info.itsthesky.disky.api.skript.PropertyCondition;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import info.itsthesky.disky.managers.ConfigManager;
 import net.bytebuddy.ByteBuddy;
@@ -54,7 +56,7 @@ public final class SkriptStateRegistry {
                 .make()
                 .load(typeClass.getClassLoader())
                 .getLoaded();
-        PropertyCondition.register((Class<? extends Condition>) conditionClass, stateName, typeName);
+        DiSkyRegistry.registerPropertyCondition((Class<? extends Condition>) conditionClass, stateName, typeName);
 
         // Property
         final Class<?> propertyClass = new ByteBuddy()
@@ -69,7 +71,7 @@ public final class SkriptStateRegistry {
                 .load(typeClass.getClassLoader())
                 .getLoaded();
 
-        SimplePropertyExpression.register(
+        DiSkyRegistry.registerProperty(
                 (Class<? extends SimplePropertyExpression<Object, Boolean>>) propertyClass,
                 Boolean.class,
                 stateName + " state",

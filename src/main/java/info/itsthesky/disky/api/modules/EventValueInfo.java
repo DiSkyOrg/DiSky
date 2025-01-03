@@ -1,9 +1,9 @@
 package info.itsthesky.disky.api.modules;
 
-import ch.njol.skript.util.Getter;
 import info.itsthesky.disky.api.ReflectionUtils;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.converter.Converter;
 
 import java.util.Arrays;
 
@@ -14,7 +14,7 @@ public class EventValueInfo<E extends Event, T> {
 		
 		public final Class<E> event;
 		public final Class<T> c;
-		public final Getter<T, E> getter;
+		public final Converter<T, E> getter;
 		@Nullable
 		public final Class<? extends E>[] excludes;
 		@Nullable

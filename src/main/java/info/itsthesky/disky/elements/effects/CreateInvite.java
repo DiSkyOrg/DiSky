@@ -93,7 +93,7 @@ public class CreateInvite extends AsyncEffect {
 
             invite = inviteAction
                     .setMaxUses(maxUses == null ? null : maxUses.intValue())
-                    .setMaxAge(maxAge == null ? null : (int) (maxAge.getMilliSeconds() / 1000))
+                    .setMaxAge(maxAge == null ? null : (int) (maxAge.getAs(Timespan.TimePeriod.MILLISECOND) / 1000))
                     .complete();
 
         } catch (Exception ex) {

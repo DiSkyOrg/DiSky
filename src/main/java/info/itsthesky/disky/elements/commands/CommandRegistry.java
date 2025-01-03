@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 
 import java.util.ArrayList;

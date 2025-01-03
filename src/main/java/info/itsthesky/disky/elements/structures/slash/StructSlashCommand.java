@@ -537,7 +537,7 @@ public class StructSlashCommand extends Structure {
                 new OnCooldownEvent(),
                 SkriptUtils.loadCode(sectionNode, OnCooldownEvent.BukkitCooldownEvent.class));
 
-        parsedCommand.setCooldown(cooldown.getMilliSeconds());
+        parsedCommand.setCooldown(cooldown.getAs(Timespan.TimePeriod.MILLISECOND));
         parsedCommand.setOnCooldown(trigger);
         return true;
     }

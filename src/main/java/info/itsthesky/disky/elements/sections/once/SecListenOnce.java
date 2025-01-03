@@ -156,7 +156,7 @@ public class SecListenOnce extends Section {
             final var builder = bot.getInstance()
                     .listenOnce(eventClass);
             if (timeout != null && timeoutTrigger != null) {
-                builder.timeout(Duration.ofMillis(timeout.getMilliSeconds()), () -> {
+                builder.timeout(Duration.ofMillis(timeout.getAs(Timespan.TimePeriod.MILLISECOND)), () -> {
                     try {
                         timeoutTrigger.execute(event);
                     } catch (Exception ex) {

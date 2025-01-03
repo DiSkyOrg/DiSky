@@ -1,11 +1,11 @@
 package info.itsthesky.disky.api.skript.reflects.state;
 
+import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.INodeHolder;
-import info.itsthesky.disky.api.skript.PropertyCondition;
 import org.jetbrains.annotations.NotNull;
 
 public class DiSkyStateCondition extends PropertyCondition<Object> implements INodeHolder {

@@ -5,6 +5,8 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.effects.Delay;
+import ch.njol.skript.effects.EffReturn;
+import ch.njol.skript.expressions.ExprPermissions;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.function.FunctionEvent;
@@ -16,6 +18,7 @@ import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.DiSkyRegistry;
 import info.itsthesky.disky.api.ReflectionUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -23,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,12 +39,10 @@ public class FindMemberSection extends Section {
                 "find [the] [discord] member[s] (in|from) [guild] %guild% and store (them|the members) in %~objects% with filter var[iable] %~objects%"
         );
 
-        try {
-            ReflectionUtils.removeElement("ch.njol.skript.effects.EffReturn",
-                    "expressions");
-        } catch (Exception e) {
-            Skript.error("DiSky were unable to remove the original 'return' effect, please report this error to the developer, with the following error.");
-            e.printStackTrace();
+        if (DiSkyRegistry.unregisterElement(SyntaxRegistry.EXPRESSION, ch.njol.skript.effects.EffReturn.class)) {
+            DiSky.debug("Unregistered the original 'permissions' expression, to replace it with a new one.");
+        } else {
+            Skript.error("DiSky were unable to unregister the original 'permissions' expression, please report this error to the developer.");
         }
 
         Skript.registerEffect(

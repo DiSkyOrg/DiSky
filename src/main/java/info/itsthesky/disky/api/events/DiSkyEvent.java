@@ -109,8 +109,8 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
         }
 
         stringRepresentation = ScriptLoader.replaceOptions(SkriptLogger.getNode().getKey()) + ":";
-        originalName = ScriptLoader.getCurrentEventName();
-        originalEvents = ScriptLoader.getCurrentEvents();
+        originalName = getParser().getCurrentEventName();
+        originalEvents = getParser().getCurrentEvents();
 
         String name = null;
         for (SkriptEventInfo<?> event : Skript.getEvents()) {
@@ -119,14 +119,14 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
             }
         }
 
-        ScriptLoader.setCurrentEvent(name == null ? "DiSky event" : name, bukkitClass);
+        getParser().setCurrentEvent(name == null ? "DiSky event" : name, bukkitClass);
         return true;
     }
 
     @Override
     public void afterParse(@NotNull Config config) {
 
-        ScriptLoader.setCurrentEvent(originalName, originalEvents);
+        getParser().setCurrentEvent(originalName, originalEvents);
     }
 
     @Override
