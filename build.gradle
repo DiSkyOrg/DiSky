@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     shadow 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
-    shadow 'com.github.SkriptLang:Skript:2.8.0'
+    shadow 'com.github.SkriptLang:Skript:2.10.0-pre1'
     // Jetbrains Annotations
     shadow 'org.jetbrains:annotations:23.0.0'
 

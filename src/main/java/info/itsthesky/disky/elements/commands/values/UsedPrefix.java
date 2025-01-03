@@ -51,7 +51,7 @@ public class UsedPrefix extends SimpleExpression<String> {
 
     @Override
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
-        if (!ScriptLoader.isCurrentEvent(CommandEvent.class)) {
+        if (!getParser().isCurrentEvent(CommandEvent.class)) {
             Skript.error("The used prefix can only used in a discord command trigger section.");
             return false;
         }

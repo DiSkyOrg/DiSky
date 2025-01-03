@@ -46,7 +46,7 @@ public class ExprArgument extends SimpleExpression<Object> {
 
     @Override
     public boolean init(final Expression<?> @NotNull [] exprs, final int matchedPattern, final @NotNull Kleenean isDelayed, final @NotNull ParseResult parser) {
-        if (!ScriptLoader.isCurrentEvent(CommandEvent.class))
+        if (!getParser().isCurrentEvent(CommandEvent.class))
             return false;
 
         List<Argument<?>> currentArguments = CommandFactory.getInstance().currentArguments;

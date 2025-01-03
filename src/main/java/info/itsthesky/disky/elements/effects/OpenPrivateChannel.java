@@ -2,6 +2,7 @@ package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -10,6 +11,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import org.bukkit.event.Event;
@@ -35,10 +37,12 @@ public class OpenPrivateChannel extends AsyncEffect {
 
     private Expression<User> exprUser;
     private Expression<Object> exprResult;
+    private Node node;
 
     @Override
     public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, ParseResult parseResult) {
         getParser().setHasDelayBefore(Kleenean.TRUE);
+        node = getParser().getNode();
 
         exprUser = (Expression<User>) exprs[0];
         exprResult = (Expression<Object>) exprs[1];
@@ -49,23 +53,25 @@ public class OpenPrivateChannel extends AsyncEffect {
     @Override
     public void execute(@NotNull Event e) {
         final User rawUser = parseSingle(exprUser, e, null);
-        DiSky.debug("Opening private channel of user " + rawUser.getId() + " ...");
-        if (anyNull(this, rawUser))
+        DiSky.debug("Opening private channel of user " + (rawUser == null ? "[user not set]" : rawUser.getId()) + " ...");
+        if (rawUser == null) {
+            DiSkyRuntimeHandler.exprNotSet(node, exprUser);
             return;
+        }
 
         try {
 
             final PrivateChannel channel = rawUser.openPrivateChannel().complete();
             if (channel == null) {
-                DiSky.debug("The private channel of user " + rawUser.getId() + " is null.");
+                DiSkyRuntimeHandler.error(new IllegalStateException("The private channel of user " + rawUser.getId() + " is null!"), node);
                 exprResult.change(e, new Object[0], Changer.ChangeMode.SET);
                 return;
             }
 
-            DiSky.debug("The private channel of user " + rawUser.getId() + " is not null. Storing ...");
             exprResult.change(e, new Object[] {channel}, Changer.ChangeMode.SET);
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error(ex, node);
+            exprResult.change(e, new Object[0], Changer.ChangeMode.SET);
         }
     }
 
