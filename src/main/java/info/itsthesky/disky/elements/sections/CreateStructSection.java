@@ -57,24 +57,24 @@ public class CreateStructSection extends Section {
         }
 
         for (var entry : structureInfo.entries()) {
-            if (!container.hasEntry(entry.name()))
+            if (!container.hasEntry(entry.entry().value()))
                 continue;
 
             List<Expression<?>> exprs = new ArrayList<>();
-            var nodesForEntry = container.getNodesForEntry(entry.name());
+            var nodesForEntry = container.getNodesForEntry(entry.entry().value());
             for (int nodeIndex = 0; nodeIndex < nodesForEntry.size(); nodeIndex++) {
                 var ignored = nodesForEntry.get(nodeIndex);
                 @Nullable Expression<?> rawValue;
                 try {
-                    rawValue = (Expression<?>) container.getOptional(entry.name(), nodeIndex, false);
+                    rawValue = (Expression<?>) container.getOptional(entry.entry().value(), nodeIndex, false);
                 } catch (Exception e) {
-                    Skript.error("The entry '" + entry.name() + "' throw an error while parsing in the data structure '" + structureInfo.name() + "':");
+                    Skript.error("The entry '" + entry.entry().value() + "' throw an error while parsing in the data structure '" + structureInfo.name() + "':");
                     e.printStackTrace();
                     return false;
                 }
 
-                if (rawValue == null && !entry.optional()) {
-                    Skript.error("The entry '" + entry.name() + "' is required in the data structure '" + structureInfo.name() + "'!");
+                if (rawValue == null && !entry.entry().optional()) {
+                    Skript.error("The entry '" + entry.entry().value() + "' is required in the data structure '" + structureInfo.name() + "'!");
                     return false;
                 }
 
@@ -83,11 +83,6 @@ public class CreateStructSection extends Section {
 
                 exprs.add(rawValue);
             }
-
-            // We validate the entry to be sure about the amounts
-            if (entry.defaultValue())
-
-            entries.put(entry.name(), exprs);
         }
 
         return Changer.ChangerUtils.acceptsChange(exprVariable, Changer.ChangeMode.SET, structureInfo.returnedClazz());
@@ -102,14 +97,14 @@ public class CreateStructSection extends Section {
         try {
             final Object instance = structureInfo.structureClazz().newInstance();
             for (var entry : structureInfo.entries()) {
-                var array = entries.get(entry.name());
+                var array = entries.get(entry.entry().value());
                 if (array.size() == 1) {
-                    final Expression<?> rawValue = entries.get(entry.name()).stream().findFirst().orElse(null);
+                    final Expression<?> rawValue = entries.get(entry.entry().value()).stream().findFirst().orElse(null);
                     Object value;
 
                     value = rawValue == null ? null : rawValue.getSingle(event);
-                    if (value == null && !entry.optional()) {
-                        Skript.error("The entry '" + entry.name() + "' is required in the data structure '" + structureInfo.name() + "'!");
+                    if (value == null && !entry.entry().optional()) {
+                        Skript.error("The entry '" + entry.entry().value() + "' is required in the data structure '" + structureInfo.name() + "'!");
                         return getNext();
                     }
 
@@ -120,10 +115,10 @@ public class CreateStructSection extends Section {
                     field.set(instance, value);
                 } else {
                     final List<Object> values = new ArrayList<>();
-                    for (var rawValue : entries.get(entry.name())) {
+                    for (var rawValue : entries.get(entry.entry().value())) {
                         Object value = rawValue.getSingle(event);
-                        if (value == null && !entry.optional()) {
-                            Skript.error("The entry '" + entry.name() + "' is required in the data structure '" + structureInfo.name() + "'!");
+                        if (value == null && !entry.entry().optional()) {
+                            Skript.error("The entry '" + entry.entry().value() + "' is required in the data structure '" + structureInfo.name() + "'!");
                             return getNext();
                         }
 

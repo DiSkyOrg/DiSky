@@ -68,24 +68,17 @@ public class BetterEntryContainer {
         return values;
     }
 
-    public <E, R extends E> R get(String key, Class<E> expectedType, boolean useDefaultValue) {
-        R value = getOptional(key, expectedType, useDefaultValue);
+    public <E, R extends E> R get(String key, int index, Class<E> expectedType, boolean useDefaultValue) {
+        R value = getOptional(key, index, expectedType, useDefaultValue);
         if (value == null)
             throw new RuntimeException("Null value for asserted non-null value");
         return value;
     }
 
-    public Object get(String key, boolean useDefaultValue) {
-        Object parsed = getOptional(key, useDefaultValue);
-        if (parsed == null)
-            throw new RuntimeException("Null value for asserted non-null value");
-        return parsed;
-    }
-
     @Nullable
     @SuppressWarnings("unchecked")
-    public <E, R extends E> R getOptional(String key, Class<E> expectedType, boolean useDefaultValue) {
-        Object parsed = getOptional(key, useDefaultValue);
+    public <E, R extends E> R getOptional(String key, int index, Class<E> expectedType, boolean useDefaultValue) {
+        Object parsed = getOptional(key, index, useDefaultValue);
         if (parsed == null)
             return null;
         if (!expectedType.isInstance(parsed))
