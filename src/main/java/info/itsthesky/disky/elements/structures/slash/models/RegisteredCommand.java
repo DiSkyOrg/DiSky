@@ -10,7 +10,6 @@ public class RegisteredCommand {
 
     private ParsedCommand parsedCommand;
 
-    private ParsedGroup group;
     private List<ParsedCommand> subCommands;
 
     private final long commandId;
@@ -64,6 +63,6 @@ public class RegisteredCommand {
     }
 
     public String getName() {
-        return parsedCommand == null ? group.getName() : parsedCommand.getName();
+        return parsedCommand == null ? "" : parsedCommand.getName();
     }
 }
