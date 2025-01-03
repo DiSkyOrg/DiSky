@@ -2,7 +2,7 @@ package info.itsthesky.disky.elements.properties.profile;
 
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
-import info.itsthesky.disky.api.skript.PropertyCondition;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 

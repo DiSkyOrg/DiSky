@@ -4,7 +4,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Condition;
 import info.itsthesky.disky.api.skript.INodeHolder;
-import info.itsthesky.disky.api.skript.PropertyCondition;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import info.itsthesky.disky.managers.ConfigManager;
 import net.bytebuddy.ByteBuddy;

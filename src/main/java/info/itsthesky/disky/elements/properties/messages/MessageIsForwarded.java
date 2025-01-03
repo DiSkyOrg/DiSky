@@ -1,6 +1,6 @@
 package info.itsthesky.disky.elements.properties.messages;
 
-import info.itsthesky.disky.api.skript.PropertyCondition;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.entities.MessageType;

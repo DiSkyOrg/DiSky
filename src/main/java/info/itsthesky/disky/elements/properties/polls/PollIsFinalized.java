@@ -1,6 +1,6 @@
 package info.itsthesky.disky.elements.properties.polls;
 
-import info.itsthesky.disky.api.skript.PropertyCondition;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import org.jetbrains.annotations.NotNull;
 

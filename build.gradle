@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'idea'
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.gradleup.shadow" version "9.0.0-beta4"
 }
 
 group = 'info.itsthesky'
@@ -35,7 +35,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.2.0'
+    implementation 'net.dv8tion:JDA:5.2.2'
 
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
@@ -44,10 +44,11 @@ dependencies {
 shadowJar {
     minimize()
 
-    archiveName = 'DiSky ' + version + '.jar'
+    // archiveName = 'DiSky ' + version + '.jar'
+    setArchiveFileName('DiSky ' + version + '.jar')
 }
 
-def targetJavaVersion = 16
+def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

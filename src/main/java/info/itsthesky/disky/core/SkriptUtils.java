@@ -32,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.entry.EntryValidator;
 
 import java.io.File;
@@ -92,14 +93,14 @@ public final class SkriptUtils {
     public static <T> Expression<T> defaultToEventValue(Expression expr, Class<T> clazz) {
         if (expr != null)
             return (Expression<T>) expr;
-        Class<? extends Event>[] events = ScriptLoader.getCurrentEvents();
+        Class<? extends Event>[] events = ParserInstance.get().getCurrentEvents();
         for (Class<? extends Event> e : events == null ? new Class[0] : events) {
-            Getter getter = EventValues.getEventValueGetter(e, clazz, 0);
+            Converter<Event, ? extends T> getter = (Converter<Event, ? extends T>) EventValues.getEventValueGetter(e, clazz, 0);
             if (getter != null) {
                 return new SimpleExpression<T>() {
                     @Override
                     protected T @NotNull [] get(@NotNull Event e) {
-                        T value = (T) getter.get(e);
+                        T value = (T) getter.convert(e);
                         if (value == null)
                             return null;
                         T[] arr = (T[]) Array.newInstance(clazz, 1);
@@ -186,9 +187,9 @@ public final class SkriptUtils {
                                                           int time) {
         if (entityClass.isArray())
             Logger.getLogger("DiSky").severe("Class "+ ReflectionUtils.getCurrentClass().getName() + " still use the single value registration while providing an array value.");
-        EventValues.registerEventValue(bukkitClass, entityClass, new Getter<T, B>() {
+        EventValues.registerEventValue(bukkitClass, entityClass, new Converter<B, T>() {
             @Override
-            public @Nullable T get(B arg) {
+            public @Nullable T convert(B arg) {
                 try {
                     return function.apply(arg);
                 } catch (Exception ex) {
@@ -254,7 +255,7 @@ public final class SkriptUtils {
     }
 
     public static OffsetDateTime convertDate(Date date) {
-        final long ms = date.getTimestamp();
+        final long ms = date.getTime();
         return OffsetDateTime.ofInstant(Instant.ofEpochMilli(ms), ZoneId.systemDefault());
     }
 

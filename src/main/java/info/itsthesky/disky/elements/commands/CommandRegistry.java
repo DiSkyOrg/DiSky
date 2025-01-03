@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 
 import java.util.ArrayList;
@@ -66,9 +67,9 @@ public class CommandRegistry extends SelfRegisteringSkriptEvent {
         SkriptUtils.registerValue(CommandEvent.class, GuildChannel.class, CommandEvent::getTxtChannel);
         SkriptUtils.registerValue(CommandEvent.class, String.class, CommandEvent::getPrefix);
 
-        EventValues.registerEventValue(CommandEvent.class, Bot.class, new Getter<Bot, CommandEvent>() {
+        EventValues.registerEventValue(CommandEvent.class, Bot.class, new Converter<CommandEvent, Bot>() {
             @Override
-            public Bot get(@NotNull CommandEvent event) {
+            public Bot convert(@NotNull CommandEvent event) {
                 return DiSky.getManager().fromJDA(event.getBot());
             }
         }, 0);

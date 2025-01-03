@@ -9,7 +9,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.Getter;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
@@ -17,6 +16,7 @@ import info.itsthesky.disky.DiSky;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.lang.converter.Converter;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -61,9 +61,9 @@ public class ExprSubEventExpression extends WrapperExpression<Object> {
         assert secListenOnce.getOuterEvent() != null;
         var evtExpr = (EventValueExpression<?>) getExpr();
         try {
-            var field = evtExpr.getClass().getDeclaredField("getters");
+            var field = evtExpr.getClass().getDeclaredField("converters");
             field.setAccessible(true);
-            var getters = (Map<Class<? extends Event>, Getter>) field.get(evtExpr);
+            var getters = (Map<Class<? extends Event>, Converter>) field.get(evtExpr);
             getters.forEach((k, v) -> {
                 DiSky.debug("Getter: " + k.getSimpleName() + " / " + v);
             });

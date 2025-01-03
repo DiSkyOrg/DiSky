@@ -1,6 +1,6 @@
 package info.itsthesky.disky.elements.properties.reactions;
 
-import info.itsthesky.disky.api.skript.PropertyCondition;
+import ch.njol.skript.conditions.base.PropertyCondition;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import org.jetbrains.annotations.NotNull;
 

@@ -79,7 +79,7 @@ public class EmbedStructure implements DataStruct<EmbedBuilder> {
         if (thumbnail != null) builder.setThumbnail(thumbnail);
         if (image != null) builder.setImage(image);
 
-        if (timestamp != null) builder.setTimestamp(Instant.ofEpochMilli(timestamp.getTimestamp()));
+        if (timestamp != null) builder.setTimestamp(Instant.ofEpochMilli(timestamp.getTime()));
 
         return builder;
     }
