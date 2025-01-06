@@ -1,12 +1,10 @@
-package info.itsthesky.disky.api.datastruct.structures;
+package info.itsthesky.disky.elements.datastructs.structures;
 
-import info.itsthesky.disky.api.datastruct.DataStructure;
 import info.itsthesky.disky.api.datastruct.DataStructureEntry;
-import info.itsthesky.disky.api.datastruct.base.DataStruct;
+import info.itsthesky.disky.api.datastruct.base.BasicDS;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
-@DataStructure(value = "embed field", clazz = MessageEmbed.Field.class, canBeCreated = false)
-public class EmbedFieldStructure implements DataStruct<MessageEmbed.Field> {
+public class EmbedFieldStructure implements BasicDS<MessageEmbed.Field> {
 
     @DataStructureEntry(value = "name")
     public String name;
