@@ -115,7 +115,6 @@ public class ReplyWith extends AsyncEffectSection {
 			secExprEmbed = validatedEntries.getOptional("embed", Expression.class, true);
 			secExprPoll = validatedEntries.getOptional("poll", Expression.class, true);
 			secExprComponents = validatedEntries.getOptional("components", List.class, true);
-
 		}
 
 		return exprResult == null || Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Message.class);

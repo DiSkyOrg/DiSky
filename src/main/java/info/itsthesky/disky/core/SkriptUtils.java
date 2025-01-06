@@ -5,10 +5,12 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.*;
 import ch.njol.skript.registrations.EventValues;
 import ch.njol.skript.util.*;
@@ -329,5 +331,23 @@ public final class SkriptUtils {
                 return null;
             }
         }
+    }
+
+    public static @Nullable List<Expression<?>> convertToExpressions(Object data) {
+        if (data == null)
+            return null;
+
+        final List<Expression<?>> expressions = new ArrayList<>();
+
+        if (data.getClass().isArray() || data instanceof List) {
+            var asList = data.getClass().isArray() ? Arrays.asList((Object[]) data) : (List<?>) data;
+            for (Object obj : asList) {
+                expressions.add(new SimpleLiteral<>(obj, false));
+            }
+        } else {
+            expressions.add(new SimpleLiteral<>(data, false));
+        }
+
+        return expressions;
     }
 }

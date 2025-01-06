@@ -1,161 +1,122 @@
 package info.itsthesky.disky.api.datastruct;
 
-import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
-import ch.njol.skript.config.Node;
-import ch.njol.skript.config.SectionNode;
-import ch.njol.skript.lang.util.SimpleLiteral;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.registrations.Classes;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.ReflectionUtils;
+import info.itsthesky.disky.api.datastruct.base.BasicDS;
+import info.itsthesky.disky.api.datastruct.base.ChainDS;
 import info.itsthesky.disky.api.datastruct.base.DataStruct;
 import info.itsthesky.disky.api.skript.BetterExpressionEntryData;
+import info.itsthesky.disky.core.SkriptUtils;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
-import org.skriptlang.skript.lang.entry.EntryData;
 import org.skriptlang.skript.lang.entry.EntryValidator;
-import org.skriptlang.skript.lang.entry.util.ExpressionEntryData;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class DataStructureFactory {
 
-    private static final DataStructureFactory INSTANCE = new DataStructureFactory();
-    public static DataStructureFactory getInstance() {
-        if (INSTANCE == null)
-            return new DataStructureFactory();
+    public static EntryValidator createValidator(@NotNull Class<?> structClass) {
 
-        return INSTANCE;
-    }
+        final var validator = EntryValidator.builder();
+        final var allNodes = new HashMap<String, String>();
 
-    public DataStructureInfo getStructure(String name) {
-        return registeredStructures.stream()
-                .filter(info -> info.name().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public record DataStructureInfo(Class<?> structureClazz, Class<?> returnedClazz,
-                                    String name,
-                                    List<DataStructureEntryInfo> entries,
-                                    EntryValidator validator) {};
-    public record DataStructureEntryInfo(DataStructureEntry entry,
-                                         String fieldName,
-                                         Class<?> returnType,
-                                         boolean array,
-                                         @Nullable Object defaultValue) {};
-
-    private List<DataStructureInfo> registeredStructures;
-
-    public DataStructureFactory() {
-        this.registeredStructures = new ArrayList<>();
-    }
-
-    public void registerDataStructure(Class<?> clazz) {
-        if (!clazz.isAnnotationPresent(DataStructure.class))
-            throw new IllegalArgumentException("The class " + clazz.getName() + " is not a valid DataStructure class!");
-
-        DataStructure annotation = clazz.getAnnotation(DataStructure.class);
-
-        List<DataStructureEntryInfo> entries = new ArrayList<>();
-        for (var field : clazz.getDeclaredFields()) {
-            if (!field.isAnnotationPresent(DataStructureEntry.class))
+        for (final var field : structClass.getDeclaredFields()) {
+            final var entry = field.getAnnotation(DataStructureEntry.class);
+            if (entry == null)
                 continue;
 
-            @Nullable Object defaultValue = null;
+            final var key = entry.value();
+            final Class type = field.getType();
+
+            Object defaultValue = null;
             try {
-                defaultValue = field.get(clazz.getConstructor().newInstance());
+                var instance = structClass.getDeclaredConstructor().newInstance();
+                field.setAccessible(true);
+                defaultValue = field.get(instance);
             } catch (IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
-                DiSky.debug("Cannot get the default value of the field " + field.getName() + " in the class " + clazz.getName());
-                DiSky.debug("The field must be public and have a default constructor!");
+                DiSky.debug("Cannot get default value of field " + field.getName() + " in class " + structClass.getName() + "! Are you sure a public and empty constructor is present?");
             }
 
-            DataStructureEntry entry = field.getAnnotation(DataStructureEntry.class);
-            entries.add(new DataStructureEntryInfo(entry, field.getName(),
-                    field.getType(), field.getType().isArray() || List.class.isAssignableFrom(field.getType()), defaultValue));
+            // get the natural name for the type
+            final var typeName = Classes.getExactClassName(type);
+            allNodes.put(key.split(":")[0], typeName);
+
+            validator.addEntryData(new BetterExpressionEntryData<Object>(
+                    key,
+                    SkriptUtils.convertToExpressions(defaultValue),
+                    entry.optional(),
+                    type
+            ));
         }
 
-        var entryValidatorBuilder = EntryValidator.builder();
-        for (var entry : entries) {
-
-            // FIRST CASE: it's not an array, and requires a data structure
-            if (!entry.array() && DataStruct.class.isAssignableFrom(entry.returnType())) { {
-
-                entryValidatorBuilder.addEntryData(new ExpressionEntryData<Object>(entry.entry().value(),
-                        null, entry.entry().optional(), (Class) entry.returnType));
-
-            }}
-
-            // SECOND CASE: it's an array, and requires a data structure
-            else if (entry.array() && DataStruct.class.isAssignableFrom(entry.returnType())) {
-
-                entryValidatorBuilder.addEntryData(new BetterExpressionEntryData<Object>(entry.entry().value(),
-                        null, entry.entry().optional(), (Class) entry.returnType));
-
-            }
-
-        }
-
-        var structInfo = new DataStructureInfo(clazz, annotation.clazz(), annotation.value(), entries, entryValidatorBuilder.build());
-        this.registeredStructures.add(structInfo);
-
-        DiSky.debug("Registered data structure " + annotation.value() + " with " + entries.size() + " entries.");
+        // final changes
+        return validator.unexpectedNodeTester(node -> false).build();
     }
 
-    @Nullable
-    public static BetterEntryContainer validate(EntryValidator entryValidator, SectionNode sectionNode) {
-        List<EntryData<?>> entries = new ArrayList<>(entryValidator.getEntryData());
-        Map<String, List<Node>> handledNodes = new HashMap<>();
-        List<Node> unhandledNodes = new ArrayList<>();
+    public static <F, T extends DataStruct<F>> F createDataStructure(@NotNull Class<T> structClass,
+                                                                     @NotNull EntryContainer container,
+                                                                     @NotNull Event event,
+                                                                     @Nullable F chainInstance)
+            throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        final var instance = structClass.getConstructor().newInstance();
 
-        var unexpectedNodeTester = (Predicate<Node>) ReflectionUtils.getFieldValueViaInstance(entryValidator, "unexpectedNodeTester");
-        var unexpectedEntryMessage = (Function<String, String>) ReflectionUtils.getFieldValueViaInstance(entryValidator, "unexpectedEntryMessage");
-        var missingRequiredEntryMessage = (Function<String, String>) ReflectionUtils.getFieldValueViaInstance(entryValidator, "missingRequiredEntryMessage");
-
-        boolean ok = true;
-        nodeLoop: for (Node node : sectionNode) {
-            if (node.getKey() == null)
+        for (final var field : structClass.getDeclaredFields()) {
+            final var entry = field.getAnnotation(DataStructureEntry.class);
+            if (entry == null)
                 continue;
 
-            // Le premier pas est de déterminer si le node est présent dans la liste entryData
-            boolean foundMatch = false;
-            for (EntryData<?> data : entries) {
-                if (data.canCreateWith(node)) {
-                    // C'est un node connu, on l'ajoute à la liste correspondante
-                    handledNodes.computeIfAbsent(data.getKey(), k -> new ArrayList<>()).add(node);
-                    foundMatch = true;
-                    // Ne pas retirer l'EntryData car on peut avoir plusieurs nodes correspondants
-                    continue nodeLoop;
-                }
-            }
+            final var key = entry.value();
+            final var type = field.getType();
+            final var isList = List.class.isAssignableFrom(type) || type.isArray();
 
-            // Aucun EntryData correspondant trouvé
-            if (!foundMatch) {
-                if (unexpectedNodeTester == null || unexpectedNodeTester.test(node)) {
-                    ok = false;
-                    Skript.error(unexpectedEntryMessage.apply(ScriptLoader.replaceOptions(node.getKey())));
-                } else {
-                    unhandledNodes.add(node);
-                }
-            }
-        }
+            field.setAccessible(true);
 
-        // Vérification des entrées requises
-        for (EntryData<?> entryData : entries) {
-            List<Node> matchingNodes = handledNodes.getOrDefault(entryData.getKey(), Collections.emptyList());
-            if (!entryData.isOptional() && matchingNodes.isEmpty()) {
-                Skript.error(missingRequiredEntryMessage.apply(entryData.getKey()));
-                ok = false;
+            var list = container.getOptional(key, List.class, true);
+            if (list == null)
+                list = new ArrayList<>();
+
+            // be sure it's a list, if it's not, check if the list contain only one expr
+            if (!isList && list.size() == 1) {
+                final var expr = (Expression<?>) list.get(0);
+                if (expr != null)
+                    field.set(instance, expr.getSingle(event));
+            } else if (isList) {
+                final var parsedList = new ArrayList<>();
+                for (final var expr : list)
+                    if (expr != null)
+                        parsedList.add(((Expression<?>) expr).getSingle(event));
+
+                field.set(instance, parsedList);
             }
         }
 
-        if (!ok)
-            return null;
+        if (instance instanceof BasicDS) {
+            return ((BasicDS<F>) instance).build();
+        } else if (instance instanceof ChainDS) {
+            if (chainInstance == null)
+                throw new IllegalArgumentException("Cannot edit a chain data structure without a chain instance!");
 
-        return new BetterEntryContainer(sectionNode, entryValidator, handledNodes, unhandledNodes);
+            return ((ChainDS<F>) instance).edit(chainInstance);
+        }
+
+        throw new IllegalArgumentException("The data structure class " + structClass.getName() + " must implement either BasicDS or ChainDS interface!");
     }
 
+    public static <F, T extends DataStruct<F>> @Nullable String preValidate(@NotNull Class<T> structClass, @NotNull List<String> presentNodes) {
+        final T instance;
+        try {
+            instance = structClass.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        return instance.preValidate(presentNodes);
+    }
 }
