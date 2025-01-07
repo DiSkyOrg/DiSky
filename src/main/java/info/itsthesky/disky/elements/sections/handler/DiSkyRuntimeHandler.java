@@ -99,6 +99,16 @@ public class DiSkyRuntimeHandler {
         return true;
     }
 
+    public static boolean validateAsync(boolean async, Node node) {
+        if (async)
+            return true;
+
+        final var prefixedNode = "await " + node.getKey();
+        error(new IllegalStateException("This effect must be executed asynchronously! Prefix your line with 'await':\n\t" + prefixedNode),
+                node, false);
+        return false;
+    }
+
     //endregion
 
     //region Error Printer

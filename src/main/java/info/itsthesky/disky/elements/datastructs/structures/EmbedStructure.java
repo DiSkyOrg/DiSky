@@ -1,20 +1,19 @@
-package info.itsthesky.disky.api.datastruct.structures;
+package info.itsthesky.disky.elements.datastructs.structures;
 
 import ch.njol.skript.util.Color;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.SkriptColor;
 import info.itsthesky.disky.api.datastruct.DataStructure;
 import info.itsthesky.disky.api.datastruct.DataStructureEntry;
-import info.itsthesky.disky.api.datastruct.base.DataStruct;
+import info.itsthesky.disky.api.datastruct.base.BasicDS;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.time.Instant;
 import java.util.List;
 
-@DataStructure(value = "embed", clazz = EmbedBuilder.class)
-public class EmbedStructure implements DataStruct<EmbedBuilder> {
+@DataStructure(clazz = EmbedBuilder.class)
+public class EmbedStructure implements BasicDS<EmbedBuilder> {
 
     @DataStructureEntry(value = "title", optional = true)
     public String title;
@@ -47,8 +46,7 @@ public class EmbedStructure implements DataStruct<EmbedBuilder> {
     @DataStructureEntry(value = "color", optional = true)
     public Color color = SkriptColor.YELLOW;
 
-    @DataStructureEntry(value = "field", optional = true,
-            maximum = MessageEmbed.MAX_FIELD_AMOUNT)
+    @DataStructureEntry(value = "field", optional = true)
     public List<EmbedFieldStructure> fields;
 
     @Override

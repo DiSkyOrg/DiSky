@@ -16,20 +16,17 @@ public @interface DataStructureEntry {
      * If the entry is optional or not.
      * @return If the entry is optional or not
      */
-    boolean optional() default false;
+    boolean optional() default true;
+
+    //region Documentation
 
     /**
-     * The minimum amount of this entry, in case it's
-     * an array or a list.
-     * @return The minimum amount of this entry
+     * The description of this entry.
+     * (what is it used for, what should be the value, etc.)
+     * @return The description of this entry
      */
-    int minimum() default 0;
+    String description() default "";
 
-    /**
-     * The maximum amount of this entry, in case it's
-     * an array or a list.
-     * @return The maximum amount of this entry
-     */
-    int maximum() default 0;
+    //endregion
 
 }

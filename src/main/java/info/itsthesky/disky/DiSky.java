@@ -2,8 +2,6 @@ package info.itsthesky.disky;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import info.itsthesky.disky.api.datastruct.DataStructureFactory;
-import info.itsthesky.disky.api.datastruct.structures.EmbedStructure;
 import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.generator.DocBuilder;
 import info.itsthesky.disky.api.modules.DiSkyModule;
@@ -12,6 +10,7 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.DynamicElements;
+import info.itsthesky.disky.elements.structures.context.ContextCommandManager;
 import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.ConfigManager;
@@ -138,15 +137,6 @@ public final class DiSky extends JavaPlugin {
         }
 
         /*
-         * Data Structures
-         */
-        try {
-            DataStructureFactory.getInstance().registerDataStructure(EmbedStructure.class);
-        } catch (Exception e) {
-            errorHandler.exception(null, e);
-        }
-
-        /*
         Default JDA's error handler
          */
         RestAction.setDefaultFailure(throwable -> DiSky.getErrorHandler().exception(null, throwable));
@@ -165,6 +155,8 @@ public final class DiSky extends JavaPlugin {
     @Override
     public void onDisable() {
         SlashManager.shutdownAll();
+        ContextCommandManager.shutdownAll();
+
         botManager.shutdown();
     }
 

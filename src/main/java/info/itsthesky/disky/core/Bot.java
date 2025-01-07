@@ -5,6 +5,7 @@ import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import info.itsthesky.disky.elements.structures.context.ContextCommandManager;
 import info.itsthesky.disky.elements.structures.slash.BotReadyWaiter;
 import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import net.dv8tion.jda.api.JDA;
@@ -29,7 +30,9 @@ public class Bot {
     private final @Nullable BotApplication application;
     private final boolean forceReload;
     private final BotOptions options;
+
     private final SlashManager slashManager;
+    private final ContextCommandManager contextManager;
 
     public Bot(String name, JDA instance, BotOptions options, @Nullable BotApplication application, boolean forceReload) {
         this.name = name;
@@ -40,6 +43,8 @@ public class Bot {
         this.options = options;
 
         this.slashManager = SlashManager.getManager(this);
+        this.contextManager = ContextCommandManager.getManager(this);
+
         BotReadyWaiter.onBotLoaded(this);
     }
 
@@ -119,5 +124,9 @@ public class Bot {
 
     public SlashManager getSlashManager() {
         return slashManager;
+    }
+
+    public ContextCommandManager getContextManager() {
+        return contextManager;
     }
 }
