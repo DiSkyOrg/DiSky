@@ -21,7 +21,7 @@ public class AutoModExecutionEvent extends DiSkyEvent<net.dv8tion.jda.api.events
         SkriptUtils.registerValue(AutoModExecutionEvent.BukkitAutoModExecutionEvent.class, Guild.class,
                 event -> event.getJDAEvent().getGuild(), 0);
 
-        SkriptUtils.registerValue(AutoModExecutionEvent.BukkitAutoModExecutionEvent.class, GuildMessageChannelUnion.class,
+        SkriptUtils.registerValue(GuildAutoModExecutionEvent.BukkitAutoModExecutionEvent.class, Channel.class,
                 event -> event.getJDAEvent().getChannel(), 0);
 
         SkriptUtils.registerValue(AutoModExecutionEvent.BukkitAutoModExecutionEvent.class, AutoModResponse.class,
