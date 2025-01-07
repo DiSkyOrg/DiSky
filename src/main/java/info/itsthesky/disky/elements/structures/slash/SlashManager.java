@@ -181,12 +181,12 @@ public final class SlashManager extends ListenerAdapter {
             DiSky.debug("Guild " + command.getGuildId() + " is not available, skipping command deletion");
             return;
         }
-        guild.deleteCommandById(command.getCommandId()).queue();
+        guild.deleteCommandById(command.getCommandId()).complete();
     }
 
     public void deleteGlobalCommand(RegisteredCommand command) {
         registeredCommands.remove(command);
-        bot.getInstance().deleteCommandById(command.getCommandId()).queue();
+        bot.getInstance().deleteCommandById(command.getCommandId()).complete();
     }
 
     // Event Handlers

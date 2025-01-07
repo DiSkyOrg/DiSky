@@ -10,6 +10,7 @@ import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.DynamicElements;
+import info.itsthesky.disky.elements.structures.context.ContextCommandManager;
 import info.itsthesky.disky.elements.structures.slash.SlashManager;
 import info.itsthesky.disky.managers.BotManager;
 import info.itsthesky.disky.managers.ConfigManager;
@@ -153,6 +154,8 @@ public final class DiSky extends JavaPlugin {
     @Override
     public void onDisable() {
         SlashManager.shutdownAll();
+        ContextCommandManager.shutdownAll();
+
         botManager.shutdown();
     }
 
