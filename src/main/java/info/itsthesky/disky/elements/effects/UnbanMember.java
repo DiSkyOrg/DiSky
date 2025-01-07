@@ -1,16 +1,20 @@
 package info.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
+import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.SpecificBotEffect;
 import info.itsthesky.disky.core.Bot;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.event.Event;
@@ -21,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Unbans a user from a guild."})
 @Examples({"unban event-user in guild with id \"818182471140114432\""})
 
-public class UnbanMember extends SpecificBotEffect {
+public class UnbanMember extends AsyncEffect {
 
     static {
         Skript.registerEffect(
@@ -32,32 +36,31 @@ public class UnbanMember extends SpecificBotEffect {
 
     private Expression<User> exprUser;
     private Expression<Guild> exprGuild;
+    private Node node;
 
     @Override
-    public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, ParseResult parseResult) {
+    public boolean init(Expression[] expr, int i, Kleenean kleenean, ParseResult parseResult) {
         exprUser = (Expression<User>) expr[0];
         exprGuild = (Expression<Guild>) expr[1];
+        node = getParser().getNode();
         return true;
     }
 
     @Override
-    public void runEffect(@NotNull Event e, Bot bot) {
-        final User user = parseSingle(exprUser, e, null);
-        final Guild guild = parseSingle(exprGuild, e, null);
+    public void execute(@NotNull Event e) {
+        final User user = EasyElement.parseSingle(exprUser, e, null);
+        final Guild guild = EasyElement.parseSingle(exprGuild, e, null);
 
-        if (user == null || guild == null || bot == null) {
-            restart();
+        if (user == null || guild == null) {
+            DiSkyRuntimeHandler.error(new NullPointerException("The user or the guild cannot be null!"), node);
             return;
         }
 
-        guild.unban(user).queue(
-                s -> restart(),
-                ex -> {
-                    DiSky.getErrorHandler().exception(e, ex);
-                    restart();
-                }
-        );
-
+        try {
+            guild.unban(user).complete();
+        } catch (Exception ex) {
+            DiSkyRuntimeHandler.error(ex, node);
+        }
     }
 
     @Override
