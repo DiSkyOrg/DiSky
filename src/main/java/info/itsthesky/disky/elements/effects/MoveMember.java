@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.*;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Move Member")
 @Description({"Move a member to another voice chat.",

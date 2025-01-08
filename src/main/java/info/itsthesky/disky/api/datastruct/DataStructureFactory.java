@@ -1,6 +1,5 @@
 package info.itsthesky.disky.api.datastruct;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.registrations.Classes;
 import info.itsthesky.disky.DiSky;
@@ -19,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class DataStructureFactory {
 

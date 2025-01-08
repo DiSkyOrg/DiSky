@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.ScheduledEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 

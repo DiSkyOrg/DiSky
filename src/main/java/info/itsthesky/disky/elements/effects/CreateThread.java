@@ -18,7 +18,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.*;
+import static info.itsthesky.disky.api.skript.EasyElement.anyNull;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Create Thread")
 @Description({"Create a new thread in a text channel with a base name.",

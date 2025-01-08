@@ -7,7 +7,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.lang.parser.ParserInstance;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.core.Debug;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

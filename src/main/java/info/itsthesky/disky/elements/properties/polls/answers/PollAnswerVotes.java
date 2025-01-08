@@ -1,7 +1,6 @@
 package info.itsthesky.disky.elements.properties.polls.answers;
 
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
-import info.itsthesky.disky.api.emojis.Emote;
 import info.itsthesky.disky.elements.properties.polls.PollAnswerData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

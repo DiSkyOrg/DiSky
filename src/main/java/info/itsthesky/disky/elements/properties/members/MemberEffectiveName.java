@@ -1,13 +1,9 @@
 package info.itsthesky.disky.elements.properties.members;
 
-import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import info.itsthesky.disky.api.skript.EasyElement;
-import info.itsthesky.disky.core.Utils;
 import net.dv8tion.jda.api.entities.Member;
-import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

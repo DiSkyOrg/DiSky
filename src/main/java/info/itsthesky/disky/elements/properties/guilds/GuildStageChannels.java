@@ -5,7 +5,6 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 @Name("All Guild Stage Channels")
 @Description("Returns all stage channels of a guild.")

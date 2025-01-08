@@ -1,8 +1,8 @@
 package info.itsthesky.disky.elements.properties.events;
 
 import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.*;
-import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.util.Date;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
 import net.dv8tion.jda.api.requests.RestAction;

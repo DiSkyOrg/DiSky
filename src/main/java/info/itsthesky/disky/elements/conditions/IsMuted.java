@@ -1,9 +1,9 @@
 package info.itsthesky.disky.elements.conditions;
 
+import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import ch.njol.skript.conditions.base.PropertyCondition;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,5 @@
 package info.itsthesky.disky.elements.properties.guilds;
 
-import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;

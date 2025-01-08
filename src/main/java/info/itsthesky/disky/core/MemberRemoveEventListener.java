@@ -2,7 +2,6 @@ package info.itsthesky.disky.core;
 
 import info.itsthesky.disky.elements.events.member.MemberBanEvent;
 import info.itsthesky.disky.elements.events.member.MemberKickEvent;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;

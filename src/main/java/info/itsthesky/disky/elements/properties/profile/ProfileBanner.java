@@ -12,7 +12,6 @@ import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.managers.AccountManager;

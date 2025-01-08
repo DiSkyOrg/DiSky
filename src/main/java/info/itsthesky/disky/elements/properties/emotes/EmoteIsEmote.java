@@ -1,7 +1,7 @@
 package info.itsthesky.disky.elements.properties.emotes;
 
-import info.itsthesky.disky.api.emojis.Emote;
 import ch.njol.skript.conditions.base.PropertyCondition;
+import info.itsthesky.disky.api.emojis.Emote;
 import org.jetbrains.annotations.NotNull;
 
 public class EmoteIsEmote extends PropertyCondition<Emote> {
