@@ -2,7 +2,6 @@ package info.itsthesky.disky.elements.properties;
 
 import info.itsthesky.disky.api.skript.reflects.ReflectClassFactory;
 import info.itsthesky.disky.api.skript.reflects.state.SkriptStateRegistry;
-import info.itsthesky.disky.elements.events.automod.AutoModExecutionEvent;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
@@ -11,7 +10,6 @@ import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.automod.AutoModResponse;
 import net.dv8tion.jda.api.entities.automod.AutoModTriggerType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
-import net.dv8tion.jda.api.entities.channel.unions.GuildMessageChannelUnion;
 import net.dv8tion.jda.api.requests.RestAction;
 
 import static info.itsthesky.disky.api.skript.reflects.ReflectClassFactory.register;
