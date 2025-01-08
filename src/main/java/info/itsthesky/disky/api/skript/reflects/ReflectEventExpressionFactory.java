@@ -33,9 +33,6 @@ public class ReflectEventExpressionFactory {
             Class<T> expressionClass,
             Function<E, T> converter
     ) {
-        if (true)
-            return;
-
         COUNT.incrementAndGet();
         try {
 

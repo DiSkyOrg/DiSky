@@ -189,9 +189,9 @@ public final class SkriptUtils {
                                                           int time) {
         if (entityClass.isArray())
             Logger.getLogger("DiSky").severe("Class "+ ReflectionUtils.getCurrentClass().getName() + " still use the single value registration while providing an array value.");
-        EventValues.registerEventValue(bukkitClass, entityClass, new Getter<T, B>() {
+        EventValues.registerEventValue(bukkitClass, entityClass, new Converter<>() {
             @Override
-            public @Nullable T get(B arg) {
+            public @Nullable T convert(B arg) {
                 try {
                     return function.apply(arg);
                 } catch (Exception ex) {
@@ -257,7 +257,7 @@ public final class SkriptUtils {
     }
 
     public static OffsetDateTime convertDate(Date date) {
-        final long ms = date.getTimestamp();
+        final long ms = date.getTime();
         return OffsetDateTime.ofInstant(Instant.ofEpochMilli(ms), ZoneId.systemDefault());
     }
 

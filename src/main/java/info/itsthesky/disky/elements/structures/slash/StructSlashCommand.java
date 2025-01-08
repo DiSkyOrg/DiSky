@@ -108,9 +108,10 @@ public class StructSlashCommand extends Structure {
     }
 
     @Override
-    public boolean init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult, @NotNull EntryContainer entryContainer) {
+    public boolean init(Literal<?> @NotNull [] args, int matchedPattern,
+                        SkriptParser.@NotNull ParseResult parseResult, @NotNull EntryContainer entryContainer) {
         this.entryContainer = entryContainer;
-        structure = getEntryContainer().getSource();
+        structure = entryContainer.getSource();
         node = getParser().getNode();
         return true;
     }

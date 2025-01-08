@@ -67,12 +67,7 @@ public class CommandRegistry extends SelfRegisteringSkriptEvent {
         SkriptUtils.registerValue(CommandEvent.class, GuildChannel.class, CommandEvent::getTxtChannel);
         SkriptUtils.registerValue(CommandEvent.class, String.class, CommandEvent::getPrefix);
 
-        EventValues.registerEventValue(CommandEvent.class, Bot.class, new Getter<Bot, CommandEvent>() {
-            @Override
-            public Bot get(@NotNull CommandEvent event) {
-                return DiSky.getManager().fromJDA(event.getBot());
-            }
-        }, 0);
+        SkriptUtils.registerValue(CommandEvent.class, Bot.class, event -> DiSky.getManager().fromJDA(event.getBot()));
     }
 
     private String arguments;

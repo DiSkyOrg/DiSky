@@ -43,7 +43,7 @@ public class EventEndDate extends SimpleScheduledEventExpression<Date> {
 		if (date == null)
 			return null;
 
-		return entity.getManager().setEndTime(new java.util.Date(date.getTimestamp()).toInstant());
+		return entity.getManager().setEndTime(new java.util.Date(date.getTime()).toInstant());
 	}
 
 	@Override

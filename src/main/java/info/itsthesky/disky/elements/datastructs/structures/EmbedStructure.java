@@ -83,7 +83,7 @@ public class EmbedStructure implements BasicDS<EmbedBuilder> {
         if (thumbnail != null) builder.setThumbnail(thumbnail);
         if (image != null) builder.setImage(image);
 
-        if (timestamp != null) builder.setTimestamp(Instant.ofEpochMilli(timestamp.getTimestamp()));
+        if (timestamp != null) builder.setTimestamp(Instant.ofEpochMilli(timestamp.getTime()));
 
         if (fields != null) {
             for (EmbedFieldStructure field : fields) {
