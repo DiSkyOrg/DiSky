@@ -1,11 +1,7 @@
 package info.itsthesky.disky.managers.wrappers;
 
 import net.dv8tion.jda.api.entities.automod.AutoModResponse;
-import net.dv8tion.jda.api.entities.automod.AutoModRule;
 import net.dv8tion.jda.api.entities.automod.build.AutoModRuleData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AutoModRuleBuilder {
 

@@ -2,18 +2,13 @@ package info.itsthesky.disky.api.events;
 
 import ch.njol.skript.config.Node;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.managers.BotManager;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**

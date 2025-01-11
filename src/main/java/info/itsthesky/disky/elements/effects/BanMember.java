@@ -77,11 +77,13 @@ public class BanMember extends AsyncEffect {
                 return;
             }
 
-            guild.ban(UserSnowflake.fromId((String) target), 0, TimeUnit.MILLISECONDS).reason(reason).queue();
+            guild.ban(UserSnowflake.fromId((String) target), 0, TimeUnit.MILLISECONDS)
+                    .reason(reason).complete();
         } else {
             final Member member = (Member) target;
             final Timespan timespan = exprDays.getSingle(e);
-            member.ban(timespan == null ? 0 : (int) timespan.getMilliSeconds(), TimeUnit.MILLISECONDS).reason(reason).queue();
+            member.ban(timespan == null ? 0 : (int) timespan.getAs(Timespan.TimePeriod.MILLISECOND), TimeUnit.MILLISECONDS)
+                    .reason(reason).complete();
         }
     }
 

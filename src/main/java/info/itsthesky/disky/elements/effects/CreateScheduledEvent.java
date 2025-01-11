@@ -19,7 +19,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.*;
+import static info.itsthesky.disky.api.skript.EasyElement.anyNull;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Create Scheduled Event")
 @Description({"Create a new scheduled event in a specific channel or at a specific place.",

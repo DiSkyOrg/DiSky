@@ -1,26 +1,20 @@
 package info.itsthesky.disky.elements.events.member;
 
-import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.util.Date;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
-import info.itsthesky.disky.api.skript.SimpleGetterExpression;
 import info.itsthesky.disky.api.skript.reflects.ReflectEventExpressionFactory;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogKey;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateTimeOutEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static info.itsthesky.disky.core.SkriptUtils.convertDateTime;
 

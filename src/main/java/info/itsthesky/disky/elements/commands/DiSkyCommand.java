@@ -3,14 +3,16 @@ package info.itsthesky.disky.elements.commands;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.Getter;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.events.BukkitEvent;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.core.Bot;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
+import info.itsthesky.disky.core.SkriptUtils;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -25,54 +27,26 @@ public class DiSkyCommand extends SkriptEvent {
                 .description("Fired when a disky/discord command is executed.")
                 .examples("on disky command:");
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, CommandObject.class, new Getter<CommandObject, EvtDiSkyCommand>() {
-            @Override
-            public CommandObject get(@NotNull EvtDiSkyCommand event) {
-                return event.command;
-            }
-        }, 0);
+        SkriptUtils.registerValue(EvtDiSkyCommand.class, CommandObject.class,
+                event -> event.command);
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, Message.class, new Getter<Message, EvtDiSkyCommand>() {
-            @Override
-            public Message get(@NotNull EvtDiSkyCommand event) {
-                return event.jdaEvent.getMessage();
-            }
-        }, 0);
+        SkriptUtils.registerValue(EvtDiSkyCommand.class, Message.class,
+                event -> event.jdaEvent.getMessage());
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, User.class, new Getter<User, EvtDiSkyCommand>() {
-            @Override
-            public User get(@NotNull EvtDiSkyCommand event) {
-                return event.jdaEvent.getAuthor();
-            }
-        }, 0);
+        SkriptUtils.registerValue(EvtDiSkyCommand.class, User.class,
+                event -> event.jdaEvent.getAuthor());
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, Member.class, new Getter<Member, EvtDiSkyCommand>() {
-            @Override
-            public Member get(@NotNull EvtDiSkyCommand event) {
-                return event.jdaEvent.getMember();
-            }
-        }, 0);
+        SkriptUtils.registerValue(EvtDiSkyCommand.class, Member.class,
+                event -> event.jdaEvent.getMember());
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, GuildMessageChannel.class, new Getter<GuildMessageChannel, EvtDiSkyCommand>() {
-            @Override
-            public GuildMessageChannel get(@NotNull EvtDiSkyCommand event) {
-                return (GuildMessageChannel) event.jdaEvent.getChannel();
-            }
-        }, 0);
+        SkriptUtils.registerValue(EvtDiSkyCommand.class, GuildMessageChannel.class,
+                event -> (GuildMessageChannel) event.jdaEvent.getChannel());
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, Guild.class, new Getter<Guild, EvtDiSkyCommand>() {
-            @Override
-            public Guild get(@NotNull EvtDiSkyCommand event) {
-                return event.jdaEvent.getGuild();
-            }
-        }, 0);
+        SkriptUtils.registerValue(EvtDiSkyCommand.class, Guild.class,
+                event -> event.jdaEvent.getGuild());
 
-        EventValues.registerEventValue(EvtDiSkyCommand.class, Bot.class, new Getter<Bot, EvtDiSkyCommand>() {
-            @Override
-            public Bot get(@NotNull EvtDiSkyCommand event) {
-                return DiSky.getManager().fromJDA(event.jdaEvent.getJDA());
-            }
-        }, 0);
+        SkriptUtils.registerValue(EvtDiSkyCommand.class, Bot.class,
+                event -> DiSky.getManager().fromJDA(event.jdaEvent.getJDA()));
     }
 
     @Override

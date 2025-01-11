@@ -7,7 +7,6 @@ import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.skript.BetterExpressionEntryData;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.events.interactions.MessageCommandEvent;
 import info.itsthesky.disky.elements.events.interactions.UserCommandEvent;

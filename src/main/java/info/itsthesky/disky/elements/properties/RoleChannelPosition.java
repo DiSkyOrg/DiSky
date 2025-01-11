@@ -3,15 +3,16 @@ package info.itsthesky.disky.elements.properties;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.attribute.IPositionableChannel;
 import net.dv8tion.jda.api.requests.RestAction;
-import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RoleChannelPosition extends SimplePropertyExpression<Object, Number> {
+public class RoleChannelPosition extends SimplePropertyExpression<Object, Number>
+        implements IAsyncChangeableExpression {
 
     static {
         register(
@@ -41,7 +42,16 @@ public class RoleChannelPosition extends SimplePropertyExpression<Object, Number
     }
 
     @Override
+    public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+        change(e, delta, mode, true);
+    }
+
+    @Override
     public void change(@NotNull Event event, Object @NotNull [] delta, Changer.@NotNull ChangeMode mode) {
+        change(event, delta, mode, false);
+    }
+
+    public void change(@NotNull Event event, Object @NotNull [] delta, Changer.ChangeMode mode, boolean async) {
         if (!EasyElement.isValid(delta))
             return;
 
@@ -80,8 +90,10 @@ public class RoleChannelPosition extends SimplePropertyExpression<Object, Number
                 break;
         }
 
-        if (action != null)
-            action.queue();
+        if (action != null) {
+            if (async) action.complete();
+            else action.queue();
+        }
     }
 
     @Override

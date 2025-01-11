@@ -1,10 +1,8 @@
 package info.itsthesky.disky.elements.getters;
 
 import info.itsthesky.disky.core.Bot;
-import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import org.bukkit.event.Event;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
 public class GetUser extends BaseGetterExpression<User> {

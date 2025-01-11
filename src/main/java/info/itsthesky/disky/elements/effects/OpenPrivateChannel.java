@@ -18,7 +18,6 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.anyNull;
 import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Open Private Channel")

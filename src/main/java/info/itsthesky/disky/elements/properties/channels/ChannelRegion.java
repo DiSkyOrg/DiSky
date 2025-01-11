@@ -1,6 +1,5 @@
 package info.itsthesky.disky.elements.properties.channels;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
 import net.dv8tion.jda.api.Region;

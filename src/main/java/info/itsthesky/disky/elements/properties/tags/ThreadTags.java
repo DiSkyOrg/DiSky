@@ -1,13 +1,19 @@
+
 package info.itsthesky.disky.elements.properties.tags;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import info.itsthesky.disky.DiSky;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
+import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
+import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -17,11 +23,11 @@ import net.dv8tion.jda.api.entities.channel.forums.ForumTagSnowflake;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,7 +38,8 @@ import java.util.stream.Collectors;
 "You must add the tag to the forum itself before adding it to the post."})
 @Examples({"set {_tags::*} to tags of event-forumchannel",
 "add new tag named \"resolved\" with reaction \"x\" to tags of forum with id \"000\""})
-public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag> {
+public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
+	implements IAsyncChangeableExpression {
 
 	static {
 		register(
@@ -41,6 +48,14 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 				"tags",
 				"threadchannel/forumchannel"
 		);
+	}
+
+	private Node node;
+
+	@Override
+	public boolean init(Expression<?> @NotNull [] expr, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
+		node = getParser().getNode();
+		return super.init(expr, matchedPattern, isDelayed, parseResult);
 	}
 
 	@Override
@@ -55,7 +70,16 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 	}
 
 	@Override
-	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
+	public void changeAsync(Event e, Object[] delta, Changer.ChangeMode mode) {
+		change(e, delta, mode, true);
+	}
+
+	@Override
+	public void change(Event event, Object @Nullable [] delta, Changer.ChangeMode mode) {
+		change(event, delta, mode, false);
+	}
+
+	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode, boolean async) {
 		if (!EasyElement.isValid(delta))
 			return;
 
@@ -81,14 +105,14 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 					if (numeral.matches()) {
 						final ForumTag tag = channel.getAvailableTagById(input);
 						if (tag == null) {
-							Skript.warning("The tag with ID " + input + " doesn't exist in the channel " + channel.getName() + "!");
+							DiSkyRuntimeHandler.error(new IllegalArgumentException("The tag with ID " + input + " doesn't exist in the channel " + channel.getName() + "!"), node);
 							continue;
 						}
 						parsedTags.add(tag);
 					} else {
 						final List<ForumTag> tag = channel.getAvailableTagsByName(input, true);
 						if (tag.isEmpty()) {
-							Skript.warning("The tag with name " + input + " doesn't exist in the channel " + channel.getName() + "!");
+							DiSkyRuntimeHandler.error(new IllegalArgumentException("The tag with name " + input + " doesn't exist in the channel " + channel.getName() + "!"), node);
 							continue;
 						}
 						parsedTags.add(tag.get(0));
@@ -144,7 +168,8 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 			action = forumChannel.getManager().setAvailableTags(current);
 		}
 
-		action.queue(null, ex -> DiSky.getErrorHandler().exception(e, ex));
+		if (async) action.complete();
+		else action.queue();
 	}
 
 	@Override

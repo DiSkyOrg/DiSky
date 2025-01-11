@@ -2,7 +2,6 @@ package info.itsthesky.disky.elements.properties.members;
 
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class MemberProperty<T> extends SimplePropertyExpression<Member, T> {

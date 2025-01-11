@@ -4,7 +4,6 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.coll.CollectionUtils;
 import info.itsthesky.disky.api.changers.MultipleChangeablePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;

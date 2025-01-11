@@ -1,15 +1,12 @@
 package info.itsthesky.disky.api.datastruct;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.expressions.base.SectionExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.datastruct.base.DataStruct;
-import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +35,7 @@ public abstract class BaseDataStructElement<T, D extends DataStruct<T>> extends 
             }
         }
 
-        final var errorMessage = DataStructureFactory.preValidate(getDataStructClass(), presentNodes);
+        final var errorMessage = DataStructureFactory.preValidate(getDataStructClass(), presentNodes, container);
         if (errorMessage != null) {
             // Skript.error(errorMessage);
             // like wtf skript? why don't you want my error message? ;-;

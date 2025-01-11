@@ -1,11 +1,10 @@
 package info.itsthesky.disky.core;
 
-import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
 import info.itsthesky.disky.BotApplication;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;
 import info.itsthesky.disky.elements.events.bots.BotStopEvent;
+import info.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static info.itsthesky.disky.core.SkriptUtils.sync;
 
 /**
  * Class that store every option defined by the user before its actual {@link Bot} creation.

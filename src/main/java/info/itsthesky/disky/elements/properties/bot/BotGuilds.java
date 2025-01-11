@@ -1,7 +1,7 @@
 package info.itsthesky.disky.elements.properties.bot;
 
-import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
+import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
 
 public class BotGuilds extends MultiplyPropertyExpression<Bot, Guild> {

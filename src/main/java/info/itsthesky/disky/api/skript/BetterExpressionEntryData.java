@@ -77,11 +77,12 @@ public class BetterExpressionEntryData<T> extends EntryData<List<Expression<? ex
         try (ParseLogHandler log = new ParseLogHandler().start()) {
             expression = new SkriptParser(value, flags, ParseContext.DEFAULT)
                     .parseExpression(returnType);
-            if (expression == null) // print an error if it couldn't parse
+            if (expression == null) { // print an error if it couldn't parse
                 log.printError(
                         "'" + value + "' " + M_IS + " " + SkriptParser.notOfType(returnType),
                         ErrorQuality.NOT_AN_EXPRESSION
                 );
+            }
         }
         return expression;
     }

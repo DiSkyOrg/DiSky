@@ -1,15 +1,12 @@
 package info.itsthesky.disky.elements.events.role;
 
+import ch.njol.skript.util.Color;
 import info.itsthesky.disky.api.events.DiSkyEvent;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.entities.channel.*;
-import net.dv8tion.jda.api.entities.channel.attribute.*;
-import net.dv8tion.jda.api.entities.channel.middleman.*;
-import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.role.update.RoleUpdateColorEvent;
-import ch.njol.skript.util.Color;
 
 public class RoleColorEvent extends DiSkyEvent<RoleUpdateColorEvent> {
 

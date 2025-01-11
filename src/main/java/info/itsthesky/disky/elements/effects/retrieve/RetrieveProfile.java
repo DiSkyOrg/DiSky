@@ -9,7 +9,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

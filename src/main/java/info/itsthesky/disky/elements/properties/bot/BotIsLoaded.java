@@ -1,7 +1,7 @@
 package info.itsthesky.disky.elements.properties.bot;
 
-import info.itsthesky.disky.DiSky;
 import ch.njol.skript.conditions.base.PropertyCondition;
+import info.itsthesky.disky.DiSky;
 import org.jetbrains.annotations.NotNull;
 
 public class BotIsLoaded extends PropertyCondition<String> {

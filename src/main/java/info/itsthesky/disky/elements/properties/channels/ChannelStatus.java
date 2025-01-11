@@ -4,7 +4,6 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.skript.action.ActionProperty;
-import info.itsthesky.disky.elements.properties.bot.SelfMember;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
