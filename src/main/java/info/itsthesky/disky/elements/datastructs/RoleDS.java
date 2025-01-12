@@ -11,12 +11,14 @@ import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.datastruct.ChainDataStructElement;
 import info.itsthesky.disky.api.datastruct.DataStructureEntry;
 import info.itsthesky.disky.api.datastruct.base.ChainDS;
+import info.itsthesky.disky.api.datastruct.base.EditableDataStructure;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.managers.RoleManager;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class RoleDS extends ChainDataStructElement<Role, RoleAction, RoleDS.RoleStructure> {
+public class RoleDS extends ChainDataStructElement<Role, RoleDS.RoleWrapper, RoleDS.RoleStructure> {
 
     static {
         Skript.registerExpression(
@@ -57,7 +59,7 @@ public class RoleDS extends ChainDataStructElement<Role, RoleAction, RoleDS.Role
     }
 
     @Override
-    public RoleAction getOriginalInstance(@NotNull Event event) {
+    public RoleWrapper getOriginalInstance(@NotNull Event event) {
         final Guild guild = EasyElement.parseSingle(exprGuild, event);
         final Role role = EasyElement.parseSingle(exprRole, event);
 
@@ -76,12 +78,12 @@ public class RoleDS extends ChainDataStructElement<Role, RoleAction, RoleDS.Role
             return null;
         }
 
-        return copy ? guild.createCopyOfRole(role) : guild.createRole();
+        return new RoleWrapper(copy ? guild.createCopyOfRole(role) : guild.createRole());
     }
 
     @Override
-    public Role applyChanges(@NotNull Event event, @NotNull RoleAction edited) {
-        return edited.complete();
+    public Role applyChanges(@NotNull Event event, @NotNull RoleWrapper edited) {
+        return edited.getAction().complete();
     }
 
     //region [ META ]
@@ -103,7 +105,7 @@ public class RoleDS extends ChainDataStructElement<Role, RoleAction, RoleDS.Role
 
     //endregion
 
-    public static class RoleStructure implements ChainDS<RoleAction> {
+    public static class RoleStructure implements ChainDS<RoleWrapper>, EditableDataStructure<RoleWrapper, RoleStructure> {
 
         @DataStructureEntry(value = "name")
         public String name;
@@ -121,12 +123,12 @@ public class RoleDS extends ChainDataStructElement<Role, RoleAction, RoleDS.Role
         public List<Permission> permissions;
 
         @Override
-        public RoleAction edit(RoleAction original) {
+        public RoleWrapper edit(RoleWrapper original) {
             if (name != null)
                 original.setName(name);
 
             if (color != null)
-                original.setColor(SkriptUtils.convert(color));
+                original.setColor(color);
 
             if (hoist != null)
                 original.setHoisted(hoist);
@@ -140,6 +142,82 @@ public class RoleDS extends ChainDataStructElement<Role, RoleAction, RoleDS.Role
             return original;
         }
 
+        @Override
+        public List<Class<?>> getAcceptedClasses() {
+            return List.of(Role.class);
+        }
+
+        @Override
+        public RoleWrapper convert(@NotNull Object object) {
+            if (!(object instanceof Role))
+                throw new IllegalArgumentException("The object to convert must be a role!");
+
+            return new RoleWrapper(((Role) object).getManager());
+        }
+    }
+
+    public static class RoleWrapper {
+
+        private @Nullable RoleAction action;
+        private @Nullable RoleManager manager;
+
+        private RoleWrapper(@Nullable RoleAction action, @Nullable RoleManager manager) {
+            this.action = action;
+            this.manager = manager;
+        }
+
+        public RoleWrapper(@NotNull RoleAction action) {
+            this(action, null);
+        }
+
+        public RoleWrapper(@NotNull RoleManager manager) {
+            this(null, manager);
+        }
+
+        //region Usual Methods
+
+        public void setName(String name) {
+            if (action != null)
+                action.setName(name);
+            else if (manager != null)
+                manager.setName(name);
+        }
+
+        public void setColor(Color color) {
+            if (action != null)
+                action.setColor(SkriptUtils.convert(color));
+            else if (manager != null)
+                manager.setColor(SkriptUtils.convert(color));
+        }
+
+        public void setHoisted(boolean hoist) {
+            if (action != null)
+                action.setHoisted(hoist);
+            else if (manager != null)
+                manager.setHoisted(hoist);
+        }
+
+        public void setMentionable(boolean mentionable) {
+            if (action != null)
+                action.setMentionable(mentionable);
+            else if (manager != null)
+                manager.setMentionable(mentionable);
+        }
+
+        public void setPermissions(List<Permission> permissions) {
+            if (action != null)
+                action.setPermissions(permissions);
+            else if (manager != null)
+                manager.setPermissions(permissions);
+        }
+
+        public @Nullable RoleManager getManager() {
+            return manager;
+        }
+
+        public @Nullable RoleAction getAction() {
+            return action;
+        }
     }
 
 }
