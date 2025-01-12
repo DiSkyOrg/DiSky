@@ -6,14 +6,11 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
-import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleEvent;
 import ch.njol.skript.util.Timespan;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.entries.MutexEntryData;
 import info.itsthesky.disky.api.skript.entries.SimpleKeyValueEntries;
-import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
 import info.itsthesky.disky.elements.events.bots.ReadyEvent;
 import info.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
@@ -35,7 +32,6 @@ import org.skriptlang.skript.lang.entry.KeyValueEntryData;
 import org.skriptlang.skript.lang.structure.Structure;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,9 +104,10 @@ public class StructSlashCommand extends Structure {
     }
 
     @Override
-    public boolean init(Literal<?> @NotNull [] args, int matchedPattern, SkriptParser.@NotNull ParseResult parseResult, @NotNull EntryContainer entryContainer) {
+    public boolean init(Literal<?> @NotNull [] args, int matchedPattern,
+                        SkriptParser.@NotNull ParseResult parseResult, @NotNull EntryContainer entryContainer) {
         this.entryContainer = entryContainer;
-        structure = getEntryContainer().getSource();
+        structure = entryContainer.getSource();
         node = getParser().getNode();
         return true;
     }

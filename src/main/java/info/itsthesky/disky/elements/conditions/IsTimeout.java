@@ -1,11 +1,11 @@
 package info.itsthesky.disky.elements.conditions;
 
+import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.api.ReflectionUtils;
-import ch.njol.skript.conditions.base.PropertyCondition;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;

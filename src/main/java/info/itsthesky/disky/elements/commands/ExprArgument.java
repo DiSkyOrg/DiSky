@@ -1,6 +1,5 @@
 package info.itsthesky.disky.elements.commands;
 
-import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.Description;

@@ -12,7 +12,6 @@ import org.bukkit.event.Event;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;

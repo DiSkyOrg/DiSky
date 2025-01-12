@@ -23,7 +23,7 @@ public class EmbedTimeStamp extends EmbedProperty<Date> {
 
 	@Override
 	public void set(EmbedBuilder builder, Date value) {
-		builder.setTimestamp(Instant.ofEpochMilli(value.getTimestamp()));
+		builder.setTimestamp(Instant.ofEpochMilli(value.getTime()));
 	}
 
 	@Override

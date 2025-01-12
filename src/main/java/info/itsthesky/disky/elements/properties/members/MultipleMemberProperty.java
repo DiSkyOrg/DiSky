@@ -2,7 +2,6 @@ package info.itsthesky.disky.elements.properties.members;
 
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class MultipleMemberProperty<T> extends MultiplyPropertyExpression<Member, T> {

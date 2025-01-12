@@ -13,7 +13,6 @@ import info.itsthesky.disky.elements.sections.EmbedSection;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
-
 import org.jetbrains.annotations.Nullable;
 
 @Name("Last Embed")

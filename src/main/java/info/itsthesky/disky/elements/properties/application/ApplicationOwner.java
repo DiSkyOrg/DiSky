@@ -2,7 +2,6 @@ package info.itsthesky.disky.elements.properties.application;
 
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.ApplicationInfo;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

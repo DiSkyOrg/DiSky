@@ -1,9 +1,13 @@
 package info.itsthesky.disky.elements.structures.slash.models;
 
 import info.itsthesky.disky.DiSky;
-import net.dv8tion.jda.api.interactions.commands.build.*;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
-import java.util.*;
+import net.dv8tion.jda.api.interactions.commands.build.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class CommandGroup {
 

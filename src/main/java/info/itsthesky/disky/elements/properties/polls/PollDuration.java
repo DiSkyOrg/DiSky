@@ -51,7 +51,7 @@ public class PollDuration extends SimplePropertyExpression<MessagePollBuilder, T
         Timespan timespan = (Timespan) delta[0];
         if (mode == Changer.ChangeMode.SET) {
             for (MessagePollBuilder poll : getExpr().getArray(event)) {
-                Duration duration = Duration.ofMillis(timespan.getMilliSeconds());
+                Duration duration = Duration.ofMillis(timespan.getAs(Timespan.TimePeriod.MILLISECOND));
                 poll.setDuration(duration);
             }
         }

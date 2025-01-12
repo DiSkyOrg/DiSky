@@ -74,7 +74,7 @@ public class TimeOutMember extends SpecificBotEffect {
 		}
 		if (matchedPattern == 0) {
 			Utils.catchAction(member
-							.timeoutFor(Duration.ofMillis(((Timespan) entity).getMilliSeconds()))
+							.timeoutFor(Duration.ofMillis(((Timespan) entity).getAs(Timespan.TimePeriod.MILLISECOND)))
 							.reason(reason),
 					v -> restart(), ex -> {
 						DiSky.getErrorHandler().exception(e, ex);
@@ -82,7 +82,7 @@ public class TimeOutMember extends SpecificBotEffect {
 					});
 		} else if (matchedPattern == 1) {
 			Utils.catchAction(member
-							.timeoutUntil(Instant.ofEpochMilli(((Date) entity).getTimestamp()))
+							.timeoutUntil(Instant.ofEpochMilli(((Date) entity).getTime()))
 							.reason(reason),
 					v -> restart(), ex -> {
 						DiSky.getErrorHandler().exception(e, ex);

@@ -9,7 +9,6 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.requests.restaction.order.RoleOrderAction;
@@ -17,7 +16,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static info.itsthesky.disky.api.skript.EasyElement.*;
+import static info.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Move Role Above/Under Role")
 @Description({"Move a specific role above or under another role within the same guild.",

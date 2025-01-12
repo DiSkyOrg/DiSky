@@ -10,7 +10,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.localization.Message;
 import ch.njol.skript.log.ErrorQuality;
 import ch.njol.skript.log.ParseLogHandler;
-import info.itsthesky.disky.DiSky;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryData;

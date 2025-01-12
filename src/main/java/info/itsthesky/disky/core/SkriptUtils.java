@@ -5,7 +5,6 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
@@ -13,15 +12,17 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.lang.util.SimpleLiteral;
 import ch.njol.skript.log.*;
 import ch.njol.skript.registrations.EventValues;
-import ch.njol.skript.util.*;
+import ch.njol.skript.util.Color;
+import ch.njol.skript.util.ColorRGB;
+import ch.njol.skript.util.Date;
 import ch.njol.util.Kleenean;
 import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.events.EventValue;
-import info.itsthesky.disky.elements.events.ExprEventValues;
 import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.elements.effects.RetrieveEventValue;
+import info.itsthesky.disky.elements.events.ExprEventValues;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -189,9 +190,9 @@ public final class SkriptUtils {
                                                           int time) {
         if (entityClass.isArray())
             Logger.getLogger("DiSky").severe("Class "+ ReflectionUtils.getCurrentClass().getName() + " still use the single value registration while providing an array value.");
-        EventValues.registerEventValue(bukkitClass, entityClass, new Getter<T, B>() {
+        EventValues.registerEventValue(bukkitClass, entityClass, new Converter<>() {
             @Override
-            public @Nullable T get(B arg) {
+            public @Nullable T convert(B arg) {
                 try {
                     return function.apply(arg);
                 } catch (Exception ex) {
@@ -257,7 +258,7 @@ public final class SkriptUtils {
     }
 
     public static OffsetDateTime convertDate(Date date) {
-        final long ms = date.getTimestamp();
+        final long ms = date.getTime();
         return OffsetDateTime.ofInstant(Instant.ofEpochMilli(ms), ZoneId.systemDefault());
     }
 

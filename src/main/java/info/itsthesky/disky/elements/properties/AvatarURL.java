@@ -5,28 +5,25 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
-import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.changers.ChangeableSimplePropertyExpression;
 import info.itsthesky.disky.api.skript.EasyElement;
 import info.itsthesky.disky.api.skript.INodeHolder;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.SkriptUtils;
-import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.ApplicationInfo;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.*;
-import java.net.URL;
 
 @Name("User / Bot / Guild Avatar")
 @Description({"Return the avatar URL of any user, guild or bot.",

@@ -73,11 +73,11 @@ public class NewRuleResponse extends SimpleExpression<AutoModResponse> {
 				return new AutoModResponse[] {AutoModResponse.sendAlert((GuildMessageChannel) channel)};
 			case 3:
 				final Timespan timespan = EasyElement.parseSingle(exprTime, e);
-				if (timespan.getTicks_i() <= 0) {
+				if (timespan.getAs(Timespan.TimePeriod.TICK) <= 0) {
 					Skript.error("The timespan '"+timespan.toString()+"' is not valid, it must be greater than 0!");
 					return new AutoModResponse[0];
 				}
-				return new AutoModResponse[] {AutoModResponse.timeoutMember(Duration.ofMillis((timespan.getMilliSeconds())))};
+				return new AutoModResponse[] {AutoModResponse.timeoutMember(Duration.ofMillis((timespan.getAs(Timespan.TimePeriod.MILLISECOND))))};
 		}
 
 		return new AutoModResponse[0];

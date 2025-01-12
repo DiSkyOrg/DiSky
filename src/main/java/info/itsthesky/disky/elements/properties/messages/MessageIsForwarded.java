@@ -3,7 +3,6 @@ package info.itsthesky.disky.elements.properties.messages;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
-import net.dv8tion.jda.api.entities.MessageType;
 import org.jetbrains.annotations.NotNull;
 
 public class MessageIsForwarded extends PropertyCondition<Message> {

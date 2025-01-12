@@ -14,8 +14,6 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 @Name("Discord Members of Guild / Channel")
 @Description({"Returns a list of members.",
 "For Message text-related channel & category, it returns members with permission to view the channel",

@@ -1,7 +1,6 @@
 package info.itsthesky.disky.managers;
 
 import com.google.common.collect.Sets;
-import info.itsthesky.disky.api.events.EventListener;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.Bot;
 import info.itsthesky.disky.core.MemberRemoveEventListener;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;

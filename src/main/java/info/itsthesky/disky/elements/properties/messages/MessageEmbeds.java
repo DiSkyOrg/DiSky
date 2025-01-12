@@ -4,8 +4,8 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import info.itsthesky.disky.api.skript.MultiplyPropertyExpression;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 
 @Name("Message Embeds")
