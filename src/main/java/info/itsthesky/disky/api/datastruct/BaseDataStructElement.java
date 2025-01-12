@@ -35,7 +35,7 @@ public abstract class BaseDataStructElement<T, D extends DataStruct<T>> extends 
             }
         }
 
-        final var errorMessage = DataStructureFactory.preValidate(getDataStructClass(), presentNodes);
+        final var errorMessage = DataStructureFactory.preValidate(getDataStructClass(), presentNodes, container);
         if (errorMessage != null) {
             // Skript.error(errorMessage);
             // like wtf skript? why don't you want my error message? ;-;

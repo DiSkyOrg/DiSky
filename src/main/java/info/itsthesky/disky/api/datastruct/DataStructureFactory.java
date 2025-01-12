@@ -108,7 +108,12 @@ public final class DataStructureFactory {
         throw new IllegalArgumentException("The data structure class " + structClass.getName() + " must implement either BasicDS or ChainDS interface!");
     }
 
-    public static <F, T extends DataStruct<F>> @Nullable String preValidate(@NotNull Class<T> structClass, @NotNull List<String> presentNodes) {
+    public static <F, T extends DataStruct<F>> @Nullable String preValidate(@NotNull Class<T> structClass,
+                                                                            @NotNull List<String> presentNodes,
+                                                                            @NotNull EntryContainer container) {
+        for (final var nodeKey : presentNodes)
+            container.getOptional(nodeKey, List.class, true);
+
         final T instance;
         try {
             instance = structClass.getConstructor().newInstance();

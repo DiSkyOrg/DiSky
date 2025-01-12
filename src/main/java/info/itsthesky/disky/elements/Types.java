@@ -245,10 +245,6 @@ public class Types {
                 Webhook::getName,
                 null
         ).eventExpression().register();
-        new DiSkyType<>(AutoModExecution.class, "automod",
-                am -> "auto mod rule with id " + am.getRuleId(),
-                null
-        ).eventExpression().register();
 
         /*
         Message Entities

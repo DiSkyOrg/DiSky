@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.exceptions.RateLimitedException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -348,17 +349,32 @@ public final class SlashManager extends ListenerAdapter {
     }
 
     private void cleanupRegisteredCommands() {
-        new ArrayList<>(registeredCommands).forEach(command -> {
-            try {
-                if (command.getGuildId() == null) {
-                    deleteGlobalCommand(command);
-                } else {
-                    deleteLocalCommand(command);
-                }
-            } catch (Exception ex) {
-                DiSky.debug("Failed to delete command " + command.getName() + ": " + ex.getMessage());
-            }
+        // gather all guilds, if any, to clear
+        Set<String> guilds = new HashSet<>();
+        registeredCommands.forEach(cmd -> {
+            if (cmd.getGuildId() != null)
+                guilds.add(cmd.getGuildId());
         });
+
+        // delete all commands
+        try {
+            for (String guildId : guilds) {
+                var guild = bot.getInstance().getGuildById(guildId);
+                if (guild == null) {
+                    DiSky.debug("Guild " + guildId + " not found, skipping command deletion");
+                    continue;
+                }
+
+                var commands = guild.retrieveCommands().complete(true);
+                for (Command cmd : commands)
+                    guild.deleteCommandById(cmd.getId()).complete(true);
+            }
+            var commands = bot.getInstance().retrieveCommands().complete(true);
+            for (Command cmd : commands)
+                bot.getInstance().deleteCommandById(cmd.getId()).complete(true);
+        } catch (RateLimitedException ex) {
+            DiSky.debug("Failed to delete all commands: " + ex.getMessage());
+        }
     }
 
     // Debug Methods
