@@ -173,57 +173,6 @@ public class DiSkyCommand implements CommandExecutor {
                 sender.sendMessage(Utils.colored("    &7- &b" + i + " &3ping: &b" + bot.getInstance().getShardManager().getShardById(i).getGatewayPing() + "ms"));*/
             sender.sendMessage(Utils.colored(""));
             return true;
-        } else if (args[0].equalsIgnoreCase("reload")) {
-            final @Nullable String moduleName = args.length > 1 ? args[1].toLowerCase(Locale.ROOT) : null;
-            if (moduleName == null) {
-                sender.sendMessage(Utils.colored("&cYou must specify a module name!"));
-                return false;
-            }
-
-            if (moduleName.equalsIgnoreCase("all")) {
-                sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Reloading All Modules &b------"));
-                long before = System.currentTimeMillis();
-
-                sender.sendMessage(Utils.colored("&4/!\\"));
-                sender.sendMessage(Utils.colored("&4/!\\ &cYou are using a BETA feature!"));
-                sender.sendMessage(Utils.colored("&4/!\\ &cDiSky will make illegal operation on Skript, &4DO NOT&c use this feature in production!"));
-                sender.sendMessage(Utils.colored("&4/!\\"));
-
-                for (DiSkyModule module : DiSky.getModuleManager().getModules()) {
-                    try {
-                        module.reload();
-                    } catch (Exception ex) {
-                        sender.sendMessage(Utils.colored("&cFailed to reload module &b" + module.getName() + "&c!"));
-                        ex.printStackTrace();
-                    }
-                }
-
-                sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2" + (System.currentTimeMillis() - before) + "ms! &b------"));
-            } else {
-                final @Nullable DiSkyModule module = DiSky.getModule(moduleName);
-
-                if (module == null) {
-                    sender.sendMessage(Utils.colored("&cNo module by that name found."));
-                    return false;
-                }
-
-                sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Module Reloading &b------"));
-                long before = System.currentTimeMillis();
-
-                sender.sendMessage(Utils.colored("&4/!\\"));
-                sender.sendMessage(Utils.colored("&4/!\\ &cYou are using a BETA feature!"));
-                sender.sendMessage(Utils.colored("&4/!\\ &cDiSky will make illegal operation on Skript, &4DO NOT&c use this feature in production!"));
-                sender.sendMessage(Utils.colored("&4/!\\"));
-
-                try {
-                    module.reload();
-                } catch (Exception ex) {
-                    sender.sendMessage(Utils.colored("&cFailed to reload module &b" + module.getName() + "&c!"));
-                    ex.printStackTrace();
-                }
-                sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2" + (System.currentTimeMillis() - before) + "ms! &b------"));
-            }
-            return true;
         } else if (args[0].equalsIgnoreCase("reloadconfig")) {
             sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Configuration Reloading &b------"));
             boolean wasDebug = ConfigManager.get("debug", false);

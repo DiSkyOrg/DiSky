@@ -67,75 +67,12 @@ public class ModuleManager {
                 .setLoader(loader);
     }
 
-    public void reload(DiSkyModule module) throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvalidConfigurationException {
-        final File cachedFile = module.getModuleJar();
-
-        getLogger().info("Reloading module " + module.getName() + "...");
-        disable(module);
-        module = loadModule(cachedFile);
-
-        getLogger().info("Enabling module " + module.getName() + "...");
-        ReflectionUtils.setField(Skript.class, null, "acceptRegistrations", true);
-        try {
-            module.init(instance, addon);
-        } catch (Exception ex) {
-
-        }
-        ReflectionUtils.setField(Skript.class, null, "acceptRegistrations", false);
-
-        Classes.onRegistrationsStop();
-
-        modules.put(module.getName(), module);
-        getLogger().info("Module " + module.getName() + " reloaded (version "+module.getVersion()+").");
+    public void reload(DiSkyModule module) {
+        getLogger().severe("It's now impossible to reload a module, please restart the server to reload it.");
     }
 
     public void disable(DiSkyModule module) {
-        getLogger().info("Disabling module " + module.getName() + "...");
-        // Removing every syntax registered by the module
-        unregisterSyntaxes(module);
-        unregisterClasses(module);
-        modules.remove(module.getName());
-
-        getLogger().info("Module " + module.getName() + " disabled.");
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<ClassInfo<?>> unregisterClasses(DiSkyModule module) {
-        final List<ClassInfo<?>> removedClasses = new ArrayList<>();
-        (new Exception()).printStackTrace();
-        try {
-            final Field tempClassInfos = Classes.class.getDeclaredField("tempClassInfos");
-            tempClassInfos.setAccessible(true);
-            final Field classInfos = Classes.class.getDeclaredField("classInfos");
-            classInfos.setAccessible(true);
-            final Field superClassInfos = Classes.class.getDeclaredField("superClassInfos");
-            superClassInfos.setAccessible(true);
-            final Field classInfosByCodeName = Classes.class.getDeclaredField("classInfosByCodeName");
-            classInfosByCodeName.setAccessible(true);
-            final Field exactClassInfos = Classes.class.getDeclaredField("exactClassInfos");
-            exactClassInfos.setAccessible(true);
-
-            for (ClassInfo<?> info : new ArrayList<>(module.getRegisteredClasses())) {
-
-                ((List<ClassInfo<?>>) tempClassInfos.get(null)).remove(info);
-
-                final ClassInfo<?>[] current = (ClassInfo<?>[]) classInfos.get(null);
-                final List<ClassInfo<?>> changedArray = new ArrayList<>(Arrays.asList(current));
-                changedArray.removeIf(c -> c.getCodeName().equals(info.getCodeName()));
-                classInfos.set(null, changedArray.toArray(new ClassInfo[0]));
-
-                ((HashMap<Class<?>, ClassInfo<?>>) superClassInfos.get(null)).remove(info.getC());
-
-                ((HashMap<String, ClassInfo<?>>) classInfosByCodeName.get(null)).remove(info.getCodeName());
-
-                ((HashMap<Class<?>, ClassInfo<?>>) exactClassInfos.get(null)).remove(info.getC());
-
-                removedClasses.add(info);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return removedClasses;
+        getLogger().severe("It's now impossible to disable a module, please restart the server to disable it.");
     }
 
     private void unregisterSyntaxes(DiSkyModule module) {
