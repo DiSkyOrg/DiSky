@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.events.automod.AutoModExecutionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -45,6 +46,8 @@ import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
+import net.dv8tion.jda.internal.entities.automod.AutoModExecutionImpl;
+import net.dv8tion.jda.internal.entities.automod.AutoModResponseImpl;
 import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
@@ -176,8 +179,12 @@ public class Types {
                     return ChannelType.valueOf(input.toUpperCase());
                 }, true
         ).eventExpression().register();
-        new DiSkyType<>(AutoModResponse.class, "automod",
-                response -> "automod response " + response.getType().name().toLowerCase() + " with custom message " + response.getCustomMessage(),
+        new DiSkyType<>(AutoModExecution.class, "automod",
+                autoModExecution -> "automod" + autoModExecution.toString(),
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(AutoModResponse.class, "automodresponse",
+                autoModResponse -> "automod response " + autoModResponse.getType().name().toLowerCase() + " with custom message " + autoModResponse.getCustomMessage(),
                 null
         ).eventExpression().register();
 
