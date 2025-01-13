@@ -39,6 +39,7 @@ public class ButtonStructure implements BasicDS<Button> {
     public @Nullable String preValidate(List<String> presentKeys) {
         if (!presentKeys.contains("label") && !presentKeys.contains("emote"))
             return "The button must have a label or an emoji. None of them are present.";
+
         if (!presentKeys.contains("id") && !presentKeys.contains("url"))
             return "The button must have an ID or an URL. None of them are present.";
 

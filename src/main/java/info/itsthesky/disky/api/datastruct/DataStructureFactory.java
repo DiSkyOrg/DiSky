@@ -6,6 +6,7 @@ import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.api.datastruct.base.BasicDS;
 import info.itsthesky.disky.api.datastruct.base.ChainDS;
 import info.itsthesky.disky.api.datastruct.base.DataStruct;
+import info.itsthesky.disky.api.datastruct.base.EditableDataStructure;
 import info.itsthesky.disky.api.skript.BetterExpressionEntryData;
 import info.itsthesky.disky.core.SkriptUtils;
 import org.bukkit.event.Event;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 import org.skriptlang.skript.lang.entry.EntryValidator;
+import org.skriptlang.skript.lang.entry.util.ExpressionEntryData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

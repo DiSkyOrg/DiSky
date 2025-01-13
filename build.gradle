@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
+    id 'maven-publish'
     id 'java'
     id 'idea'
     id "com.gradleup.shadow" version "9.0.0-beta4"
@@ -114,6 +115,35 @@ idea {
     module {
         downloadJavadoc = true
         downloadSources = true
+    }
+}
+
+task sourceJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact(sourceJar)
+
+            groupId = 'net.itsthesky'
+            artifactId = 'DiSky'
+            version = project.version + '-SNAPSHOT'
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'nexus'
+            url = "https://gradle.itsthesky.net/repository/DiSky/"
+            credentials {
+                username = project.findProperty("nexusUsername") ?: System.getenv("NEXUS_USERNAME")
+                password = project.findProperty("nexusPassword") ?: System.getenv("NEXUS_PASSWORD")
+            }
+        }
     }
 }
 
