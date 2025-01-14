@@ -2,6 +2,7 @@ package info.itsthesky.disky.elements.structures.slash.models;
 
 import info.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 
 import java.util.ArrayList;
@@ -157,7 +158,11 @@ public class CommandGroup {
                 if (choice.getValue() instanceof String) {
                     optionData.addChoice(choice.getKey(), (String) choice.getValue());
                 } else if (choice.getValue() instanceof Number) {
-                    optionData.addChoice(choice.getKey(), ((Number) choice.getValue()).doubleValue());
+                    if (arg.getType() == OptionType.INTEGER) {
+                        optionData.addChoice(choice.getKey(), ((Number) choice.getValue()).longValue());
+                    } else {
+                        optionData.addChoice(choice.getKey(), ((Number) choice.getValue()).doubleValue());
+                    }
                 }
             }
         }
