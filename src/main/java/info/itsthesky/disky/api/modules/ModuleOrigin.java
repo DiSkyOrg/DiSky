@@ -13,7 +13,7 @@ public class ModuleOrigin implements SyntaxOrigin {
 
     @Override
     public String name() {
-        return module.getName() + " [DiSky Module]";
+        return module.getModuleInfo().name + " [DiSky Module]";
     }
 
 }

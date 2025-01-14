@@ -2,6 +2,7 @@ package info.itsthesky.disky;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
+import ch.njol.skript.util.Version;
 import info.itsthesky.disky.api.emojis.EmojiStore;
 import info.itsthesky.disky.api.generator.DocBuilder;
 import info.itsthesky.disky.api.modules.DiSkyModule;
@@ -21,6 +22,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.io.File;
 import java.io.IOException;
@@ -198,5 +200,13 @@ public final class DiSky extends JavaPlugin {
             for (int i = 0; i < data.length - 1; i += 2)
                 getInstance().getLogger().severe(ChatColor.GOLD + "  - " + ChatColor.YELLOW + data[i] + ChatColor.GRAY + ": " + ChatColor.WHITE + data[i + 1]);
         }
+    }
+
+    public static SyntaxRegistry syntaxRegistry() {
+        return getAddonInstance().syntaxRegistry();
+    }
+
+    public static Version getVersion() {
+        return new Version(getInstance().getDescription().getVersion());
     }
 }

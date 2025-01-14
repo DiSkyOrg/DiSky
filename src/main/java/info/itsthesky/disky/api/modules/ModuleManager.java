@@ -11,6 +11,7 @@ import info.itsthesky.disky.api.ReflectionUtils;
 import info.itsthesky.disky.api.generator.DocBuilder;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,56 +52,30 @@ public class ModuleManager {
 
         final YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(moduleYml);
-
-        final String classPath = config.getString("MainClass");
-
-        final String name = config.getString("Name");
-        final String author = config.getString("Author");
-        final String version = config.getString("Version");
+        final DiSkyModuleInfo info = DiSkyModuleInfo.fromYaml(config);
+        if (DiSky.getVersion().isSmallerThan(info.requiredMinVersion)) {
+            getLogger().severe("The module '"+info.name+"' v"+info.version+" by '"+info.author+"' requires at least DiSky v"+info.requiredMinVersion+" to work! (You're using v"+DiSky.getVersion()+")");
+            return null;
+        }
 
         final URL[] urls = {new URL("jar:file:"+file.getAbsolutePath()+"!/")};
         final URLClassLoader loader = new URLClassLoader(urls, getClass().getClassLoader());
-        final Class<DiSkyModule> clazz = (Class<DiSkyModule>) loader.loadClass(classPath);
+        final Class<DiSkyModule> clazz = (Class<DiSkyModule>) loader.loadClass(info.mainClass);
 
-        final Constructor<DiSkyModule> constructor = clazz.getDeclaredConstructor(String.class, String.class, String.class, File.class);
-        return constructor.newInstance(name, author, version, file)
+        final Constructor<DiSkyModule> constructor = clazz.getDeclaredConstructor(DiSkyModuleInfo.class, File.class);
+        return constructor.newInstance(info, file)
                 .setLoader(loader);
-    }
-
-    public void reload(DiSkyModule module) {
-        getLogger().severe("It's now impossible to reload a module, please restart the server to reload it.");
-    }
-
-    public void disable(DiSkyModule module) {
-        getLogger().severe("It's now impossible to disable a module, please restart the server to disable it.");
-    }
-
-    private void unregisterSyntaxes(DiSkyModule module) {
-        final Collection<SyntaxElementInfo<?>> effects = Skript
-                .getEffects().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> conditions = Skript
-                .getConditions().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> sections = Skript
-                .getSections().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> events = Skript
-                .getEvents().stream().filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
-        final Collection<SyntaxElementInfo<?>> expressions = ((List<ExpressionInfo<?, ?>>) ReflectionUtils.getField(Skript.class, null, "expressions"))
-                .stream()
-                .filter(i -> DocBuilder.isFromModule(i, module)).collect(Collectors.toList());
-
-        ReflectionUtils.setFinalCollection(Skript.class, "effects", effects);
-        ReflectionUtils.setFinalCollection(Skript.class, "conditions", conditions);
-        ReflectionUtils.setFinalCollection(Skript.class, "sections", sections);
-        ReflectionUtils.setFinalCollection(Skript.class, "events", events);
-        ReflectionUtils.setFinalCollection(Skript.class, "expressions", new ArrayList<>(expressions));
     }
 
     public void loadModules() throws IOException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvalidConfigurationException {
         final File[] modulesFile = this.moduleFolder.listFiles();
         assert modulesFile != null;
         for (final File moduleFile : modulesFile) {
-            if (moduleFile.isDirectory() || !moduleFile.getName().endsWith(".jar"))
+            if (moduleFile.isDirectory() || !moduleFile.getName().endsWith(".jar")) {
+                getLogger().warning("Skipping file '"+moduleFile.getPath()+"' as it's not a valid module file.");
                 continue;
+            }
+
             getLogger().warning("Loading module from file '"+moduleFile.getPath()+"'...");
             final DiSkyModule module;
             try {
@@ -110,16 +85,20 @@ public class ModuleManager {
                 getLogger().severe("Unable to initialize module '"+moduleFile.getPath()+"'! Maybe a wrong Java version?");
                 return;
             }
-            getLogger().info("Successfully loaded module '"+module.getName()+"' v"+module.getVersion()+" by '"+module.getAuthor()+"'! Enabling ...");
+            if (module == null) // If the module is null, it means the version is not compatible
+                continue;
+
+
+            getLogger().info("Successfully loaded module '"+module.getModuleInfo().name+"' v"+module.getModuleInfo().version+" by '"+module.getModuleInfo().author+"'! Enabling ...");
             try {
                 module.init(this.instance, this.addon);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                getLogger().severe("Failed to enable module '"+module.getName()+"' v"+module.getVersion()+" by '"+module.getAuthor()+"':");
+                getLogger().severe("Failed to enable module '"+module.getModuleInfo().name+"' v"+module.getModuleInfo().version+" by '"+module.getModuleInfo().author+"':");
                 continue;
             }
-            modules.put(module.getName(), module);
-            getLogger().info("Successfully enabled module '"+module.getName()+"'!");
+            modules.put(module.getModuleInfo().name, module);
+            getLogger().info("Successfully enabled module '"+module.getModuleInfo().name+"'!");
         }
     }
 
