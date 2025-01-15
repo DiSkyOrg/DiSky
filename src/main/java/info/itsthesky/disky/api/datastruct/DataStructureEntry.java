@@ -1,5 +1,8 @@
 package info.itsthesky.disky.api.datastruct;
 
+import info.itsthesky.disky.api.datastruct.base.DataStruct;
+
+import javax.annotation.Nullable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -17,6 +20,14 @@ public @interface DataStructureEntry {
      * @return If the entry is optional or not
      */
     boolean optional() default true;
+
+    /**
+     * Get the sub structure type, to use when parsing an array
+     * of structure for this field. Naturally, those structures, once
+     * built, must return the same type as the field type.
+     * @return The sub structure type
+     */
+    Class<? extends DataStruct> subStructureType() default DataStruct.class;
 
     //region Documentation
 

@@ -285,4 +285,8 @@ public class ReflectionUtils {
             return null;
         }
     }
+
+    public static Class<?> getGenericType(Field field) {
+        return (Class<?>) ((java.lang.reflect.ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+    }
 }

@@ -13,11 +13,14 @@ import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class EditDataStructElement<T, D extends DataStruct<T>> extends Section {
 
     protected EntryContainer container;
+    protected Map<String, List<Expression<?>>> expressions;
 
     @Override
     public boolean init(Expression<?>[] expressions,
@@ -35,7 +38,11 @@ public abstract class EditDataStructElement<T, D extends DataStruct<T>> extends 
             }
         }
 
-        final var errorMessage = DataStructureFactory.preValidate(getDataStructClass(), presentNodes, container);
+        this.expressions = new HashMap<>();
+        for (final var nodeKey : presentNodes)
+            container.getOptional(nodeKey, List.class, true);
+
+        final var errorMessage = DataStructureFactory.preValidate(getDataStructClass(), presentNodes);
         if (errorMessage != null) {
             // DiSky.debug("--- Error while validating data structure: " + errorMessage);
             // Skript.error(errorMessage);

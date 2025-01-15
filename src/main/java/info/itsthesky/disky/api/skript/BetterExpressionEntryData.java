@@ -75,6 +75,22 @@ public class BetterExpressionEntryData<T> extends EntryData<List<Expression<? ex
         }
     }
 
+    public void preValidate(Node node) {
+        if (node instanceof final SectionNode sectionNode) {
+            for (Node subNode : sectionNode) {
+                final String value = subNode.getKey();
+                parseExpression(value);
+            }
+        } else if (node instanceof final SimpleNode simpleNode) {
+            final String key = simpleNode.getKey();
+            if (key == null)
+                return;
+
+            final String value = ScriptLoader.replaceOptions(key).substring(getKey().length() + EntryValidator.EntryValidatorBuilder.DEFAULT_ENTRY_SEPARATOR.length());
+            parseExpression(value);
+        }
+    }
+
     private Expression<? extends T> parseExpression(String value) {
         Expression<? extends T> expression;
         try (ParseLogHandler log = new ParseLogHandler().start()) {
@@ -93,7 +109,11 @@ public class BetterExpressionEntryData<T> extends EntryData<List<Expression<? ex
     @Override
     public boolean canCreateWith(@NotNull Node node) {
         if (node instanceof SectionNode) {
-            return true;
+            String key = node.getKey();
+            if (key == null)
+                return false;
+            key = ScriptLoader.replaceOptions(key);
+            return getKey().equalsIgnoreCase(key);
         } else if (node instanceof SimpleNode) {
             String key = node.getKey();
             if (key == null)

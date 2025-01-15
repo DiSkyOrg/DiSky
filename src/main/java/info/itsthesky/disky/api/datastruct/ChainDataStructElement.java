@@ -15,27 +15,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.EntryContainer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ChainDataStructElement<F, T, D extends DataStruct<T>>
         extends SectionExpression<F> implements IAsyncGettableExpression<F> {
 
-    protected EntryContainer container;
+    protected DataStructureFactory.DataStructureParseResult parseResult;
     protected Node node;
 
     @Override
-    public boolean init(Expression<?>[] expressions,
-                        int pattern,
-                        Kleenean delayed,
-                        SkriptParser.ParseResult result,
-                        @Nullable SectionNode node,
+    public boolean init(Expression<?>[] givenExprs, int pattern, Kleenean delayed,
+                        SkriptParser.ParseResult result, @Nullable SectionNode node,
                         @Nullable List<TriggerItem> triggerItems) {
         this.node = getParser().getNode();
-
-        final var validator = DataStructureFactory.createValidator(getDataStructClass());
-        container = validator.validate(node);
-
-        return container != null;
+        this.parseResult = DataStructureFactory.initDataStructure(getDataStructClass(), node);
+        return this.parseResult != null;
     }
 
     @Override
@@ -46,17 +43,15 @@ public abstract class ChainDataStructElement<F, T, D extends DataStruct<T>>
 
     @Override
     public F[] getAsync(Event event) {
-        if (container == null)
-            return null;
 
         final var original = getOriginalInstance(event);
         if (original == null)
             return null;
 
         try {
-            final var result = DataStructureFactory.createDataStructure(getDataStructClass(), container, event, original);
-            return (F[]) new Object[] {applyChanges(event, result)};
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | java.lang.reflect.InvocationTargetException e) {
+            final var result = DataStructureFactory.createDataStructure(getDataStructClass(), parseResult, event, null);
+            return (F[]) new Object[] {applyChanges(event, (T) result)};
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }

@@ -6,14 +6,14 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 public class EmbedFieldStructure implements BasicDS<MessageEmbed.Field> {
 
-    @DataStructureEntry(value = "name")
+    @DataStructureEntry(value = "name", optional = false)
     public String name;
 
-    @DataStructureEntry(value = "value")
+    @DataStructureEntry(value = "value", optional = false)
     public String value;
 
-    @DataStructureEntry(value = "inline", optional = true)
-    public boolean inline = false;
+    @DataStructureEntry(value = "inline")
+    public Boolean inline = false;
 
     @Override
     public MessageEmbed.Field build() {
