@@ -37,6 +37,8 @@ public class ExprEventValues extends SimpleExpression<Object> {
 
     @Override
     public boolean init(final Expression<?> @NotNull [] exprs, final int matchedPattern, final @NotNull Kleenean isDelayed, final @NotNull ParseResult parser) {
+        if (ParserInstance.get().getCurrentEvents() == null)
+            return false;
         final String name = parser.expr.split("event-")[1];
         final List<EventValue<?, ?>> values = eventValues.getOrDefault(ParserInstance.get().getCurrentEvents()[0], new ArrayList<>());
         if (values.isEmpty() || values.stream().noneMatch(v -> v.getName().equalsIgnoreCase(name))) {

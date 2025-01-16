@@ -8,6 +8,7 @@ import info.itsthesky.disky.api.datastruct.DataStructureEntry;
 import info.itsthesky.disky.api.datastruct.base.BasicDS;
 import info.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.time.Instant;
 import java.util.List;
@@ -15,39 +16,39 @@ import java.util.List;
 @DataStructure(clazz = EmbedBuilder.class)
 public class EmbedStructure implements BasicDS<EmbedBuilder> {
 
-    @DataStructureEntry(value = "title", optional = true)
+    @DataStructureEntry(value = "title")
     public String title;
-    @DataStructureEntry(value = "url", optional = true)
+    @DataStructureEntry(value = "url")
     public String url;
 
-    @DataStructureEntry(value = "description", optional = true)
+    @DataStructureEntry(value = "description")
     public String description;
 
-    @DataStructureEntry(value = "footer", optional = true)
+    @DataStructureEntry(value = "footer")
     public String footer;
-    @DataStructureEntry(value = "footer icon", optional = true)
+    @DataStructureEntry(value = "footer icon")
     public String footerIcon;
 
-    @DataStructureEntry(value = "thumbnail", optional = true)
+    @DataStructureEntry(value = "thumbnail")
     public String thumbnail;
-    @DataStructureEntry(value = "image", optional = true)
+    @DataStructureEntry(value = "image")
     public String image;
 
-    @DataStructureEntry(value = "author", optional = true)
+    @DataStructureEntry(value = "author")
     public String author;
-    @DataStructureEntry(value = "author icon", optional = true)
+    @DataStructureEntry(value = "author icon")
     public String authorIcon;
-    @DataStructureEntry(value = "author url", optional = true)
+    @DataStructureEntry(value = "author url")
     public String authorUrl;
 
-    @DataStructureEntry(value = "timestamp", optional = true)
+    @DataStructureEntry(value = "timestamp")
     public Date timestamp;
 
-    @DataStructureEntry(value = "color", optional = true)
+    @DataStructureEntry(value = "color")
     public Color color = SkriptColor.YELLOW;
 
-    @DataStructureEntry(value = "field", optional = true)
-    public List<EmbedFieldStructure> fields;
+    @DataStructureEntry(value = "field", subStructureType = EmbedFieldStructure.class)
+    public List<MessageEmbed.Field> fields;
 
     @Override
     public EmbedBuilder build() {
@@ -86,8 +87,8 @@ public class EmbedStructure implements BasicDS<EmbedBuilder> {
         if (timestamp != null) builder.setTimestamp(Instant.ofEpochMilli(timestamp.getTime()));
 
         if (fields != null) {
-            for (EmbedFieldStructure field : fields) {
-                builder.addField(field.build());
+            for (MessageEmbed.Field field : fields) {
+                builder.addField(field);
             }
         }
 

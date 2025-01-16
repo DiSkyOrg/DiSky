@@ -1,6 +1,7 @@
 package info.itsthesky.disky.api.datastruct;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.expressions.base.SectionExpression;
 import ch.njol.skript.lang.Expression;
@@ -16,48 +17,31 @@ import org.skriptlang.skript.lang.entry.EntryContainer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseDataStructElement<T, D extends DataStruct<T>> extends SectionExpression<T> {
 
-    protected EntryContainer container;
+    protected DataStructureFactory.DataStructureParseResult parseResult;
 
     @Override
-    public boolean init(Expression<?>[] expressions, int pattern, Kleenean delayed,
+    public boolean init(Expression<?>[] givenExprs, int pattern, Kleenean delayed,
                         SkriptParser.ParseResult result, @Nullable SectionNode node,
                         @Nullable List<TriggerItem> triggerItems) {
-        final var validator = DataStructureFactory.createValidator(getDataStructClass());
-        container = validator.validate(node);
-
-        final var presentNodes = new ArrayList<String>();
-        if (container != null) {
-            for (final var entryData : validator.getEntryData()) {
-                if (container.hasEntry(entryData.getKey()))
-                    presentNodes.add(entryData.getKey());
-            }
-        }
-
-        final var errorMessage = DataStructureFactory.preValidate(getDataStructClass(), presentNodes, container);
-        if (errorMessage != null) {
-            // DiSky.debug("--- Error while validating data structure: " + errorMessage);
-            // Skript.error(errorMessage);
-            // why skript? why don't you want my error message? ;-;
-            DiSkyRuntimeHandler.error(new IllegalStateException(errorMessage), node);
-            return false;
-        }
-
-        return container != null;
+        this.parseResult = DataStructureFactory.initDataStructure(getDataStructClass(), node);
+        return this.parseResult != null;
     }
 
     @Override
     protected T @Nullable [] get(Event event) {
-        if (container == null)
+        if (parseResult == null)
             return null;
 
         try {
-            final var result = DataStructureFactory.createDataStructure(getDataStructClass(), container, event, null);
+            final var result = DataStructureFactory.createDataStructure(getDataStructClass(), parseResult, event, null);
             return (T[]) new Object[] {result};
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }

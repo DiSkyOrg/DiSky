@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+import java.util.jar.JarFile
+
 plugins {
     id 'maven-publish'
     id 'java'
@@ -32,7 +34,7 @@ repositories {
 
 dependencies {
     shadow 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
-    shadow 'com.github.SkriptLang:Skript:2.10.0-pre1'
+    shadow 'com.github.SkriptLang:Skript:2.10.0'
     // Jetbrains Annotations
     shadow 'org.jetbrains:annotations:23.0.0'
 
@@ -60,7 +62,7 @@ task removeClassPath {
         manifestFile.parentFile.mkdirs()
 
         // Lire le manifest existant
-        def origManifest = new java.util.jar.JarFile(jarFile).manifest
+        def origManifest = new JarFile(jarFile).manifest
 
         // Créer un nouveau manifest sans Class-Path
         def newManifest = new StringBuilder()
