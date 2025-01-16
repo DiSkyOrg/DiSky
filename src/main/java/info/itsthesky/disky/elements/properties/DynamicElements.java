@@ -112,8 +112,12 @@ public final class DynamicElements {
                         "rule id of event-automod", "4.21.0"));
 
         register("automod", "automod action type", AutoModTriggerType.class, "automod action [type]", AutoModExecution::getTriggerType,
-                new ReflectClassFactory.Documentation("AutoMod action", "the action type of the automod.",
+                new ReflectClassFactory.Documentation("AutoMod action", "The action type of the automod.",
                         "automod action of event-automod", "4.21.0"));
+
+        register("automod", "automod alert message id", String.class, "[automod] alert message id", AutoModExecution::getAlertMessageId,
+                new ReflectClassFactory.Documentation("Alert Message ID", "The alert message id sent to the alert channel.",
+                        "alert message id of event-automod", "4.21.0"));
 
     }
 
