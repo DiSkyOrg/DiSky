@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.automod.AutoModResponse;
+import net.dv8tion.jda.api.entities.automod.AutoModRule;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.*;
@@ -360,8 +361,8 @@ public class Types {
         DiSkyType.fromEnum(Member.MemberFlag.class, "memberflag", "memberflag")
                 .eventExpression()
                 .register();
-        new DiSkyType<>(AutoModRuleBuilder.class, "automodrule",
-                AutoModRuleBuilder::toString,
+        new DiSkyType<>(AutoModRule.class, "automodrule",
+                AutoModRule::toString,
                 null).eventExpression().register();
         DiSkyType.fromEnum(FilterType.class, "filtertype", "filtertype")
                 .eventExpression().register();

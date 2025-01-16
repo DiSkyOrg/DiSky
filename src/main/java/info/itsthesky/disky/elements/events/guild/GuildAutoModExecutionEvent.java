@@ -33,6 +33,14 @@ public class GuildAutoModExecutionEvent extends DiSkyEvent<AutoModExecutionEvent
                 SimpleDiSkyEvent::getJDAEvent, 0);
 
         ReflectEventExpressionFactory.registerEventExpression(
+                "alert message id", BukkitAutoModExecutionEvent.class,
+                String.class, event -> event.getJDAEvent().getAlertMessageId());
+
+        ReflectEventExpressionFactory.registerEventExpression(
+                "rule id", BukkitAutoModExecutionEvent.class,
+                String.class, event -> event.getJDAEvent().getRuleId());
+
+        ReflectEventExpressionFactory.registerEventExpression(
                 "moderated user", BukkitAutoModExecutionEvent.class,
                 User.class, event -> event.getJDAEvent().getJDA().getUserById(event.getJDAEvent().getUserId()));
 
