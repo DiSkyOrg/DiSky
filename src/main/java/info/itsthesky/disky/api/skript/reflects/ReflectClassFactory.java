@@ -64,9 +64,9 @@ public final class ReflectClassFactory {
 		private final String name;
 		private final String[] description;
 		private final String[] examples;
-		private final String since;
+		private final String[] since;
 
-		public Documentation(String name, String description, String examples, String since) {
+		public Documentation(String name, String description, String examples, String... since) {
 			this.name = name;
 			this.description = description.split("\n");
 			this.examples = examples.split("\n");
@@ -85,7 +85,7 @@ public final class ReflectClassFactory {
 			return examples;
 		}
 
-		public String getSince() {
+		public String[] getSince() {
 			return since;
 		}
 	}
@@ -106,7 +106,7 @@ public final class ReflectClassFactory {
 					.annotateType(AnnotationDescription.Builder.ofType(Name.class).define("value", documentation.getName()).build())
 					.annotateType(AnnotationDescription.Builder.ofType(Description.class).defineArray("value", documentation.getDescription()).build())
 					.annotateType(AnnotationDescription.Builder.ofType(Examples.class).defineArray("value", documentation.getExamples()).build())
-					.annotateType(AnnotationDescription.Builder.ofType(Since.class).define("value", documentation.getSince()).build())
+					.annotateType(AnnotationDescription.Builder.ofType(Since.class).defineArray("value", documentation.getSince()).build())
 
 					.method(named("convert")).intercept(MethodDelegation.to(new ConvertMethodInterceptor<>(converter)))
 					.method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(propertyName)))
