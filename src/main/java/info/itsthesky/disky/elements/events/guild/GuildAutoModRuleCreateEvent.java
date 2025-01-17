@@ -25,7 +25,7 @@ public class GuildAutoModRuleCreateEvent extends DiSkyEvent<AutoModRuleCreateEve
                 SimpleDiSkyEvent::getJDAEvent, 0);
 
         ReflectEventExpressionFactory.registerEventExpression(
-                "automod rule name", BukkitAutoModRuleCreateEvent.class,
+                "rule name", BukkitAutoModRuleCreateEvent.class,
                 AutoModRule.class, event -> event.getJDAEvent().getRule());
     }
 
