@@ -30,7 +30,7 @@ public class ReflectEventExpressionFactory {
 
             final Class<?> elementClass = new ByteBuddy()
                     .redefine(ReflectGetterExpression.class)
-                    .name("info.itsthesky.disky.elements.reflects.ReflectGetterExpression_" + COUNT.incrementAndGet())
+                    .name("net.itsthesky.disky.elements.reflects.ReflectGetterExpression_" + COUNT.incrementAndGet())
 
                     .method(named("convert")).intercept(MethodDelegation.to(new ReflectClassFactory.ConvertMethodInterceptor<>(converter)))
                     .method(named("getPropertyName")).intercept(MethodDelegation.to(new ReflectClassFactory.PropertyNameMethodInterceptor(stripPattern(pattern))))

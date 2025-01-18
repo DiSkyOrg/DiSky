@@ -101,7 +101,7 @@ public final class ReflectClassFactory {
 
 			final Class<?> elementClass = new ByteBuddy()
 					.redefine(ReflectProperty.class)
-					.name("info.itsthesky.disky.elements.reflects.ReflectProperty_" + COUNT.incrementAndGet())
+					.name("net.itsthesky.disky.elements.reflects.ReflectProperty_" + COUNT.incrementAndGet())
 
 					.annotateType(AnnotationDescription.Builder.ofType(Name.class).define("value", documentation.getName()).build())
 					.annotateType(AnnotationDescription.Builder.ofType(Description.class).defineArray("value", documentation.getDescription()).build())

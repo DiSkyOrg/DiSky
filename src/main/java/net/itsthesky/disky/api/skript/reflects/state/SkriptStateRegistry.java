@@ -46,7 +46,7 @@ public final class SkriptStateRegistry {
         // Condition
         final Class<?> conditionClass = new ByteBuddy()
                 .redefine(DiSkyStateCondition.class)
-                .name("info.itsthesky.disky.api.skript.reflects.state.CondState_" + COUNT.incrementAndGet())
+                .name("net.itsthesky.disky.api.skript.reflects.state.CondState_" + COUNT.incrementAndGet())
 
                 .method(named("check")).intercept(MethodDelegation.to(new CheckMethod<>(getter)))
                 .method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(stateName + " state")))
@@ -59,7 +59,7 @@ public final class SkriptStateRegistry {
         // Property
         final Class<?> propertyClass = new ByteBuddy()
                 .redefine(DiSkyStateProperty.class)
-                .name("info.itsthesky.disky.api.skript.reflects.state.PropState_" + COUNT.incrementAndGet())
+                .name("net.itsthesky.disky.api.skript.reflects.state.PropState_" + COUNT.incrementAndGet())
 
                 .method(named("convert")).intercept(MethodDelegation.to(new CheckMethod<>(getter)))
                 .method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(stateName + " state")))

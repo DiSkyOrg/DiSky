@@ -32,7 +32,7 @@ public class EasyDSRegistry {
 
             final Class<?> elementClass = new ByteBuddy()
                     .redefine(ReflectBasicDataStructure.class)
-                    .name("info.itsthesky.disky.elements.reflects.ReflectDataStructureElement_" + COUNT.incrementAndGet())
+                    .name("net.itsthesky.disky.elements.reflects.ReflectDataStructureElement_" + COUNT.incrementAndGet())
 
                     .method(named("getReturnType")).intercept(MethodDelegation.to(new ReturnClassMethodInterceptor(returnType)))
                     .method(named("getDataStructClass")).intercept(MethodDelegation.to(new ReturnClassMethodInterceptor(clazz)))
