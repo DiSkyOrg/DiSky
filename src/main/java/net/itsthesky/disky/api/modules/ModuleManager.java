@@ -44,6 +44,11 @@ public class ModuleManager {
         final YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(moduleYml);
         final DiSkyModuleInfo info = DiSkyModuleInfo.fromYaml(config);
+        if (info == null) {
+            getLogger().severe("The module '"+file.getName()+"' was made for an older (4.20 or below) version of DiSky and cannot be loaded.");
+            getLogger().severe("Please update the module at https://patreon.disky.me/ or on the wiki page (https://disky.me/docs)!");
+            return null;
+        }
         if (DiSky.getVersion().isSmallerThan(info.requiredMinVersion)) {
             getLogger().severe("The module '"+info.name+"' v"+info.version+" by '"+info.author+"' requires at least DiSky v"+info.requiredMinVersion+" to work! (You're using v"+DiSky.getVersion()+")");
             return null;

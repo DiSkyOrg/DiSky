@@ -65,6 +65,9 @@ public class DiSkyModuleInfo {
      * @return The deserialized module info
      */
     public static DiSkyModuleInfo fromYaml(YamlConfiguration configuration) {
+        if (!configuration.contains("main"))
+            return null; // old version, unsupported
+
         return new DiSkyModuleInfo(
                 configuration.getString("main"),
                 configuration.getString("name"),
