@@ -1,5 +1,6 @@
 package net.itsthesky.disky.api.datastruct;
 
+import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Expression;
@@ -43,6 +44,7 @@ public final class DataStructureFactory {
      * containing all necessary information to create instances.
      */
     public static record DataStructureParseResult(
+            @NotNull SectionNode relatedNode,
             @NotNull EntryValidator validator,
             @NotNull EntryContainer container,
             @NotNull Map<String, List<Expression<?>>> expressions,
@@ -78,7 +80,7 @@ public final class DataStructureFactory {
             return null;
         }
 
-        return new DataStructureParseResult(validator, container, expressions, subStructures);
+        return new DataStructureParseResult(node, validator, container, expressions, subStructures);
     }
 
     /**
@@ -91,15 +93,22 @@ public final class DataStructureFactory {
         final var validator = EntryValidator.builder();
         DiSky.debug("=========== Starting validation of data structure " + structClass.getName() + " ===========");
 
+        final var plannedKeys = new HashSet<String>();
         for (final var field : structClass.getDeclaredFields()) {
             final var entry = field.getAnnotation(DataStructureEntry.class);
-            if (entry == null) continue;
+            if (entry == null)
+                continue;
 
             processFieldValidator(validator, field, entry, structClass);
+            plannedKeys.add(entry.value());
         }
 
         validator.unexpectedNodeTester(node -> {
-            DiSky.debug("UNEXPECTED NODE: " + node.getKey());
+            final var key = node.getKey().split(":")[0];
+            if (plannedKeys.contains(key))
+                return false; // all good, it's a sub-structure or entry
+
+            Skript.error("Unexpected node with key '" + key + "' in data structure " + structClass.getSimpleName());
             return false;
         });
 
@@ -129,9 +138,36 @@ public final class DataStructureFactory {
 
         final var unhandledNodes = groupUnhandledNodes(container);
         processFields(structClass, instance, parseResult, event, unhandledNodes);
+        if (!validateFields(parseResult.relatedNode(), structClass, instance))
+            return null;
 
         DiSky.debug("################## End of creation of data structure " + structClass.getName() + " ##################");
         return finalizeInstance(instance, chainInstance);
+    }
+
+    /**
+     * Validates the fields of a data structure instance.
+     * This will check the instance's field value for optional and type constraints.
+     * @param structClass The class of the data structure
+     * @param instance The instance to validate
+     */
+    private static boolean validateFields(@NotNull Node node, @NotNull Class<?> structClass, @NotNull Object instance) {
+        for (final var field : structClass.getDeclaredFields()) {
+            final var entry = field.getAnnotation(DataStructureEntry.class);
+            if (entry == null) continue;
+
+            final var key = entry.value();
+            final var value = ReflectionUtils.getFieldValue(field, instance);
+
+            if (value == null && !entry.optional()) {
+                DiSkyRuntimeHandler.error(new IllegalStateException(
+                        "Field '" + key + "' in data structure " + structClass.getSimpleName() + " is null/none/empty, but is required!"
+                ), node, false);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
