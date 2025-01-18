@@ -7,6 +7,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import info.itsthesky.disky.DiSky;
 import info.itsthesky.disky.elements.changers.IAsyncGettableExpression;
 import info.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
@@ -51,6 +52,7 @@ public class GetAutoModRule extends SimpleExpression<AutoModRule>
         if (!DiSkyRuntimeHandler.checkSet(node, id, exprId, guild, exprGuild))
             return new AutoModRule[0];
 
+        DiSky.debug("Getting automod rule with ID " + id + " in guild " + guild);
         return new AutoModRule[] {guild.retrieveAutoModRuleById(id).complete()};
     }
 
