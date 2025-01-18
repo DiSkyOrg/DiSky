@@ -9,7 +9,7 @@ plugins {
     id "com.gradleup.shadow" version "9.0.0-beta4"
 }
 
-group = 'info.itsthesky'
+group = 'net.itsthesky'
 
 // Semantic Versioning
 def major = '4'
