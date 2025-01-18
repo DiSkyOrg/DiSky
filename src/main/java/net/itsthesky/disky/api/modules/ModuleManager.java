@@ -62,7 +62,10 @@ public class ModuleManager {
         final File[] modulesFile = this.moduleFolder.listFiles();
         assert modulesFile != null;
         for (final File moduleFile : modulesFile) {
-            if (moduleFile.isDirectory() || !moduleFile.getName().endsWith(".jar")) {
+            if (moduleFile.isDirectory())
+                continue; // Skip directories
+
+            if (!moduleFile.getName().endsWith(".jar")) {
                 getLogger().warning("Skipping file '"+moduleFile.getPath()+"' as it's not a valid module file.");
                 continue;
             }
