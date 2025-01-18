@@ -1,28 +1,21 @@
 package info.itsthesky.disky.api.modules;
 
-import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import ch.njol.skript.classes.ClassInfo;
-import ch.njol.skript.lang.ExpressionInfo;
-import ch.njol.skript.lang.SyntaxElementInfo;
-import ch.njol.skript.registrations.Classes;
 import info.itsthesky.disky.DiSky;
-import info.itsthesky.disky.api.ReflectionUtils;
-import info.itsthesky.disky.api.generator.DocBuilder;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
