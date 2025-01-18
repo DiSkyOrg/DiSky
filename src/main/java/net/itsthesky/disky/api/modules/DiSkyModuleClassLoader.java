@@ -1,4 +1,4 @@
-package info.itsthesky.disky.api.modules;
+package net.itsthesky.disky.api.modules;
 
 import java.io.File;
 import java.io.IOException;

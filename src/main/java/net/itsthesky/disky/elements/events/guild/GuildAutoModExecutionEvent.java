@@ -1,9 +1,9 @@
-package info.itsthesky.disky.elements.events.guild;
+package net.itsthesky.disky.elements.events.guild;
 
-import info.itsthesky.disky.api.events.DiSkyEvent;
-import info.itsthesky.disky.api.events.SimpleDiSkyEvent;
-import info.itsthesky.disky.api.skript.reflects.ReflectEventExpressionFactory;
-import info.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.api.events.DiSkyEvent;
+import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import net.itsthesky.disky.api.skript.reflects.ReflectEventExpressionFactory;
+import net.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.automod.AutoModResponse;
