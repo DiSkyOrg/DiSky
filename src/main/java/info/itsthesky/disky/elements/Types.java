@@ -27,9 +27,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.messages.MessagePoll;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
-import net.dv8tion.jda.api.events.automod.AutoModRuleCreateEvent;
-import net.dv8tion.jda.api.events.automod.AutoModRuleDeleteEvent;
-import net.dv8tion.jda.api.events.automod.AutoModRuleUpdateEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -187,18 +184,6 @@ public class Types {
         ).eventExpression().register();
         new DiSkyType<>(AutoModResponse.class, "automodresponse",
                 autoModResponse -> "automod response " + autoModResponse.getType().name().toLowerCase() + " with custom message " + autoModResponse.getCustomMessage(),
-                null
-        ).eventExpression().register();
-        new DiSkyType<>(AutoModRuleUpdateEvent.class, "updaterule",
-                autoModRuleUpdateEvent -> autoModRuleUpdateEvent.getRule().toString(),
-                null
-        ).eventExpression().register();
-        new DiSkyType<>(AutoModRuleCreateEvent.class, "createrule",
-                autoModRuleCreateEvent -> autoModRuleCreateEvent.getRule().toString(),
-                null
-        ).eventExpression().register();
-        new DiSkyType<>(AutoModRuleDeleteEvent.class, "deleterule",
-                autoModRuleDeleteEvent -> autoModRuleDeleteEvent.getRule().toString(),
                 null
         ).eventExpression().register();
 
