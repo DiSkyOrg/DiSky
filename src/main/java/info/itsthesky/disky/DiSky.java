@@ -9,6 +9,7 @@ import info.itsthesky.disky.api.modules.DiSkyModule;
 import info.itsthesky.disky.api.modules.ModuleManager;
 import info.itsthesky.disky.api.skript.ErrorHandler;
 import info.itsthesky.disky.core.DiSkyCommand;
+import info.itsthesky.disky.core.DiSkyMetrics;
 import info.itsthesky.disky.core.Utils;
 import info.itsthesky.disky.elements.properties.DynamicElements;
 import info.itsthesky.disky.elements.structures.context.ContextCommandManager;
@@ -45,7 +46,7 @@ public final class DiSky extends JavaPlugin {
         return getModuleManager()
                 .getModules()
                 .stream()
-                .filter(module -> module.getName().equalsIgnoreCase(moduleName))
+                .filter(module -> module.getModuleInfo().name.equalsIgnoreCase(moduleName))
                 .findAny()
                 .orElse(null);
     }
