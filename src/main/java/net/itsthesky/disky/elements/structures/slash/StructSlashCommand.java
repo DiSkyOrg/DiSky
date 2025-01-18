@@ -46,7 +46,7 @@ public class StructSlashCommand extends Structure {
     private static final Pattern ARGUMENT =
             Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>\\w+)\">(\\])?");
     private static final Pattern STRUCTURE =
-            Pattern.compile("slash command ((([A-Za-z]+) )?(([A-Za-z]+) )?(([A-Za-z]+)( )?)?)([^<]*<.+)?");
+            Pattern.compile("slash command ((([A-Za-z_]+) )?(([A-Za-z_]+) )?(([A-Za-z_]+)( )?)?)([^<]*<.+)?");
     private static final Pattern LIST =
             Pattern.compile("\\s*,\\s*/?");
 
