@@ -82,9 +82,10 @@ public final class DiSky extends JavaPlugin {
         }
 
         /*
-         * Loading the configuration
+         * Loading the configuration & the metrics
          */
         ConfigManager.loadConfig(this);
+        DiSkyMetrics.init(this);
 
         /*
         Saving & loading emojis

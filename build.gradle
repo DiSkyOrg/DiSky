@@ -42,6 +42,9 @@ dependencies {
     // Stable: net.dv8tion:JDA
     implementation 'net.dv8tion:JDA:5.2.2'
 
+    // bStats
+    implementation 'org.bstats:bstats-bukkit:3.0.2'
+
     // Class manipulation
     implementation 'net.bytebuddy:byte-buddy:1.11.22'
 }
@@ -50,6 +53,14 @@ shadowJar {
     minimize()
 
     setArchiveFileName('DiSky ' + version + '.jar')
+
+    // We currently cannot relocate JDA, as its default package is
+    // used over modules and more. However, as DiSky should be the only
+    // plugin using JDA, this should not be a problem.
+
+    // relocate('net.dv8tion.jda', 'net.itsthesky.disky.jda')
+
+    relocate('org.bstats', 'net.itsthesky.disky.bstats')
 }
 
 task removeClassPath {
