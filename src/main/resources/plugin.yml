@@ -1,6 +1,6 @@
 name: DiSky
 version: '${version}'
-main: info.itsthesky.disky.DiSky
+main: net.itsthesky.disky.DiSky
 api-version: 1.13
 softdepend: [ Skript ]
 authors: [ ItsTheSky ]
