@@ -91,7 +91,7 @@ public class DiSkyCommand implements CommandExecutor {
                 sb.append("== | Modules Information\n\n");
                 sb.append("Loaded Modules: ").append(DiSky.getModuleManager().getModules().size()).append("\n");
                 for (DiSkyModule module : DiSky.getModuleManager().getModules())
-                    sb.append("  - ").append(module.getModuleInfo().name).append(" v").append(module.getModuleInfo().version).append("\n");
+                    sb.append(" - ").append(module.getModuleInfo().name).append(" v").append(module.getModuleInfo().version).append("\n");
                 sb.append("\n");
             });
             debugSections.put("skript", () -> {
@@ -141,7 +141,7 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Modules (" + DiSky.getModuleManager().getModules().size() + ") &b------"));
             sender.sendMessage(Utils.colored(""));
             for (DiSkyModule module : DiSky.getModuleManager().getModules())
-                sender.sendMessage(Utils.colored("  &7- &b" + module.getModuleInfo().name + " &3made by &b" + module.getModuleInfo().author + " &3version &b" + module.getModuleInfo().version));
+                sender.sendMessage(Utils.colored(" &7- &b" + module.getModuleInfo().name + " &3made by &b" + module.getModuleInfo().author + " &3version &b" + module.getModuleInfo().version));
             sender.sendMessage(Utils.colored(""));
             return true;
         } else if (args[0].equalsIgnoreCase("bots")) {
