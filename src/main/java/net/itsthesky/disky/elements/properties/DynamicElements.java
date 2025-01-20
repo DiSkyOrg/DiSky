@@ -6,6 +6,9 @@ import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.automod.AutoModExecution;
+import net.dv8tion.jda.api.entities.automod.AutoModResponse;
+import net.dv8tion.jda.api.entities.automod.AutoModTriggerType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.requests.RestAction;
 
@@ -86,4 +89,36 @@ public final class DynamicElements {
         );
 
     }
+
+    public static void registerAutoMod() {
+        register("automod", "message content", String.class, "message content", AutoModExecution::getContent,
+                new ReflectClassFactory.Documentation("Message Content", "The message content that triggered the automod.",
+                        "message content of event-automod", "4.21.0"));
+
+        register("automod", "the matched content", String.class, "matched content", AutoModExecution::getMatchedContent,
+                new ReflectClassFactory.Documentation("Matched Content", "The substring match of the message content which triggered this rule.",
+                        "matched content of event-automod", "4.21.0"));
+
+        register("automod", "matched keyword", String.class, "matched keyword", AutoModExecution::getMatchedKeyword,
+                new ReflectClassFactory.Documentation("Matched Keyword", "the keyword that was found in the message content.",
+                        "matched keyword of event-automod", "4.21.0"));
+
+        register("automod", "automod response", AutoModResponse.class, "automod response", AutoModExecution::getResponse,
+                new ReflectClassFactory.Documentation("AutoMod Response", "The automod response that has been triggered by this event.",
+                        "automod response of event-automod", "4.21.0"));
+
+        register("automod", "rule id", String.class, "rule id", AutoModExecution::getRuleId,
+                new ReflectClassFactory.Documentation("Rule ID", "The id of the AutoMod Rule which has been triggered.",
+                        "rule id of event-automod", "4.21.0"));
+
+        register("automod", "automod action type", AutoModTriggerType.class, "automod action [type]", AutoModExecution::getTriggerType,
+                new ReflectClassFactory.Documentation("AutoMod action", "The action type of the automod.",
+                        "automod action of event-automod", "4.21.0"));
+
+        register("automod", "automod alert message id", String.class, "[automod] alert message id", AutoModExecution::getAlertMessageId,
+                new ReflectClassFactory.Documentation("Alert Message ID", "The alert message id sent to the alert channel.",
+                        "alert message id of event-automod", "4.21.0"));
+
+    }
+
 }
