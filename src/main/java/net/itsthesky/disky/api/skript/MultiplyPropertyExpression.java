@@ -6,6 +6,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,8 +15,8 @@ public abstract class MultiplyPropertyExpression<F, T> extends SimpleExpression<
 
     public Expression<? extends F> expr;
 
-    protected static <T> void register(final Class<? extends Expression<T>> c, final Class<T> type, final String property, final String fromType) {
-        Skript.registerExpression(c, type, ExpressionType.SIMPLE,
+    public static <T> void register(final Class<? extends Expression<T>> c, final Class<T> type, final String property, final String fromType) {
+        DiSkyRegistry.registerExpression(c, type, ExpressionType.SIMPLE,
                 "[all] [the] " + property + " of %" + fromType + "%",
                 "[all] [the] %" + fromType + "%'[s] " + property
         );

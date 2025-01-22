@@ -13,10 +13,12 @@ import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import static net.bytebuddy.matcher.ElementMatchers.isDefaultFinalizer;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 /**
@@ -26,11 +28,23 @@ import static net.bytebuddy.matcher.ElementMatchers.named;
  */
 public final class ReflectClassFactory {
 
-	public static class ConvertMethodInterceptor<F, T> {
+	public static class SingleConvertMethodInterceptor<F, T> {
 		private final Function<F, T> function;
-		public ConvertMethodInterceptor(Function<F, T> function) {
+		public SingleConvertMethodInterceptor(Function<F, T> function) {
 			this.function = function;
 		}
+		@RuntimeType
+		public Object intercept(@AllArguments Object[] allArguments) {
+			return function.apply((F) allArguments[0]);
+		}
+	}
+
+	public static class MultipleConvertMethodInterceptor<F, T> {
+		private final Function<F, T[]> function;
+		public MultipleConvertMethodInterceptor(Function<F, T[]> function) {
+			this.function = function;
+		}
+
 		@RuntimeType
 		public Object intercept(@AllArguments Object[] allArguments) {
 			return function.apply((F) allArguments[0]);
@@ -108,7 +122,7 @@ public final class ReflectClassFactory {
 					.annotateType(AnnotationDescription.Builder.ofType(Examples.class).defineArray("value", documentation.getExamples()).build())
 					.annotateType(AnnotationDescription.Builder.ofType(Since.class).defineArray("value", documentation.getSince()).build())
 
-					.method(named("convert")).intercept(MethodDelegation.to(new ConvertMethodInterceptor<>(converter)))
+					.method(named("convert")).intercept(MethodDelegation.to(new SingleConvertMethodInterceptor<>(converter)))
 					.method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(propertyName)))
 
 					.make()
@@ -118,6 +132,39 @@ public final class ReflectClassFactory {
 			DiSkyRegistry.registerProperty((Class<? extends Expression<T>>) elementClass,
 					toType, property, fromTypeName);
 			DiSky.debug("Registered property expression: " + elementClass.getName() + " (" + fromTypeName + " -> " + toType.getSimpleName() + ")");
+
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	public static <F, T> void registerMultiple(String fromTypeName,
+											   String propertyName,
+											   Class<T> toType,
+											   String property,
+											   Function<F, T[]> converter,
+											   Documentation documentation) {
+		try {
+
+			final Class<?> elementClass = new ByteBuddy()
+					.redefine(ReflectMultipleProperty.class)
+					.name("net.itsthesky.disky.elements.reflects.ReflectProperty_" + COUNT.incrementAndGet())
+
+					.annotateType(AnnotationDescription.Builder.ofType(Name.class).define("value", documentation.getName()).build())
+					.annotateType(AnnotationDescription.Builder.ofType(Description.class).defineArray("value", documentation.getDescription()).build())
+					.annotateType(AnnotationDescription.Builder.ofType(Examples.class).defineArray("value", documentation.getExamples()).build())
+					.annotateType(AnnotationDescription.Builder.ofType(Since.class).defineArray("value", documentation.getSince()).build())
+
+					.method(named("convert")).intercept(MethodDelegation.to(new MultipleConvertMethodInterceptor<>(converter)))
+					.method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(propertyName)))
+
+					.make()
+					.load(ReflectProperty.class.getClassLoader())
+					.getLoaded();
+
+			MultiplyPropertyExpression.register((Class<? extends Expression<T>>) elementClass,
+					toType, property, fromTypeName);
+			DiSky.debug("Registered property expression: " + elementClass.getName() + " (" + fromTypeName + " -> " + toType.getSimpleName() + ") [MULTIPLE]");
 
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
