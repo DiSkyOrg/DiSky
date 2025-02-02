@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.structures.slash;
 
 import ch.njol.skript.lang.Trigger;
+import ch.njol.skript.lang.util.common.AnyNamed;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -58,7 +59,12 @@ public final class SlashManager extends ListenerAdapter {
         String baseCommandName = parts[0];
 
         // Get or create the command group
-        CommandGroup group = commandGroups.computeIfAbsent(baseCommandName, name -> {
+        CommandGroup group = commandGroups.compute(baseCommandName, (name, existingGroup) -> {
+            if (existingGroup != null) {
+                // Remove existing commands
+                registeredCommands.removeIf(cmd -> cmd.getParsedCommand().getName().startsWith(name));
+            }
+
             CommandType type = parts.length == 1 ? CommandType.SINGLE : CommandType.GROUP;
             return new CommandGroup(name, type);
         });
@@ -349,6 +355,9 @@ public final class SlashManager extends ListenerAdapter {
     }
 
     private void cleanupRegisteredCommands() {
+        if (true)
+            return; // TODO: Fix this method. It's so fucking hard to both handle JDA's queue system while being stuck on bukkit's single thread system
+
         // gather all guilds, if any, to clear
         Set<String> guilds = new HashSet<>();
         registeredCommands.forEach(cmd -> {

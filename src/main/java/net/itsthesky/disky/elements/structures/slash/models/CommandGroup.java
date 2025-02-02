@@ -1,5 +1,6 @@
 package net.itsthesky.disky.elements.structures.slash.models;
 
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -116,7 +117,13 @@ public class CommandGroup {
                 for (ParsedArgument arg : singleCommand.getArguments()) {
                     commandData.addOptions(createOptionData(arg));
                 }
+
+                if (singleCommand.isDisabledByDefault() && singleCommand.getEnabledFor().isEmpty())
+                    commandData.setDefaultPermissions(DefaultMemberPermissions.DISABLED);
+                else if (!singleCommand.getEnabledFor().isEmpty())
+                    commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(singleCommand.getEnabledFor()));
             }
+
             return commandData;
         }
 
