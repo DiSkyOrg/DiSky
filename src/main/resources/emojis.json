@@ -14909,6 +14909,14 @@
         "pink_heart"
       ],
       "supportsFitzpatrick": false
+    },
+    {
+      "subpage": "face-holding-back-tears",
+      "unicode": "\uD83E\uDD79",
+      "shortcodes": [
+        "face_holding_back_tears"
+      ],
+      "supportsFitzpatrick": false
     }
   ]
 }
