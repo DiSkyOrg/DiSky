@@ -9,6 +9,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
+import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.requests.restaction.order.RoleOrderAction;
@@ -86,6 +87,8 @@ public class MoveRole extends AsyncEffect {
 			DiSkyRuntimeHandler.error(new IllegalArgumentException("The modifier must be at least 1! Got: " + mod), node);
 			return;
 		}
+		if (moveType == MoveType.ABOVE)
+			DiSky.debug("Moving role " + role.getName() + " above " + target.getName());
 
 		RoleOrderAction action = target.getGuild().modifyRolePositions();
         action = switch (moveType) {
