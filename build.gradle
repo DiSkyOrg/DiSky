@@ -40,7 +40,7 @@ dependencies {
 
     // Commits: com.github.dv8fromtheworld:jda
     // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.2.2'
+    implementation 'net.dv8tion:JDA:5.2.3'
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'
