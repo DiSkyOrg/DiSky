@@ -21,7 +21,7 @@ It provides more than **600** different syntax, such as:
 
 * [**Wiki**](https://disky.me/docs/)
 * [Discord Server](https://disky.me/discord)
-* [Documentation](https://disky.me/docs/docs/)
+* [Documentation](https://disky.me/docs/home/)
 
 ## Modules
 
