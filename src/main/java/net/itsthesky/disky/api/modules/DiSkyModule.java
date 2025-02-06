@@ -85,6 +85,14 @@ public abstract class DiSkyModule {
     }
 
     /**
+     * Shutdown the module. This should be used to clean up any resources
+     * that the module may have created.
+     */
+    public void shutdown() {
+
+    }
+
+    /**
      * Change the loader of this module. This should only be called when
      * the module is being instantiated for the first time; otherwise, it
      * may cause issues with class loading.

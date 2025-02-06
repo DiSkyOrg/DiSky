@@ -159,6 +159,7 @@ public final class DiSky extends JavaPlugin {
     public void onDisable() {
         SlashManager.shutdownAll();
         ContextCommandManager.shutdownAll();
+        moduleManager.getModules().forEach(DiSkyModule::shutdown);
 
         botManager.shutdown();
     }
