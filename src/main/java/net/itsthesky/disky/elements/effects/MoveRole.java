@@ -91,6 +91,12 @@ public class MoveRole extends AsyncEffect {
 			DiSky.debug("Moving role " + role.getName() + " above " + target.getName());
 
 		RoleOrderAction action = target.getGuild().modifyRolePositions();
+
+		switch (moveType) {
+			case ABOVE, UNDER -> action.selectPosition(role);
+			case UP, DOWN -> action.selectPosition(target);
+		}
+
         action = switch (moveType) {
             case ABOVE -> action.moveAbove(role);
             case UNDER -> action.moveBelow(role);

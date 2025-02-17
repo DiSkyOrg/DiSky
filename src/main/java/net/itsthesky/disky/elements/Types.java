@@ -1,5 +1,6 @@
 package net.itsthesky.disky.elements;
 
+import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
 import net.itsthesky.disky.api.emojis.Emote;
@@ -173,6 +174,10 @@ public class Types {
 
                     return ChannelType.valueOf(input.toUpperCase());
                 }, true
+        ).eventExpression().register();
+        new DiSkyType<>(AutoModExecution.class, "automod",
+                AutoModExecution::toString,
+                null
         ).eventExpression().register();
 
         /*
