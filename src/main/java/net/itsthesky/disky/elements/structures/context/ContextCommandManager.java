@@ -122,19 +122,6 @@ public final class ContextCommandManager extends ListenerAdapter {
         handleContextCommand(event.getCommandIdLong(), event);
     }
 
-    public void markGuildAsReady(String guildId) {
-        DiSky.debug("Marking guild " + guildId + " as ready in SlashManager");
-        readyGuilds.add(guildId);
-
-        // Process any waiting commands for this guild
-        if (waitingGuildCommands.containsKey(guildId)) {
-            final List<Runnable> tasks = waitingGuildCommands.remove(guildId);
-            DiSky.debug("Guild " + guildId + " is ready, registering " + tasks.size() + " commands");
-            tasks.forEach(Runnable::run);
-        }
-    }
-
-
     private void handleContextCommand(long commandId, Object event) {
         ParsedContextCommand command = registeredCommands.get(commandId);
         if (command == null) {
