@@ -125,6 +125,19 @@ public final class SlashManager extends ListenerAdapter {
         }
     }
 
+    public void markGuildAsReady(String guildId) {
+        DiSky.debug("Marking guild " + guildId + " as ready in SlashManager");
+        readyGuilds.add(guildId);
+
+        // Process any waiting commands for this guild
+        if (waitingGuildCommands.containsKey(guildId)) {
+            final List<Runnable> tasks = waitingGuildCommands.remove(guildId);
+            DiSky.debug("Guild " + guildId + " is ready, registering " + tasks.size() + " commands");
+            tasks.forEach(Runnable::run);
+        }
+    }
+
+
     private void registerCommandGroupSuccess(CommandGroup group, Command cmd, @Nullable String guildId) {
         // Register the main command if it's a single command
         if (group.getType() == CommandType.SINGLE && group.getSingleCommand() != null) {
