@@ -8,6 +8,8 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.entities.Message;
+import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.ReturningSection;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.bukkit.event.Event;
@@ -76,26 +78,34 @@ public class CreateMessage extends ReturningSection<MessageCreateBuilder> {
 				CreateMessage.class,
 				MessageCreateBuilder.class,
 				message.class,
-				"(make|create) [a] [new] [:silent] message"
+				"(make|create) [a] [new] [:silent] message [(based on|from) %-message%]"
 		);
 	}
 
 	private boolean silent;
+	private Expression<Message> exprBase;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
 		silent = parseResult.hasTag("silent");
+		exprBase = (Expression<Message>) exprs[0];
 		return super.init(exprs, matchedPattern, isDelayed, parseResult, sectionNode, triggerItems);
 	}
 
 	@Override
-	public MessageCreateBuilder createNewValue(Event event) {
-		return new MessageCreateBuilder().setSuppressedNotifications(silent);
+	public MessageCreateBuilder createNewValue(@NotNull Event event) {
+		final var message = EasyElement.parseSingle(exprBase, event);
+		final var builder = new MessageCreateBuilder();
+		if (message != null)
+			builder.applyMessage(message);
+		builder.setSuppressedNotifications(silent);
+
+		return builder;
 	}
 
 	@Override
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "create a new message";
+		return "create a new " + (silent ? "silent " : "") + "message" + (exprBase != null ? " based on " + exprBase.toString(e, debug) : "");
 	}
 
 }
