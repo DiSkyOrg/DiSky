@@ -4,6 +4,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.JDAUtils;
+import net.itsthesky.disky.core.UpdateCheckerTask;
 import net.itsthesky.disky.core.Utils;
 import net.itsthesky.disky.managers.ConfigManager;
 import org.bukkit.Bukkit;
@@ -130,6 +131,13 @@ public class DiSkyRuntimeHandler {
         send("&4[&c!&4] &c");
         send("&4[&c!&4] &4DiSky Internal Error (version: "+ DiSky.getInstance().getDescription().getVersion()+")");
         send("&4[&c!&4] &4Error type: &c" + exception.getClass().getSimpleName());
+
+        if (UpdateCheckerTask.STATE == UpdateCheckerTask.VersionState.OUTDATED) {
+            send("&4[&c!&4] &c");
+            send("&4[&c!&4] &4You are using an outdated version of DiSky, please update to the latest version.");
+            send("&4[&c!&4] &4You can download the latest version here: https://modrinth.com/plugin/disky");
+        }
+
         send("&4[&c!&4] &c");
 
         send("&4[&c!&4] &e- - - - - - - - - - - - - - - - - - - - - - - - -");
