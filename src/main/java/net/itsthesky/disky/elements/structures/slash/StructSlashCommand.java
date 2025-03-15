@@ -46,7 +46,7 @@ public class StructSlashCommand extends Structure {
     private static final Pattern ARGUMENT =
             Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>\\w+)\">(\\])?");
     private static final Pattern STRUCTURE =
-            Pattern.compile("slash command ((([_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]+) )?(([_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]+) )?(([_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]+)( )?)?)([^<]*<.+)?");
+            Pattern.compile("slash command (([A-Za-z0-9_\\-]+ )?([A-Za-z0-9_\\-]+ )?([A-Za-z0-9_\\-]+)?)([^<]*<.+)?");
     private static final Pattern LIST =
             Pattern.compile("\\s*,\\s*/?");
 
@@ -255,7 +255,7 @@ public class StructSlashCommand extends Structure {
             return null;
         }
 
-        final String rawArguments = argsMatcher.group(9); // Get the arguments part
+        final String rawArguments = argsMatcher.group(5);
         if (rawArguments == null || rawArguments.trim().isEmpty())
             return arguments;
 
