@@ -46,7 +46,7 @@ public class StructSlashCommand extends Structure {
     private static final Pattern ARGUMENT =
             Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>\\w+)\">(\\])?");
     private static final Pattern STRUCTURE =
-            Pattern.compile("slash command ((([A-Za-z_]+) )?(([A-Za-z_]+) )?(([A-Za-z_]+)( )?)?)([^<]*<.+)?");
+            Pattern.compile("slash command ((([_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]+) )?(([_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]+) )?(([_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]+)( )?)?)([^<]*<.+)?");
     private static final Pattern LIST =
             Pattern.compile("\\s*,\\s*/?");
 
@@ -469,8 +469,8 @@ public class StructSlashCommand extends Structure {
 
         // Validate each part
         for (String part : parts) {
-            if (!part.matches("[A-Za-z][A-Za-z0-9_-]*")) {
-                Skript.error("Invalid command name part: '" + part + "'. Must start with a letter and contain only letters, numbers, underscores, and hyphens.");
+            if (!part.matches("[_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]{1,32}")) {
+                Skript.error("Invalid command name part: '" + part + "'. Must match Discord's naming requirements.");
                 return null;
             }
         }
