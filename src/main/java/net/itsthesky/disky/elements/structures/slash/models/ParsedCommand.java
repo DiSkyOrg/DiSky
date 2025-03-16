@@ -1,12 +1,15 @@
 package net.itsthesky.disky.elements.structures.slash.models;
 
 import ch.njol.skript.lang.Trigger;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.JDAUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,7 +161,8 @@ public class ParsedCommand {
         return true;
     }
 
-    public void prepareArguments(List<OptionMapping> options) {
+    public void prepareArguments(SlashCommandInteractionEvent event) {
+        final var options = event.getOptions();
         DiSky.debug("Found '" + arguments.size() + " args' for '" + options.size() + " options'");
         for (ParsedArgument argument : arguments) {
             final OptionMapping option = options.stream().filter(opt -> opt.getName().equals(argument.getName())).findFirst().orElse(null);
@@ -167,7 +171,35 @@ public class ParsedCommand {
                 continue;
             }
 
-            argument.setValue(JDAUtils.parseOptionValue(option));
+            if (argument.getCustomArgument() != null) {
+                final var customArgument = argument.getCustomArgument();
+                final var value = customArgument.convert(event, option);
+
+                argument.setValue(value);
+            } else {
+                argument.setValue(JDAUtils.parseOptionValue(option));
+            }
+        }
+    }
+
+    public void prepareArguments(CommandAutoCompleteInteractionEvent event) {
+        final var options = event.getOptions();
+        DiSky.debug("Found '" + arguments.size() + " args' for '" + options.size() + " options'");
+        for (ParsedArgument argument : arguments) {
+            final OptionMapping option = options.stream().filter(opt -> opt.getName().equals(argument.getName())).findFirst().orElse(null);
+            if (option == null) {
+                argument.setValue(null);
+                continue;
+            }
+
+            if (argument.getCustomArgument() != null) {
+                final var customArgument = argument.getCustomArgument();
+                final var value = customArgument.convert(event, option);
+
+                argument.setValue(value);
+            } else {
+                argument.setValue(JDAUtils.parseOptionValue(option));
+            }
         }
     }
 }
