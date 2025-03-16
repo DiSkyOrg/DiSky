@@ -26,37 +26,61 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.itsthesky.disky.elements.structures.slash.args.CustomArgument;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class PlayerCustomArg extends CustomArgument<Player> {
+public class PlayerCustomArg extends CustomArgument<OfflinePlayer> {
 
-    public PlayerCustomArg() {
-        super(Player.class, OptionType.STRING, true, false);
+    private final boolean offline;
+
+    public PlayerCustomArg(boolean offline) {
+        super(OfflinePlayer.class, OptionType.STRING, true, false);
+        this.offline = offline;
+    }
+
+    @Override
+    public boolean supportsClass(@NotNull ClassInfo<?> classInfo) {
+        if (offline)
+            return OfflinePlayer.class.isAssignableFrom(classInfo.getC());
+
+        return Player.class.isAssignableFrom(classInfo.getC());
     }
 
     @Override
     public List<Command.Choice> handleAutoCompletion(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull String input) {
-        final var onlinePLayers = Bukkit.getServer().getOnlinePlayers();
-        return onlinePLayers.stream()
+        final List<OfflinePlayer> players;
+        if (offline) {
+            players = List.of(Bukkit.getOfflinePlayers());
+        } else {
+            players = Arrays.asList(Bukkit.getOnlinePlayers().toArray(new OfflinePlayer[0]));
+        }
+
+        return players.stream()
+                .filter(player -> player.getName() != null)
                 .filter(player -> player.getName().toLowerCase().startsWith(input.toLowerCase()))
                 .map(player -> new Command.Choice(player.getName(), player.getUniqueId().toString()))
                 .toList();
     }
 
     @Override
-    public @Nullable Player convert(@NotNull SlashCommandInteractionEvent event, @NotNull OptionMapping mapping) {
+    public @Nullable OfflinePlayer convert(@NotNull SlashCommandInteractionEvent event, @NotNull OptionMapping mapping) {
         final var playerName = mapping.getAsString();
-        return Bukkit.getPlayer(UUID.fromString(playerName));
+        final var uuid = UUID.fromString(playerName);
+
+        return offline ? Bukkit.getOfflinePlayer(uuid) : Bukkit.getPlayer(uuid);
     }
 
     @Override
-    public @Nullable Player convert(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull OptionMapping mapping) {
+    public @Nullable OfflinePlayer convert(@NotNull CommandAutoCompleteInteractionEvent event, @NotNull OptionMapping mapping) {
         final var playerName = mapping.getAsString();
-        return Bukkit.getPlayer(UUID.fromString(playerName));
+        final var uuid = UUID.fromString(playerName);
+
+        return offline ? Bukkit.getOfflinePlayer(uuid) : Bukkit.getPlayer(uuid);
     }
 }
