@@ -193,6 +193,41 @@ public class CommandGroup {
         return subCommandData;
     }
 
+    /**
+     * Find a command in this group by its full command path
+     * @param fullCommandPath The full command path (e.g. "set color" or "set setting color")
+     * @return The ParsedCommand if found, null otherwise
+     */
+    public ParsedCommand findCommand(String fullCommandPath) {
+        String[] parts = fullCommandPath.split(" ");
+
+        if (parts.length == 0 || !parts[0].equals(name)) {
+            return null;
+        }
+
+        if (parts.length == 1) {
+            // Request for the base command
+            if (type == CommandType.SINGLE) {
+                return singleCommand;
+            }
+            return null;
+        }
+
+        if (parts.length == 2) {
+            // Looking for a direct subcommand
+            return subCommands.get(parts[1]);
+        }
+
+        if (parts.length == 3) {
+            // Looking for a subcommand in a group
+            CommandGroup subGroup = subGroups.get(parts[1]);
+            if (subGroup == null) return null;
+            return subGroup.getSubCommands().get(parts[2]);
+        }
+
+        return null; // Too many parts
+    }
+
     // Getters and setters
     public String getName() {
         return name;
@@ -236,5 +271,16 @@ public class CommandGroup {
 
     public ParsedCommand getSingleCommand() {
         return singleCommand;
+    }
+
+    @Override
+    public String toString() {
+        return "CommandGroup{" +
+                "name='" + name + '\'' +
+                ", type=" + type +
+                ", subCommandsCount=" + subCommands.size() +
+                ", subGroupsCount=" + subGroups.size() +
+                ", hasSingleCommand=" + (singleCommand != null) +
+                '}';
     }
 }

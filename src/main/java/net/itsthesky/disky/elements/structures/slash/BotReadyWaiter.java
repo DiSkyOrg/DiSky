@@ -25,6 +25,9 @@ public final class BotReadyWaiter {
 
         final var slashManager = bot.getSlashManager();
         commands.forEach(slashManager::registerCommand);
+
+        // Clear the waiting commands after they are registered
+        WaitingCommands.remove(bot.getName());
     }
 
     private static void checkContextCommands(Bot bot) {
@@ -34,6 +37,8 @@ public final class BotReadyWaiter {
 
         final var contextManager = bot.getContextManager();
         commands.forEach(contextManager::registerCommand);
-    }
 
+        // Clear the waiting context commands after they are registered
+        WaitingContextCommands.remove(bot.getName());
+    }
 }

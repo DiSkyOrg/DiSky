@@ -18,7 +18,7 @@ public final class DiSkyMetrics {
         metrics.addCustomChart(new SimplePie("using_slash_structures", () -> {
             boolean using = false;
             for (final var bot : DiSky.getManager().getBots()) {
-                if (!bot.getSlashManager().getRegisteredCommands().isEmpty()) {
+                if (!bot.getSlashManager().getRegisteredGroups().isEmpty()) {
                     using = true;
                     break;
                 }
