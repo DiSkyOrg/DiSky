@@ -15,6 +15,7 @@ import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.events.bots.ReadyEvent;
 import net.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
 import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
+import net.itsthesky.disky.elements.structures.slash.args.SlashCustomArgs;
 import net.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
@@ -34,6 +35,7 @@ import org.skriptlang.skript.lang.structure.Structure;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * @author ItsThesky
@@ -173,6 +175,7 @@ public class StructSlashCommand extends Structure {
         DiSky.debug("------------------- Args (" + parsedCommand.getArguments().size() + ") -------------------");
         for (ParsedArgument arg : parsedCommand.getArguments()) {
             DiSky.debug("Argument: " + arg.getName() + " | Type: " + arg.getType() + " | Optional: " + arg.isOptional());
+            DiSky.debug("Custom Argument: " + arg.getCustomArgument());
             if (arg.hasChoices()) {
                 DiSky.debug(" - Choices (" + arg.getChoices().size() + "):");
                 for (String choice : arg.getChoices().keySet()) {
@@ -279,8 +282,20 @@ public class StructSlashCommand extends Structure {
             try {
                 type = OptionType.valueOf(rawType.toUpperCase());
             } catch (Exception ex) {
-                Skript.error("Invalid argument type: " + rawType + " (Available: " + Arrays.toString(OptionType.values()) + ")");
-                return null;
+                final var customArg = SlashCustomArgs.tryParseCustomArgument(rawType);
+                if (customArg == null) {
+                    Skript.error("Invalid argument type: " + rawType + " (Available: " +
+                            Stream.of(OptionType.values())
+                                    .map(OptionType::name)
+                                    .reduce((a, b) -> a + ", " + b)
+                                    .orElse("None") + ")");
+                    return null;
+                }
+
+                final ParsedArgument parsedArgument = new ParsedArgument(customArg.getType(), name, !optional);
+                parsedArgument.setCustomArgument(customArg);
+                arguments.add(parsedArgument);
+                continue;
             }
 
             arguments.add(new ParsedArgument(type, name, !optional));

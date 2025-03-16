@@ -277,7 +277,7 @@ public final class SlashManager extends ListenerAdapter {
                             group.getCooldown(event.getUser(), commandPath)
                     );
                     bukkitEvent.setJDAEvent(event);
-                    command.prepareArguments(event.getOptions());
+                    command.prepareArguments(event);
                     command.getOnCooldown().execute(bukkitEvent);
 
                     return !bukkitEvent.isCancelled();
@@ -290,7 +290,7 @@ public final class SlashManager extends ListenerAdapter {
     }
 
     private void executeCommand(ParsedCommand command, SlashCommandInteractionEvent event) {
-        command.prepareArguments(event.getOptions());
+        command.prepareArguments(event);
         final Trigger trigger = command.getTrigger();
         final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent =
                 new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
@@ -299,24 +299,41 @@ public final class SlashManager extends ListenerAdapter {
     }
 
     private void handleAutoComplete(ParsedCommand command, CommandAutoCompleteInteractionEvent event) {
-        String focusedArgument = event.getFocusedOption().getName();
-        Trigger trigger = command.getArguments()
+        final var focusedArgument = event.getFocusedOption().getName();
+        final var focusArg = command.getArguments()
                 .stream()
                 .filter(arg -> arg.getName().equals(focusedArgument))
                 .findFirst()
-                .map(ParsedArgument::getOnCompletionRequest)
                 .orElse(null);
 
-        if (trigger == null) {
+        if (focusArg == null) {
             DiSky.debug("No completion trigger for argument " + focusedArgument);
             return;
         }
 
-        command.prepareArguments(event.getOptions());
-        SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
-                new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
-        bukkitEvent.setJDAEvent(event);
-        trigger.execute(bukkitEvent);
+        if (focusArg.getCustomArgument() == null) {
+            command.prepareArguments(event);
+            SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
+                    new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
+            bukkitEvent.setJDAEvent(event);
+
+            final var trigger = focusArg.getOnCompletionRequest();
+            if (trigger == null) {
+                DiSky.debug("No completion trigger for argument " + focusedArgument);
+                return;
+            }
+
+            trigger.execute(bukkitEvent);
+        } else {
+            final var customArgument = focusArg.getCustomArgument();
+            final var input = event.getFocusedOption().getValue();
+            final var choices = customArgument.handleAutoCompletion(event, input);
+            if (choices != null) {
+                event.replyChoices(choices).queue();
+            } else {
+                DiSky.debug("No choices for argument " + focusedArgument);
+            }
+        }
     }
 
     // Cleanup Methods

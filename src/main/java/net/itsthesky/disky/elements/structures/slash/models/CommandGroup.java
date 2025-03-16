@@ -174,9 +174,11 @@ public class CommandGroup {
             }
         }
 
-        if (arg.isAutoCompletion()) {
+        if (arg.getCustomArgument() != null && arg.getCustomArgument().isChoices())
+            optionData.addChoices(arg.getCustomArgument().getChoices());
+
+        if (arg.isAutoCompletion())
             optionData.setAutoComplete(true);
-        }
 
         return optionData;
     }
