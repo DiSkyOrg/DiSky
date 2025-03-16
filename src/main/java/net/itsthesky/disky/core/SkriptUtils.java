@@ -171,6 +171,17 @@ public final class SkriptUtils {
         RetrieveEventValue.VALUES.put(bukkitClass, current);
     }
 
+    @SuppressWarnings({"rawtypes"})
+    public static void registerRawRestValue(String codeName,
+                                         Class<? extends SimpleDiSkyEvent> bukkitClass,
+                                         Function function,
+                                         Function converter) {
+        final List<RetrieveEventValue.RetrieveValueInfo> current =
+                RetrieveEventValue.VALUES.getOrDefault(bukkitClass, new ArrayList<>());
+        current.add(new RetrieveEventValue.RetrieveValueInfo(bukkitClass, codeName, function, converter));
+        RetrieveEventValue.VALUES.put(bukkitClass, current);
+    }
+
     public static <B extends SimpleDiSkyEvent, T> void registerRestValue(String codeName,
                                                                          Class<B> bukkitClass,
                                                                          Function<B, RestAction<T>> function) {
