@@ -9,7 +9,6 @@ import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.core.ReactionListener;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.react.ReactionAddEvent;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import org.bukkit.event.Event;
@@ -44,9 +43,9 @@ public class ReactSection extends EffectSection {
 		exprEmote = (Expression<Emote>) exprs[1];
 		exprUser = (Expression<User>) exprs[2];
 		runOneTime = (parseResult.mark & 1) != 0;
-		if (sectionNode != null)
-			trigger = loadCode(sectionNode, "react section", SkriptUtils.addEventClasses(ReactionAddEvent.BukkitReactionAddEvent.class));
-		return true;
+		/*if (sectionNode != null)
+			trigger = loadCode(sectionNode, "react section", SkriptUtils.addEventClasses(ReactionAddEvent.BukkitReactionAddEvent.class));*/
+		return false;
 	}
 
 	@Override
