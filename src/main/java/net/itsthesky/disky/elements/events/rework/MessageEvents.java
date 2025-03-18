@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
@@ -32,7 +33,7 @@ public class MessageEvents {
                 .example("\t\treply with \"I just received '%event-message%' from %mention tag of event-channel%!\"")
                 .example("\telse:")
                 .example("\t\treply with \"I just received '%event-message%' from %mention tag of event-user%!\"")
-                .implement(MessageEvent.class)
+                .implementMessage(GenericMessageEvent::getChannel)
                 .value(Message.class, MessageReceivedEvent::getMessage)
                 .value(Guild.class, MessageReceivedEvent::getGuild)
                 .value(Member.class, MessageReceivedEvent::getMember)
@@ -51,7 +52,7 @@ public class MessageEvents {
                 .description("Fired when any message is deleted.",
                         "Use 'event-string' to get the old message content, only works if this message was cached by DiSky before hand.",
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
-                .implement(MessageEvent.class)
+                .implementMessage(GenericMessageEvent::getChannel)
                 .value(Guild.class, event -> event.isFromGuild() ? event.getGuild() : null)
                 .value(MessageChannel.class, MessageDeleteEvent::getChannel)
                 .value(String.class, event -> MessageManager.getManager(event.getJDA()).getDeletedMessageContent(event.getMessageIdLong()))
@@ -76,7 +77,7 @@ public class MessageEvents {
                 .description("Fired when any message is edited / updated.",
                         "Use 'event-string' to get the old message content, only works if this message was cached by DiSky before hand.",
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
-                .implement(MessageEvent.class)
+                .implementMessage(GenericMessageEvent::getChannel)
                 .value(Guild.class, event -> event.isFromGuild() ? event.getGuild() : null)
                 .value(MessageChannel.class, MessageUpdateEvent::getChannel)
                 .value(Message.class, MessageUpdateEvent::getMessage)

@@ -1,5 +1,23 @@
 package net.itsthesky.disky.api.events.rework;
 
+/*
+ * DiSky
+ * Copyright (C) 2025 ItsTheSky
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -7,21 +25,18 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.MethodDelegation;
-import net.bytebuddy.implementation.SuperMethodCall;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.This;
 import net.dv8tion.jda.api.events.Event;
 import net.itsthesky.disky.api.events.DiSkyEvent;
 import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
-import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
 
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import java.nio.channels.Channel;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import static net.bytebuddy.matcher.ElementMatchers.named;
 
 /**
  * Factory class that generates DiSky event classes dynamically.
@@ -73,13 +88,21 @@ public class EventRegistryFactory {
                     .load(DiSkyEvent.class.getClassLoader())
                     .getLoaded();
 
-            // Create SimpleDiSkyEvent subclass (Bukkit event)
-            Class<?> bukkitEventClass = new ByteBuddy()
+            final var interfaces = builder.getInterfaces();
+            var simpleEventClassBuilder = new ByteBuddy()
                     .subclass(SimpleDiSkyEvent.class)
-                    .name(bukkitEventClassName)
-                    // Add interface implementations based on builder configuration
-                    .implement(builder.getInterfaces().toArray(new Class[0]))
-                    .make()
+                    .name(bukkitEventClassName);
+
+            // Now add all the interfaces
+            for (final var inter : interfaces) {
+                simpleEventClassBuilder = simpleEventClassBuilder.implement(inter.getInterfaceClass())
+                        .defineMethod(inter.getMethodName(), inter.getReturnTypeClass(), 0)
+                        .intercept(MethodDelegation.to(new BasicFunctionInterceptor<>(
+                                inter.getFunction()
+                        )));
+            }
+
+            Class<?> bukkitEventClass = simpleEventClassBuilder.make()
                     .load(diSkyEventClass.getClassLoader())
                     .getLoaded();
 
@@ -97,6 +120,8 @@ public class EventRegistryFactory {
             SkriptUtils.registerBotValue((Class<? extends SimpleDiSkyEvent>) bukkitEventClass);
 
             // Register event values
+            var hasChannelClass = builder.getValueRegistrations().stream()
+                    .anyMatch(registration -> registration.getValueClass().equals(Channel.class));
             for (EventValueRegistration<T, ?> registration : builder.getValueRegistrations()) {
                 final Class<?> valueClass = registration.getValueClass();
                 final Function<T, ?> mapper = registration.getMapper();
@@ -111,6 +136,20 @@ public class EventRegistryFactory {
                         },
                         time
                 );
+
+                if (!hasChannelClass && Channel.class.isAssignableFrom(valueClass)) { // We also register the Channel class as it's a common type
+                    SkriptUtils.registerValue(
+                            (Class<? extends org.bukkit.event.Event>) bukkitEventClass,
+                            Channel.class,
+                            event -> {
+                                final var rawEvent = (SimpleDiSkyEvent) event;
+                                return (Channel) mapper.apply((T) rawEvent.getJDAEvent());
+                            },
+                            time
+                    );
+
+                    hasChannelClass = true;
+                }
             }
 
             // Register rest values
@@ -138,6 +177,25 @@ public class EventRegistryFactory {
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to register event: " + builder.getName(), e);
+        }
+    }
+
+    protected static class BasicFunctionInterceptor<I, S extends Event, R> {
+
+        private final BiFunction<I, S, R> function;
+        public BasicFunctionInterceptor(BiFunction<I, S, R> function) {
+            this.function = function;
+        }
+
+        @RuntimeType
+        public Object intercept(@AllArguments Object[] allArguments,
+                                @This Object instance) {
+            final var arg = allArguments.length > 0 ? allArguments[0] : null;
+            final var event = (SimpleDiSkyEvent<S>) instance;
+            if (arg == null)
+                return function.apply(null, event.getJDAEvent());
+
+            return function.apply((I) arg, event.getJDAEvent());
         }
     }
 

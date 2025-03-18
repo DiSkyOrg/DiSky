@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveAllEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
@@ -25,7 +26,7 @@ public class ReactionEvents {
                 .patterns("(reaction|emote)[s] add[ed]")
                 .description("Fired when a message, that can be seen by the bot, receive a reaction.",
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
-                .implement(MessageEvent.class)
+                .implementMessage(GenericMessageEvent::getChannel)
                 .restValue("message", MessageReactionAddEvent::retrieveMessage)
                 .value(Guild.class, MessageReactionAddEvent::getGuild)
                 .value(Member.class, MessageReactionAddEvent::getMember)
@@ -46,7 +47,7 @@ public class ReactionEvents {
                 .patterns("(reaction|emote)[s] remove[d]")
                 .description("Fired when an user remove a reaction from a specific message.",
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
-                .implement(MessageEvent.class)
+                .implementMessage(GenericMessageEvent::getChannel)
                 .restValue("message", MessageReactionRemoveEvent::retrieveMessage)
                 .value(Guild.class, MessageReactionRemoveEvent::getGuild)
                 .value(Member.class, MessageReactionRemoveEvent::getMember)
@@ -65,7 +66,7 @@ public class ReactionEvents {
                 .patterns("(reaction|emote)[s] (remove[d] all|clear|reset)")
                 .description("Fired when an user remove every reactions from a message.",
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
-                .implement(MessageEvent.class)
+                .implementMessage(GenericMessageEvent::getChannel)
                 .restValue("message", event -> event.getChannel().retrieveMessageById(event.getMessageId()))
                 .value(Guild.class, MessageReactionRemoveAllEvent::getGuild)
                 .value(MessageChannel.class, MessageReactionRemoveAllEvent::getChannel)

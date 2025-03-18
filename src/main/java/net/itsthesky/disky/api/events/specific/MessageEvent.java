@@ -9,6 +9,8 @@ public interface MessageEvent {
 
     MessageChannel getMessageChannel();
 
-    boolean isFromGuild();
+    default boolean isFromGuild() {
+        return getMessageChannel().getType().isGuild();
+    };
 
 }

@@ -1,11 +1,43 @@
 package net.itsthesky.disky.api.events.rework;
 
+/*
+ * DiSky
+ * Copyright (C) 2025 ItsTheSky
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
+import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
+import net.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
+import net.itsthesky.disky.api.events.specific.LogEvent;
+import net.itsthesky.disky.api.events.specific.MessageEvent;
+import net.itsthesky.disky.api.events.specific.ModalEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -13,6 +45,7 @@ import java.util.function.Function;
  * This allows for more concise and maintainable event registration.
  *
  * @param <T> The JDA event type
+ * @author ItsTheSky
  */
 public class EventBuilder<T extends Event> {
     private final Class<T> jdaEventClass;
@@ -20,9 +53,9 @@ public class EventBuilder<T extends Event> {
     private String[] patterns;
     private final List<String> descriptionLines = new ArrayList<>();
     private final List<String> exampleLines = new ArrayList<>();
-    private final List<Class<?>> interfaces = new ArrayList<>();
     private final List<EventValueRegistration<T, ?>> valueRegistrations = new ArrayList<>();
     private final List<RestValueRegistration<T, ?, ?>> restValueRegistrations = new ArrayList<>();
+    private final List<InterfaceRegistration<T, ?, ?, ?>> interfaces = new ArrayList<>();
     private Function<T, Guild> authorMapper;
 
     EventBuilder(Class<T> jdaEventClass) {
@@ -69,9 +102,7 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> description(String... lines) {
-        for (String line : lines) {
-            this.descriptionLines.add(line);
-        }
+        Collections.addAll(this.descriptionLines, lines);
         return this;
     }
 
@@ -93,21 +124,39 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> examples(String... examples) {
-        for (String example : examples) {
-            this.exampleLines.add(example);
-        }
+        this.exampleLines.addAll(Arrays.asList(examples));
         return this;
     }
 
-    /**
-     * Specifies that the event should implement the given interface.
-     *
-     * @param interfaceClass The interface to implement
-     * @return This builder
-     */
-    public EventBuilder<T> implement(Class<?> interfaceClass) {
-        this.interfaces.add(interfaceClass);
+    public <I, R, P> EventBuilder<T> implement(Class<I> interfaceClass, Class<R> returnTypeClass, @Nullable Class<P> parameterTypeClass,
+                                               String methodName, BiFunction<P, T, R> function) {
+        interfaces.add(new InterfaceRegistration<>(interfaceClass, returnTypeClass, parameterTypeClass, methodName, function));
         return this;
+    }
+
+    public EventBuilder<T> implementModal(BiFunction<T, Modal, ModalCallbackAction> modalMapper) {
+        return implement(ModalEvent.class, ModalCallbackAction.class, Modal.class, "replyModal",
+                (modal, event) -> modalMapper.apply(event, modal));
+    }
+
+    public EventBuilder<T> implementInteraction(Function<T, GenericInteractionCreateEvent> interactionMapper) {
+        return implement(ModalEvent.class, GenericInteractionCreateEvent.class, null, "getInteractionEvent",
+                (none, event) -> interactionMapper.apply(event));
+    }
+
+    public EventBuilder<T> implementMessage(Function<T, MessageChannel> messageMapper) {
+        return implement(MessageEvent.class, MessageChannel.class, null, "getMessageChannel",
+                (none, event) -> messageMapper.apply(event));
+    }
+
+    public EventBuilder<T> implementLog(Function<T, User> authorMapper) {
+        return implement(LogEvent.class, User.class, null, "getActionAuthor",
+                (none, event) -> authorMapper.apply(event));
+    }
+
+    public EventBuilder<T> implementComponentInteraction(Function<T, ComponentInteraction> interactionMapper) {
+        return implement(ComponentInteractionEvent.class, ComponentInteraction.class, null, "getInteractionEvent",
+                (none, event) -> interactionMapper.apply(event));
     }
 
     /**
@@ -221,7 +270,7 @@ public class EventBuilder<T extends Event> {
         return exampleLines.toArray(new String[0]);
     }
 
-    List<Class<?>> getInterfaces() {
+    List<InterfaceRegistration<T, ?, ?, ?>> getInterfaces() {
         return interfaces;
     }
 
