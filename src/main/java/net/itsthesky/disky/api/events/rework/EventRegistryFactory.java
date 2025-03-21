@@ -31,6 +31,7 @@ import net.bytebuddy.implementation.bind.annotation.This;
 import net.dv8tion.jda.api.events.Event;
 import net.itsthesky.disky.api.events.DiSkyEvent;
 import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import net.itsthesky.disky.api.skript.reflects.ReflectEventExpressionFactory;
 import net.itsthesky.disky.core.SkriptUtils;
 
 import java.nio.channels.Channel;
@@ -116,9 +117,33 @@ public class EventRegistryFactory {
                         )));
             }
 
-            Class<?> bukkitEventClass = simpleEventClassBuilder.make()
+            Class<? extends org.bukkit.event.Event> bukkitEventClass = (Class<org.bukkit.event.Event>) simpleEventClassBuilder.make()
                     .load(diSkyEventClass.getClassLoader())
                     .getLoaded();
+
+            for (final var singleExpr : builder.getSingleExpressionRegistrations()) {
+                final Class exprClass = singleExpr.getExpressionClass();
+                final Function mapper = singleExpr.getExpressionMapper();
+
+                ReflectEventExpressionFactory.registerSingleEventExpression(
+                        singleExpr.getPattern(),
+                        (Class) bukkitEventClass,
+                        exprClass,
+                        mapper
+                );
+            }
+
+            for (final var multiExpr : builder.getListExpressionRegistrations()) {
+                final Class exprClass = multiExpr.getExpressionClass();
+                final Function mapper = multiExpr.getExpressionMapper();
+
+                ReflectEventExpressionFactory.registerListEventExpression(
+                        multiExpr.getPattern(),
+                        (Class) bukkitEventClass,
+                        exprClass,
+                        mapper
+                );
+            }
 
             DiSkyEvent.registerExternalEventClass((Class) diSkyEventClass, (Class) bukkitEventClass);
 

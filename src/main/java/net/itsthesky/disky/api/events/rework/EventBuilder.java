@@ -61,6 +61,8 @@ public class EventBuilder<T extends Event> {
     private final List<String> descriptionLines = new ArrayList<>();
     private final List<String> exampleLines = new ArrayList<>();
     private final List<EventValueRegistration<T, ?>> valueRegistrations = new ArrayList<>();
+    private final List<EventSingleExpressionRegistration<T, ?>> singleExpressionRegistrations = new ArrayList<>();
+    private final List<EventListExpressionRegistration<T, ?>> listExpressionRegistrations = new ArrayList<>();
     private final List<RestValueRegistration<T, ?, ?>> restValueRegistrations = new ArrayList<>();
     private final List<InterfaceRegistration<T, ?, ?, ?>> interfaces = new ArrayList<>();
     private Function<T, Guild> authorMapper;
@@ -285,6 +287,36 @@ public class EventBuilder<T extends Event> {
     }
 
     /**
+     * Registers an expression that can be used within that event only.
+     * This is useful for creating custom expressions that are specific to the event.
+     *
+     * @param <E> The type of the expression
+     * @param pattern The patterns used in the expression
+     * @param expressionClass The class of the expression
+     * @param mapper A function to extract the expression from the JDA event
+     * @return This builder
+     */
+    public <E> EventBuilder<T> singleExpression(String pattern, Class<E> expressionClass, Function<T, E> mapper) {
+        singleExpressionRegistrations.add(new EventSingleExpressionRegistration<>(pattern, expressionClass, mapper));
+        return this;
+    }
+
+    /**
+     * Registers an expression that can be used within that event only.
+     * This is useful for creating custom expressions that are specific to the event.
+     *
+     * @param <E> The type of the expression
+     * @param pattern The patterns used in the expression
+     * @param expressionClass The class of the expression
+     * @param mapper A function to extract the expression from the JDA event
+     * @return This builder
+     */
+    public <E> EventBuilder<T> listExpression(String pattern, Class<E> expressionClass, Function<T, E[]> mapper) {
+        listExpressionRegistrations.add(new EventListExpressionRegistration<>(pattern, expressionClass, mapper));
+        return this;
+    }
+
+    /**
      * Registers the author value for this event.
      *
      * @param mapper A function to extract the guild from the JDA event
@@ -375,5 +407,13 @@ public class EventBuilder<T extends Event> {
 
     Predicate<GuildAuditLogEntryCreateEvent> getLogChecker() {
         return logChecker;
+    }
+
+    List<EventSingleExpressionRegistration<T, ?>> getSingleExpressionRegistrations() {
+        return singleExpressionRegistrations;
+    }
+
+    List<EventListExpressionRegistration<T, ?>> getListExpressionRegistrations() {
+        return listExpressionRegistrations;
     }
 }
