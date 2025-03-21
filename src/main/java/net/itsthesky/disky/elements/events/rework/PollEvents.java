@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.poll.MessagePollVoteAddEvent;
 import net.dv8tion.jda.api.events.message.poll.MessagePollVoteRemoveEvent;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
@@ -43,13 +44,8 @@ public class PollEvents {
                 .restValue("member", MessagePollVoteAddEvent::retrieveMember)
                 .restValue("user", MessagePollVoteAddEvent::retrieveUser)
 
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromGuild() ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromGuild() ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromGuild() ? event.getChannel().asThreadChannel() : null)
+                .channelValues(GenericMessageEvent::getChannel)
                 .value(Guild.class, event -> event.isFromGuild() ? event.getGuild() : null)
-                .value(MessageChannel.class, MessagePollVoteAddEvent::getChannel)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
                 .value(Number.class, MessagePollVoteAddEvent::getMessageIdLong)
 
                 .author(event -> event.isFromGuild() ? event.getGuild() : null)
@@ -67,13 +63,7 @@ public class PollEvents {
                 .restValue("member", MessagePollVoteRemoveEvent::retrieveMember)
                 .restValue("user", MessagePollVoteRemoveEvent::retrieveUser)
 
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromGuild() ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromGuild() ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromGuild() ? event.getChannel().asThreadChannel() : null)
-                .value(Guild.class, event -> event.isFromGuild() ? event.getGuild() : null)
-                .value(MessageChannel.class, MessagePollVoteRemoveEvent::getChannel)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
+                .channelValues(GenericMessageEvent::getChannel)
                 .value(Number.class, MessagePollVoteRemoveEvent::getMessageIdLong)
 
                 .author(event -> event.isFromGuild() ? event.getGuild() : null)

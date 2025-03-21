@@ -38,12 +38,7 @@ public class MessageEvents {
                 .value(Guild.class, MessageReceivedEvent::getGuild)
                 .value(Member.class, MessageReceivedEvent::getMember)
                 .value(User.class, MessageReceivedEvent::getAuthor)
-                .value(MessageChannel.class, MessageReceivedEvent::getChannel)
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromType(ChannelType.TEXT) ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromType(ChannelType.NEWS) ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromType(ChannelType.GUILD_PUBLIC_THREAD) || event.isFromType(ChannelType.GUILD_PRIVATE_THREAD) ? event.getChannel().asThreadChannel() : null)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
+                .channelValues(GenericMessageEvent::getChannel)
                 .register();
 
         EventRegistryFactory.builder(MessageDeleteEvent.class)
@@ -54,7 +49,6 @@ public class MessageEvents {
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
                 .implementMessage(GenericMessageEvent::getChannel)
                 .value(Guild.class, event -> event.isFromGuild() ? event.getGuild() : null)
-                .value(MessageChannel.class, MessageDeleteEvent::getChannel)
                 .value(String.class, event -> MessageManager.getManager(event.getJDA()).getDeletedMessageContent(event.getMessageIdLong()))
                 .value(Message.class, event -> {
                     DiSky.debug("Getting message from cache ["+ event.getJDA().getSelfUser().getId() +"]: " + event.getMessageIdLong());
@@ -62,11 +56,7 @@ public class MessageEvents {
                     DiSky.debug(manager.getDeletedMessage(event.getMessageIdLong()) == null ? "Message is null" : ("Message is not null: " + manager.getDeletedMessage(event.getMessageIdLong()).getContentRaw()));
                     return manager.getDeletedMessage(event.getMessageIdLong());
                 })
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromGuild() ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromGuild() ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromGuild() ? event.getChannel().asThreadChannel() : null)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
+                .channelValues(GenericMessageEvent::getChannel)
                 .value(Number.class, MessageDeleteEvent::getMessageIdLong)
                 .author(event -> event.isFromGuild() ? event.getGuild() : null)
                 .register();
@@ -79,14 +69,9 @@ public class MessageEvents {
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
                 .implementMessage(GenericMessageEvent::getChannel)
                 .value(Guild.class, event -> event.isFromGuild() ? event.getGuild() : null)
-                .value(MessageChannel.class, MessageUpdateEvent::getChannel)
                 .value(Message.class, MessageUpdateEvent::getMessage)
                 .value(String.class, event -> MessageManager.getManager(event.getJDA()).getEditedMessageOldContent(event.getMessageIdLong()))
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromGuild() ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromGuild() ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromGuild() ? event.getChannel().asThreadChannel() : null)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
+                .channelValues(GenericMessageEvent::getChannel)
                 .register();
     }
 }

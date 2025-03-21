@@ -17,8 +17,9 @@ public class ThreadEvents {
                 .description("Fired when a member joins a tread, either by joining itself or by a moderator can be used to get the thread, the guild and the member.")
                 .example("on thread join:")
                 .implementMessage(GenericThreadEvent::getThread)
+
+                .channelValues(ThreadMemberJoinEvent::getThread)
                 .value(Member.class, ThreadMemberJoinEvent::getMember)
-                .value(ThreadChannel.class, ThreadMemberJoinEvent::getThread)
                 .value(Guild.class, ThreadMemberJoinEvent::getGuild)
                 .register();
 
@@ -28,8 +29,9 @@ public class ThreadEvents {
                 .description("Fired when a member leaves a thread, either by leaving itself or by a moderator can be used to get the thread, the guild and the member.")
                 .example("on thread leave:")
                 .implementMessage(GenericThreadEvent::getThread)
+
+                .channelValues(ThreadMemberLeaveEvent::getThread)
                 .value(Member.class, ThreadMemberLeaveEvent::getMember)
-                .value(ThreadChannel.class, ThreadMemberLeaveEvent::getThread)
                 .value(Guild.class, ThreadMemberLeaveEvent::getGuild)
                 .register();
     }

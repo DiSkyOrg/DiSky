@@ -20,6 +20,11 @@ package net.itsthesky.disky.api.events.rework;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.*;
+import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
@@ -168,6 +173,37 @@ public class EventBuilder<T extends Event> {
      */
     public <V> EventBuilder<T> value(Class<V> valueClass, Function<T, V> mapper) {
         return value(valueClass, mapper, 0);
+    }
+
+    /**
+     * Registers all channel-related values to be accessed in scripts.
+     * For given channel mapper, it will register the following:
+     * - Channel
+     * - MessageChannel / AudioChannel
+     * - VoiceChannel / StageChannel
+     * - PrivateChannel / GuildChannel
+     * - TextChannel / NewsChannel / ThreadChannel / ForumChannel
+     * @param channelMapper A function to extract the channel from the JDA event
+     * @return This builder
+     */
+    public EventBuilder<T> channelValues(Function<T, Channel> channelMapper) {
+        value(Channel.class, channelMapper);
+
+        value(MessageChannel.class, channelMapper.andThen(channel -> channel.getType().isMessage() ? (MessageChannel) channel : null));
+        value(AudioChannel.class, channelMapper.andThen(channel -> channel.getType().isAudio() ? (AudioChannel) channel : null));
+
+        value(VoiceChannel.class, channelMapper.andThen(channel -> channel.getType().isGuild() && channel.getType().equals(ChannelType.VOICE) ? (VoiceChannel) channel : null));
+        value(StageChannel.class, channelMapper.andThen(channel -> channel.getType().isGuild() && channel.getType().equals(ChannelType.STAGE) ? (StageChannel) channel : null));
+
+        value(PrivateChannel.class, channelMapper.andThen(channel -> !channel.getType().isGuild() ? (PrivateChannel) channel : null));
+        value(GuildChannel.class, channelMapper.andThen(channel -> channel.getType().isGuild() ? (GuildChannel) channel : null));
+
+        value(TextChannel.class, channelMapper.andThen(channel -> channel.getType().isGuild() && channel.getType().equals(ChannelType.TEXT) ? (TextChannel) channel : null));
+        value(NewsChannel.class, channelMapper.andThen(channel -> channel.getType().isGuild() && channel.getType().equals(ChannelType.NEWS) ? (NewsChannel) channel : null));
+        value(ThreadChannel.class, channelMapper.andThen(channel -> channel.getType().isGuild() && channel.getType().isThread() ? (ThreadChannel) channel : null));
+        value(ForumChannel.class, channelMapper.andThen(channel -> channel.getType().isGuild() && channel.getType().equals(ChannelType.FORUM) ? (ForumChannel) channel : null));
+
+        return this;
     }
 
     /**

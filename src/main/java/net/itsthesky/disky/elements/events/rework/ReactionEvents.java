@@ -28,18 +28,15 @@ public class ReactionEvents {
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
                 .implementMessage(GenericMessageEvent::getChannel)
                 .restValue("message", MessageReactionAddEvent::retrieveMessage)
+
+                .channelValues(GenericMessageEvent::getChannel)
                 .value(Guild.class, MessageReactionAddEvent::getGuild)
                 .value(Member.class, MessageReactionAddEvent::getMember)
                 .value(User.class, MessageReactionAddEvent::getUser)
-                .value(MessageChannel.class, MessageReactionAddEvent::getChannel)
                 .value(Emote.class, event -> Emote.fromUnion(event.getEmoji()))
                 .value(MessageReaction.class, MessageReactionAddEvent::getReaction)
                 .value(long.class, MessageReactionAddEvent::getMessageAuthorIdLong)
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromGuild() ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromGuild() ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromGuild() ? event.getChannel().asThreadChannel() : null)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
+
                 .register();
 
         EventRegistryFactory.builder(MessageReactionRemoveEvent.class)
@@ -49,16 +46,13 @@ public class ReactionEvents {
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
                 .implementMessage(GenericMessageEvent::getChannel)
                 .restValue("message", MessageReactionRemoveEvent::retrieveMessage)
+
+                .channelValues(GenericMessageEvent::getChannel)
                 .value(Guild.class, MessageReactionRemoveEvent::getGuild)
                 .value(Member.class, MessageReactionRemoveEvent::getMember)
                 .value(User.class, MessageReactionRemoveEvent::getUser)
-                .value(MessageChannel.class, MessageReactionRemoveEvent::getChannel)
                 .value(Emote.class, event -> Emote.fromUnion(event.getEmoji()))
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromGuild() ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromGuild() ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromGuild() ? event.getChannel().asThreadChannel() : null)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
+
                 .register();
 
         EventRegistryFactory.builder(MessageReactionRemoveAllEvent.class)
@@ -69,12 +63,7 @@ public class ReactionEvents {
                 .implementMessage(GenericMessageEvent::getChannel)
                 .restValue("message", event -> event.getChannel().retrieveMessageById(event.getMessageId()))
                 .value(Guild.class, MessageReactionRemoveAllEvent::getGuild)
-                .value(MessageChannel.class, MessageReactionRemoveAllEvent::getChannel)
-                .value(GuildChannel.class, event -> event.isFromGuild() ? event.getGuildChannel() : null)
-                .value(TextChannel.class, event -> event.isFromGuild() ? event.getChannel().asTextChannel() : null)
-                .value(NewsChannel.class, event -> event.isFromGuild() ? event.getChannel().asNewsChannel() : null)
-                .value(ThreadChannel.class, event -> event.isFromGuild() ? event.getChannel().asThreadChannel() : null)
-                .value(PrivateChannel.class, event -> !event.isFromGuild() ? event.getChannel().asPrivateChannel() : null)
+                .channelValues(GenericMessageEvent::getChannel)
                 .author(event -> event.isFromGuild() ? event.getGuild() : null)
                 .register();
     }

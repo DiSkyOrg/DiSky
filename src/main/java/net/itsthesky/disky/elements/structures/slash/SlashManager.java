@@ -21,7 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public final class SlashManager extends ListenerAdapter {
 
@@ -345,34 +347,64 @@ public final class SlashManager extends ListenerAdapter {
     }
 
     private void cleanupRegisteredGroups() {
-        if (true)
-            return; // TODO: Fix this method. It's so fucking hard to both handle JDA's queue system while being stuck on bukkit's single thread system
-
-        // gather all guilds, if any, to clear
         Set<String> guilds = new HashSet<>();
         registeredGroups.forEach(group -> {
             if (group.getGuildId() != null)
                 guilds.add(group.getGuildId());
         });
 
-        // delete all commands
-        try {
-            for (String guildId : guilds) {
-                var guild = bot.getInstance().getGuildById(guildId);
-                if (guild == null) {
-                    DiSky.debug("Guild " + guildId + " not found, skipping command deletion");
-                    continue;
-                }
-
-                var commands = guild.retrieveCommands().complete(true);
-                for (Command cmd : commands)
-                    guild.deleteCommandById(cmd.getId()).complete(true);
+        for (String guildId : guilds) {
+            // delete every command with a reasonable timeout (3s)
+            var guild = bot.getInstance().getGuildById(guildId);
+            if (guild == null) {
+                DiSky.debug("Guild " + guildId + " not found, skipping command deletion");
+                continue;
             }
-            var commands = bot.getInstance().retrieveCommands().complete(true);
-            for (Command cmd : commands)
-                bot.getInstance().deleteCommandById(cmd.getId()).complete(true);
-        } catch (RateLimitedException ex) {
-            DiSky.debug("Failed to delete all commands: " + ex.getMessage());
+
+            try {
+                CompletableFuture<List<Command>> futureCommands = new CompletableFuture<>();
+                guild.retrieveCommands().queue(
+                        futureCommands::complete,
+                        futureCommands::completeExceptionally
+                );
+
+                List<Command> commands = futureCommands.get(3, TimeUnit.SECONDS);
+                for (Command cmd : commands) {
+                    CompletableFuture<Void> future = new CompletableFuture<>();
+                    guild.deleteCommandById(cmd.getId()).queue(
+                            v -> future.complete(null),
+                            future::completeExceptionally
+                    );
+                    future.get(3, TimeUnit.SECONDS);
+                }
+            } catch (Exception e) {
+                DiSky.debug("Failed to delete guild commands: " + e.getMessage());
+                for (var trace : e.getStackTrace())
+                    DiSky.debug("  " + trace);
+            }
+        }
+
+        // same for global commands
+        try {
+            CompletableFuture<List<Command>> futureCommands = new CompletableFuture<>();
+            bot.getInstance().retrieveCommands().queue(
+                    futureCommands::complete,
+                    futureCommands::completeExceptionally
+            );
+
+            List<Command> commands = futureCommands.get(3, TimeUnit.SECONDS);
+            for (Command cmd : commands) {
+                CompletableFuture<Void> future = new CompletableFuture<>();
+                bot.getInstance().deleteCommandById(cmd.getId()).queue(
+                        v -> future.complete(null),
+                        future::completeExceptionally
+                );
+                future.get(3, TimeUnit.SECONDS);
+            }
+        } catch (Exception e) {
+            DiSky.debug("Failed to delete global commands: " + e.getMessage());
+            for (var trace : e.getStackTrace())
+                DiSky.debug("  " + trace);
         }
     }
 
