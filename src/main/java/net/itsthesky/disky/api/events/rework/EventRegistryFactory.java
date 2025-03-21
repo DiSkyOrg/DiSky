@@ -37,10 +37,13 @@ import java.nio.channels.Channel;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Factory class that generates DiSky event classes dynamically.
  * This reduces boilerplate code and makes event registration more centralized.
+ *
+ * @author ItsTheSky (C) 2025
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class EventRegistryFactory {
@@ -72,7 +75,7 @@ public class EventRegistryFactory {
             String bukkitEventClassName = diSkyEventClassName + "$BukkitEvent";
 
             // Create DiSkyEvent subclass
-            Class<?> diSkyEventClass = new ByteBuddy()
+            var diskyEventBuilder = new ByteBuddy()
                     .subclass(TypeDescription.Generic.Builder.parameterizedType(
                                     DiSkyEvent.class,
                                     builder.getJdaEventClass())
@@ -83,7 +86,18 @@ public class EventRegistryFactory {
                     .annotateType(AnnotationDescription.Builder.ofType(Description.class)
                             .defineArray("value", builder.getDescriptionLines()).build())
                     .annotateType(AnnotationDescription.Builder.ofType(Examples.class)
-                            .defineArray("value", builder.getExampleLines()).build())
+                            .defineArray("value", builder.getExampleLines()).build());
+
+            if (builder.getChecker() != null) {
+                diskyEventBuilder = diskyEventBuilder.defineMethod("checker", Predicate.class , 0)
+                        .intercept(MethodDelegation.to(new PredicateInterceptor(builder.getChecker())));
+            }
+            if (builder.getLogChecker() != null) {
+                diskyEventBuilder = diskyEventBuilder.defineMethod("logChecker", Predicate.class , 0)
+                        .intercept(MethodDelegation.to(new PredicateInterceptor(builder.getLogChecker())));
+            }
+
+            final var diSkyEventClass = diskyEventBuilder
                     .make()
                     .load(DiSkyEvent.class.getClassLoader())
                     .getLoaded();
@@ -196,6 +210,19 @@ public class EventRegistryFactory {
                 return function.apply(null, event.getJDAEvent());
 
             return function.apply((I) arg, event.getJDAEvent());
+        }
+    }
+
+    protected static class PredicateInterceptor {
+
+        private final Predicate predicate;
+        public PredicateInterceptor(Predicate predicate) {
+            this.predicate = predicate;
+        }
+
+        @RuntimeType
+        public Object intercept() {
+            return predicate;
         }
     }
 

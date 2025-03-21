@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.modals.Modal;
@@ -44,6 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * A fluent builder for configuring and registering DiSky events.
@@ -62,6 +64,8 @@ public class EventBuilder<T extends Event> {
     private final List<RestValueRegistration<T, ?, ?>> restValueRegistrations = new ArrayList<>();
     private final List<InterfaceRegistration<T, ?, ?, ?>> interfaces = new ArrayList<>();
     private Function<T, Guild> authorMapper;
+    private Predicate<T> checker;
+    private Predicate<GuildAuditLogEntryCreateEvent> logChecker;
 
     EventBuilder(Class<T> jdaEventClass) {
         this.jdaEventClass = jdaEventClass;
@@ -133,6 +137,20 @@ public class EventBuilder<T extends Event> {
         return this;
     }
 
+    /**
+     * Implements an interface for this event.
+     * This allows providing specific functionalities to the event through a given interface.
+     *
+     * @param <I> The type of the interface to implement
+     * @param <R> The return type of the interface method</r>
+     * @param <P> The parameter type of the interface method (can be null)
+     * @param interfaceClass The class of the interface to implement
+     * @param returnTypeClass The class of the return type
+     * @param parameterTypeClass The class of the parameter type (null if no parameter)
+     * @param methodName The name of the method to implement
+     * @param function The function that implements the interface method
+     * @return This builder instance
+     */
     public <I, R, P> EventBuilder<T> implement(Class<I> interfaceClass, Class<R> returnTypeClass, @Nullable Class<P> parameterTypeClass,
                                                String methodName, BiFunction<P, T, R> function) {
         interfaces.add(new InterfaceRegistration<>(interfaceClass, returnTypeClass, parameterTypeClass, methodName, function));
@@ -165,6 +183,28 @@ public class EventBuilder<T extends Event> {
     }
 
     /**
+     * Sets a checker for the event. It will be called before the event is executed
+     * to determine if the event should be executed or not.
+     * @param checker The checker function
+     * @return This builder
+     */
+    public EventBuilder<T> checker(Predicate<T> checker) {
+        this.checker = checker;
+        return this;
+    }
+
+    /**
+     * Sets a checker for the log event. It will be called before the event is executed
+     * to determine if the event should be executed or not.
+     * @param checker The checker function
+     * @return This builder
+     */
+    public EventBuilder<T> logChecker(Predicate<GuildAuditLogEntryCreateEvent> checker) {
+        this.logChecker = checker;
+        return this;
+    }
+
+    /**
      * Registers a value that can be accessed in scripts.
      *
      * @param valueClass The class of the value
@@ -177,14 +217,17 @@ public class EventBuilder<T extends Event> {
 
     /**
      * Registers all channel-related values to be accessed in scripts.
-     * For given channel mapper, it will register the following:
-     * - Channel
-     * - MessageChannel / AudioChannel
-     * - VoiceChannel / StageChannel
-     * - PrivateChannel / GuildChannel
-     * - TextChannel / NewsChannel / ThreadChannel / ForumChannel
-     * @param channelMapper A function to extract the channel from the JDA event
-     * @return This builder
+     * For the given channel mapper, the following registrations will be made:
+     * <ul>
+     *   <li>Channel</li>
+     *   <li>MessageChannel / AudioChannel</li>
+     *   <li>VoiceChannel / StageChannel</li>
+     *   <li>PrivateChannel / GuildChannel</li>
+     *   <li>TextChannel / NewsChannel / ThreadChannel / ForumChannel</li>
+     * </ul>
+     *
+     * @param channelMapper a function to extract the channel from the JDA event
+     * @return this builder
      */
     public EventBuilder<T> channelValues(Function<T, Channel> channelMapper) {
         value(Channel.class, channelMapper);
@@ -324,5 +367,13 @@ public class EventBuilder<T extends Event> {
 
     Class<T> getJdaEventClass() {
         return jdaEventClass;
+    }
+
+    Predicate<T> getChecker() {
+        return checker;
+    }
+
+    Predicate<GuildAuditLogEntryCreateEvent> getLogChecker() {
+        return logChecker;
     }
 }
