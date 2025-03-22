@@ -25,6 +25,7 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.StubMethod;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
@@ -81,6 +82,7 @@ public class EventRegistryFactory {
                                     DiSkyEvent.class,
                                     builder.getJdaEventClass())
                             .build())
+
                     .name(diSkyEventClassName)
                     .annotateType(AnnotationDescription.Builder.ofType(Name.class)
                             .define("value", builder.getName()).build())

@@ -20,6 +20,7 @@ package net.itsthesky.disky.api.events.rework;
 
 import net.dv8tion.jda.api.events.Event;
 import net.itsthesky.disky.api.events.DiSkyEvent;
+import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 
 /**
  * Represents an event that has been built & registered as a Skript event.
@@ -45,13 +46,17 @@ public class BuiltEvent<T extends Event> {
         return diskyEventClass;
     }
 
-    public Class<?> getBukkitEventClass() {
+    public Class<? extends org.bukkit.event.Event> getBukkitEventClass() {
         return bukkitEventClass;
     }
 
-    public org.bukkit.event.Event createBukkitInstance(Object... args) {
+    public org.bukkit.event.Event createBukkitInstance(Event jdaEvent) {
         try {
-            return (org.bukkit.event.Event) bukkitEventClass.getConstructor(args.getClass()).newInstance(args);
+            final var event = bukkitEventClass.getConstructor().newInstance();
+            final var method = SimpleDiSkyEvent.class.getDeclaredMethod("setJDAEvent", Event.class);
+
+            method.invoke(event, jdaEvent);
+            return event;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create Bukkit event instance", e);
         }

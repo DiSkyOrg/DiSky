@@ -1,5 +1,6 @@
 package net.itsthesky.disky.api.events;
 
+import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.util.HashMap;

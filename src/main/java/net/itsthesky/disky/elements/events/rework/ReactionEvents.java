@@ -15,13 +15,16 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveAllEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.itsthesky.disky.api.emojis.Emote;
+import net.itsthesky.disky.api.events.rework.BuiltEvent;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.api.events.specific.MessageEvent;
 
 public class ReactionEvents {
 
+    public static final BuiltEvent<?> REACTION_ADD;
+
     static {
-        EventRegistryFactory.builder(MessageReactionAddEvent.class)
+        REACTION_ADD = EventRegistryFactory.builder(MessageReactionAddEvent.class)
                 .name("Reaction Add")
                 .patterns("(reaction|emote)[s] add[ed]")
                 .description("Fired when a message, that can be seen by the bot, receive a reaction.",
