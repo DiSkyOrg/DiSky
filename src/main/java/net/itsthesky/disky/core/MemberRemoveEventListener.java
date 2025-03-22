@@ -1,11 +1,11 @@
 package net.itsthesky.disky.core;
 
-import net.itsthesky.disky.elements.events.member.MemberBanEvent;
-import net.itsthesky.disky.elements.events.member.MemberKickEvent;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.itsthesky.disky.elements.events.members.MemberBanEvent;
+import net.itsthesky.disky.elements.events.members.MemberKickEvent;
 
 import java.util.WeakHashMap;
 

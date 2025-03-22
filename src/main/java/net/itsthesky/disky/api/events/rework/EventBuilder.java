@@ -18,6 +18,7 @@ package net.itsthesky.disky.api.events.rework;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import ch.njol.skript.registrations.Classes;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -33,6 +34,7 @@ import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
+import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
 import net.itsthesky.disky.api.events.specific.LogEvent;
 import net.itsthesky.disky.api.events.specific.MessageEvent;
@@ -55,6 +57,8 @@ import java.util.function.Predicate;
  * @author ItsTheSky
  */
 public class EventBuilder<T extends Event> {
+    public static final List<EventBuilder<?>> REGISTERED_EVENTS = new ArrayList<>();
+
     private final Class<T> jdaEventClass;
     private String name;
     private String[] patterns;
@@ -102,7 +106,7 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> description(String line) {
-        this.descriptionLines.add(line);
+        this.descriptionLines.add(line.replace("\t", "    "));
         return this;
     }
 
@@ -113,7 +117,8 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> description(String... lines) {
-        Collections.addAll(this.descriptionLines, lines);
+        for (String line : lines)
+            this.descriptionLines.add(line.replace("\t", "    "));
         return this;
     }
 
@@ -301,6 +306,13 @@ public class EventBuilder<T extends Event> {
         return this;
     }
 
+    public <E> EventBuilder<T> customTimedExpressions(String baseProperty, Class<E> expressionClass,
+                                                      Function<T, E> currentMapper, Function<T, E> pastMapper) {
+        singleExpression("[(new|current)] " + baseProperty, expressionClass, currentMapper);
+        singleExpression("(old|past|previous) " + baseProperty, expressionClass, pastMapper);
+        return this;
+    }
+
     /**
      * Registers an expression that can be used within that event only.
      * This is useful for creating custom expressions that are specific to the event.
@@ -359,8 +371,62 @@ public class EventBuilder<T extends Event> {
     /**
      * Registers the event with DiSky.
      */
-    public void register() {
-        EventRegistryFactory.registerEvent(this);
+    public BuiltEvent<T> register() {
+        if (name == null || patterns == null)
+            throw new IllegalStateException("Event name and patterns must be set before registering.");
+        REGISTERED_EVENTS.add(this);
+
+        return EventRegistryFactory.registerEvent(this);
+    }
+
+    public String createDocumentation() {
+        StringBuilder documentation = new StringBuilder();
+
+        documentation.append("## ").append(name).append("\n\n");
+        documentation.append("[[[ macros.required_version('").append(DiSky.getVersion()).append("') ]]]\n");
+        documentation.append("[[[ macros.is_cancellable('No') ]]]\n\n");
+        documentation.append(descriptionLines.stream().reduce((a, b) -> a + "\n" + b).orElse("")).append("\n\n");
+        documentation.append("=== \"Examples\"\n");
+        documentation.append("    ```applescript\n");
+        documentation.append(exampleLines.stream().map(line -> "    " + line).reduce((a, b) -> a + "\n" + b).orElse("")).append("\n");
+        documentation.append("    ```\n\n");
+        documentation.append("=== \"Patterns\"\n");
+        documentation.append("    ```applescript\n");
+        documentation.append(Arrays.stream(patterns).map(line -> "    " + line).reduce((a, b) -> a + "\n" + b).orElse("")).append("\n");
+        documentation.append("    ```\n\n");
+        documentation.append("=== \"Event Values\"\n");
+        for (EventValueRegistration<T, ?> registration : valueRegistrations) {
+            final var clazz = registration.getValueClass();
+            final var codeName = Classes.getExactClassName(clazz);
+            final var prefix = registration.getTime() == 0 ? "" : registration.getTime() == -1 ? "past " : "future ";
+
+            documentation.append("    * [`").append(prefix).append("event-").append(codeName).append("`](../docs/types.md#").append(codeName).append(")").append("\n");
+        }
+        for (EventSingleExpressionRegistration<T, ?> registration : singleExpressionRegistrations) {
+            final var clazz = registration.getExpressionClass();
+            final var codeName = Classes.getExactClassName(clazz);
+
+            documentation.append("    * `").append(registration.getPattern()).append("` - Returns a `").append(codeName).append("`.").append("\n");
+        }
+        for (EventListExpressionRegistration<T, ?> registration : listExpressionRegistrations) {
+            final var clazz = registration.getExpressionClass();
+            final var codeName = Classes.getExactClassName(clazz);
+
+            documentation.append("    * `").append(registration.getPattern()).append("` - Returns a list of `").append(codeName).append("`.").append("\n");
+        }
+
+        if (!restValueRegistrations.isEmpty()) {
+            documentation.append("\n    === \"REST/Retrieve Event Values\"\n\n");
+            documentation.append("    !!! info \"Check the [retrieve values docs](#information-retrieve-values)!\"\n\n");
+            for (RestValueRegistration<T, ?, ?> registration : restValueRegistrations) {
+                final var codeName = registration.getCodeName();
+
+                documentation.append("    * `").append(codeName).append("`\n");
+            }
+        }
+
+        documentation.append("\n\n");
+        return documentation.toString();
     }
 
     // Getters for internal use

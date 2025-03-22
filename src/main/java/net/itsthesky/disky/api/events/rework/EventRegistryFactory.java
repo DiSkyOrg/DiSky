@@ -67,7 +67,7 @@ public class EventRegistryFactory {
      * @param builder The event builder with configuration
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    static <T extends Event> void registerEvent(EventBuilder<T> builder) {
+    static <T extends Event> BuiltEvent<T> registerEvent(EventBuilder<T> builder) {
         try {
             // Generate unique class names
             String baseClassName = "net.itsthesky.disky.elements.events.generated.Generated" +
@@ -117,7 +117,7 @@ public class EventRegistryFactory {
                         )));
             }
 
-            Class<? extends org.bukkit.event.Event> bukkitEventClass = (Class<org.bukkit.event.Event>) simpleEventClassBuilder.make()
+            Class<? extends org.bukkit.event.Event> bukkitEventClass = simpleEventClassBuilder.make()
                     .load(diSkyEventClass.getClassLoader())
                     .getLoaded();
 
@@ -214,6 +214,7 @@ public class EventRegistryFactory {
                 );
             }
 
+            return new BuiltEvent<>(builder.getJdaEventClass(), (Class) diSkyEventClass, bukkitEventClass);
         } catch (Exception e) {
             throw new RuntimeException("Failed to register event: " + builder.getName(), e);
         }

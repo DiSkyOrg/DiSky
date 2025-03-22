@@ -215,9 +215,8 @@ public class ChannelEvents {
                 .patterns("[discord] channel archived (change|update)")
                 .description("Fired when a thread channel's archived status is changed.")
                 .example("on channel archived change:")
-                .value(Boolean.class, ChannelUpdateArchivedEvent::getOldValue, -1)
-                .value(Boolean.class, ChannelUpdateArchivedEvent::getNewValue, 0)
-                .value(Boolean.class, ChannelUpdateArchivedEvent::getNewValue, 1)
+                .customTimedExpressions("[channel] archive[d] state", Boolean.class,
+                        GenericChannelUpdateEvent::getNewValue, GenericChannelUpdateEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateArchivedEvent::getGuild)
                 .channelValues(ChannelUpdateArchivedEvent::getChannel)
                 .author(ChannelUpdateArchivedEvent::getGuild)
@@ -318,7 +317,7 @@ public class ChannelEvents {
                                 .map(ChannelFlag::name)
                                 .map(String::toLowerCase)
                                 .toArray(String[]::new))
-                .listExpression("(old|previous) channel flags", String.class,
+                .listExpression("(old|previous|past) channel flags", String.class,
                         evt -> evt.getOldValue().stream()
                                 .map(ChannelFlag::name)
                                 .map(String::toLowerCase)
