@@ -1,33 +1,16 @@
 package net.itsthesky.disky.elements.events.rework;
 
 import ch.njol.skript.util.Date;
-import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogKey;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageType;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateAvatarEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdatePendingEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateTimeOutEvent;
+import net.dv8tion.jda.api.events.guild.member.update.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceSelfDeafenEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceSelfMuteEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -66,10 +49,9 @@ public class MemberEvents {
                 .name("Role Add Event")
                 .patterns("[member] role add[ed]")
                 .description("Fired when a member receives new roles. This is a log action, so event-author returns who made the action and event-roles returns a list of added roles.")
-                .example("on role add:\n\tbroadcast \"%event-author% added roles %event-roles% to %event-member%\"")
-                .customTimedListExpressions("[added] roles", Role.class,
-                        evt -> evt.getRoles().toArray(Role[]::new),
-                        evt -> new Role[0])
+                .example("on role add:\n\tbroadcast \"%event-author% added roles %added roles% to %event-member%\"")
+                .listExpression("added roles", Role.class,
+                        evt -> evt.getRoles().toArray(Role[]::new))
                 .value(Guild.class, GuildMemberRoleAddEvent::getGuild)
                 .value(Member.class, GuildMemberRoleAddEvent::getMember)
                 .author(GuildMemberRoleAddEvent::getGuild)
@@ -80,10 +62,9 @@ public class MemberEvents {
                 .name("Role Remove Event")
                 .patterns("[member] role remove[d]")
                 .description("Fired when roles are removed from a member. This is a log action, so event-author returns who made the action and event-roles returns a list of removed roles.")
-                .example("on role remove:\n\tbroadcast \"%event-author% removed roles %event-roles% from %event-member%\"")
-                .customTimedListExpressions("[removed] roles", Role.class,
-                        evt -> evt.getRoles().toArray(Role[]::new),
-                        evt -> new Role[0])
+                .example("on role remove:\n\tbroadcast \"%event-author% removed roles %removed roles% from %event-member%\"")
+                .listExpression("removed roles", Role.class,
+                        evt -> evt.getRoles().toArray(Role[]::new))
                 .value(Guild.class, GuildMemberRoleRemoveEvent::getGuild)
                 .value(Member.class, GuildMemberRoleRemoveEvent::getMember)
                 .author(GuildMemberRoleRemoveEvent::getGuild)
