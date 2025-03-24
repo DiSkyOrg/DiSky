@@ -313,6 +313,13 @@ public class EventBuilder<T extends Event> {
         return this;
     }
 
+    public <E> EventBuilder<T> customTimedListExpressions(String baseProperty, Class<E> expressionClass,
+                                                      Function<T, E[]> currentMapper, Function<T, E[]> pastMapper) {
+        listExpression("[(new|current)] " + baseProperty, expressionClass, currentMapper);
+        listExpression("(old|past|previous) " + baseProperty, expressionClass, pastMapper);
+        return this;
+    }
+
     /**
      * Registers an expression that can be used within that event only.
      * This is useful for creating custom expressions that are specific to the event.
