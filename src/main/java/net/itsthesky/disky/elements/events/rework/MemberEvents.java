@@ -38,115 +38,128 @@ import net.itsthesky.disky.core.SkriptUtils;
 
 public class MemberEvents {
 
-    static{
+    static {
         // Member Join Event
         EventRegistryFactory.builder(GuildMemberJoinEvent.class)
                 .name("Member Join Event")
                 .patterns("member join[ed] [guild]")
                 .description("Fired when a member joins a guild.")
-                .example("on member join:")
+                .example("on member join:\n\tbroadcast \"Welcome %event-member% to %event-guild%!\"")
                 .value(Guild.class, GuildMemberJoinEvent::getGuild)
                 .value(Member.class, GuildMemberJoinEvent::getMember)
+                .author(GuildMemberJoinEvent::getGuild)
                 .register();
 
         // Member Remove Event
         EventRegistryFactory.builder(GuildMemberRemoveEvent.class)
                 .name("Member Leave Event")
                 .patterns("member (leave|left) [guild]")
-                .description("Fired when a member is removed from a guild either by leaving or being punished. Use the ban/kick event instead to check the exact reason")
-                .example("on member leave:")
+                .description("Fired when a member is removed from a guild either by leaving or being punished. Use the ban/kick event instead to check the exact reason.")
+                .example("on member leave:\n\tbroadcast \"%event-member% has left %event-guild%\"")
                 .value(Guild.class, GuildMemberRemoveEvent::getGuild)
                 .value(Member.class, GuildMemberRemoveEvent::getMember)
+                .author(GuildMemberRemoveEvent::getGuild)
                 .register();
 
         // Member Role Add Event
         EventRegistryFactory.builder(GuildMemberRoleAddEvent.class)
                 .name("Role Add Event")
                 .patterns("[member] role add[ed]")
-                .description("Fired when a member adds roles to another member, it's a log action so event-author returns who made the action event-roles returns a list of added roles")
-                .example("on role add:")
+                .description("Fired when a member receives new roles. This is a log action, so event-author returns who made the action and event-roles returns a list of added roles.")
+                .example("on role add:\n\tbroadcast \"%event-author% added roles %event-roles% to %event-member%\"")
+                .customTimedListExpressions("[added] roles", Role.class,
+                        evt -> evt.getRoles().toArray(Role[]::new),
+                        evt -> new Role[0])
                 .value(Guild.class, GuildMemberRoleAddEvent::getGuild)
                 .value(Member.class, GuildMemberRoleAddEvent::getMember)
-                .value(Role[].class, event -> event.getRoles().toArray(new Role[0]), 0)
+                .author(GuildMemberRoleAddEvent::getGuild)
                 .register();
 
         // Member Role Remove Event
         EventRegistryFactory.builder(GuildMemberRoleRemoveEvent.class)
                 .name("Role Remove Event")
                 .patterns("[member] role remove[d]")
-                .description("Fired when a member removes roles from another member, it's a log action so event-author returns who made the action event-roles returns a list of removed roles")
-                .example("on role remove:")
+                .description("Fired when roles are removed from a member. This is a log action, so event-author returns who made the action and event-roles returns a list of removed roles.")
+                .example("on role remove:\n\tbroadcast \"%event-author% removed roles %event-roles% from %event-member%\"")
+                .customTimedListExpressions("[removed] roles", Role.class,
+                        evt -> evt.getRoles().toArray(Role[]::new),
+                        evt -> new Role[0])
                 .value(Guild.class, GuildMemberRoleRemoveEvent::getGuild)
                 .value(Member.class, GuildMemberRoleRemoveEvent::getMember)
-                .value(Role[].class, event -> event.getRoles().toArray(new Role[0]), 0)
+                .author(GuildMemberRoleRemoveEvent::getGuild)
                 .register();
 
         // Member Nickname Event
         EventRegistryFactory.builder(GuildMemberUpdateNicknameEvent.class)
                 .name("Member Nickname Event")
                 .patterns("[guild] member nickname (change|update)")
-                .description("Fired when a member changes their nickname.")
-                .example("on member nickname change:")
-                .value(String.class, GuildMemberUpdateNicknameEvent::getNewValue, 0)
-                .value(String.class, GuildMemberUpdateNicknameEvent::getNewValue, 1)
-                .value(String.class, GuildMemberUpdateNicknameEvent::getOldValue, -1)
+                .description("Fired when a member changes their nickname in a guild.")
+                .example("on member nickname change:\n\tbroadcast \"%event-member% changed their nickname from '%previous nickname%' to '%current nickname%'\"")
+                .customTimedExpressions("[member] nickname", String.class,
+                        GuildMemberUpdateNicknameEvent::getNewValue,
+                        GuildMemberUpdateNicknameEvent::getOldValue)
                 .value(Guild.class, GuildMemberUpdateNicknameEvent::getGuild)
                 .value(Member.class, GuildMemberUpdateNicknameEvent::getMember)
+                .author(GuildMemberUpdateNicknameEvent::getGuild)
                 .register();
 
         // Member Avatar Event
         EventRegistryFactory.builder(GuildMemberUpdateAvatarEvent.class)
                 .name("Member Avatar Event")
                 .patterns("[guild] member avatar (change|update)")
-                .description("Fired when a member changes their avatar.")
-                .example("on member avatar change:")
-                .value(String.class, GuildMemberUpdateAvatarEvent::getNewAvatarUrl, 0)
-                .value(String.class, GuildMemberUpdateAvatarEvent::getNewAvatarUrl, 1)
-                .value(String.class, GuildMemberUpdateAvatarEvent::getOldAvatarUrl, -1)
+                .description("Fired when a member changes their server-specific avatar.")
+                .example("on member avatar change:\n\tbroadcast \"%event-member% changed their server avatar. New URL: %current avatar url%\"")
+                .customTimedExpressions("[member] avatar url", String.class,
+                        GuildMemberUpdateAvatarEvent::getNewAvatarUrl,
+                        GuildMemberUpdateAvatarEvent::getOldAvatarUrl)
                 .value(Guild.class, GuildMemberUpdateAvatarEvent::getGuild)
                 .value(Member.class, GuildMemberUpdateAvatarEvent::getMember)
+                .author(GuildMemberUpdateAvatarEvent::getGuild)
                 .register();
 
         // Member Accept Screen Event
         EventRegistryFactory.builder(GuildMemberUpdatePendingEvent.class)
                 .name("Member Accept Screen Event")
                 .patterns("[guild] member screen accept")
-                .description("Fired when a member has agreed to membership screen requirements it can be useful for adding roles since the member is not available if they haven't accepted it yet.")
-                .example("on member screen accept:")
-                .value(Boolean.class, GuildMemberUpdatePendingEvent::getNewValue, 0)
-                .value(Boolean.class, GuildMemberUpdatePendingEvent::getNewValue, 1)
-                .value(Boolean.class, GuildMemberUpdatePendingEvent::getOldValue, -1)
+                .description("Fired when a member has agreed to membership screen requirements. This can be useful for adding roles since the member is not fully available until they've accepted the screen requirements.")
+                .example("on member screen accept:\n\tbroadcast \"%event-member% has completed the membership screening in %event-guild%\"")
+                .customTimedExpressions("[member] pending state", Boolean.class,
+                        GuildMemberUpdatePendingEvent::getNewValue,
+                        GuildMemberUpdatePendingEvent::getOldValue)
                 .value(Guild.class, GuildMemberUpdatePendingEvent::getGuild)
                 .value(Member.class, GuildMemberUpdatePendingEvent::getMember)
+                .author(GuildMemberUpdatePendingEvent::getGuild)
                 .register();
 
         // Member Boost Time Update Event
         EventRegistryFactory.builder(GuildMemberUpdateBoostTimeEvent.class)
                 .name("Member Boost Time Update Event")
                 .patterns("[guild] member boost time (change|update)")
-                .description("Fired when a member's boost time updates.")
-                .example("on member boost time change:")
-                .value(Date.class, event -> SkriptUtils.convertDateTime(event.getNewValue()), 0)
-                .value(Date.class, event -> SkriptUtils.convertDateTime(event.getNewValue()), 1)
-                .value(Date.class, event -> SkriptUtils.convertDateTime(event.getOldValue()), -1)
+                .description("Fired when a member's boost time is updated, which can happen when they start or stop boosting a server.")
+                .example("on member boost time change:\n\tbroadcast \"%event-member% boost time updated from %previous boost time% to %current boost time%\"")
+                .customTimedExpressions("[member] boost time", Date.class,
+                        evt -> SkriptUtils.convertDateTime(evt.getNewValue()),
+                        evt -> SkriptUtils.convertDateTime(evt.getOldValue()))
                 .value(Guild.class, GuildMemberUpdateBoostTimeEvent::getGuild)
                 .value(Member.class, GuildMemberUpdateBoostTimeEvent::getMember)
                 .value(User.class, GuildMemberUpdateBoostTimeEvent::getUser)
+                .author(GuildMemberUpdateBoostTimeEvent::getGuild)
                 .register();
 
         // Member Boost Event
         EventRegistryFactory.builder(MessageReceivedEvent.class)
                 .name("Member Boost Event")
                 .patterns("member boost[ed]")
-                .description("Fired when a member boosts a server.")
-                .example("on member boost:")
+                .description("Fired when a member boosts a server, which is detected through a system message in the server.")
+                .example("on member boost:\n\tbroadcast \"Thank you %event-user% for boosting %event-guild%!\"")
                 .implementMessage(MessageReceivedEvent::getChannel)
                 .value(Message.class, MessageReceivedEvent::getMessage)
                 .value(Guild.class, MessageReceivedEvent::getGuild)
                 .value(User.class, MessageReceivedEvent::getAuthor)
                 .channelValues(GenericMessageEvent::getChannel)
+                .author(MessageReceivedEvent::getGuild)
                 .checker(event -> event.isFromGuild()
-                        && event.getMessage().getType().isSystem() 
+                        && event.getMessage().getType().isSystem()
                         && event.getMessage().getType().equals(MessageType.GUILD_MEMBER_BOOST))
                 .register();
 
@@ -154,14 +167,15 @@ public class MemberEvents {
         EventRegistryFactory.builder(GuildMemberUpdateTimeOutEvent.class)
                 .name("Member Timeout Event")
                 .patterns("member time[ ]out[ed]")
-                .description("Fired when a member is timed out.")
-                .example("on member timeout:")
+                .description("Fired when a member is timed out (temporarily restricted from interacting with the server).")
+                .example("on member timeout:\n\tbroadcast \"%event-member% has been timed out until %event-date%\"")
+                .customTimedExpressions("[member] timeout end", Date.class,
+                        evt -> SkriptUtils.convertDateTime(evt.getNewTimeOutEnd()),
+                        evt -> SkriptUtils.convertDateTime(evt.getOldTimeOutEnd()))
                 .value(Guild.class, GuildMemberUpdateTimeOutEvent::getGuild)
                 .value(Member.class, GuildMemberUpdateTimeOutEvent::getMember)
                 .value(User.class, GuildMemberUpdateTimeOutEvent::getUser)
-                .value(Date.class, event -> SkriptUtils.convertDateTime(event.getNewTimeOutEnd()), 0)
-                .restValue("author", event -> event.getGuild().retrieveMemberById(event.getGuild().getIdLong()))
-                .checker(event -> true)
+                .author(GuildMemberUpdateTimeOutEvent::getGuild)
                 .logChecker(event -> event.getEntry().getChangeByKey(AuditLogKey.MEMBER_TIME_OUT) != null)
                 .register();
 
@@ -169,41 +183,48 @@ public class MemberEvents {
         EventRegistryFactory.builder(GuildVoiceSelfMuteEvent.class)
                 .name("Member Self Mute Event")
                 .patterns("member [self] [un]mute[d]")
-                .description("Fired when a member mutes or unmutes themselves")
-                .example("on member mute:\n\tbroadcast event-boolean, event-member and event-guild")
-                .value(Boolean.class, GuildVoiceSelfMuteEvent::isSelfMuted)
+                .description("Fired when a member mutes or unmutes themselves in a voice channel.")
+                .example("on member mute:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% muted themselves\"\n\telse:\n\t\tbroadcast \"%event-member% unmuted themselves\"")
+                .customTimedExpressions("[member] mute[d] state", Boolean.class,
+                        GuildVoiceSelfMuteEvent::isSelfMuted,
+                        evt -> !evt.isSelfMuted())
                 .value(Guild.class, GuildVoiceSelfMuteEvent::getGuild)
                 .value(Member.class, GuildVoiceSelfMuteEvent::getMember)
+                .author(GuildVoiceSelfMuteEvent::getGuild)
                 .register();
 
         // Member Self Deafen Event
         EventRegistryFactory.builder(GuildVoiceSelfDeafenEvent.class)
                 .name("Member Self Deafen Event")
                 .patterns("member [self] [un]deafen[ed]")
-                .description("Fired when a member deafens or undeafens themselves")
-                .example("on member deafen:\n\tbroadcast event-boolean, event-member and event-guild")
-                .value(Boolean.class, GuildVoiceSelfDeafenEvent::isSelfDeafened)
+                .description("Fired when a member deafens or undeafens themselves in a voice channel.")
+                .example("on member deafen:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% deafened themselves\"\n\telse:\n\t\tbroadcast \"%event-member% undeafened themselves\"")
+                .customTimedExpressions("[member] deafen[ed] state", Boolean.class,
+                        GuildVoiceSelfDeafenEvent::isSelfDeafened,
+                        evt -> !evt.isSelfDeafened())
                 .value(Guild.class, GuildVoiceSelfDeafenEvent::getGuild)
                 .value(Member.class, GuildVoiceSelfDeafenEvent::getMember)
+                .author(GuildVoiceSelfDeafenEvent::getGuild)
                 .register();
 
         // Member Voice Join Event
         EventRegistryFactory.builder(GuildVoiceUpdateEvent.class)
                 .name("Member Voice Join Event")
                 .patterns("[member] voice [channel] join")
-                .description("Fired when a member joins a voice or a stage channel, also fires when a member moves to another channel")
-                .example("on voice channel join:")
-                .value(AudioChannel.class, GuildVoiceUpdateEvent::getChannelJoined, 1)
-                .value(AudioChannel.class, GuildVoiceUpdateEvent::getChannelJoined, 0)
-                .value(AudioChannel.class, GuildVoiceUpdateEvent::getChannelLeft, -1)
-                .value(VoiceChannel.class, event -> event.getChannelJoined() instanceof VoiceChannel ? (VoiceChannel) event.getChannelJoined() : null, 1)
-                .value(VoiceChannel.class, event -> event.getChannelJoined() instanceof VoiceChannel ? (VoiceChannel) event.getChannelJoined() : null, 0)
-                .value(VoiceChannel.class, event -> event.getChannelLeft() instanceof VoiceChannel ? (VoiceChannel) event.getChannelLeft() : null, -1)
-                .value(StageChannel.class, event -> event.getChannelJoined() instanceof StageChannel ? (StageChannel) event.getChannelJoined() : null, 1)
-                .value(StageChannel.class, event -> event.getChannelJoined() instanceof StageChannel ? (StageChannel) event.getChannelJoined() : null, 0)
-                .value(StageChannel.class, event -> event.getChannelLeft() instanceof StageChannel ? (StageChannel) event.getChannelLeft() : null, -1)
+                .description("Fired when a member joins a voice or stage channel. This event also fires when a member moves from one voice channel to another.")
+                .example("on voice channel join:\n\tbroadcast \"%event-member% joined voice channel %event-voice-channel%\"")
+                .customTimedExpressions("[joined] voice channel", AudioChannel.class,
+                        GuildVoiceUpdateEvent::getChannelJoined,
+                        GuildVoiceUpdateEvent::getChannelLeft)
+                .customTimedExpressions("[joined] voice", VoiceChannel.class,
+                        evt -> evt.getChannelJoined() instanceof VoiceChannel ? (VoiceChannel) evt.getChannelJoined() : null,
+                        evt -> evt.getChannelLeft() instanceof VoiceChannel ? (VoiceChannel) evt.getChannelLeft() : null)
+                .customTimedExpressions("[joined] stage", StageChannel.class,
+                        evt -> evt.getChannelJoined() instanceof StageChannel ? (StageChannel) evt.getChannelJoined() : null,
+                        evt -> evt.getChannelLeft() instanceof StageChannel ? (StageChannel) evt.getChannelLeft() : null)
                 .value(Guild.class, GuildVoiceUpdateEvent::getGuild)
                 .value(Member.class, GuildVoiceUpdateEvent::getMember)
+                .author(GuildVoiceUpdateEvent::getGuild)
                 .checker(event -> event.getChannelJoined() != null)
                 .register();
 
@@ -211,13 +232,20 @@ public class MemberEvents {
         EventRegistryFactory.builder(GuildVoiceUpdateEvent.class)
                 .name("Member Voice Leave Event")
                 .patterns("[member] voice [channel] leave")
-                .description("Fired when a member leaves a voice or a stage channel")
-                .example("on voice channel leave:")
-                .value(AudioChannel.class, GuildVoiceUpdateEvent::getChannelLeft)
-                .value(VoiceChannel.class, event -> event.getChannelLeft() instanceof VoiceChannel ? (VoiceChannel) event.getChannelLeft() : null)
-                .value(StageChannel.class, event -> event.getChannelLeft() instanceof StageChannel ? (StageChannel) event.getChannelLeft() : null)
+                .description("Fired when a member leaves a voice or stage channel. This includes both disconnecting completely and moving to another channel.")
+                .example("on voice channel leave:\n\tbroadcast \"%event-member% left voice channel %event-voice-channel%\"")
+                .customTimedExpressions("[left] voice channel", AudioChannel.class,
+                        GuildVoiceUpdateEvent::getChannelLeft,
+                        GuildVoiceUpdateEvent::getChannelJoined)
+                .customTimedExpressions("[left] voice", VoiceChannel.class,
+                        evt -> evt.getChannelLeft() instanceof VoiceChannel ? (VoiceChannel) evt.getChannelLeft() : null,
+                        evt -> evt.getChannelJoined() instanceof VoiceChannel ? (VoiceChannel) evt.getChannelJoined() : null)
+                .customTimedExpressions("[left] stage", StageChannel.class,
+                        evt -> evt.getChannelLeft() instanceof StageChannel ? (StageChannel) evt.getChannelLeft() : null,
+                        evt -> evt.getChannelJoined() instanceof StageChannel ? (StageChannel) evt.getChannelJoined() : null)
                 .value(Guild.class, GuildVoiceUpdateEvent::getGuild)
                 .value(Member.class, GuildVoiceUpdateEvent::getMember)
+                .author(GuildVoiceUpdateEvent::getGuild)
                 .checker(event -> event.getChannelLeft() != null)
                 .register();
     }
