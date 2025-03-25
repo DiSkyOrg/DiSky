@@ -126,7 +126,7 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> example(String example) {
-        this.exampleLines.add(example);
+        this.exampleLines.add(example.replace("\t", "    "));
         return this;
     }
 
@@ -137,7 +137,8 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> examples(String... examples) {
-        this.exampleLines.addAll(Arrays.asList(examples));
+        for (String example : examples)
+            this.exampleLines.add(example.replace("\t", "    "));
         return this;
     }
 
