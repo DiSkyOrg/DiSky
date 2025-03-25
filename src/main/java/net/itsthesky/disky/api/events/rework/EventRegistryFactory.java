@@ -35,6 +35,7 @@ import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import net.itsthesky.disky.api.skript.reflects.ReflectEventExpressionFactory;
 import net.itsthesky.disky.core.SkriptUtils;
 
+import java.lang.reflect.Modifier;
 import java.nio.channels.Channel;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
@@ -112,11 +113,20 @@ public class EventRegistryFactory {
 
             // Now add all the interfaces
             for (final var inter : interfaces) {
-                simpleEventClassBuilder = simpleEventClassBuilder.implement(inter.getInterfaceClass())
-                        .defineMethod(inter.getMethodName(), inter.getReturnTypeClass(), 0)
-                        .intercept(MethodDelegation.to(new BasicFunctionInterceptor<>(
-                                inter.getFunction()
-                        )));
+                if (inter.getParameterTypeClass() == null) {
+                    simpleEventClassBuilder = simpleEventClassBuilder.implement(inter.getInterfaceClass())
+                            .defineMethod(inter.getMethodName(), inter.getReturnTypeClass(), Modifier.PUBLIC)
+                            .intercept(MethodDelegation.to(new BasicFunctionInterceptor<>(
+                                    inter.getFunction()
+                            )));
+                } else {
+                    simpleEventClassBuilder = simpleEventClassBuilder.implement(inter.getInterfaceClass())
+                            .defineMethod(inter.getMethodName(), inter.getReturnTypeClass(), Modifier.PUBLIC)
+                            .withParameters(inter.getParameterTypeClass())
+                            .intercept(MethodDelegation.to(new BasicFunctionInterceptor<>(
+                                    inter.getFunction()
+                            )));
+                }
             }
 
             Class<? extends org.bukkit.event.Event> bukkitEventClass = simpleEventClassBuilder.make()
@@ -131,7 +141,7 @@ public class EventRegistryFactory {
                         singleExpr.getPattern(),
                         (Class) bukkitEventClass,
                         exprClass,
-                        mapper
+                        simpleEvt -> mapper.apply(((SimpleDiSkyEvent) simpleEvt).getJDAEvent())
                 );
             }
 

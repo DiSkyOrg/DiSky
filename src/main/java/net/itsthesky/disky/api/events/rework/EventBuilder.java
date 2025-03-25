@@ -35,10 +35,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.itsthesky.disky.DiSky;
-import net.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
-import net.itsthesky.disky.api.events.specific.LogEvent;
-import net.itsthesky.disky.api.events.specific.MessageEvent;
-import net.itsthesky.disky.api.events.specific.ModalEvent;
+import net.itsthesky.disky.api.events.specific.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -170,7 +167,7 @@ public class EventBuilder<T extends Event> {
     }
 
     public EventBuilder<T> implementInteraction(Function<T, GenericInteractionCreateEvent> interactionMapper) {
-        return implement(ModalEvent.class, GenericInteractionCreateEvent.class, null, "getInteractionEvent",
+        return implement(InteractionEvent.class, GenericInteractionCreateEvent.class, null, "getInteractionEvent",
                 (none, event) -> interactionMapper.apply(event));
     }
 
