@@ -54,14 +54,6 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * This class registers all dropdown and completion related events in DiSky.
- * These events handle user interactions with dropdown menus (both string and entity selections)
- * and slash command autocompletion events.
- * 
- * Dropdown interactions are a powerful way to let users select from predefined options,
- * while autocompletion provides dynamic suggestions as users type in slash commands.
- */
 public class DropdownEvents {
 
 
@@ -121,76 +113,4 @@ public class DropdownEvents {
                 .register();
     }
 
-    /**
-     * Expression for accessing slash command arguments during autocompletion
-     */
-    @Name("Slash Command Argument")
-    @Description({"Represents a slash command argument.",
-            "The name is the ID used when defining the slash command.",
-            "Specify the type, so that Skript can parse it correctly. (if it's a number, operation wil be allowed for example)",
-            "The type should be the same used when defining the argument in the command."})
-    @Examples({"# I'm doing /ban time:30 user:*user id*, so:",
-            "set {_time} to argument \"time\" as integer",
-            "set {_user} to argument \"user\" as user"})
-    public static class ArgumentValue extends SimpleGetterExpression<Object, Event> {
-
-        static {
-            Skript.registerExpression(
-                    ArgumentValue.class,
-                    Object.class,
-                    ExpressionType.COMBINED,
-                    "[the] arg[ument] [(named|with name)] %string% as %optiontype%"
-            );
-        }
-
-        private Expression<String> exprName;
-        private OptionType type;
-
-        @Override
-        @SuppressWarnings("ALL")
-        public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
-            if (!super.init(exprs, matchedPattern, isDelayed, parseResult))
-                return false;
-
-            exprName = (Expression<String>) exprs[0];
-            type = ((Expression<OptionType>) exprs[1]).getSingle(null);
-            if (type == null) {
-                Skript.error("You must provide a literal (= constant) value for the option type.");
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        protected String getValue() {
-            return "argument " + exprName.toString(null, false);
-        }
-
-        @Override
-        protected Class<Event> getEvent() {
-            return Event.class;
-        }
-
-        @Override
-        protected Object convert(Event e) {
-            final String name = EasyElement.parseSingle(exprName, e, null);
-            if (name == null)
-                return null;
-
-            CommandAutoCompleteInteractionEvent event = EventRegistryFactory.getEvent(e, CommandAutoCompleteInteractionEvent.class);
-            if (event == null)
-                return null;
-
-            final OptionMapping option = event.getOption(name);
-            if (option == null)
-                return null;
-
-            return JDAUtils.parseOptionValue(option);
-        }
-
-        @Override
-        public @NotNull Class<?> getReturnType() {
-            return JDAUtils.getOptionClass(type);
-        }
-    }
 }

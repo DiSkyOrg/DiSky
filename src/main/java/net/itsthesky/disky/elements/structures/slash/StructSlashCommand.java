@@ -16,7 +16,6 @@ import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.entries.MutexEntryData;
 import net.itsthesky.disky.api.skript.entries.SimpleKeyValueEntries;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import net.itsthesky.disky.elements.structures.slash.args.SlashCustomArgs;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
@@ -381,7 +380,7 @@ public class StructSlashCommand extends Structure {
                             getParser().getCurrentScript(),
                             "completion for argument " + argument.getName(),
                             new SimpleEvent(),
-                            SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class)
+                            SkriptUtils.loadCode(completionNode, CommandEvents.SLASH_COMPLETION_EVENT.getBukkitEventClass())
                     );
                     argument.setOnCompletionRequest(trigger);
                 }
@@ -454,7 +453,7 @@ public class StructSlashCommand extends Structure {
                     getParser().getCurrentScript(),
                     "completion for argument " + argument.getName(),
                     new SimpleEvent(),
-                    SkriptUtils.loadCode(completionNode, SlashCompletionEvent.BukkitSlashCompletionEvent.class)
+                    SkriptUtils.loadCode(completionNode, CommandEvents.SLASH_COMPLETION_EVENT.getBukkitEventClass())
             );
             argument.setOnCompletionRequest(trigger);
         }

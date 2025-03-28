@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import net.itsthesky.disky.elements.events.rework.custom.SlashCooldownEvent;
 import net.itsthesky.disky.elements.structures.slash.models.*;
@@ -310,10 +309,7 @@ public final class SlashManager extends ListenerAdapter {
 
         if (focusArg.getCustomArgument() == null) {
             command.prepareArguments(event);
-            SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
-                    new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
-            bukkitEvent.setJDAEvent(event);
-
+            final var bukkitEvent = CommandEvents.SLASH_COMPLETION_EVENT.createBukkitInstance(event);
             final var trigger = focusArg.getOnCompletionRequest();
             if (trigger == null) {
                 DiSky.debug("No completion trigger for argument " + focusedArgument);

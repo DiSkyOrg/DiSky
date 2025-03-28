@@ -96,7 +96,7 @@ public final class SkriptUtils {
             return (Expression<T>) expr;
         Class<? extends Event>[] events = ParserInstance.get().getCurrentEvents();
         for (Class<? extends Event> e : events == null ? new Class[0] : events) {
-            Converter<Event, ? extends T> getter = (Converter<Event, ? extends T>) EventValues.getEventValueGetter(e, clazz, 0);
+            Converter<Event, ? extends T> getter = (Converter<Event, ? extends T>) EventValues.getEventValueConverter(e, clazz, 0);
             if (getter != null) {
                 return new SimpleExpression<T>() {
                     @Override
