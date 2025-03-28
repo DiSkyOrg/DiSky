@@ -14,7 +14,7 @@ import net.itsthesky.disky.api.skript.entries.SimpleKeyValueEntries;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.events.bots.ReadyEvent;
 import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
-import net.itsthesky.disky.elements.events.rework.CommandsEvents;
+import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import net.itsthesky.disky.elements.structures.slash.args.SlashCustomArgs;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
@@ -608,7 +608,7 @@ public class StructSlashCommand extends Structure {
             return true;
 
         final Trigger trigger = new Trigger(getParser().getCurrentScript(), "on slash command " + parsedCommand.getName(), new ReadyEvent(),
-                SkriptUtils.loadCode(sectionNode, CommandsEvents.SLASH_COMMAND_EVENT.getBukkitEventClass()));
+                SkriptUtils.loadCode(sectionNode, CommandEvents.SLASH_COMMAND_EVENT.getBukkitEventClass()));
         parsedCommand.setTrigger(trigger);
         return true;
     }
@@ -629,8 +629,8 @@ public class StructSlashCommand extends Structure {
         }
 
         final Trigger trigger = new Trigger(getParser().getCurrentScript(), "on cooldown for " + parsedCommand.getName(),
-                CommandsEvents.SLASH_COOLDOWN_EVENT.createDiSkyEvent(),
-                SkriptUtils.loadCode(sectionNode, CommandsEvents.SLASH_COOLDOWN_EVENT.getBukkitEventClass()));
+                CommandEvents.SLASH_COOLDOWN_EVENT.createDiSkyEvent(),
+                SkriptUtils.loadCode(sectionNode, CommandEvents.SLASH_COOLDOWN_EVENT.getBukkitEventClass()));
 
         parsedCommand.setCooldown(cooldown.getAs(Timespan.TimePeriod.MILLISECOND));
         parsedCommand.setOnCooldown(trigger);

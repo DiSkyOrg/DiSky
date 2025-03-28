@@ -192,6 +192,7 @@ public class EventBuilder<T extends Event> {
     }
 
     public EventBuilder<T> implementModal(BiFunction<T, Modal, ModalCallbackAction> modalMapper) {
+        description("", "!!! info \"You can reply with a **modal** in this event.\"");
         return implement(ModalEvent.class, ModalCallbackAction.class, Modal.class, "replyModal",
                 (modal, event) -> modalMapper.apply(event, modal));
     }
@@ -420,25 +421,29 @@ public class EventBuilder<T extends Event> {
         StringBuilder documentation = new StringBuilder();
 
         documentation.append("## ").append(name).append("\n\n");
+
         documentation.append("[[[ macros.required_version('").append(DiSky.getVersion()).append("') ]]]\n");
         documentation.append("[[[ macros.is_cancellable('No') ]]]\n\n");
-        documentation.append(descriptionLines.stream().reduce((a, b) -> a + "\n" + b).orElse("")).append("\n\n");
+
+        if (!descriptionLines.isEmpty())
+            documentation.append(descriptionLines.stream().reduce((a, b) -> a + "\n" + b).orElse("")).append("\n\n");
+        else
+            documentation.append("No description provided.\n\n");
+
         documentation.append("=== \"Examples\"\n");
         documentation.append("    ```applescript\n");
-        documentation.append(exampleLines.stream().map(line -> "    " + line).reduce((a, b) -> a + "\n" + b).orElse("")).append("\n");
+        if (exampleLines.isEmpty())
+            documentation.append("    No examples provided.\n");
+        else
+            documentation.append(exampleLines.stream().map(line -> "    " + line).reduce((a, b) -> a + "\n" + b).orElse("")).append("\n");
         documentation.append("    ```\n\n");
+
         documentation.append("=== \"Patterns\"\n");
         documentation.append("    ```applescript\n");
         documentation.append(Arrays.stream(patterns).map(line -> "    " + line).reduce((a, b) -> a + "\n" + b).orElse("")).append("\n");
         documentation.append("    ```\n\n");
-        documentation.append("=== \"Event Values\"\n");
-        for (EventValueRegistration<T, ?> registration : valueRegistrations) {
-            final var clazz = registration.getValueClass();
-            final var codeName = Classes.getExactClassName(clazz);
-            final var prefix = registration.getTime() == 0 ? "" : registration.getTime() == -1 ? "past " : "future ";
 
-            documentation.append("    * [`").append(prefix).append("event-").append(codeName).append("`](../docs/types.md#").append(codeName).append(")").append("\n");
-        }
+        documentation.append("=== \"Event Values\"\n");
         for (EventSingleExpressionRegistration<T, ?> registration : singleExpressionRegistrations) {
             final var clazz = registration.getExpressionClass();
             final var codeName = Classes.getExactClassName(clazz);
@@ -451,9 +456,16 @@ public class EventBuilder<T extends Event> {
 
             documentation.append("    * `").append(registration.getPattern()).append("` - Returns a list of `").append(codeName).append("`.").append("\n");
         }
+        for (EventValueRegistration<T, ?> registration : valueRegistrations) {
+            final var clazz = registration.getValueClass();
+            final var codeName = Classes.getExactClassName(clazz);
+            final var prefix = registration.getTime() == 0 ? "" : registration.getTime() == -1 ? "past " : "future ";
+
+            documentation.append("    * [`").append(prefix).append("event-").append(codeName).append("`](../docs/types.md#").append(codeName).append(")").append("\n");
+        }
 
         if (!restValueRegistrations.isEmpty()) {
-            documentation.append("\n    === \"REST/Retrieve Event Values\"\n\n");
+            documentation.append("\n=== \"REST/Retrieve Event Values\"\n\n");
             documentation.append("    !!! info \"Check the [retrieve values docs](#information-retrieve-values)!\"\n\n");
             for (RestValueRegistration<T, ?, ?> registration : restValueRegistrations) {
                 final var codeName = registration.getCodeName();

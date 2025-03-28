@@ -13,10 +13,9 @@ import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
-import net.itsthesky.disky.elements.events.rework.CommandsEvents;
+import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import net.itsthesky.disky.elements.events.rework.custom.SlashCooldownEvent;
 import net.itsthesky.disky.elements.structures.slash.models.*;
-import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -276,7 +275,7 @@ public final class SlashManager extends ListenerAdapter {
                 if (command.getOnCooldown() != null) {
                     final var jdaEvent = new SlashCooldownEvent(event,
                             group.getCooldown(event.getUser(), commandPath));
-                    final var bukkitEvent = CommandsEvents.SLASH_COOLDOWN_EVENT.createBukkitInstance(jdaEvent);
+                    final var bukkitEvent = CommandEvents.SLASH_COOLDOWN_EVENT.createBukkitInstance(jdaEvent);
                     command.prepareArguments(event);
                     command.getOnCooldown().execute(bukkitEvent);
 
@@ -292,7 +291,7 @@ public final class SlashManager extends ListenerAdapter {
     private void executeCommand(ParsedCommand command, SlashCommandInteractionEvent event) {
         command.prepareArguments(event);
         final Trigger trigger = command.getTrigger();
-        final var bukkitEvent = CommandsEvents.SLASH_COMMAND_EVENT.createBukkitInstance(event);
+        final var bukkitEvent = CommandEvents.SLASH_COMMAND_EVENT.createBukkitInstance(event);
         trigger.execute(bukkitEvent);
     }
 

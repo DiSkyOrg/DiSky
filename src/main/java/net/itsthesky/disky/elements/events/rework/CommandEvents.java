@@ -28,8 +28,11 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.itsthesky.disky.api.events.rework.BuiltEvent;
@@ -43,10 +46,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class CommandsEvents {
+public class CommandEvents {
 
     public static final BuiltEvent<SlashCooldownEvent> SLASH_COOLDOWN_EVENT;
     public static final BuiltEvent<SlashCommandInteractionEvent> SLASH_COMMAND_EVENT;
+    public static final BuiltEvent<MessageContextInteractionEvent> MESSAGE_COMMAND_EVENT;
+    public static final BuiltEvent<UserContextInteractionEvent> USER_COMMAND_EVENT;
 
     static {
 
@@ -54,11 +59,12 @@ public class CommandsEvents {
                 .name("Slash Command")
                 .patterns("slash command [receive[d]]")
                 .description("Fired when a user execute a specific slash command.",
-                        "Use 'event-string' to get the command name. Don't forget to either reply or defer the interaction, You can only defer using the wait pattern  e.g: 'defer the interaction and wait [silently].",
+                        "Use 'used command' to get the command name. Don't forget to either reply or defer the interaction, You can only defer using the wait pattern  e.g: 'defer the interaction and wait [silently].",
                         "You can get value of arguments using 'argument \"name\" as string' for example.")
 
                 .implementModal(SlashCommandInteractionEvent::replyModal)
                 .implementInteraction(evt -> evt)
+
                 .channelValues(SlashCommandInteractionEvent::getChannel)
                 .value(String.class, SlashCommandInteractionEvent::getFullCommandName)
 
@@ -66,12 +72,17 @@ public class CommandsEvents {
                 .value(Guild.class, SlashCommandInteractionEvent::getGuild)
                 .value(Member.class, SlashCommandInteractionEvent::getMember)
 
+                .singleExpression("(execute|use)[d] [slash] command", String.class,
+                        SlashCommandInteractionEvent::getFullCommandName)
+
                 .register();
 
         SLASH_COOLDOWN_EVENT = EventRegistryFactory.builder(SlashCooldownEvent.class)
                 .noRegistration()
+
                 .implementModal(SlashCommandInteractionEvent::replyModal)
                 .implementInteraction(evt -> evt)
+
                 .channelValues(SlashCommandInteractionEvent::getChannel)
                 .value(String.class, SlashCommandInteractionEvent::getFullCommandName)
 
@@ -81,6 +92,53 @@ public class CommandsEvents {
 
                 .cancellable(SlashCooldownEvent::isCancelled,
                         SlashCooldownEvent::setCancelled)
+
+                .register();
+
+        MESSAGE_COMMAND_EVENT = EventRegistryFactory.builder(MessageContextInteractionEvent.class)
+                .name("Message Command")
+                .patterns("message command [receive[d]]")
+                .description("Fired when someone click on a message application command.",
+                        "Use `used command` to get the command name and `target message` for the targeted message. Don't forget to either reply to the interaction. Defer doesn't work here.")
+
+                .implementModal(MessageContextInteractionEvent::replyModal)
+                .implementInteraction(evt -> evt)
+
+                .channelValues(MessageContextInteractionEvent::getChannel)
+                .value(String.class, MessageContextInteractionEvent::getName)
+
+                .value(User.class, MessageContextInteractionEvent::getUser)
+                .value(Guild.class, MessageContextInteractionEvent::getGuild)
+                .value(Member.class, MessageContextInteractionEvent::getMember)
+                .value(Message.class, MessageContextInteractionEvent::getTarget)
+
+                .singleExpression("(execute|use)[d] [message] command", String.class,
+                        MessageContextInteractionEvent::getFullCommandName)
+                .singleExpression("[the] target message", Message.class,
+                        MessageContextInteractionEvent::getTarget)
+
+                .register();
+
+        USER_COMMAND_EVENT = EventRegistryFactory.builder(UserContextInteractionEvent.class)
+                .name("User Command")
+                .patterns("user command [receive[d]]")
+                .description("Fired when someone click on a user application command.",
+                        "Use `used command` to get the command name and `target user` for the targeted user. Don't forget to either reply to the interaction. Defer doesn't work here.")
+
+                .implementModal(UserContextInteractionEvent::replyModal)
+                .implementInteraction(evt -> evt)
+
+                .channelValues(UserContextInteractionEvent::getChannel)
+                .value(String.class, UserContextInteractionEvent::getName)
+
+                .value(User.class, UserContextInteractionEvent::getUser)
+                .value(Guild.class, UserContextInteractionEvent::getGuild)
+                .value(Member.class, UserContextInteractionEvent::getMember)
+
+                .singleExpression("(execute|use)[d] [user] command", String.class,
+                        UserContextInteractionEvent::getFullCommandName)
+                .singleExpression("[the] target user", User.class,
+                        UserContextInteractionEvent::getTarget)
 
                 .register();
 

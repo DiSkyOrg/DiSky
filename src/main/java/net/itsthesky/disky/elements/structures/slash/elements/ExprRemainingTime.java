@@ -4,7 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.util.Timespan;
 import net.itsthesky.disky.api.skript.SimpleGetterExpression;
-import net.itsthesky.disky.elements.events.rework.CommandsEvents;
+import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,12 +26,12 @@ public class ExprRemainingTime extends SimpleGetterExpression<Timespan, Event> {
 
     @Override
     protected Class<Event> getEvent() {
-        return (Class<Event>) CommandsEvents.SLASH_COOLDOWN_EVENT.getBukkitEventClass();
+        return (Class<Event>) CommandEvents.SLASH_COOLDOWN_EVENT.getBukkitEventClass();
     }
 
     @Override
     protected Timespan convert(Event event) {
-        final var evt = CommandsEvents.SLASH_COOLDOWN_EVENT.getJDAEvent(event);
+        final var evt = CommandEvents.SLASH_COOLDOWN_EVENT.getJDAEvent(event);
         if (evt == null)
             return null;
 
