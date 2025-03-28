@@ -290,7 +290,7 @@ public class EventRegistryFactory {
         }
     }
 
-    private static class ComplexInterceptor {
+    protected static class ComplexInterceptor {
 
         private final BiFunction<Object[], Object, Object> function;
         public ComplexInterceptor(BiFunction<Object[], Object, Object> function) {

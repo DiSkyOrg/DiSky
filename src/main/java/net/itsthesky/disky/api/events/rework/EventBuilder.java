@@ -406,14 +406,17 @@ public class EventBuilder<T extends Event> {
      * Registers the event with DiSky.
      */
     public BuiltEvent<T> register() {
-        if (name == null || patterns == null)
+        if ((name == null || patterns == null) && skriptRegistered)
             throw new IllegalStateException("Event name and patterns must be set before registering.");
         REGISTERED_EVENTS.add(this);
 
         return EventRegistryFactory.registerEvent(this);
     }
 
-    public String createDocumentation() {
+    public @Nullable String createDocumentation() {
+        if (!skriptRegistered)
+            return null;
+
         StringBuilder documentation = new StringBuilder();
 
         documentation.append("## ").append(name).append("\n\n");
@@ -466,7 +469,7 @@ public class EventBuilder<T extends Event> {
     // Getters for internal use
 
     String getName() {
-        return name;
+        return name == null ? jdaEventClass.getSimpleName() : name;
     }
 
     String[] getPatterns() {
