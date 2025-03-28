@@ -24,9 +24,14 @@ import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
+import net.itsthesky.disky.api.events.rework.BuiltEvent;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 
 public class BotEvents {
+
+    public static final BuiltEvent<ReadyEvent> READY_EVENT;
+    public static final BuiltEvent<GuildReadyEvent> GUILD_READY_EVENT;
+    public static final BuiltEvent<ShutdownEvent> SHUTDOWN_EVENT;
 
     static {
         // Bot Join Event
@@ -55,7 +60,7 @@ public class BotEvents {
 
         // Bot Shutdown Event
         // Fired when the bot is shutting down
-        EventRegistryFactory.builder(ShutdownEvent.class)
+        SHUTDOWN_EVENT = EventRegistryFactory.builder(ShutdownEvent.class)
                 .name("Bot Shutdown Event")
                 .patterns("bot (shutdown|stop)")
                 .description("Fired when a bot is shutting down or being stopped.",
@@ -67,7 +72,7 @@ public class BotEvents {
 
         // Guild Ready Event
         // Fired when a guild is fully loaded and accessible to the bot
-        EventRegistryFactory.builder(GuildReadyEvent.class)
+        GUILD_READY_EVENT = EventRegistryFactory.builder(GuildReadyEvent.class)
                 .name("Guild Ready Event")
                 .patterns("guild (ready|load[ed])")
                 .description("Fired when a guild is fully loaded and all its data is accessible.",
@@ -80,7 +85,7 @@ public class BotEvents {
 
         // Bot Ready Event
         // Fired when the bot is fully initialized and ready
-        EventRegistryFactory.builder(ReadyEvent.class)
+        READY_EVENT = EventRegistryFactory.builder(ReadyEvent.class)
                 .name("Bot Ready Event")
                 .patterns("(ready|bot load[ed])")
                 .description("Fired when a bot is fully loaded and connected to Discord.",

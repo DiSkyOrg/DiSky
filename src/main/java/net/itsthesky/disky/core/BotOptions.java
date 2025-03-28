@@ -3,8 +3,6 @@ package net.itsthesky.disky.core;
 import ch.njol.skript.lang.TriggerItem;
 import net.itsthesky.disky.BotApplication;
 import net.itsthesky.disky.DiSky;
-import net.itsthesky.disky.elements.events.bots.BotStopEvent;
-import net.itsthesky.disky.elements.events.bots.GuildReadyEvent.BukkitGuildReadyEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -14,6 +12,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.itsthesky.disky.elements.events.rework.BotEvents;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -62,16 +61,14 @@ public class BotOptions {
     public void runReady(ReadyEvent event) {
         if (getOnReady().isEmpty())
             return;
-        final net.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent e = new net.itsthesky.disky.elements.events.bots.ReadyEvent.BukkitReadyEvent(new net.itsthesky.disky.elements.events.bots.ReadyEvent());
-        e.setJDAEvent(event);
+        final var e = BotEvents.READY_EVENT.createBukkitInstance(event);
         TriggerItem.walk(getOnReady().get(0), e);
     }
 
     public void runGuildReady(GuildReadyEvent event) {
         if (getOnGuildReady().isEmpty())
             return;
-        final BukkitGuildReadyEvent e = new BukkitGuildReadyEvent(new net.itsthesky.disky.elements.events.bots.GuildReadyEvent());
-        e.setJDAEvent(event);
+        final var e = BotEvents.GUILD_READY_EVENT.createBukkitInstance(event);
         TriggerItem.walk(getOnGuildReady().get(0), e);
     }
 
@@ -81,8 +78,7 @@ public class BotOptions {
             DiSky.debug("No shutdown event defined for bot " + getName());
             return;
         }
-        final BotStopEvent.BukkitShutdownEvent e = new BotStopEvent.BukkitShutdownEvent(new BotStopEvent());
-        e.setJDAEvent(event);
+        final var e = BotEvents.SHUTDOWN_EVENT.createBukkitInstance(event);
         DiSky.debug("Running shutdown event for bot " + getName());
         TriggerItem.walk(getOnShutdown().get(0), e);
     }

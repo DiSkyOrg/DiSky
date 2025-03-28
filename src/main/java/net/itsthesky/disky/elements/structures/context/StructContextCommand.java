@@ -8,7 +8,6 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.bots.ReadyEvent;
 import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import net.itsthesky.disky.elements.structures.slash.BotReadyWaiter;
 import net.dv8tion.jda.api.Permission;
@@ -199,14 +198,15 @@ public class StructContextCommand extends Structure {
             return false;
         }
 
-        final Class<? extends Event> eventClass = parsedCommand.getType() == Command.Type.USER 
-                ? CommandEvents.USER_COMMAND_EVENT.getBukkitEventClass()
-                : CommandEvents.MESSAGE_COMMAND_EVENT.getBukkitEventClass();
+        final var builtEvent = parsedCommand.getType() == Command.Type.USER
+                ? CommandEvents.USER_COMMAND_EVENT
+                : CommandEvents.MESSAGE_COMMAND_EVENT;
+        final Class<? extends Event> eventClass = builtEvent.getBukkitEventClass();
 
         final Trigger trigger = new Trigger(
                 getParser().getCurrentScript(),
                 "on " + parsedCommand.getType().name().toLowerCase() + " command " + parsedCommand.getName(),
-                new ReadyEvent(),
+                builtEvent.createDiSkyEvent(),
                 SkriptUtils.loadCode(sectionNode, eventClass)
         );
 

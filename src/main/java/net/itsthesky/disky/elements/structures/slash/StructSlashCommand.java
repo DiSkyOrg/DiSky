@@ -8,21 +8,20 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.util.SimpleEvent;
 import ch.njol.skript.util.Timespan;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.entries.MutexEntryData;
 import net.itsthesky.disky.api.skript.entries.SimpleKeyValueEntries;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.bots.ReadyEvent;
 import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import net.itsthesky.disky.elements.structures.slash.args.SlashCustomArgs;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
 import net.itsthesky.disky.elements.structures.slash.models.SlashCommandInformation;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.interactions.DiscordLocale;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -607,7 +606,8 @@ public class StructSlashCommand extends Structure {
         if (sectionNode == null)
             return true;
 
-        final Trigger trigger = new Trigger(getParser().getCurrentScript(), "on slash command " + parsedCommand.getName(), new ReadyEvent(),
+        final Trigger trigger = new Trigger(getParser().getCurrentScript(), "on slash command " + parsedCommand.getName(),
+                CommandEvents.SLASH_COMMAND_EVENT.createDiSkyEvent(),
                 SkriptUtils.loadCode(sectionNode, CommandEvents.SLASH_COMMAND_EVENT.getBukkitEventClass()));
         parsedCommand.setTrigger(trigger);
         return true;
