@@ -18,11 +18,9 @@ import ch.njol.skript.util.Date;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.ReflectionUtils;
-import net.itsthesky.disky.api.events.EventValue;
 import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.elements.effects.RetrieveEventValue;
-import net.itsthesky.disky.elements.events.ExprEventValues;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -186,13 +184,6 @@ public final class SkriptUtils {
                                                                          Class<B> bukkitClass,
                                                                          Function<B, RestAction<T>> function) {
         registerRestValue(codeName, bukkitClass, function, entity -> entity);
-    }
-
-    public static <B extends Event, T> void registerValues(Class<B> bukkitClass,
-                                                           Class<T> entityClass,
-                                                           String name,
-                                                           Function<B, T[]> function) {
-        ExprEventValues.registerEventValue(bukkitClass, new EventValue<>(entityClass, name, function));
     }
 
     public static <B extends Event, T> void registerValue(Class<B> bukkitClass,

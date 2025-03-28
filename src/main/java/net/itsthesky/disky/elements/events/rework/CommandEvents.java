@@ -22,17 +22,20 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.*;
+import ch.njol.skript.sections.SecLoop;
+import ch.njol.skript.sections.SecWhile;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.itsthesky.disky.api.events.rework.BuiltEvent;
@@ -43,6 +46,7 @@ import net.itsthesky.disky.core.JDAUtils;
 import net.itsthesky.disky.elements.events.rework.custom.SlashCooldownEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -52,6 +56,7 @@ public class CommandEvents {
     public static final BuiltEvent<SlashCommandInteractionEvent> SLASH_COMMAND_EVENT;
     public static final BuiltEvent<MessageContextInteractionEvent> MESSAGE_COMMAND_EVENT;
     public static final BuiltEvent<UserContextInteractionEvent> USER_COMMAND_EVENT;
+    public static final BuiltEvent<CommandAutoCompleteInteractionEvent> SLASH_COMPLETION_EVENT;
 
     static {
 
@@ -142,6 +147,36 @@ public class CommandEvents {
 
                 .register();
 
+
+
+        // Slash Command Completion Event
+        // Fired when a user triggers autocompletion in a slash command
+        SLASH_COMPLETION_EVENT = EventRegistryFactory.builder(CommandAutoCompleteInteractionEvent.class)
+                .name("Slash Command Completion Event")
+                .patterns("slash completion [receive[d]]")
+                .description("Fired when Discord requests argument autocompletion for a slash command.",
+                        "Use 'event-string' to get the command name.",
+                        "Use the 'return' effect to provide completion choices to the user.",
+                        "You can access the focused argument with 'current argument' and other argument values with 'argument \"name\" as type'.")
+                .example("on slash completion:\n\tif event-string is \"mycommand\":\n\t\tif current argument is \"option\":\n\t\t\treturn choice \"Option 1\" with value \"option1\", choice \"Option 2\" with value \"option2\"")
+                .implementInteraction(evt -> evt)
+
+                .channelValues(CommandAutoCompleteInteractionEvent::getChannel)
+                .value(Guild.class, CommandAutoCompleteInteractionEvent::getGuild)
+                .value(Member.class, CommandAutoCompleteInteractionEvent::getMember)
+                .value(User.class, CommandAutoCompleteInteractionEvent::getUser)
+                .value(String.class, CommandAutoCompleteInteractionEvent::getFullCommandName)
+
+                .singleExpression("current( |-)arg[ument] [name]", String.class,
+                        evt -> evt.getInteraction().getFocusedOption().getName())
+
+                .register();
+
+        // Register the Return effect for slash command completion
+        Skript.registerEffect(
+                ReturnCompletions.class,
+                "return %slashchoices%"
+        );
     }
 
     @Name("Slash Command Argument")
@@ -195,7 +230,16 @@ public class CommandEvents {
 
         @Override
         protected Class<Event> getEvent() {
-            return (Class<Event>) SLASH_COOLDOWN_EVENT.getBukkitEventClass();
+            throw new UnsupportedOperationException("This method should not be called.");
+        }
+
+        @Override
+        public Class<Event>[] getCompatibleEvents() {
+            return new Class[]{
+                    SLASH_COMMAND_EVENT.getBukkitEventClass(),
+                    SLASH_COOLDOWN_EVENT.getBukkitEventClass(),
+                    SLASH_COMPLETION_EVENT.getBukkitEventClass()
+            };
         }
 
         @Override
@@ -204,24 +248,34 @@ public class CommandEvents {
             if (name == null)
                 return null;
 
-            final var evt = SLASH_COOLDOWN_EVENT.getJDAEvent(e);
-            if (evt == null) {
-                Skript.error("You cannot use this expression outside of a slash command event.");
-                return null;
+            final OptionMapping option;
+            final boolean isFromGuild;
+            final @Nullable Guild guild;
+            if (SLASH_COMMAND_EVENT.getBukkitEventClass().isAssignableFrom(e.getClass())) {
+                option = SLASH_COMMAND_EVENT.getJDAEvent(e).getOption(name);
+                isFromGuild = SLASH_COMMAND_EVENT.getJDAEvent(e).isFromGuild();
+                guild = SLASH_COMMAND_EVENT.getJDAEvent(e).getGuild();
+            } else if (SLASH_COMPLETION_EVENT.getBukkitEventClass().isAssignableFrom(e.getClass())) {
+                option = SLASH_COMPLETION_EVENT.getJDAEvent(e).getOption(name);
+                isFromGuild = SLASH_COMPLETION_EVENT.getJDAEvent(e).isFromGuild();
+                guild = SLASH_COMPLETION_EVENT.getJDAEvent(e).getGuild();
+            } else {
+                option = null;
+                isFromGuild = false;
+                guild = null;
             }
 
-            final OptionMapping option = evt.getOption(name);
             if (option == null)
                 return null;
 
             if (isMember) {
                 final User user = option.getAsUser();
-                if (!evt.isFromGuild()) {
+                if (!isFromGuild) {
                     Skript.error("You cannot get a member from a private channel slash command.");
                     return null;
                 }
 
-                return Objects.requireNonNull(evt.getGuild()).getMember(user);
+                return Objects.requireNonNull(guild).getMember(user);
             } else {
                 return JDAUtils.parseOptionValue(option);
             }
@@ -232,5 +286,57 @@ public class CommandEvents {
             return JDAUtils.getOptionClass(type);
         }
     }
+
+
+    /**
+     * Effect for returning autocompletion choices in slash command completion events
+     */
+    public static class ReturnCompletions extends Effect {
+        private Expression<Command.Choice> exprChoices;
+
+        @Override
+        protected void execute(@NotNull Event e) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected @Nullable TriggerItem walk(@NotNull Event e) {
+            debug(e, false);
+            final Command.Choice[] choices = EasyElement.parseList(exprChoices, e, new Command.Choice[0]);
+            if (choices.length == 0)
+                return null;
+
+            CommandAutoCompleteInteractionEvent event = SLASH_COMPLETION_EVENT.getJDAEvent(e);
+            if (event != null)
+                event.replyChoices(choices).queue();
+
+            // Exit from any loops or while sections
+            TriggerSection parent = getParent();
+            while (parent != null) {
+                if (parent instanceof SecLoop) {
+                    ((SecLoop) parent).exit(e);
+                } else if (parent instanceof SecWhile) {
+                    ((SecWhile) parent).exit(e);
+                }
+                parent = parent.getParent();
+            }
+
+            return null;
+        }
+
+        @Override
+        public @NotNull String toString(@Nullable Event e, boolean debug) {
+            return "return choices " + exprChoices.toString(e, debug);
+        }
+
+        @Override
+        public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
+            if (!EasyElement.containsEvent(SLASH_COMPLETION_EVENT.getBukkitEventClass()))
+                return false;
+            exprChoices = (Expression<Command.Choice>) exprs[0];
+            return true;
+        }
+    }
+
 
 }
