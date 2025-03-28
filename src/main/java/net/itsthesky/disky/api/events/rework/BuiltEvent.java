@@ -18,9 +18,12 @@ package net.itsthesky.disky.api.events.rework;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import ch.njol.skript.lang.SkriptEvent;
 import net.dv8tion.jda.api.events.Event;
 import net.itsthesky.disky.api.events.DiSkyEvent;
 import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents an event that has been built & registered as a Skript event.
@@ -42,14 +45,28 @@ public class BuiltEvent<T extends Event> {
         return jdaEventClass;
     }
 
+    /**
+     * Get the DiSky event class that is used to represent this JDA event in Skript.
+     * @return The DiSky event class.
+     */
     public Class<? extends DiSkyEvent<T>> getDiSkyEventClass() {
         return diskyEventClass;
     }
 
+    /**
+     * Get the Bukkit event class that is used to represent this JDA event in Skript.
+     * This should technically always return a {@link SimpleDiSkyEvent<T>} class.
+     * @return The Bukkit event class.
+     */
     public Class<? extends org.bukkit.event.Event> getBukkitEventClass() {
         return bukkitEventClass;
     }
 
+    /**
+     * Create an instance of that event to ue when running Skript code, or for context parsing.
+     * @param jdaEvent The JDA event to create the Bukkit event from.
+     * @return The Bukkit event instance, with its JDA event set.
+     */
     public org.bukkit.event.Event createBukkitInstance(Event jdaEvent) {
         try {
             final var event = bukkitEventClass.getConstructor().newInstance();
@@ -59,6 +76,35 @@ public class BuiltEvent<T extends Event> {
             return event;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create Bukkit event instance", e);
+        }
+    }
+
+    /**
+     * Get (~= cast) the given Bukkit event into this JDA Event.
+     * If it's not the same class, or a reflection error occurs, null will be returned.
+     * @param bukkitEvent The Bukkit event to get the JDA event from.
+     * @return The JDA event instance, or null if the class doesn't match.
+     */
+    public @Nullable T getJDAEvent(@NotNull org.bukkit.event.Event bukkitEvent) {
+        if (bukkitEvent.getClass() != bukkitEventClass)
+            return null;
+        try {
+            final var method = SimpleDiSkyEvent.class.getDeclaredMethod("getJDAEvent");
+            return (T) method.invoke(bukkitEvent);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get JDA event instance", e);
+        }
+    }
+
+    /**
+     * Create an instance of the DiSky event class.
+     * @return The DiSky event instance.
+     */
+    public DiSkyEvent<T> createDiSkyEvent() {
+        try {
+            return diskyEventClass.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create DiSky event instance", e);
         }
     }
 }

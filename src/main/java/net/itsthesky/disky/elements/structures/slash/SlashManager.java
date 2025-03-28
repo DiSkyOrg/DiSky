@@ -6,17 +6,17 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.exceptions.RateLimitedException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
 import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
-import net.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
+import net.itsthesky.disky.elements.events.rework.CommandsEvents;
+import net.itsthesky.disky.elements.events.rework.custom.SlashCooldownEvent;
 import net.itsthesky.disky.elements.structures.slash.models.*;
+import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -274,15 +274,13 @@ public final class SlashManager extends ListenerAdapter {
             String commandPath = command.getOriginalName();
             if (group.isInCooldown(event.getUser(), commandPath)) {
                 if (command.getOnCooldown() != null) {
-                    final OnCooldownEvent.BukkitCooldownEvent bukkitEvent = new OnCooldownEvent.BukkitCooldownEvent(
-                            new OnCooldownEvent(),
-                            group.getCooldown(event.getUser(), commandPath)
-                    );
-                    bukkitEvent.setJDAEvent(event);
+                    final var jdaEvent = new SlashCooldownEvent(event,
+                            group.getCooldown(event.getUser(), commandPath));
+                    final var bukkitEvent = CommandsEvents.SLASH_COOLDOWN_EVENT.createBukkitInstance(jdaEvent);
                     command.prepareArguments(event);
                     command.getOnCooldown().execute(bukkitEvent);
 
-                    return !bukkitEvent.isCancelled();
+                    return !jdaEvent.isCancelled();
                 }
                 return true; // Default behavior if no cooldown handler
             }
@@ -294,9 +292,7 @@ public final class SlashManager extends ListenerAdapter {
     private void executeCommand(ParsedCommand command, SlashCommandInteractionEvent event) {
         command.prepareArguments(event);
         final Trigger trigger = command.getTrigger();
-        final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent =
-                new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
-        bukkitEvent.setJDAEvent(event);
+        final var bukkitEvent = CommandsEvents.SLASH_COMMAND_EVENT.createBukkitInstance(event);
         trigger.execute(bukkitEvent);
     }
 

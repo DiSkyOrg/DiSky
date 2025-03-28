@@ -36,12 +36,13 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.specific.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -59,13 +60,19 @@ public class EventBuilder<T extends Event> {
     private final Class<T> jdaEventClass;
     private String name;
     private String[] patterns;
+    private boolean skriptRegistered = true;
     private final List<String> descriptionLines = new ArrayList<>();
     private final List<String> exampleLines = new ArrayList<>();
-    private final List<EventValueRegistration<T, ?>> valueRegistrations = new ArrayList<>();
-    private final List<EventSingleExpressionRegistration<T, ?>> singleExpressionRegistrations = new ArrayList<>();
-    private final List<EventListExpressionRegistration<T, ?>> listExpressionRegistrations = new ArrayList<>();
-    private final List<RestValueRegistration<T, ?, ?>> restValueRegistrations = new ArrayList<>();
-    private final List<InterfaceRegistration<T, ?, ?, ?>> interfaces = new ArrayList<>();
+
+    final List<EventValueRegistration<T, ?>> valueRegistrations = new ArrayList<>();
+    final List<EventSingleExpressionRegistration<T, ?>> singleExpressionRegistrations = new ArrayList<>();
+    final List<EventListExpressionRegistration<T, ?>> listExpressionRegistrations = new ArrayList<>();
+    final List<RestValueRegistration<T, ?, ?>> restValueRegistrations = new ArrayList<>();
+    final List<InterfaceRegistration<T, ?, ?, ?>> interfaces = new ArrayList<>();
+
+    private @Nullable Function<T, Boolean> isCancelledMapper;
+    private @Nullable BiConsumer<T, Boolean> setCancelledMapper;
+
     private Function<T, Guild> authorMapper;
     private Predicate<T> checker;
     private Predicate<GuildAuditLogEntryCreateEvent> logChecker;
@@ -93,6 +100,28 @@ public class EventBuilder<T extends Event> {
      */
     public EventBuilder<T> patterns(String... patterns) {
         this.patterns = patterns;
+        return this;
+    }
+
+    /**
+     * Disable the Skript event registration for that event.
+     * Only the DiSky/Simple Event classes will be created, but
+     * not registered in Skript.
+     * @return This builder
+     */
+    public EventBuilder<T> noRegistration() {
+        this.skriptRegistered = false;
+        return this;
+    }
+
+    /**
+     * Make this event cancellable by providing a get & set mapper.
+     * @return This builder
+     */
+    public EventBuilder<T> cancellable(@NotNull Function<T, Boolean> isCancelledMapper,
+                                       @NotNull BiConsumer<T, Boolean> setCancelledMapper) {
+        this.isCancelledMapper = isCancelledMapper;
+        this.setCancelledMapper = setCancelledMapper;
         return this;
     }
 
@@ -486,5 +515,21 @@ public class EventBuilder<T extends Event> {
 
     List<EventListExpressionRegistration<T, ?>> getListExpressionRegistrations() {
         return listExpressionRegistrations;
+    }
+
+    boolean isCancellable() {
+        return isCancelledMapper != null && setCancelledMapper != null;
+    }
+
+    @Nullable Function<T, Boolean> getIsCancelledMapper() {
+        return isCancelledMapper;
+    }
+
+    @Nullable BiConsumer<T, Boolean> getSetCancelledMapper() {
+        return setCancelledMapper;
+    }
+
+    boolean isSkriptRegistered() {
+        return skriptRegistered;
     }
 }

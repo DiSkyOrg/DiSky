@@ -22,13 +22,18 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
+import net.itsthesky.disky.api.events.rework.BuiltEvent;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 
-public class InteractionEvents {
+import java.util.Objects;
+
+public class ComponentEvents {
+
+    public static final BuiltEvent<ModalInteractionEvent> MODAL_INTERACTION_EVENT;
 
     static {
 
@@ -59,6 +64,30 @@ public class InteractionEvents {
                         ButtonInteraction::getComponentId)
                 .register();
 
+        MODAL_INTERACTION_EVENT = EventRegistryFactory.builder(ModalInteractionEvent.class)
+                .name("Modal Received")
+                .description("Fired when a modal has been sent to the bot from any user.",
+                        "Use 'received modal' to get the modal id. Don't forget to either reply or defer the interaction.",
+                        "",
+                        "!!! warning \"Modal can NOT be shown in this interaction!\"")
+                .patterns("modal (click[ed]|receive[d])")
+                .example("on modal received:\n" +
+                        "\treply with hidden \"You clicked the button with id '%received modal%'!\" # This will defer the interaction!")
+
+                .implementInteraction(evt -> evt)
+
+                .channelValues(ModalInteractionEvent::getChannel)
+
+                .value(String.class, ModalInteractionEvent::getModalId)
+                .value(Guild.class, ModalInteractionEvent::getGuild)
+                .value(User.class, ModalInteractionEvent::getUser)
+                .value(Member.class, ModalInteractionEvent::getMember)
+                .value(Number.class, evt -> Objects.requireNonNull(evt.getMessage()).getIdLong())
+                .value(Message.class, ModalInteractionEvent::getMessage)
+
+                .singleExpression("receive[d] (id|modal)", String.class,
+                        ModalInteractionEvent::getModalId)
+                .register();
     }
 
 }

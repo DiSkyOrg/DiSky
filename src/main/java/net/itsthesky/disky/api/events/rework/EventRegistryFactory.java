@@ -24,6 +24,7 @@ import ch.njol.skript.doc.Name;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.StubMethod;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -34,9 +35,11 @@ import net.itsthesky.disky.api.events.DiSkyEvent;
 import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import net.itsthesky.disky.api.skript.reflects.ReflectEventExpressionFactory;
 import net.itsthesky.disky.core.SkriptUtils;
+import org.bukkit.event.Cancellable;
 
 import java.lang.reflect.Modifier;
 import java.nio.channels.Channel;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -129,6 +132,27 @@ public class EventRegistryFactory {
                 }
             }
 
+            if (builder.isCancellable()) {
+                simpleEventClassBuilder = simpleEventClassBuilder.implement(Cancellable.class)
+                        .defineMethod("isCancelled", boolean.class, Modifier.PUBLIC)
+                        .intercept(MethodDelegation.to(new ComplexInterceptor((allArguments, instance) -> {
+                            final var event = (SimpleDiSkyEvent) instance;
+                            final var jdaEvent = event.getJDAEvent();
+                            return Objects.requireNonNull(builder.getIsCancelledMapper()).apply((T) jdaEvent);
+                        })))
+
+                        .defineMethod("setCancelled", void.class, Modifier.PUBLIC)
+                        .withParameters(boolean.class)
+                        .intercept(MethodDelegation.to(new ComplexInterceptor((allArguments, instance) -> {
+                            final var event = (SimpleDiSkyEvent) instance;
+                            final var jdaEvent = event.getJDAEvent();
+                            Objects.requireNonNull(builder.getSetCancelledMapper())
+                                    .accept((T) jdaEvent, (boolean) allArguments[0]);
+                            return null;
+                        })));
+
+            }
+
             Class<? extends org.bukkit.event.Event> bukkitEventClass = simpleEventClassBuilder.make()
                     .load(diSkyEventClass.getClassLoader())
                     .getLoaded();
@@ -157,15 +181,17 @@ public class EventRegistryFactory {
                 );
             }
 
-            DiSkyEvent.registerExternalEventClass((Class) diSkyEventClass, (Class) bukkitEventClass);
+            if (builder.isSkriptRegistered()) {
+                DiSkyEvent.registerExternalEventClass((Class) diSkyEventClass, (Class) bukkitEventClass);
 
-            // Register the event with Skript
-            DiSkyEvent.register(
-                    builder.getName(),
-                    diSkyEventClass,
-                    bukkitEventClass,
-                    builder.getPatterns()
-            ).description(builder.getDescriptionLines());
+                // Register the event with Skript
+                DiSkyEvent.register(
+                        builder.getName(),
+                        diSkyEventClass,
+                        bukkitEventClass,
+                        builder.getPatterns()
+                ).description(builder.getDescriptionLines());
+            }
 
             // Register bot value
             SkriptUtils.registerBotValue((Class<? extends SimpleDiSkyEvent>) bukkitEventClass);
@@ -261,6 +287,20 @@ public class EventRegistryFactory {
         @RuntimeType
         public Object intercept() {
             return predicate;
+        }
+    }
+
+    private static class ComplexInterceptor {
+
+        private final BiFunction<Object[], Object, Object> function;
+        public ComplexInterceptor(BiFunction<Object[], Object, Object> function) {
+            this.function = function;
+        }
+
+        @RuntimeType
+        public Object intercept(@AllArguments Object[] allArguments,
+                                @This Object instance) {
+            return function.apply(allArguments, instance);
         }
     }
 

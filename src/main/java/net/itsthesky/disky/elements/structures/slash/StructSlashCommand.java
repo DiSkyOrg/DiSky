@@ -13,10 +13,9 @@ import net.itsthesky.disky.api.skript.entries.MutexEntryData;
 import net.itsthesky.disky.api.skript.entries.SimpleKeyValueEntries;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.events.bots.ReadyEvent;
-import net.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
 import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
+import net.itsthesky.disky.elements.events.rework.CommandsEvents;
 import net.itsthesky.disky.elements.structures.slash.args.SlashCustomArgs;
-import net.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedArgument;
 import net.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
 import net.itsthesky.disky.elements.structures.slash.models.SlashCommandInformation;
@@ -609,7 +608,7 @@ public class StructSlashCommand extends Structure {
             return true;
 
         final Trigger trigger = new Trigger(getParser().getCurrentScript(), "on slash command " + parsedCommand.getName(), new ReadyEvent(),
-                SkriptUtils.loadCode(sectionNode, SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent.class));
+                SkriptUtils.loadCode(sectionNode, CommandsEvents.SLASH_COMMAND_EVENT.getBukkitEventClass()));
         parsedCommand.setTrigger(trigger);
         return true;
     }
@@ -629,10 +628,9 @@ public class StructSlashCommand extends Structure {
             return false;
         }
 
-
         final Trigger trigger = new Trigger(getParser().getCurrentScript(), "on cooldown for " + parsedCommand.getName(),
-                new OnCooldownEvent(),
-                SkriptUtils.loadCode(sectionNode, OnCooldownEvent.BukkitCooldownEvent.class));
+                CommandsEvents.SLASH_COOLDOWN_EVENT.createDiSkyEvent(),
+                SkriptUtils.loadCode(sectionNode, CommandsEvents.SLASH_COOLDOWN_EVENT.getBukkitEventClass()));
 
         parsedCommand.setCooldown(cooldown.getAs(Timespan.TimePeriod.MILLISECOND));
         parsedCommand.setOnCooldown(trigger);
