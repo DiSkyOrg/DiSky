@@ -9,7 +9,6 @@ import net.itsthesky.disky.core.JDAUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;

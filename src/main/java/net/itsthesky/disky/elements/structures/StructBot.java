@@ -12,15 +12,13 @@ import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.BotOptions;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.bots.BotStopEvent;
-import net.itsthesky.disky.elements.events.bots.GuildReadyEvent;
-import net.itsthesky.disky.elements.events.bots.ReadyEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.itsthesky.disky.elements.events.rework.BotEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -180,13 +178,13 @@ public class StructBot extends Structure {
 
 		if (readySection != null)
 			ready = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' ready section", new SimpleEvent(),
-					SkriptUtils.loadCode(readySection, ReadyEvent.BukkitReadyEvent.class));
+					SkriptUtils.loadCode(readySection, BotEvents.READY_EVENT.getBukkitEventClass()));
 		if (guildReadySection != null)
 			guildReady = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' guild ready section", new SimpleEvent(),
-					SkriptUtils.loadCode(guildReadySection, GuildReadyEvent.BukkitGuildReadyEvent.class));
+					SkriptUtils.loadCode(guildReadySection, BotEvents.GUILD_READY_EVENT.getBukkitEventClass()));
 		if (shutdownSection != null)
 			shutdown = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' shutdown section", new SimpleEvent(),
-					SkriptUtils.loadCode(shutdownSection, BotStopEvent.BukkitShutdownEvent.class));
+					SkriptUtils.loadCode(shutdownSection, BotEvents.SHUTDOWN_EVENT.getBukkitEventClass()));
 
 		options = new BotOptions();
 

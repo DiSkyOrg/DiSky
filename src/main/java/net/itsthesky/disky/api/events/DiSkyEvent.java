@@ -11,6 +11,7 @@ import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.log.SkriptLogger;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.managers.CoreEventListener;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
@@ -26,10 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-/**
- * Made by Blitz, minor edit by Sky for DiSky
- */
 public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extends SelfRegisteringSkriptEvent {
+
+    private static final Map<Class<? extends DiSkyEvent<?>>, Class<? extends SimpleDiSkyEvent<?>>> externalEventMap = new HashMap<>();
 
     /**
      * The ending appended to patterns if no custom ending is specified
@@ -45,6 +45,15 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     private String originalName;
     private Class<? extends Event>[] originalEvents;
     private Constructor<?> constructor;
+
+    /**
+     * Enregistre un mapping externe entre une classe DiSkyEvent et sa classe Bukkit associée
+     * Utilisé par le nouveau système de génération d'événements
+     */
+    public static <T extends net.dv8tion.jda.api.events.Event, D extends DiSkyEvent<T>, B extends SimpleDiSkyEvent<T>>
+    void registerExternalEventClass(Class<D> diSkyEventClass, Class<B> bukkitEventClass) {
+        externalEventMap.put(diSkyEventClass, bukkitEventClass);
+    }
 
     /**
      * @param name     The name of the event used for ScriptLoader#setCurrentEvents
@@ -65,6 +74,11 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
      */
     @SuppressWarnings("unchecked")
     public static <T extends SimpleDiSkyEvent<?>> SkriptEventInfo<?> register(String name, String ending, Class type, Class<T> clazz, String... patterns) {
+        // Enregistrer le mapping externe pour les événements générés
+        if (type.getName().contains("Generated")) {
+            registerExternalEventClass(type, (Class) clazz);
+        }
+
         for (int i = 0; i < patterns.length; i++) {
             patterns[i] += " " + ending;
         }
@@ -84,31 +98,56 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
     }
 
     @Override
-     @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public boolean init(Literal<?> @NotNull [] exprs, int matchedPattern, @NotNull ParseResult parser) {
         bot = (String) (exprs[0] == null ? null : exprs[0].getSingle());
 
-        bukkitClass = (Class<? extends Event>) Arrays.stream(this.getClass().getDeclaredClasses())
-                .filter(innerClass -> innerClass.getSuperclass() == SimpleDiSkyEvent.class)
-                .findFirst()
-                .orElse(null);
+        // Check if we're dealing with a generated event class first
+        if (externalEventMap.containsKey(this.getClass())) {
+            this.bukkitClass = externalEventMap.get(this.getClass());
 
-        if (bukkitClass == null) {
-            throw new RuntimeException(this.getClass().getCanonicalName() + " doesn't have an inner SimpleDiSkyEvent " +
-                    "class to be instantiated. Report this at https://github.com/SkyCraft78/DiSky3/issues!");
-        }
+            // Get JDA event class from generic parameter
+            try {
+                jdaClass = (Class<D>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            } catch (ClassCastException e) {
+                throw new RuntimeException(this.getClass().getCanonicalName() + " doesn't use a valid JDA event type. Report this at https://github.com/SkyCraft78/DiSky3/issues!");
+            }
 
-        try {
-            jdaClass = (Class<D>) ((ParameterizedType) bukkitClass.getGenericSuperclass()).getActualTypeArguments()[0];
-        } catch (ClassCastException e) {
-            throw new RuntimeException(this.getClass().getCanonicalName() + "'s inner class doesn't use the same JDA" +
-                    " event as it's parent class in it's SimpleDiSkyEvent. Report this at https://github.com/SkyCraft78/DiSky3/issues!");
-        }
+            // For external classes, we need to get a constructor that accepts the DiSkyEvent
+            try {
+                constructor = bukkitClass.getDeclaredConstructor(DiSkyEvent.class);
+            } catch (NoSuchMethodException e) {
+                DiSky.debug("No constructor found for " + bukkitClass.getName() + " with DiSkyEvent parameter. Looking for empty constructor...");
+                try {
+                    constructor = bukkitClass.getDeclaredConstructor();
+                } catch (NoSuchMethodException ex) {
+                    throw new RuntimeException("No suitable constructor found for " + bukkitClass.getName());
+                }
+            }
+        } else {
+            // Original approach - find inner class
+            bukkitClass = (Class<? extends Event>) Arrays.stream(this.getClass().getDeclaredClasses())
+                    .filter(innerClass -> innerClass.getSuperclass() == SimpleDiSkyEvent.class)
+                    .findFirst()
+                    .orElse(null);
 
-        try {
-            constructor = bukkitClass.getDeclaredConstructor(this.getClass());
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            if (bukkitClass == null) {
+                throw new RuntimeException(this.getClass().getCanonicalName() + " doesn't have an inner SimpleDiSkyEvent " +
+                        "class to be instantiated. Report this at https://github.com/SkyCraft78/DiSky3/issues!");
+            }
+
+            try {
+                jdaClass = (Class<D>) ((ParameterizedType) bukkitClass.getGenericSuperclass()).getActualTypeArguments()[0];
+            } catch (ClassCastException e) {
+                throw new RuntimeException(this.getClass().getCanonicalName() + "'s inner class doesn't use the same JDA" +
+                        " event as it's parent class in it's SimpleDiSkyEvent. Report this at https://github.com/SkyCraft78/DiSky3/issues!");
+            }
+
+            try {
+                constructor = bukkitClass.getDeclaredConstructor(this.getClass());
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("Constructor not found for " + bukkitClass.getName(), e);
+            }
         }
 
         stringRepresentation = ScriptLoader.replaceOptions(SkriptLogger.getNode().getKey()) + ":";
@@ -128,7 +167,6 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
 
     @Override
     public void afterParse(@NotNull Config config) {
-
         getParser().setCurrentEvent(originalName, originalEvents);
     }
 
@@ -138,14 +176,20 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
         trigger = t;
         listener = new EventListener<>(jdaClass, (JDAEvent, auditLogEntryCreateEvent) -> {
             if (check(JDAEvent)) {
-
                 /* !? */
                 SimpleDiSkyEvent<D> eventWorkaround = null;
                 SimpleDiSkyEvent<D> event;
                 try {
-                    eventWorkaround = (SimpleDiSkyEvent<D>) constructor.newInstance(DiSkyEvent.this);
+                    // Adapter pour les deux types de constructeurs
+                    if (constructor.getParameterCount() == 1) {
+                        eventWorkaround = (SimpleDiSkyEvent<D>) constructor.newInstance(DiSkyEvent.this);
+                    } else {
+                        eventWorkaround = (SimpleDiSkyEvent<D>) constructor.newInstance();
+                    }
                 } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                    e.printStackTrace();
+                    DiSkyRuntimeHandler.error(new RuntimeException("Failed to instantiate event: " + e.getMessage(), e),
+                            SkriptLogger.getNode());
+                    return;
                 }
                 event = eventWorkaround;
 
@@ -157,7 +201,6 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
                         getTrigger().execute(event);
                     }
                 });
-
             }
         }, checker(), logChecker(), getLogType(), bot, getParser().getNode());
         CoreEventListener.addListener(listener);
@@ -221,5 +264,4 @@ public abstract class DiSkyEvent<D extends net.dv8tion.jda.api.events.Event> ext
             throw new RuntimeException(clazz.getCanonicalName() + " doesn't use the same JDA event as it's parent class.");
         }
     }
-
 }

@@ -23,10 +23,7 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.registrations.Classes;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.itsthesky.disky.DiSky;
-import net.itsthesky.disky.elements.structures.slash.args.custom.EnumCustomArg;
-import net.itsthesky.disky.elements.structures.slash.args.custom.SmallEnumCustomArg;
-import net.itsthesky.disky.elements.structures.slash.args.custom.MemberCustomArg;
-import net.itsthesky.disky.elements.structures.slash.args.custom.PlayerCustomArg;
+import net.itsthesky.disky.elements.structures.slash.args.custom.*;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +36,7 @@ public class SlashCustomArgs {
 
     static {
         AVAILABLE_ARGUMENTS.add(new MemberCustomArg());
+        AVAILABLE_ARGUMENTS.add(new ColorCustomArg());
 
         AVAILABLE_ARGUMENTS.add(new PlayerCustomArg(true));
         AVAILABLE_ARGUMENTS.add(new PlayerCustomArg(false));
@@ -107,7 +105,7 @@ public class SlashCustomArgs {
             return null;
 
         for (CustomArgument<?> argument : AVAILABLE_ARGUMENTS) {
-            DiSky.debug(" --- Checking " + argument.toString() + " for " + classInfo.getName());
+            // DiSky.debug(" --- Checking " + argument.toString() + " for " + classInfo.getName());
             if (argument.supportsClass(classInfo)) {
                 return argument;
             }

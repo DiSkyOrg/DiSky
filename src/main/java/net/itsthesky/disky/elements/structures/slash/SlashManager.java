@@ -6,22 +6,22 @@ import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.exceptions.RateLimitedException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
-import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
-import net.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
+import net.itsthesky.disky.elements.events.rework.CommandEvents;
+import net.itsthesky.disky.elements.events.rework.custom.SlashCooldownEvent;
 import net.itsthesky.disky.elements.structures.slash.models.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public final class SlashManager extends ListenerAdapter {
 
@@ -272,15 +272,13 @@ public final class SlashManager extends ListenerAdapter {
             String commandPath = command.getOriginalName();
             if (group.isInCooldown(event.getUser(), commandPath)) {
                 if (command.getOnCooldown() != null) {
-                    final OnCooldownEvent.BukkitCooldownEvent bukkitEvent = new OnCooldownEvent.BukkitCooldownEvent(
-                            new OnCooldownEvent(),
-                            group.getCooldown(event.getUser(), commandPath)
-                    );
-                    bukkitEvent.setJDAEvent(event);
+                    final var jdaEvent = new SlashCooldownEvent(event,
+                            group.getCooldown(event.getUser(), commandPath));
+                    final var bukkitEvent = CommandEvents.SLASH_COOLDOWN_EVENT.createBukkitInstance(jdaEvent);
                     command.prepareArguments(event);
                     command.getOnCooldown().execute(bukkitEvent);
 
-                    return !bukkitEvent.isCancelled();
+                    return !jdaEvent.isCancelled();
                 }
                 return true; // Default behavior if no cooldown handler
             }
@@ -292,9 +290,7 @@ public final class SlashManager extends ListenerAdapter {
     private void executeCommand(ParsedCommand command, SlashCommandInteractionEvent event) {
         command.prepareArguments(event);
         final Trigger trigger = command.getTrigger();
-        final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent =
-                new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
-        bukkitEvent.setJDAEvent(event);
+        final var bukkitEvent = CommandEvents.SLASH_COMMAND_EVENT.createBukkitInstance(event);
         trigger.execute(bukkitEvent);
     }
 
@@ -313,10 +309,7 @@ public final class SlashManager extends ListenerAdapter {
 
         if (focusArg.getCustomArgument() == null) {
             command.prepareArguments(event);
-            SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
-                    new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
-            bukkitEvent.setJDAEvent(event);
-
+            final var bukkitEvent = CommandEvents.SLASH_COMPLETION_EVENT.createBukkitInstance(event);
             final var trigger = focusArg.getOnCompletionRequest();
             if (trigger == null) {
                 DiSky.debug("No completion trigger for argument " + focusedArgument);
@@ -345,34 +338,64 @@ public final class SlashManager extends ListenerAdapter {
     }
 
     private void cleanupRegisteredGroups() {
-        if (true)
-            return; // TODO: Fix this method. It's so fucking hard to both handle JDA's queue system while being stuck on bukkit's single thread system
-
-        // gather all guilds, if any, to clear
         Set<String> guilds = new HashSet<>();
         registeredGroups.forEach(group -> {
             if (group.getGuildId() != null)
                 guilds.add(group.getGuildId());
         });
 
-        // delete all commands
-        try {
-            for (String guildId : guilds) {
-                var guild = bot.getInstance().getGuildById(guildId);
-                if (guild == null) {
-                    DiSky.debug("Guild " + guildId + " not found, skipping command deletion");
-                    continue;
-                }
-
-                var commands = guild.retrieveCommands().complete(true);
-                for (Command cmd : commands)
-                    guild.deleteCommandById(cmd.getId()).complete(true);
+        for (String guildId : guilds) {
+            // delete every command with a reasonable timeout (3s)
+            var guild = bot.getInstance().getGuildById(guildId);
+            if (guild == null) {
+                DiSky.debug("Guild " + guildId + " not found, skipping command deletion");
+                continue;
             }
-            var commands = bot.getInstance().retrieveCommands().complete(true);
-            for (Command cmd : commands)
-                bot.getInstance().deleteCommandById(cmd.getId()).complete(true);
-        } catch (RateLimitedException ex) {
-            DiSky.debug("Failed to delete all commands: " + ex.getMessage());
+
+            try {
+                CompletableFuture<List<Command>> futureCommands = new CompletableFuture<>();
+                guild.retrieveCommands().queue(
+                        futureCommands::complete,
+                        futureCommands::completeExceptionally
+                );
+
+                List<Command> commands = futureCommands.get(3, TimeUnit.SECONDS);
+                for (Command cmd : commands) {
+                    CompletableFuture<Void> future = new CompletableFuture<>();
+                    guild.deleteCommandById(cmd.getId()).queue(
+                            v -> future.complete(null),
+                            future::completeExceptionally
+                    );
+                    future.get(3, TimeUnit.SECONDS);
+                }
+            } catch (Exception e) {
+                DiSky.debug("Failed to delete guild commands: " + e.getMessage());
+                for (var trace : e.getStackTrace())
+                    DiSky.debug("  " + trace);
+            }
+        }
+
+        // same for global commands
+        try {
+            CompletableFuture<List<Command>> futureCommands = new CompletableFuture<>();
+            bot.getInstance().retrieveCommands().queue(
+                    futureCommands::complete,
+                    futureCommands::completeExceptionally
+            );
+
+            List<Command> commands = futureCommands.get(3, TimeUnit.SECONDS);
+            for (Command cmd : commands) {
+                CompletableFuture<Void> future = new CompletableFuture<>();
+                bot.getInstance().deleteCommandById(cmd.getId()).queue(
+                        v -> future.complete(null),
+                        future::completeExceptionally
+                );
+                future.get(3, TimeUnit.SECONDS);
+            }
+        } catch (Exception e) {
+            DiSky.debug("Failed to delete global commands: " + e.getMessage());
+            for (var trace : e.getStackTrace())
+                DiSky.debug("  " + trace);
         }
     }
 

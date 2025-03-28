@@ -1,13 +1,12 @@
 package net.itsthesky.disky.elements.structures.context;
 
 import ch.njol.skript.lang.Trigger;
-import net.itsthesky.disky.elements.events.interactions.MessageCommandEvent;
-import net.itsthesky.disky.elements.events.interactions.UserCommandEvent;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import org.bukkit.event.Event;
 
 import java.util.*;
@@ -28,14 +27,10 @@ public class ParsedContextCommand {
     }
 
     public Event wrapEvent(Object event) {
-        if (event instanceof UserContextInteractionEvent) {
-            final var evt = new UserCommandEvent.BukkitUserCommandEvent(new UserCommandEvent());
-            evt.setJDAEvent((UserContextInteractionEvent) event);
-            return evt;
-        } else if (event instanceof MessageContextInteractionEvent) {
-            final var evt = new MessageCommandEvent.BukkitMessageCommandEvent(new MessageCommandEvent());
-            evt.setJDAEvent((MessageContextInteractionEvent) event);
-            return evt;
+        if (event instanceof final UserContextInteractionEvent jdaEvent) {
+            return CommandEvents.USER_COMMAND_EVENT.createBukkitInstance(jdaEvent);
+        } else if (event instanceof final MessageContextInteractionEvent jdaEvent) {
+            return CommandEvents.MESSAGE_COMMAND_EVENT.createBukkitInstance(jdaEvent);
         }
 
         throw new IllegalArgumentException("Unknown event type: " + event.getClass().getName());

@@ -80,28 +80,18 @@ public final class JDAUtils {
 	}
 
 	public static Class<?> getOptionClass(OptionType type) {
-		switch (type) {
-			case ROLE:
-				return Role.class;
-			case USER:
-				return User.class;
-			case CHANNEL:
-				return MessageChannel.class;
-			case NUMBER:
-				return Number.class;
-			case INTEGER:
-				return Integer.class;
-			case STRING:
-				return String.class;
-			case ATTACHMENT:
-				return Message.Attachment.class;
-			case BOOLEAN:
-				return Boolean.class;
-			case MENTIONABLE:
-				return IMentionable.class;
-			default:
-				return Object.class;
-		}
+        return switch (type) {
+            case ROLE -> Role.class;
+            case USER -> User.class;
+            case CHANNEL -> MessageChannel.class;
+            case NUMBER -> Number.class;
+            case INTEGER -> Integer.class;
+            case STRING -> String.class;
+            case ATTACHMENT -> Message.Attachment.class;
+            case BOOLEAN -> Boolean.class;
+            case MENTIONABLE -> IMentionable.class;
+            default -> Object.class;
+        };
 	}
 
 	public static Object parseOptionValue(OptionMapping option) {

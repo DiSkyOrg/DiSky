@@ -92,10 +92,10 @@ public class MoveRole extends AsyncEffect {
 
 		RoleOrderAction action = target.getGuild().modifyRolePositions();
 
-		switch (moveType) {
+		action = switch (moveType) {
 			case ABOVE, UNDER -> action.selectPosition(role);
 			case UP, DOWN -> action.selectPosition(target);
-		}
+		};
 
         action = switch (moveType) {
             case ABOVE -> action.moveAbove(role);

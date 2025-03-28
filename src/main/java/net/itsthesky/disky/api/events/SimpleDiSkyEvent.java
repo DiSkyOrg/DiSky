@@ -1,13 +1,11 @@
 package net.itsthesky.disky.api.events;
 
+import net.dv8tion.jda.api.events.Event;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Made by Blitz, minor edit by Sky for DiSky
- */
 public class SimpleDiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extends BukkitEvent {
 
     private D JDAEvent;
@@ -18,7 +16,13 @@ public class SimpleDiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extend
         super(async);
     }
 
-    public SimpleDiSkyEvent() {super(false);}
+    public SimpleDiSkyEvent() {
+        super(false);
+    }
+
+    public SimpleDiSkyEvent(DiSkyEvent<D> diSkyEvent) {
+        super(false);
+    }
 
     public D getJDAEvent() {
         return JDAEvent;
@@ -48,5 +52,4 @@ public class SimpleDiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extend
     public <T> T getValue(Class<T> clazz) {
         return (T) valueMap.get(clazz);
     }
-
 }

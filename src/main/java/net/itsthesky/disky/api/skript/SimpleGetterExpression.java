@@ -8,6 +8,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.stream.Stream;
+
 public abstract class SimpleGetterExpression<T, E extends Event> extends SimpleExpression<T> {
 
 	protected abstract String getValue();
@@ -15,6 +17,12 @@ public abstract class SimpleGetterExpression<T, E extends Event> extends SimpleE
 	protected abstract Class<E> getEvent();
 
 	protected abstract T convert(E event);
+
+	public Class<E>[] getCompatibleEvents() {
+		Class<E>[] events = new Class[1];
+		events[0] = getEvent();
+		return events;
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -34,6 +42,7 @@ public abstract class SimpleGetterExpression<T, E extends Event> extends SimpleE
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
-		return getEvent() == null || EasyElement.containsEvent(getEvent());
+		return Stream.of(getCompatibleEvents())
+				.anyMatch(EasyElement::containsEvent);
 	}
 }

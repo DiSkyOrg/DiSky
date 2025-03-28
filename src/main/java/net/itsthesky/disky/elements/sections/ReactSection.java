@@ -9,9 +9,9 @@ import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.core.ReactionListener;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.react.ReactionAddEvent;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.itsthesky.disky.elements.events.rework.ReactionEvents;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,8 @@ public class ReactSection extends EffectSection {
 		exprUser = (Expression<User>) exprs[2];
 		runOneTime = (parseResult.mark & 1) != 0;
 		if (sectionNode != null)
-			trigger = loadCode(sectionNode, "react section", SkriptUtils.addEventClasses(ReactionAddEvent.BukkitReactionAddEvent.class));
+			trigger = loadCode(sectionNode, "react section",
+					SkriptUtils.addEventClasses(ReactionEvents.REACTION_ADD.getBukkitEventClass()));
 		return true;
 	}
 
@@ -56,7 +57,8 @@ public class ReactSection extends EffectSection {
 		final @Nullable User user = EasyElement.parseSingle(exprUser, e, null);
 		if (EasyElement.anyNull(this, message, emote))
 			return getNext();
-		emote.addReaction(message).queue(v -> ReactionListener.waiters.put(message.getIdLong(), new ReactionListener.ReactionInfo(runOneTime, emote, message.getIdLong(), message
+		emote.addReaction(message).queue(v -> ReactionListener.waiters.put(message.getIdLong(),
+				new ReactionListener.ReactionInfo(runOneTime, emote, message.getIdLong(), message
 				.getJDA().getSelfUser().getIdLong(), user, trigger)));
 		return getNext();
 	}
