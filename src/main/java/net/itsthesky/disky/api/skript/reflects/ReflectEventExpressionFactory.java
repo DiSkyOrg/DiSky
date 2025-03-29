@@ -42,7 +42,7 @@ public class ReflectEventExpressionFactory {
                     .name("net.itsthesky.disky.elements.reflects.ReflectGetterExpression_" + COUNT.incrementAndGet())
 
                     .method(named("convert")).intercept(MethodDelegation.to(new ReflectClassFactory.SingleConvertMethodInterceptor<>(converter)))
-                    .method(named("getPropertyName")).intercept(MethodDelegation.to(new ReflectClassFactory.PropertyNameMethodInterceptor(stripPattern(pattern))))
+                    .method(named("getValue")).intercept(MethodDelegation.to(new ReflectClassFactory.PropertyNameMethodInterceptor(stripPattern(pattern))))
 
                     .method(named("getEvent")).intercept(MethodDelegation.to(new ReflectClassFactory.ClassResultMethodInterceptor(eventClass)))
                     .method(named("getReturnType")).intercept(MethodDelegation.to(new ReflectClassFactory.ClassResultMethodInterceptor(expressionClass)))
@@ -77,7 +77,7 @@ public class ReflectEventExpressionFactory {
                     .name("net.itsthesky.disky.elements.reflects.MultipleReflectGetterExpression_" + COUNT.incrementAndGet())
 
                     .method(named("gets")).intercept(MethodDelegation.to(new ReflectClassFactory.MultipleConvertMethodInterceptor<>(converter)))
-                    .method(named("getPropertyName")).intercept(MethodDelegation.to(new ReflectClassFactory.PropertyNameMethodInterceptor(stripPattern(pattern))))
+                    .method(named("getValue")).intercept(MethodDelegation.to(new ReflectClassFactory.PropertyNameMethodInterceptor(stripPattern(pattern))))
 
                     .method(named("getEvent")).intercept(MethodDelegation.to(new ReflectClassFactory.ClassResultMethodInterceptor(eventClass)))
                     .method(named("getReturnType")).intercept(MethodDelegation.to(new ReflectClassFactory.ClassResultMethodInterceptor(expressionClass)))
