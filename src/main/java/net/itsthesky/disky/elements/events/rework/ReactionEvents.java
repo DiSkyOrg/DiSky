@@ -25,6 +25,7 @@ public class ReactionEvents {
 
     static {
         REACTION_ADD = EventRegistryFactory.builder(MessageReactionAddEvent.class)
+                .eventCategory(MessageEvents.class)
                 .name("Reaction Add")
                 .patterns("(reaction|emote)[s] add[ed]")
                 .description("Fired when a message, that can be seen by the bot, receive a reaction.",
@@ -43,6 +44,7 @@ public class ReactionEvents {
                 .register();
 
         EventRegistryFactory.builder(MessageReactionRemoveEvent.class)
+                .eventCategory(MessageEvents.class)
                 .name("Reaction Remove")
                 .patterns("(reaction|emote)[s] remove[d]")
                 .description("Fired when an user remove a reaction from a specific message.",
@@ -59,6 +61,7 @@ public class ReactionEvents {
                 .register();
 
         EventRegistryFactory.builder(MessageReactionRemoveAllEvent.class)
+                .eventCategory(MessageEvents.class)
                 .name("Reaction Remove All")
                 .patterns("(reaction|emote)[s] (remove[d] all|clear|reset)")
                 .description("Fired when an user remove every reactions from a message.",

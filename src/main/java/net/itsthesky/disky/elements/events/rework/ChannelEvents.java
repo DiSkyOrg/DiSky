@@ -3,24 +3,22 @@ package net.itsthesky.disky.elements.events.rework;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Timespan;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelFlag;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
-import net.dv8tion.jda.api.entities.channel.forums.BaseForumTag;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
-import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.ChannelDeleteEvent;
 import net.dv8tion.jda.api.events.channel.update.*;
 import net.itsthesky.disky.api.emojis.Emote;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.core.SkriptUtils;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.stream.Stream;
-
+@EventCategory(name = "Channel Events", description = {
+        "These events are fired when a channel is created, deleted, or updated.",
+        "This include all types of channels, including text, voice, forum, private, ... channels.",
+})
 public class ChannelEvents {
 
     static {

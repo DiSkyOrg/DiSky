@@ -26,8 +26,13 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.user.UserTypingEvent;
 import net.dv8tion.jda.api.events.user.update.*;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 
+@EventCategory(name = "User/Member Events", description = {
+        "Events related to user/member actions and updates.",
+        "Keep in mind most user update events requires a member to be seen by the bot in any guild, with the intent 'guild presence' enabled."
+})
 public class UserEvents {
 
     static {

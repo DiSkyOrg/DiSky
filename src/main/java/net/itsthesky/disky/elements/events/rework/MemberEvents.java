@@ -16,9 +16,11 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceSelfMuteEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.itsthesky.disky.api.events.rework.CopyEventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.core.SkriptUtils;
 
+@CopyEventCategory(UserEvents.class)
 public class MemberEvents {
 
     static {

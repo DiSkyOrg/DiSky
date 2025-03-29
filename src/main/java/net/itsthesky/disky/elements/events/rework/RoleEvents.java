@@ -25,9 +25,15 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.RoleDeleteEvent;
 import net.dv8tion.jda.api.events.role.update.*;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.core.SkriptUtils;
 
+@EventCategory(name = "Role Events", description = {
+        "These events are triggered when a role is created, deleted, or updated in a Discord server.",
+        "They provide access to the role and guild involved in the event.",
+        "These events are useful for tracking changes to roles, managing permissions, and implementing role-based features."
+})
 public class RoleEvents {
 
     static {

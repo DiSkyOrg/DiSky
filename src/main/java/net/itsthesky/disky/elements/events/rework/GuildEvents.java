@@ -18,8 +18,13 @@ import net.dv8tion.jda.api.events.guild.invite.GuildInviteDeleteEvent;
 import net.dv8tion.jda.api.events.guild.update.*;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 
+@EventCategory(name = "Guild Events", description = {
+        "Events related to guilds (servers) on Discord.",
+        "These events are triggered when certain actions occur within a guild, such as changes to settings, member actions, or administrative tasks."
+})
 public class GuildEvents {
 
     static {
