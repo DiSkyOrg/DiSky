@@ -151,7 +151,7 @@ public class MemberEvents {
                 .name("Member Timeout Event")
                 .patterns("member time[ ]out[ed]")
                 .description("Fired when a member is timed out (temporarily restricted from interacting with the server).")
-                .example("on member timeout:\n    broadcast \"%event-member% has been timed out until %event-date%\"")
+                .example("on member timeout:\n    broadcast \"%event-member% has been timed out until %timeout end%.\"")
                 .customTimedExpressions("[member] timeout end", Date.class,
                         evt -> SkriptUtils.convertDateTime(evt.getNewTimeOutEnd()),
                         evt -> SkriptUtils.convertDateTime(evt.getOldTimeOutEnd()))
@@ -167,7 +167,7 @@ public class MemberEvents {
                 .name("Member Self Mute Event")
                 .patterns("member [self] [un]mute[d]")
                 .description("Fired when a member mutes or unmutes themselves in a voice channel.")
-                .example("on member mute:\n    if event-boolean is true:\n        broadcast \"%event-member% muted themselves\"\n    else:\n        broadcast \"%event-member% unmuted themselves\"")
+                .example("on member mute:\n    if member mute state is true:\n        broadcast \"%event-member% muted themselves\"\n    else:\n        broadcast \"%event-member% unmuted themselves\"")
                 .customTimedExpressions("[member] mute[d] state", Boolean.class,
                         GuildVoiceSelfMuteEvent::isSelfMuted,
                         evt -> !evt.isSelfMuted())
@@ -181,7 +181,7 @@ public class MemberEvents {
                 .name("Member Self Deafen Event")
                 .patterns("member [self] [un]deafen[ed]")
                 .description("Fired when a member deafens or undeafens themselves in a voice channel.")
-                .example("on member deafen:\n    if event-boolean is true:\n        broadcast \"%event-member% deafened themselves\"\n    else:\n        broadcast \"%event-member% undeafened themselves\"")
+                .example("on member deafen:\n    if member deafen state is true:\n        broadcast \"%event-member% deafened themselves\"\n    else:\n        broadcast \"%event-member% undeafened themselves\"")
                 .customTimedExpressions("[member] deafen[ed] state", Boolean.class,
                         GuildVoiceSelfDeafenEvent::isSelfDeafened,
                         evt -> !evt.isSelfDeafened())
@@ -195,7 +195,7 @@ public class MemberEvents {
                 .name("Member Voice Join Event")
                 .patterns("[member] voice [channel] join")
                 .description("Fired when a member joins a voice or stage channel. This event also fires when a member moves from one voice channel to another.")
-                .example("on voice channel join:\n    broadcast \"%event-member% joined voice channel %event-voice-channel%\"")
+                .example("on voice channel join:\n    broadcast \"%event-member% joined voice channel %joined voice channel%\"")
                 .customTimedExpressions("[joined] voice channel", AudioChannel.class,
                         GuildVoiceUpdateEvent::getChannelJoined,
                         GuildVoiceUpdateEvent::getChannelLeft)
@@ -216,7 +216,7 @@ public class MemberEvents {
                 .name("Member Voice Leave Event")
                 .patterns("[member] voice [channel] leave")
                 .description("Fired when a member leaves a voice or stage channel. This includes both disconnecting completely and moving to another channel.")
-                .example("on voice channel leave:\n    broadcast \"%event-member% left voice channel %event-voice-channel%\"")
+                .example("on voice channel leave:\n    broadcast \"%event-member% left voice channel %left voice channel%\"")
                 .customTimedExpressions("[left] voice channel", AudioChannel.class,
                         GuildVoiceUpdateEvent::getChannelLeft,
                         GuildVoiceUpdateEvent::getChannelJoined)

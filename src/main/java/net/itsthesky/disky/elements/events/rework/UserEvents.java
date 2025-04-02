@@ -44,7 +44,7 @@ public class UserEvents {
                 .description("Fired when a user changes their activity order.",
                         "This event is triggered when a user starts a new activity or changes between activities.",
                         "Activities include playing games, listening to music, streaming, or custom status messages.")
-                .example("on user activity change:\n    broadcast \"%event-user% is now %event-user's activities%\"")
+                .example("on user activity change:\n    broadcast \"%event-user% is now %first element of user activities%\"")
                 .listExpression("user activit(y|ies)", Activity.class,
                         evt -> evt.getNewValue().toArray(Activity[]::new))
                 .value(User.class, UserUpdateActivityOrderEvent::getUser)
