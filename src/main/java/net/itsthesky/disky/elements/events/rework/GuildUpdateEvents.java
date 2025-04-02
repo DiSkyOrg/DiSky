@@ -35,7 +35,7 @@ public class GuildUpdateEvents {
                 .name("Guild AFK Channel Event")
                 .patterns("[discord] guild afk channel (change|update)")
                 .description("Fired when the AFK channel of a guild changes. Can be used to get the old/new channel, the author and the guild.")
-                .example("on guild afk channel change:\n\tbroadcast \"Guild %event-guild% changed AFK channel from %past afk channel% to %current afk channel%\"")
+                .example("on guild afk channel change:\n    broadcast \"Guild %event-guild% changed AFK channel from %past afk channel% to %current afk channel%\"")
                 .customTimedExpressions("afk channel", VoiceChannel.class,
                         GuildUpdateAfkChannelEvent::getNewValue,
                         GuildUpdateAfkChannelEvent::getOldValue)
@@ -49,7 +49,7 @@ public class GuildUpdateEvents {
                 .name("Guild AFK Timeout Event")
                 .patterns("[discord] guild afk timeout (change|update)")
                 .description("Fired when the AFK timeout of a guild changes. Can be used to get the old/new timeout value, the author and the guild.")
-                .example("on guild afk timeout change:\n\tbroadcast \"Guild %event-guild% changed AFK timeout from %past afk timeout% to %current afk timeout%\"")
+                .example("on guild afk timeout change:\n    broadcast \"Guild %event-guild% changed AFK timeout from %past afk timeout% to %current afk timeout%\"")
                 .customTimedExpressions("afk timeout", Guild.Timeout.class,
                         GuildUpdateAfkTimeoutEvent::getNewValue,
                         GuildUpdateAfkTimeoutEvent::getOldValue)
@@ -63,7 +63,7 @@ public class GuildUpdateEvents {
                 .name("Guild Banner Event")
                 .patterns("[discord] guild banner (change|update)")
                 .description("Fired when the banner of a guild changes. Can be used to get the old/new banner URL, the author and the guild.")
-                .example("on guild banner change:\n\tbroadcast \"Guild %event-guild% changed banner from %past banner% to %current banner%\"")
+                .example("on guild banner change:\n    broadcast \"Guild %event-guild% changed banner from %past banner% to %current banner%\"")
                 .customTimedExpressions("banner", String.class,
                         GuildUpdateBannerEvent::getNewBannerUrl,
                         GuildUpdateBannerEvent::getOldBannerUrl)
@@ -77,7 +77,7 @@ public class GuildUpdateEvents {
                 .name("Guild Boost Count Update")
                 .patterns("[discord] guild boost count (change|update)")
                 .description("Fired when the boost count of a guild changes. Can be used to get the old/new count, and the guild.")
-                .example("on guild boost count change:\n\tbroadcast \"Guild %event-guild% boost count changed from %past boost count% to %current boost count%\"")
+                .example("on guild boost count change:\n    broadcast \"Guild %event-guild% boost count changed from %past boost count% to %current boost count%\"")
                 .customTimedExpressions("boost count", Integer.class,
                         GuildUpdateBoostCountEvent::getNewValue,
                         GuildUpdateBoostCountEvent::getOldValue)
@@ -91,7 +91,7 @@ public class GuildUpdateEvents {
                 .name("Guild Boost Tier Update")
                 .patterns("[discord] guild boost tier (change|update)")
                 .description("Fired when the boost tier of a guild changes. Can be used to get the old/new tier, and the guild.")
-                .example("on guild boost tier change:\n\tbroadcast \"Guild %event-guild% boost tier changed from %past boost tier% to %current boost tier%\"")
+                .example("on guild boost tier change:\n    broadcast \"Guild %event-guild% boost tier changed from %past boost tier% to %current boost tier%\"")
                 .customTimedExpressions("boost tier", String.class,
                         event -> event.getNewBoostTier().name(),
                         event -> event.getOldBoostTier().name())
@@ -105,7 +105,7 @@ public class GuildUpdateEvents {
                 .name("Guild Icon Event")
                 .patterns("[discord] guild icon (change|update)")
                 .description("Fired when the icon of a guild changes. Can be used to get the old/new icon URL, the author and the guild.")
-                .example("on guild icon change:\n\tbroadcast \"Guild %event-guild% changed icon from %past icon% to %current icon%\"")
+                .example("on guild icon change:\n    broadcast \"Guild %event-guild% changed icon from %past icon% to %current icon%\"")
                 .customTimedExpressions("icon", String.class,
                         GuildUpdateIconEvent::getNewIconUrl,
                         GuildUpdateIconEvent::getOldIconUrl)
@@ -119,7 +119,7 @@ public class GuildUpdateEvents {
                 .name("Guild Name Event")
                 .patterns("[discord] guild name (update|change)")
                 .description("Fired when the name of a guild is changed. Can be used to get the old/new name, the author and the guild.")
-                .example("on guild name change:\n\tbroadcast \"Guild name changed from '%past guild name%' to '%current guild name%'\"")
+                .example("on guild name change:\n    broadcast \"Guild name changed from '%past guild name%' to '%current guild name%'\"")
                 .customTimedExpressions("guild name", String.class,
                         GuildUpdateNameEvent::getNewValue,
                         GuildUpdateNameEvent::getOldValue)
@@ -133,7 +133,7 @@ public class GuildUpdateEvents {
                 .name("Guild Owner Event")
                 .patterns("[discord] guild owner (change|update)")
                 .description("Fired when the owner of a guild changes. Can be used to get the old/new owner, the author and the guild.")
-                .example("on guild owner change:\n\tbroadcast \"Guild %event-guild% owner changed from %past owner% to %current owner%\"")
+                .example("on guild owner change:\n    broadcast \"Guild %event-guild% owner changed from %past owner% to %current owner%\"")
                 .customTimedExpressions("owner", Member.class,
                         GuildUpdateOwnerEvent::getNewOwner,
                         GuildUpdateOwnerEvent::getOldOwner)
@@ -147,7 +147,7 @@ public class GuildUpdateEvents {
                 .name("Guild Splash Event")
                 .patterns("[discord] guild splash (change|update)")
                 .description("Fired when the splash image of a guild changes. Can be used to get the old/new splash URL, the author and the guild.")
-                .example("on guild splash change:\n\tbroadcast \"Guild %event-guild% splash changed from %past splash% to %current splash%\"")
+                .example("on guild splash change:\n    broadcast \"Guild %event-guild% splash changed from %past splash% to %current splash%\"")
                 .customTimedExpressions("splash", String.class,
                         GuildUpdateSplashEvent::getNewSplashUrl,
                         GuildUpdateSplashEvent::getOldSplashUrl)

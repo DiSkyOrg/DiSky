@@ -166,7 +166,7 @@ public class CommandEvents {
                         "Use 'event-string' to get the command name.",
                         "Use the 'return' effect to provide completion choices to the user.",
                         "You can access the focused argument with 'current argument' and other argument values with 'argument \"name\" as type'.")
-                .example("on slash completion:\n\tif event-string is \"mycommand\":\n\t\tif current argument is \"option\":\n\t\t\treturn choice \"Option 1\" with value \"option1\", choice \"Option 2\" with value \"option2\"")
+                .example("on slash completion:\n    if event-string is \"mycommand\":\n        if current argument is \"option\":\n            return choice \"Option 1\" with value \"option1\", choice \"Option 2\" with value \"option2\"")
                 .implementInteraction(evt -> evt)
 
                 .channelValues(CommandAutoCompleteInteractionEvent::getChannel)

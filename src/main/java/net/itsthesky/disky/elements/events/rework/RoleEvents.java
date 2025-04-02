@@ -45,7 +45,7 @@ public class RoleEvents {
                 .description("Fired when a new role is created in a guild.",
                         "This event provides access to the newly created role and the guild it belongs to.",
                         "It's useful for tracking administrative changes or implementing role management systems.")
-                .example("on role create:\n\tbroadcast \"New role created: %event-role% in %event-guild%\"")
+                .example("on role create:\n    broadcast \"New role created: %event-role% in %event-guild%\"")
                 .value(Guild.class, RoleCreateEvent::getGuild)
                 .value(Role.class, RoleCreateEvent::getRole)
                 .author(RoleCreateEvent::getGuild)
@@ -59,7 +59,7 @@ public class RoleEvents {
                 .description("Fired when a role is deleted from a guild.",
                         "This event provides access to the deleted role and the guild it belonged to.",
                         "It can be used for auditing purposes or to trigger cleanup actions in your bot.")
-                .example("on role delete:\n\tbroadcast \"Role %event-role% was deleted from %event-guild%\"")
+                .example("on role delete:\n    broadcast \"Role %event-role% was deleted from %event-guild%\"")
                 .value(Guild.class, RoleDeleteEvent::getGuild)
                 .value(Role.class, RoleDeleteEvent::getRole)
                 .author(RoleDeleteEvent::getGuild)
@@ -73,7 +73,7 @@ public class RoleEvents {
                 .description("Fired when the color of a role changes.",
                         "This event provides access to both the old and new colors of the role.",
                         "It can be used for tracking aesthetic changes to roles or for synchronization systems.")
-                .example("on role color change:\n\tbroadcast \"Role %event-role% color changed from %previous role color% to %current role color%\"")
+                .example("on role color change:\n    broadcast \"Role %event-role% color changed from %previous role color% to %current role color%\"")
                 .customTimedExpressions("role color", Color.class,
                         evt -> SkriptUtils.convert(evt.getNewColor()),
                         evt -> SkriptUtils.convert(evt.getOldColor()))
@@ -90,7 +90,7 @@ public class RoleEvents {
                 .description("Fired when the name of a role changes.",
                         "This event provides access to both the old and new names of the role.",
                         "It's useful for tracking role identity changes or updating external systems that reference roles by name.")
-                .example("on role name change:\n\tbroadcast \"Role name changed from '%previous role name%' to '%current role name%' in %event-guild%\"")
+                .example("on role name change:\n    broadcast \"Role name changed from '%previous role name%' to '%current role name%' in %event-guild%\"")
                 .customTimedExpressions("role name", String.class,
                         RoleUpdateNameEvent::getNewValue,
                         RoleUpdateNameEvent::getOldValue)
@@ -108,7 +108,7 @@ public class RoleEvents {
                         "Hoisted roles are displayed separately in the member list.",
                         "This event provides access to both the old and new hoisted states.",
                         "It's useful for tracking changes to role visibility in the member sidebar.")
-                .example("on role hoisted change:\n\tif current role hoisted state is true:\n\t\tbroadcast \"Role %event-role% is now shown separately in the member list\"\n\telse:\n\t\tbroadcast \"Role %event-role% is no longer shown separately in the member list\"")
+                .example("on role hoisted change:\n    if current role hoisted state is true:\n        broadcast \"Role %event-role% is now shown separately in the member list\"\n    else:\n        broadcast \"Role %event-role% is no longer shown separately in the member list\"")
                 .customTimedExpressions("role hoisted [state]", Boolean.class,
                         RoleUpdateHoistedEvent::getNewValue,
                         RoleUpdateHoistedEvent::getOldValue)
@@ -125,7 +125,7 @@ public class RoleEvents {
                 .description("Fired when the icon of a role changes.",
                         "This event provides access to both the old and new icon URLs.",
                         "It can be used for tracking visual changes to roles or updating external systems.")
-                .example("on role icon change:\n\tbroadcast \"Role %event-role% icon changed from %previous role icon% to %current role icon%\"")
+                .example("on role icon change:\n    broadcast \"Role %event-role% icon changed from %previous role icon% to %current role icon%\"")
                 .customTimedExpressions("role icon", String.class,
                         evt -> evt.getNewValue() == null ? null : evt.getNewValue().getIconUrl(),
                         evt -> evt.getOldValue() == null ? null : evt.getOldValue().getIconUrl())
@@ -142,7 +142,7 @@ public class RoleEvents {
                 .description("Fired when the position of a role changes in the role hierarchy.",
                         "This event provides access to both the old and new positions.",
                         "It's useful for tracking changes to the role hierarchy that may affect permissions.")
-                .example("on role position change:\n\tbroadcast \"Role %event-role% position changed from %previous role position% to %current role position%\"")
+                .example("on role position change:\n    broadcast \"Role %event-role% position changed from %previous role position% to %current role position%\"")
                 .customTimedExpressions("role position", Integer.class,
                         RoleUpdatePositionEvent::getNewValue,
                         RoleUpdatePositionEvent::getOldValue)
@@ -159,7 +159,7 @@ public class RoleEvents {
                 .description("Fired when the permissions of a role change.",
                         "This event provides access to both the old and new permission sets.",
                         "It's crucial for security monitoring, permission auditing, and tracking administrative changes.")
-                .example("on role permissions change:\n\tbroadcast \"Permissions for role %event-role% have been updated in %event-guild%\"")
+                .example("on role permissions change:\n    broadcast \"Permissions for role %event-role% have been updated in %event-guild%\"")
                 .customTimedListExpressions("role permission[s]", Permission.class,
                         evt -> evt.getNewPermissions().toArray(Permission[]::new),
                         evt -> evt.getOldPermissions().toArray(Permission[]::new))
@@ -177,7 +177,7 @@ public class RoleEvents {
                         "This event tracks whether a role can be mentioned by regular users.",
                         "It provides access to both the old and new mentionable states.",
                         "It's useful for tracking changes that affect role notifications and visibility.")
-                .example("on role mentionable change:\n\tif current role mentionable state is true:\n\t\tbroadcast \"Role %event-role% can now be mentioned by everyone\"\n\telse:\n\t\tbroadcast \"Role %event-role% can no longer be mentioned by everyone\"")
+                .example("on role mentionable change:\n    if current role mentionable state is true:\n        broadcast \"Role %event-role% can now be mentioned by everyone\"\n    else:\n        broadcast \"Role %event-role% can no longer be mentioned by everyone\"")
                 .customTimedExpressions("role mentionable [state]", Boolean.class,
                         RoleUpdateMentionableEvent::getNewValue,
                         RoleUpdateMentionableEvent::getOldValue)

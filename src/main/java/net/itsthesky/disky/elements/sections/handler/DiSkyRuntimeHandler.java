@@ -105,7 +105,7 @@ public class DiSkyRuntimeHandler {
             return true;
 
         final var prefixedNode = "await " + node.getKey();
-        error(new IllegalStateException("This effect must be executed asynchronously! Prefix your line with 'await':\n\t" + prefixedNode),
+        error(new IllegalStateException("This effect must be executed asynchronously! Prefix your line with 'await':\n    " + prefixedNode),
                 node, false);
         return false;
     }

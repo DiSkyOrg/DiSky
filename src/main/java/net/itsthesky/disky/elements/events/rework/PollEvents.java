@@ -52,7 +52,7 @@ public class PollEvents {
                 .patterns("[message] poll vote remove[d]")
                 .description("Fired when a user removes their vote from a poll in a message.")
                 .example("on poll vote remove:")
-                .example("\tsend \"User %event-user% removed their vote from a poll in %event-channel%!\" to console")
+                .example("    send \"User %event-user% removed their vote from a poll in %event-channel%!\" to console")
 
                 .restValue("message", MessagePollVoteRemoveEvent::retrieveMessage)
                 .restValue("member", MessagePollVoteRemoveEvent::retrieveMember)

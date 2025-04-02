@@ -34,7 +34,7 @@ public class GuildVoiceEvents {
                 .name("Guild Voice Deafen Event")
                 .patterns("[discord] guild [voice] deafen[ed]")
                 .description("Fired when a member is deafened or undeafened by the guild. Can be used to track moderation actions in voice channels.")
-                .example("on guild voice deafen:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% was deafened in %event-guild%\"\n\telse:\n\t\tbroadcast \"%event-member% was undeafened in %event-guild%\"")
+                .example("on guild voice deafen:\n    if event-boolean is true:\n        broadcast \"%event-member% was deafened in %event-guild%\"\n    else:\n        broadcast \"%event-member% was undeafened in %event-guild%\"")
                 .value(Boolean.class, GuildVoiceGuildDeafenEvent::isGuildDeafened, 0)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)
@@ -45,7 +45,7 @@ public class GuildVoiceEvents {
                 .name("Guild Voice Mute Event")
                 .patterns("[discord] guild [voice] mute[d]")
                 .description("Fired when a member is muted or unmuted by the guild. Can be used to track moderation actions in voice channels.")
-                .example("on guild voice mute:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% was muted in %event-guild%\"\n\telse:\n\t\tbroadcast \"%event-member% was unmuted in %event-guild%\"")
+                .example("on guild voice mute:\n    if event-boolean is true:\n        broadcast \"%event-member% was muted in %event-guild%\"\n    else:\n        broadcast \"%event-member% was unmuted in %event-guild%\"")
                 .value(Boolean.class, GuildVoiceGuildMuteEvent::isGuildMuted, 0)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)
@@ -56,7 +56,7 @@ public class GuildVoiceEvents {
                 .name("Guild Voice Mute Event")
                 .patterns("[discord] guild [voice] mute[d]")
                 .description("Fired when a member is muted or unmuted by the guild. Can be used to track moderation actions in voice channels.")
-                .example("on guild voice mute:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% was muted in %event-guild%\"\n\telse:\n\t\tbroadcast \"%event-member% was unmuted in %event-guild%\"")
+                .example("on guild voice mute:\n    if event-boolean is true:\n        broadcast \"%event-member% was muted in %event-guild%\"\n    else:\n        broadcast \"%event-member% was unmuted in %event-guild%\"")
                 .value(Boolean.class, GuildVoiceMuteEvent::isMuted, 0)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)
@@ -68,7 +68,7 @@ public class GuildVoiceEvents {
                 .patterns("[discord] guild [voice] request to speak")
                 .description("Fired when a member requests to speak in a stage channel. Can be used to track moderation actions in voice channels.",
                         "You may use `event-boolean` to check if the state is true (user requested to speak) or false (user cancelled the request).")
-                .example("on guild voice request to speak:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% requested to speak in %event-guild%\"\n\telse:\n\t\tbroadcast \"%event-member% cancelled their request to speak in %event-guild%\"")
+                .example("on guild voice request to speak:\n    if event-boolean is true:\n        broadcast \"%event-member% requested to speak in %event-guild%\"\n    else:\n        broadcast \"%event-member% cancelled their request to speak in %event-guild%\"")
                 .value(Boolean.class, evt -> evt.getNewTime() != null)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)
@@ -85,7 +85,7 @@ public class GuildVoiceEvents {
                         "You may use `event-boolean` to check if the state is true (user started streaming) or false (user stopped streaming).",
                         "",
                         "!!! warning \"This **DOES NOT** include camera! Use the `GuildVoice Video Event` for that.\"")
-                .example("on guild voice stream:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% started streaming in %event-guild%\"\n\telse:\n\t\tbroadcast \"%event-member% stopped streaming in %event-guild%\"")
+                .example("on guild voice stream:\n    if event-boolean is true:\n        broadcast \"%event-member% started streaming in %event-guild%\"\n    else:\n        broadcast \"%event-member% stopped streaming in %event-guild%\"")
                 .value(Boolean.class, GuildVoiceStreamEvent::isStream, 0)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)
@@ -99,7 +99,7 @@ public class GuildVoiceEvents {
                         "You may use `event-boolean` to check if the state is true (user started its camera) or false (user stopped its camera).",
                         "",
                         "!!! warning \"This **DOES NOT** include streams! Use the `Guild Voice Stream Event` instead.\"")
-                .example("on guild voice video:\n\tif event-boolean is true:\n\t\tbroadcast \"%event-member% started video in %event-guild%\"\n\telse:\n\t\tbroadcast \"%event-member% stopped video in %event-guild%\"")
+                .example("on guild voice video:\n    if event-boolean is true:\n        broadcast \"%event-member% started video in %event-guild%\"\n    else:\n        broadcast \"%event-member% stopped video in %event-guild%\"")
                 .value(Boolean.class, GuildVoiceVideoEvent::isSendingVideo, 0)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)

@@ -42,7 +42,7 @@ public class BotEvents {
                 .description("Fired when the bot joins a new guild/server.",
                         "This event is useful for setting up initial configurations when the bot enters a new server,", 
                         "such as adding default roles, sending welcome messages, or initializing server-specific settings.")
-                .example("on bot join:\n\tbroadcast \"Bot joined a new server: %event-guild%!\"")
+                .example("on bot join:\n    broadcast \"Bot joined a new server: %event-guild%!\"")
                 .value(Guild.class, GuildJoinEvent::getGuild, 0)
                 .register();
 
@@ -54,7 +54,7 @@ public class BotEvents {
                 .description("Fired when the bot leaves a guild/server.",
                         "This event can be used for cleanup operations or logging when the bot is removed from a server,",
                         "either by being kicked, the server being deleted, or the bot owner removing it manually.")
-                .example("on bot leave:\n\tbroadcast \"Bot left the server: %event-guild%\"")
+                .example("on bot leave:\n    broadcast \"Bot left the server: %event-guild%\"")
                 .value(Guild.class, GuildLeaveEvent::getGuild, 0)
                 .register();
 
@@ -67,7 +67,7 @@ public class BotEvents {
                         "This event is triggered when the bot's connection to Discord is closing,",
                         "which can happen during server restarts, plugin reloads, or manual bot shutdowns.",
                         "It provides an opportunity to perform cleanup operations or save data before the bot goes offline.")
-                .example("on bot shutdown:\n\tbroadcast \"Bot %event-bot% is shutting down!\"")
+                .example("on bot shutdown:\n    broadcast \"Bot %event-bot% is shutting down!\"")
                 .register();
 
         // Guild Ready Event
@@ -79,7 +79,7 @@ public class BotEvents {
                         "This event occurs for each guild the bot is connected to when starting up.",
                         "It's fired before the global Ready event and indicates that guild-specific data", 
                         "like members, channels, and roles have been loaded and are available for use.")
-                .example("on guild ready:\n\tbroadcast \"Guild %event-guild% is now fully loaded!\"")
+                .example("on guild ready:\n    broadcast \"Guild %event-guild% is now fully loaded!\"")
                 .value(Guild.class, GuildReadyEvent::getGuild, 0)
                 .register();
 
@@ -92,7 +92,7 @@ public class BotEvents {
                         "This event is triggered once all guilds are ready and the bot's connection to Discord",
                         "is completely established. This is the ideal event to use for initialization code that",
                         "needs to run once when the bot starts up, such as scheduling tasks or initializing resources.")
-                .example("on bot loaded:\n\tbroadcast \"Bot %event-bot% is now online and ready!\"")
+                .example("on bot loaded:\n    broadcast \"Bot %event-bot% is now online and ready!\"")
                 .register();
     }
 }

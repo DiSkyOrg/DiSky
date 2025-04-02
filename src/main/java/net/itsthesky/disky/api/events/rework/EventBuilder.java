@@ -161,7 +161,7 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> description(String line) {
-        this.descriptionLines.add(line.replace("\t", "    "));
+        this.descriptionLines.add(line.replace("    ", "    "));
         return this;
     }
 
@@ -173,7 +173,7 @@ public class EventBuilder<T extends Event> {
      */
     public EventBuilder<T> description(String... lines) {
         for (String line : lines)
-            this.descriptionLines.add(line.replace("\t", "    "));
+            this.descriptionLines.add(line.replace("    ", "    "));
         return this;
     }
 
@@ -184,7 +184,7 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> example(String example) {
-        this.exampleLines.add(example.replace("\t", "    "));
+        this.exampleLines.add(example.replace("    ", "    "));
         return this;
     }
 
@@ -196,7 +196,7 @@ public class EventBuilder<T extends Event> {
      */
     public EventBuilder<T> examples(String... examples) {
         for (String example : examples)
-            this.exampleLines.add(example.replace("\t", "    "));
+            this.exampleLines.add(example.replace("    ", "    "));
         return this;
     }
 

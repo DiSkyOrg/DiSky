@@ -22,26 +22,26 @@ import java.util.List;
 @Description("This builder allow you to make embed easily. You can specify the template used, you must register this template before use it!")
 @Since("3.0")
 @Examples("discord command embed:\n" +
-        "\tprefixes: !\n" +
-        "\ttrigger:\n" +
-        "\t\tmake embed:\n" +
-        "\t\t\tset title of embed to \"Title\"\n" +
-        "\t\t\tset description of embed to \"Description%nl%The title leads to the URL, if given\"\n" +
-        "\t\t\tset author of the embed to \"Author name (Can point to URL)\"\n" +
-        "\t\t\tset author icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
-        "\t\t\tset author url of embed to \"https://www.youtube.com/watch?v=i33DB6R8YUY\"\n" +
-        "\t\t\tset embed color of the embed to orange\n" +
-        "\t\t\tadd inline field named \"Field Name\" with value \"Colour sets %nl%< that\" to fields of embed\n" +
-        "\t\t\tadd inline field named \"Field Name\" with value \"Color is a java Color%nl%Not a string\" to fields of embed\n" +
-        "\t\t\tadd inline field named \"Field Name\" with value \"Field value\" to fields of embed\n" +
-        "\t\t\tadd field named \"Non-inline field name\" with value \"The number of fields that can be shown on the same row is limited to 3, but is limited to 2 when an image is included\" to fields of embed\n" +
-        "\t\t\tset image of embed to \"https://media.discordapp.net/attachments/237757030708936714/390520880242884608/8xAac.png?width=508&height=522\"\n" +
-        "\t\t\tset thumbnail of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
-        "\t\t\tset title url of embed to \"https://www.crunchyroll.com/fr/tonikawa-over-the-moon-for-you\"\n" +
-        "\t\t\tset footer of embed to \"Footer text\"\n" +
-        "\t\t\tset footer icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
-        "\t\t\tset timestamp of embed to now\n" +
-        "\t\treply with last embed")
+        "    prefixes: !\n" +
+        "    trigger:\n" +
+        "        make embed:\n" +
+        "            set title of embed to \"Title\"\n" +
+        "            set description of embed to \"Description%nl%The title leads to the URL, if given\"\n" +
+        "            set author of the embed to \"Author name (Can point to URL)\"\n" +
+        "            set author icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
+        "            set author url of embed to \"https://www.youtube.com/watch?v=i33DB6R8YUY\"\n" +
+        "            set embed color of the embed to orange\n" +
+        "            add inline field named \"Field Name\" with value \"Colour sets %nl%< that\" to fields of embed\n" +
+        "            add inline field named \"Field Name\" with value \"Color is a java Color%nl%Not a string\" to fields of embed\n" +
+        "            add inline field named \"Field Name\" with value \"Field value\" to fields of embed\n" +
+        "            add field named \"Non-inline field name\" with value \"The number of fields that can be shown on the same row is limited to 3, but is limited to 2 when an image is included\" to fields of embed\n" +
+        "            set image of embed to \"https://media.discordapp.net/attachments/237757030708936714/390520880242884608/8xAac.png?width=508&height=522\"\n" +
+        "            set thumbnail of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
+        "            set title url of embed to \"https://www.crunchyroll.com/fr/tonikawa-over-the-moon-for-you\"\n" +
+        "            set footer of embed to \"Footer text\"\n" +
+        "            set footer icon of embed to \"https://cdn.discordapp.com/emojis/825811394963177533.png?v=1\"\n" +
+        "            set timestamp of embed to now\n" +
+        "        reply with last embed")
 public class EmbedSection extends ReturningSection<EmbedBuilder> {
 
     public static EmbedSection lastSection;

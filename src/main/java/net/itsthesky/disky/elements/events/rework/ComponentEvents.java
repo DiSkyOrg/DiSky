@@ -52,7 +52,7 @@ public class ComponentEvents {
                         "!!! info \"Modal can be shown in this interaction!\"")
                 .patterns("button click[ed]")
                 .example("on button clicked:\n" +
-                        "\treply with hidden \"You clicked the button with id '%clicked id%'!\" # This will defer the interaction!")
+                        "    reply with hidden \"You clicked the button with id '%clicked id%'!\" # This will defer the interaction!")
 
                 .implementComponentInteraction(evt -> evt)
                 .implementModal(ButtonInteraction::replyModal)
@@ -79,7 +79,7 @@ public class ComponentEvents {
                         "!!! warning \"Modal can NOT be shown in this interaction!\"")
                 .patterns("modal (click[ed]|receive[d])")
                 .example("on modal received:\n" +
-                        "\treply with hidden \"You clicked the button with id '%received modal%'!\" # This will defer the interaction!")
+                        "    reply with hidden \"You clicked the button with id '%received modal%'!\" # This will defer the interaction!")
 
                 .implementInteraction(evt -> evt)
 

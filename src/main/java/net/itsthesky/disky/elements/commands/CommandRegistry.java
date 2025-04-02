@@ -49,10 +49,10 @@ public class CommandRegistry extends SelfRegisteringSkriptEvent {
         Skript.registerEvent("Discord Command", CommandRegistry.class, CommandEvent.class, "discord command <([^\\s]+)( .+)?$>")
         .description("Custom DiSky discord command system. Arguments works like the normal skript's one and accept both optional and require arguments.")
         .examples("discord command move <member> <voicechannel>:\n" +
-                "\tprefixes: !\n" +
-                "\ttrigger:\n" +
-                "\t\treply with mention tag of arg-2\n" +
-                "\t\tmove arg-1 to arg-2")
+                "    prefixes: !\n" +
+                "    trigger:\n" +
+                "        reply with mention tag of arg-2\n" +
+                "        move arg-1 to arg-2")
         .since("3.0");
 
         SkriptUtils.registerValue(CommandEvent.class, CommandObject.class, CommandEvent::getCommand);

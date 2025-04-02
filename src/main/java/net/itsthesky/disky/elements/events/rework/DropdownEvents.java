@@ -40,7 +40,7 @@ public class DropdownEvents {
                         "This event provides access to the selected string values and dropdown details.",
                         "Don't forget to either reply to or defer the interaction to acknowledge it.",
                         "You can show a modal in response to this interaction.")
-                .example("on dropdown clicked:\n\treply with \"You selected: %selected values%\"")
+                .example("on dropdown clicked:\n    reply with \"You selected: %selected values%\"")
                 .implementComponentInteraction(evt -> evt)
                 .implementModal(StringSelectInteractionEvent::replyModal)
                 
@@ -67,7 +67,7 @@ public class DropdownEvents {
                         "This event provides access to the selected entities (users, roles, channels, etc.).",
                         "Don't forget to either reply to or defer the interaction to acknowledge it.",
                         "You can show a modal in response to this interaction.")
-                .example("on entity dropdown clicked:\n\tbroadcast \"User %event-user% selected entities: %selected entities%\"")
+                .example("on entity dropdown clicked:\n    broadcast \"User %event-user% selected entities: %selected entities%\"")
                 .implementComponentInteraction(evt -> evt)
                 .implementModal(EntitySelectInteractionEvent::replyModal)
                 
