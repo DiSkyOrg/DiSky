@@ -10,8 +10,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.api.skript.EasyElement;
-import net.itsthesky.disky.elements.events.interactions.ModalSendEvent;
-import net.dv8tion.jda.api.interactions.modals.ModalMapping;
+import net.itsthesky.disky.elements.events.rework.ComponentEvents;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +38,11 @@ public class ComponentValue extends SimpleExpression<Object> {
 		final String id = EasyElement.parseSingle(exprId, e, null);
 		if (EasyElement.anyNull(this, id))
 			return new String[0];
-		final ModalMapping mapping = ((ModalSendEvent.BukkitModalSendEvent) e).getJDAEvent().getValue(id);
+		final var event = ComponentEvents.MODAL_INTERACTION_EVENT.getJDAEvent(e);
+		if (event == null)
+			return new String[0];
+
+		final var mapping = event.getValue(id);
 		if (mapping == null)
 			return new String[0];
 
@@ -48,7 +51,6 @@ public class ComponentValue extends SimpleExpression<Object> {
 		else
 			return new Object[0];
 			//return mapping.getAsStringList().toArray(new String[0]);
-
 	}
 
 	@Override
@@ -71,10 +73,11 @@ public class ComponentValue extends SimpleExpression<Object> {
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
-		if (!EasyElement.containsEvent(ModalSendEvent.BukkitModalSendEvent.class)) {
+		if (!EasyElement.containsEvent(ComponentEvents.MODAL_INTERACTION_EVENT.getBukkitEventClass())) {
 			Skript.error("You can only get values of components in a modal receive event.");
 			return false;
 		}
+
 		returnType = parseResult.mark == 1 ? String.class : String[].class;
 		isSingle = parseResult.mark == 1;
 		exprId = (Expression<String>) exprs[0];

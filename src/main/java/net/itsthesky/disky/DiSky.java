@@ -3,6 +3,7 @@ package net.itsthesky.disky;
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.util.Version;
+import net.dv8tion.jda.api.requests.RestAction;
 import net.itsthesky.disky.api.emojis.EmojiStore;
 import net.itsthesky.disky.api.generator.DocBuilder;
 import net.itsthesky.disky.api.modules.DiSkyModule;
@@ -10,6 +11,7 @@ import net.itsthesky.disky.api.modules.ModuleManager;
 import net.itsthesky.disky.api.skript.ErrorHandler;
 import net.itsthesky.disky.core.DiSkyCommand;
 import net.itsthesky.disky.core.DiSkyMetrics;
+import net.itsthesky.disky.core.UpdateCheckerTask;
 import net.itsthesky.disky.core.Utils;
 import net.itsthesky.disky.elements.properties.DynamicElements;
 import net.itsthesky.disky.elements.structures.context.ContextCommandManager;
@@ -17,11 +19,11 @@ import net.itsthesky.disky.elements.structures.slash.SlashManager;
 import net.itsthesky.disky.managers.BotManager;
 import net.itsthesky.disky.managers.ConfigManager;
 import net.itsthesky.disky.managers.WebhooksManager;
-import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
@@ -82,6 +84,20 @@ public final class DiSky extends JavaPlugin {
             return;
         }
 
+        if (Skript.getVersion().isSmallerThan(new Version("2.10.0"))) {
+
+            getLogger().severe("This version of DiSky requires Skript 2.10.0 or higher.");
+            getLogger().severe("The last version of DiSky supporting Skript 2.9.x is DiSky 4.20.0!");
+            getLogger().severe("BY DOWNGRADING DISKY, YOU WILL **NOT** RECEIVE ANY SUPPORT!");
+            getLogger().severe("Please update Skript to the latest version.");
+
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        final var checker = new UpdateCheckerTask(this);
+        checker.runTaskAsynchronously(this);
+
         /*
          * Loading the configuration & the metrics
          */
@@ -127,10 +143,6 @@ public final class DiSky extends JavaPlugin {
         addonInstance = Skript.registerAddon(this);
         moduleManager = new ModuleManager(new File(getDataFolder(), "modules"), this, addonInstance);
         try {
-            DynamicElements.registerLogs();
-            DynamicElements.registerThreadProperties();
-            DynamicElements.registerAutoMod();
-
             addonInstance.loadClasses("net.itsthesky.disky.elements");
             moduleManager.loadModules();
         } catch (IOException e) {

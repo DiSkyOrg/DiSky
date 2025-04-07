@@ -1,17 +1,21 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Sends the typing status to discord. This is what is used to make the message \"X is typing...\" appear.",
         "Typing status lasts for 10 seconds."})
 @Examples({"show typing status in event-channel"})
-public class SendTyping extends SpecificBotEffect {
+public class SendTyping extends AsyncEffect {
 
     static {
         Skript.registerEffect(
@@ -30,40 +34,36 @@ public class SendTyping extends SpecificBotEffect {
     }
 
     private Expression<Channel> exprChannel;
+    private Node node;
 
     @Override
-    public boolean initEffect(Expression[] expr, int i, Kleenean kleenean, ParseResult parseResult) {
+    public boolean init(Expression[] expr, int i, Kleenean kleenean, ParseResult parseResult) {
+        node = getParser().getNode();
+
         exprChannel = (Expression<Channel>) expr[0];
         return true;
     }
 
     @Override
-    public void runEffect(@NotNull Event e, Bot bot) {
-        final Channel channel = parseSingle(exprChannel, e, null);
+    public void execute(@NotNull Event e) {
+        final Channel channel = EasyElement.parseSingle(exprChannel, e, null);
 
-        if (bot == null || channel == null) {
-            restart();
+        if (channel == null) {
+            DiSkyRuntimeHandler.exprNotSet(node, exprChannel);
             return;
         }
 
-        final MessageChannel textchannel = bot != null ?
-                bot.findMessageChannel((MessageChannel) channel) : (MessageChannel) channel;
-        if (textchannel == null) {
-            restart();
-            return;
+        if (!channel.getType().isMessage()) {
+            DiSkyRuntimeHandler.error(new IllegalArgumentException("The given channel is a '" + channel.getType().name() + "' channel, not a message channel."),
+                    node, false);
         }
+        final var msgChannel = (MessageChannel) channel;
 
-        textchannel.sendTyping().queue(
-                v -> restart(),
-                ex -> {
-                    DiSky.getErrorHandler().exception(e, ex);
-                    restart();
-                }
-        );
+        msgChannel.sendTyping().complete();
     }
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "Sent typing to " + exprChannel.toString(e, debug);
+        return "send typing to " + exprChannel.toString(e, debug);
     }
 }

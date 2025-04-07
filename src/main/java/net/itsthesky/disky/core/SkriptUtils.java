@@ -18,11 +18,9 @@ import ch.njol.skript.util.Date;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.ReflectionUtils;
-import net.itsthesky.disky.api.events.EventValue;
 import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.elements.effects.RetrieveEventValue;
-import net.itsthesky.disky.elements.events.ExprEventValues;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -98,7 +96,7 @@ public final class SkriptUtils {
             return (Expression<T>) expr;
         Class<? extends Event>[] events = ParserInstance.get().getCurrentEvents();
         for (Class<? extends Event> e : events == null ? new Class[0] : events) {
-            Converter<Event, ? extends T> getter = (Converter<Event, ? extends T>) EventValues.getEventValueGetter(e, clazz, 0);
+            Converter<Event, ? extends T> getter = (Converter<Event, ? extends T>) EventValues.getEventValueConverter(e, clazz, 0);
             if (getter != null) {
                 return new SimpleExpression<T>() {
                     @Override
@@ -171,17 +169,21 @@ public final class SkriptUtils {
         RetrieveEventValue.VALUES.put(bukkitClass, current);
     }
 
+    @SuppressWarnings({"rawtypes"})
+    public static void registerRawRestValue(String codeName,
+                                         Class<? extends SimpleDiSkyEvent> bukkitClass,
+                                         Function function,
+                                         Function converter) {
+        final List<RetrieveEventValue.RetrieveValueInfo> current =
+                RetrieveEventValue.VALUES.getOrDefault(bukkitClass, new ArrayList<>());
+        current.add(new RetrieveEventValue.RetrieveValueInfo(bukkitClass, codeName, function, converter));
+        RetrieveEventValue.VALUES.put(bukkitClass, current);
+    }
+
     public static <B extends SimpleDiSkyEvent, T> void registerRestValue(String codeName,
                                                                          Class<B> bukkitClass,
                                                                          Function<B, RestAction<T>> function) {
         registerRestValue(codeName, bukkitClass, function, entity -> entity);
-    }
-
-    public static <B extends Event, T> void registerValues(Class<B> bukkitClass,
-                                                           Class<T> entityClass,
-                                                           String name,
-                                                           Function<B, T[]> function) {
-        ExprEventValues.registerEventValue(bukkitClass, new EventValue<>(entityClass, name, function));
     }
 
     public static <B extends Event, T> void registerValue(Class<B> bukkitClass,

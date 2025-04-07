@@ -1,28 +1,27 @@
 package net.itsthesky.disky.elements.structures.slash;
 
 import ch.njol.skript.lang.Trigger;
-import ch.njol.skript.lang.util.common.AnyNamed;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.exceptions.RateLimitedException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
-import net.itsthesky.disky.elements.events.interactions.SlashCommandReceiveEvent;
-import net.itsthesky.disky.elements.events.interactions.SlashCompletionEvent;
-import net.itsthesky.disky.elements.structures.slash.elements.OnCooldownEvent;
+import net.itsthesky.disky.elements.events.rework.CommandEvents;
+import net.itsthesky.disky.elements.events.rework.custom.SlashCooldownEvent;
 import net.itsthesky.disky.elements.structures.slash.models.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public final class SlashManager extends ListenerAdapter {
 
@@ -42,7 +41,7 @@ public final class SlashManager extends ListenerAdapter {
     private final Map<String, List<Runnable>> waitingGuildCommands = new HashMap<>();
     private final Set<String> readyGuilds = new HashSet<>();
     private final List<Runnable> waitingGlobalCommands = new ArrayList<>();
-    private final List<RegisteredCommand> registeredCommands = new ArrayList<>();
+    private final List<RegisteredGroup> registeredGroups = new ArrayList<>();
     private final Map<String, CommandGroup> commandGroups = new ConcurrentHashMap<>();
     private final Bot bot;
     private boolean readyGlobal = false;
@@ -60,13 +59,8 @@ public final class SlashManager extends ListenerAdapter {
 
         // Get or create the command group
         CommandGroup group = commandGroups.compute(baseCommandName, (name, existingGroup) -> {
-            if (existingGroup != null) {
-                // Remove existing commands
-                registeredCommands.removeIf(cmd -> cmd.getParsedCommand().getName().startsWith(name));
-            }
-
             CommandType type = parts.length == 1 ? CommandType.SINGLE : CommandType.GROUP;
-            return new CommandGroup(name, type);
+            return existingGroup != null ? existingGroup : new CommandGroup(name, type);
         });
 
         // Add the command to the group
@@ -125,93 +119,56 @@ public final class SlashManager extends ListenerAdapter {
         }
     }
 
-    public void markGuildAsReady(String guildId) {
-        DiSky.debug("Marking guild " + guildId + " as ready in SlashManager");
-        readyGuilds.add(guildId);
-
-        // Process any waiting commands for this guild
-        if (waitingGuildCommands.containsKey(guildId)) {
-            final List<Runnable> tasks = waitingGuildCommands.remove(guildId);
-            DiSky.debug("Guild " + guildId + " is ready, registering " + tasks.size() + " commands");
-            tasks.forEach(Runnable::run);
-        }
-    }
-
-
     private void registerCommandGroupSuccess(CommandGroup group, Command cmd, @Nullable String guildId) {
-        // Register the main command if it's a single command
-        if (group.getType() == CommandType.SINGLE && group.getSingleCommand() != null) {
-            final RegisteredCommand registeredCommand = new RegisteredCommand(
-                    group.getSingleCommand(),
-                    cmd.getIdLong(),
-                    bot.getName(),
-                    guildId
-            );
-            registeredCommands.add(registeredCommand);
-        }
+        // Remove any existing group with the same name and guild
+        registeredGroups.removeIf(rg ->
+                rg.getCommandGroup().getName().equals(group.getName()) &&
+                        Objects.equals(rg.getGuildId(), guildId)
+        );
 
-        // Register all subcommands
-        for (ParsedCommand subCmd : group.getSubCommands().values()) {
-            final RegisteredCommand registeredCommand = new RegisteredCommand(
-                    subCmd,
-                    cmd.getIdLong(),
-                    bot.getName(),
-                    guildId
-            );
-            registeredCommands.add(registeredCommand);
-        }
+        // Create and add the new registered group
+        RegisteredGroup registeredGroup = new RegisteredGroup(
+                group,
+                cmd.getIdLong(),
+                bot.getName(),
+                guildId
+        );
 
-        // Register subcommands in groups
-        for (CommandGroup subGroup : group.getSubGroups().values()) {
-            for (ParsedCommand subCmd : subGroup.getSubCommands().values()) {
-                final RegisteredCommand registeredCommand = new RegisteredCommand(
-                        subCmd,
-                        cmd.getIdLong(),
-                        bot.getName(),
-                        guildId
-                );
-                registeredCommands.add(registeredCommand);
-            }
-        }
+        registeredGroups.add(registeredGroup);
 
         DiSky.debug("Successfully registered command group " + group.getName() +
                 (guildId != null ? " in guild " + guildId : " globally"));
     }
 
     // Command Management Methods
-    public RegisteredCommand findCommand(String name, String guildId) {
-        return registeredCommands.stream()
-                .filter(cmd -> cmd.getName().equals(name) && Objects.equals(cmd.getGuildId(), guildId))
+    public RegisteredGroup findGroup(String commandName, String guildId) {
+        String baseName = commandName.split(" ")[0];
+
+        return registeredGroups.stream()
+                .filter(group ->
+                        group.getCommandGroup().getName().equals(baseName) &&
+                                Objects.equals(group.getGuildId(), guildId)
+                )
                 .findFirst()
                 .orElse(null);
     }
 
-    public RegisteredCommand findCommand(String name) {
-        return registeredCommands.stream()
-                .filter(cmd -> cmd.getName().equals(name) && cmd.getGuildId() == null)
+    public RegisteredGroup findGroup(String commandName) {
+        String baseName = commandName.split(" ")[0];
+
+        return registeredGroups.stream()
+                .filter(group ->
+                        group.getCommandGroup().getName().equals(baseName) &&
+                                group.getGuildId() == null
+                )
                 .findFirst()
                 .orElse(null);
-    }
-
-    public void deleteLocalCommand(RegisteredCommand command) {
-        registeredCommands.remove(command);
-        final Guild guild = bot.getInstance().getGuildById(command.getGuildId());
-        if (guild == null) {
-            DiSky.debug("Guild " + command.getGuildId() + " is not available, skipping command deletion");
-            return;
-        }
-        guild.deleteCommandById(command.getCommandId()).complete();
-    }
-
-    public void deleteGlobalCommand(RegisteredCommand command) {
-        registeredCommands.remove(command);
-        bot.getInstance().deleteCommandById(command.getCommandId()).complete();
     }
 
     // Event Handlers
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        // Build the full command name from the base command and subcommand
+        // Build the full command name
         StringBuilder fullCommandName = new StringBuilder(event.getName());
 
         if (event.getSubcommandGroup() != null) {
@@ -223,50 +180,60 @@ public final class SlashManager extends ListenerAdapter {
 
         String commandString = fullCommandName.toString();
 
-        // Find the registered command
-        RegisteredCommand command = registeredCommands.stream()
-                .filter(cmd -> {
-                    String originalName = cmd.getParsedCommand().getOriginalName();
+        // Find the registered group
+        RegisteredGroup group = event.isGlobalCommand() ?
+                findGroup(event.getName()) :
+                findGroup(event.getName(), Objects.requireNonNull(event.getGuild()).getId());
 
-                    // For single commands, compare directly
-                    if (!commandString.contains(" ") && originalName.equals(commandString)) {
-                        return event.isGlobalCommand() ?
-                                cmd.getGuildId() == null :
-                                cmd.getGuildId() != null && cmd.getGuildId().equals(event.getGuild().getId());
-                    }
-
-                    // For subcommands and groups, compare parts
-                    String[] originalParts = originalName.split(" ");
-                    String[] executedParts = commandString.split(" ");
-
-                    if (originalParts.length != executedParts.length) {
-                        return false;
-                    }
-
-                    for (int i = 0; i < originalParts.length; i++) {
-                        if (!originalParts[i].equalsIgnoreCase(executedParts[i])) {
-                            return false;
-                        }
-                    }
-
-                    return event.isGlobalCommand() ?
-                            cmd.getGuildId() == null :
-                            cmd.getGuildId() != null && cmd.getGuildId().equals(event.getGuild().getId());
-                })
-                .findFirst()
-                .orElse(null);
-
-        if (command == null) {
+        if (group == null) {
             DiSky.debug("Received unregistered command '" + fullCommandName + "' for execution (global: " + event.isGlobalCommand() + ")");
             return;
         }
 
-        tryExecute(command, event);
+        // Find the specific command within the group
+        ParsedCommand command = group.findCommand(commandString);
+        if (command == null) {
+            DiSky.debug("Command '" + commandString + "' not found in group " + group.getCommandGroup().getName());
+            return;
+        }
+
+        // Execute the command
+        tryExecute(group, command, event);
     }
 
     @Override
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
-        handleAutoComplete(event);
+        // Build the full command name
+        StringBuilder fullCommandName = new StringBuilder(event.getName());
+
+        if (event.getSubcommandGroup() != null) {
+            fullCommandName.append(" ").append(event.getSubcommandGroup());
+        }
+        if (event.getSubcommandName() != null) {
+            fullCommandName.append(" ").append(event.getSubcommandName());
+        }
+
+        String commandString = fullCommandName.toString();
+
+        // Find the registered group
+        RegisteredGroup group = event.isGlobalCommand() ?
+                findGroup(event.getName()) :
+                findGroup(event.getName(), Objects.requireNonNull(event.getGuild()).getId());
+
+        if (group == null) {
+            DiSky.debug("Received unregistered command '" + event.getName() + "' for auto-completion");
+            return;
+        }
+
+        // Find the specific command within the group
+        ParsedCommand command = group.findCommand(commandString);
+        if (command == null) {
+            DiSky.debug("Command '" + commandString + "' not found in group " + group.getCommandGroup().getName());
+            return;
+        }
+
+        // Handle auto-completion
+        handleAutoComplete(command, event);
     }
 
     @Override
@@ -291,112 +258,161 @@ public final class SlashManager extends ListenerAdapter {
     }
 
     // Command Execution Methods
-    private void tryExecute(RegisteredCommand command, SlashCommandInteractionEvent event) {
+    private void tryExecute(RegisteredGroup group, ParsedCommand command, SlashCommandInteractionEvent event) {
         SkriptUtils.sync(() -> {
-            if (handleCooldown(command, event)) {
+            if (handleCooldown(group, command, event)) {
                 return;
             }
             executeCommand(command, event);
         });
     }
 
-    private boolean handleCooldown(RegisteredCommand command, SlashCommandInteractionEvent event) {
-        if (command.getParsedCommand().hasCooldown()) {
-            if (command.isInCooldown(event.getUser())) {
-                if (command.getParsedCommand().getOnCooldown() != null) {
-                    final OnCooldownEvent.BukkitCooldownEvent bukkitEvent = new OnCooldownEvent.BukkitCooldownEvent(
-                            new OnCooldownEvent(),
-                            command.getCooldown(event.getUser()) - System.currentTimeMillis()
-                    );
-                    bukkitEvent.setJDAEvent(event);
-                    command.getParsedCommand().prepareArguments(event.getOptions());
-                    command.getParsedCommand().getOnCooldown().execute(bukkitEvent);
+    private boolean handleCooldown(RegisteredGroup group, ParsedCommand command, SlashCommandInteractionEvent event) {
+        if (command.hasCooldown()) {
+            String commandPath = command.getOriginalName();
+            if (group.isInCooldown(event.getUser(), commandPath)) {
+                if (command.getOnCooldown() != null) {
+                    final var jdaEvent = new SlashCooldownEvent(event,
+                            group.getCooldown(event.getUser(), commandPath));
+                    final var bukkitEvent = CommandEvents.SLASH_COOLDOWN_EVENT.createBukkitInstance(jdaEvent);
+                    command.prepareArguments(event);
+                    command.getOnCooldown().execute(bukkitEvent);
 
-                    return !bukkitEvent.isCancelled();
+                    return !jdaEvent.isCancelled();
                 }
+                return true; // Default behavior if no cooldown handler
             }
-            command.setCooldown(event.getUser());
+            group.setCooldown(event.getUser(), commandPath, command.getCooldown());
         }
         return false;
     }
 
-    private void executeCommand(RegisteredCommand command, SlashCommandInteractionEvent event) {
-        command.getParsedCommand().prepareArguments(event.getOptions());
-        final Trigger trigger = command.getParsedCommand().getTrigger();
-        final SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent bukkitEvent =
-                new SlashCommandReceiveEvent.BukkitSlashCommandReceiveEvent(new SlashCommandReceiveEvent());
-        bukkitEvent.setJDAEvent(event);
+    private void executeCommand(ParsedCommand command, SlashCommandInteractionEvent event) {
+        command.prepareArguments(event);
+        final Trigger trigger = command.getTrigger();
+        final var bukkitEvent = CommandEvents.SLASH_COMMAND_EVENT.createBukkitInstance(event);
         trigger.execute(bukkitEvent);
     }
 
-    private void handleAutoComplete(CommandAutoCompleteInteractionEvent event) {
-        RegisteredCommand registeredCommand = event.isGlobalCommand() ?
-                findCommand(event.getName()) :
-                findCommand(event.getName(), event.getGuild().getId());
-
-        if (registeredCommand == null) {
-            DiSky.debug("Received unregistered command " + event.getName() + " for auto-completion");
-            return;
-        }
-
-        String focusedArgument = event.getFocusedOption().getName();
-        Trigger trigger = registeredCommand.getParsedCommand().getArguments()
+    private void handleAutoComplete(ParsedCommand command, CommandAutoCompleteInteractionEvent event) {
+        final var focusedArgument = event.getFocusedOption().getName();
+        final var focusArg = command.getArguments()
                 .stream()
                 .filter(arg -> arg.getName().equals(focusedArgument))
                 .findFirst()
-                .map(ParsedArgument::getOnCompletionRequest)
                 .orElse(null);
 
-        if (trigger == null) {
+        if (focusArg == null) {
             DiSky.debug("No completion trigger for argument " + focusedArgument);
             return;
         }
 
-        registeredCommand.getParsedCommand().prepareArguments(event.getOptions());
-        SlashCompletionEvent.BukkitSlashCompletionEvent bukkitEvent =
-                new SlashCompletionEvent.BukkitSlashCompletionEvent(new SlashCompletionEvent());
-        bukkitEvent.setJDAEvent(event);
-        trigger.execute(bukkitEvent);
+        if (focusArg.getCustomArgument() == null) {
+            command.prepareArguments(event);
+            final var bukkitEvent = CommandEvents.SLASH_COMPLETION_EVENT.createBukkitInstance(event);
+            final var trigger = focusArg.getOnCompletionRequest();
+            if (trigger == null) {
+                DiSky.debug("No completion trigger for argument " + focusedArgument);
+                return;
+            }
+
+            trigger.execute(bukkitEvent);
+        } else {
+            final var customArgument = focusArg.getCustomArgument();
+            final var input = event.getFocusedOption().getValue();
+            final var choices = customArgument.handleAutoCompletion(event, input);
+            if (choices != null) {
+                event.replyChoices(choices).queue();
+            } else {
+                DiSky.debug("No choices for argument " + focusedArgument);
+            }
+        }
     }
 
     // Cleanup Methods
     public void shutdown() {
         bot.getInstance().removeEventListener(this);
-        cleanupRegisteredCommands();
-        registeredCommands.clear();
+        cleanupRegisteredGroups();
+        registeredGroups.clear();
         commandGroups.clear();
     }
 
-    private void cleanupRegisteredCommands() {
-        if (true)
-            return; // TODO: Fix this method. It's so fucking hard to both handle JDA's queue system while being stuck on bukkit's single thread system
-
-        // gather all guilds, if any, to clear
+    private void cleanupRegisteredGroups() {
         Set<String> guilds = new HashSet<>();
-        registeredCommands.forEach(cmd -> {
-            if (cmd.getGuildId() != null)
-                guilds.add(cmd.getGuildId());
+        registeredGroups.forEach(group -> {
+            if (group.getGuildId() != null)
+                guilds.add(group.getGuildId());
         });
 
-        // delete all commands
-        try {
-            for (String guildId : guilds) {
-                var guild = bot.getInstance().getGuildById(guildId);
-                if (guild == null) {
-                    DiSky.debug("Guild " + guildId + " not found, skipping command deletion");
-                    continue;
-                }
-
-                var commands = guild.retrieveCommands().complete(true);
-                for (Command cmd : commands)
-                    guild.deleteCommandById(cmd.getId()).complete(true);
+        for (String guildId : guilds) {
+            // delete every command with a reasonable timeout (3s)
+            var guild = bot.getInstance().getGuildById(guildId);
+            if (guild == null) {
+                DiSky.debug("Guild " + guildId + " not found, skipping command deletion");
+                continue;
             }
-            var commands = bot.getInstance().retrieveCommands().complete(true);
-            for (Command cmd : commands)
-                bot.getInstance().deleteCommandById(cmd.getId()).complete(true);
-        } catch (RateLimitedException ex) {
-            DiSky.debug("Failed to delete all commands: " + ex.getMessage());
+
+            try {
+                CompletableFuture<List<Command>> futureCommands = new CompletableFuture<>();
+                guild.retrieveCommands().queue(
+                        futureCommands::complete,
+                        futureCommands::completeExceptionally
+                );
+
+                List<Command> commands = futureCommands.get(3, TimeUnit.SECONDS);
+                for (Command cmd : commands) {
+                    CompletableFuture<Void> future = new CompletableFuture<>();
+                    guild.deleteCommandById(cmd.getId()).queue(
+                            v -> future.complete(null),
+                            future::completeExceptionally
+                    );
+                    future.get(3, TimeUnit.SECONDS);
+                }
+            } catch (Exception e) {
+                DiSky.debug("Failed to delete guild commands: " + e.getMessage());
+                for (var trace : e.getStackTrace())
+                    DiSky.debug("  " + trace);
+            }
         }
+
+        // same for global commands
+        try {
+            CompletableFuture<List<Command>> futureCommands = new CompletableFuture<>();
+            bot.getInstance().retrieveCommands().queue(
+                    futureCommands::complete,
+                    futureCommands::completeExceptionally
+            );
+
+            List<Command> commands = futureCommands.get(3, TimeUnit.SECONDS);
+            for (Command cmd : commands) {
+                CompletableFuture<Void> future = new CompletableFuture<>();
+                bot.getInstance().deleteCommandById(cmd.getId()).queue(
+                        v -> future.complete(null),
+                        future::completeExceptionally
+                );
+                future.get(3, TimeUnit.SECONDS);
+            }
+        } catch (Exception e) {
+            DiSky.debug("Failed to delete global commands: " + e.getMessage());
+            for (var trace : e.getStackTrace())
+                DiSky.debug("  " + trace);
+        }
+    }
+
+    // Methods for deleting groups
+    public void deleteLocalGroup(RegisteredGroup group) {
+        registeredGroups.remove(group);
+        final Guild guild = bot.getInstance().getGuildById(group.getGuildId());
+        if (guild == null) {
+            DiSky.debug("Guild " + group.getGuildId() + " is not available, skipping command deletion");
+            return;
+        }
+        guild.deleteCommandById(group.getCommandId()).complete();
+    }
+
+    public void deleteGlobalGroup(RegisteredGroup group) {
+        registeredGroups.remove(group);
+        bot.getInstance().deleteCommandById(group.getCommandId()).complete();
     }
 
     // Debug Methods
@@ -436,11 +452,11 @@ public final class SlashManager extends ListenerAdapter {
             }
         }
 
-        debug.append("\nRegistered Commands (").append(registeredCommands.size()).append("):\n");
-        registeredCommands.forEach(cmd ->
-                debug.append("  - ").append(cmd.getName())
-                        .append(" (ID: ").append(cmd.getCommandId()).append(")")
-                        .append(cmd.getGuildId() != null ? " [Guild: " + cmd.getGuildId() + "]" : " [Global]")
+        debug.append("\nRegistered Groups (").append(registeredGroups.size()).append("):\n");
+        registeredGroups.forEach(group ->
+                debug.append("  - ").append(group.getCommandGroup().getName())
+                        .append(" (ID: ").append(group.getCommandId()).append(")")
+                        .append(group.getGuildId() != null ? " [Guild: " + group.getGuildId() + "]" : " [Global]")
                         .append("\n")
         );
 
@@ -451,7 +467,7 @@ public final class SlashManager extends ListenerAdapter {
         return Collections.unmodifiableMap(commandGroups);
     }
 
-    public List<RegisteredCommand> getRegisteredCommands() {
-        return Collections.unmodifiableList(registeredCommands);
+    public List<RegisteredGroup> getRegisteredGroups() {
+        return Collections.unmodifiableList(registeredGroups);
     }
 }

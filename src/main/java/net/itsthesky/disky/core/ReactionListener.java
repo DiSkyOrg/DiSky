@@ -2,10 +2,10 @@ package net.itsthesky.disky.core;
 
 import ch.njol.skript.lang.Trigger;
 import net.itsthesky.disky.api.emojis.Emote;
-import net.itsthesky.disky.elements.events.react.ReactionAddEvent;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.itsthesky.disky.elements.events.rework.ReactionEvents;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +30,7 @@ public class ReactionListener extends ListenerAdapter {
 		if (info.getSelfID().equals(event.getUserIdLong())) // It's the actual bot
 			return;
 
-		final ReactionAddEvent.BukkitReactionAddEvent e = new ReactionAddEvent.BukkitReactionAddEvent(new ReactionAddEvent());
-		e.setJDAEvent(event);
+		final Event e = ReactionEvents.REACTION_ADD.createBukkitInstance(event);
 		if (info.isAlreadyFired())
 			waiters.remove(event.getMessageIdLong());
 		else

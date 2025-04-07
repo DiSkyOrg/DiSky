@@ -5,6 +5,7 @@ import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.util.Date;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.EventListener;
+import net.itsthesky.disky.api.events.rework.EventBuilder;
 import net.itsthesky.disky.api.modules.DiSkyModule;
 import net.itsthesky.disky.managers.ConfigManager;
 import net.itsthesky.disky.managers.CoreEventListener;
@@ -23,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DiSkyCommand implements CommandExecutor {
     @Override
@@ -32,6 +35,7 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored(""));
             sender.sendMessage(Utils.colored("&b/disky &7- &9Show this help page."));
             sender.sendMessage(Utils.colored("&b/disky docs [include time] [module name] &7- &9Generate the full documentation of DiSky, including or not event-value's time."));
+            sender.sendMessage(Utils.colored("&b/disky eventdocs &7- &9Generate the documentation for the events."));
             sender.sendMessage(Utils.colored("&b/disky modules &7- &9Show the list of modules."));
             sender.sendMessage(Utils.colored("&b/disky bots &7- &9Show the list of loaded bots."));
             sender.sendMessage(Utils.colored("&b/disky bot <bot> &7- &9Show info about a specific bot."));
@@ -180,6 +184,81 @@ public class DiSkyCommand implements CommandExecutor {
             sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2" + (System.currentTimeMillis() - before) + "ms! &b------"));
             if (wasDebug != ConfigManager.get("debug", false) && ConfigManager.get("debug", false))
                 sender.sendMessage(Utils.colored("&5--------> &dDebug mode has been enabled!"));
+            return true;
+        } else if (args[0].equalsIgnoreCase("eventdocs")) {
+            sender.sendMessage(Utils.colored("&b------ &9DiSky v" + DiSky.getInstance().getDescription().getVersion() + " Events Documentation &b------"));
+            long before = System.currentTimeMillis();
+            final var file = new File(DiSky.getInstance().getDataFolder(), "events-docs.txt");
+            if (file.exists())
+                file.delete();
+
+            try {
+                final var builder = new StringBuilder();
+                builder.append("""
+                        ---
+                        icon: material/check-all
+                        ---
+                        
+                        # Events
+                        
+                        [[[% import 'macros.html' as macros %]]]
+                        
+                        ## Information: Retrieve-Values
+                        
+                        For some event, you can see a `retrieve values` section. Some values are given by Discord directly, and others needs another **request** to Discord to get the value (those are in as `retrieve values`).
+                        
+                        !!! example ""
+                            For instance in the [Reaction Add Event](#reaction-add), Discord gives us the message ID only, so you can use its retrieve value to get the actual message:
+                        
+                            ```applescript
+                            on reaction add:
+                                # </>
+                        
+                                retrieve event value "message" and store it in {_message}
+                                # now you can use {_message} as the message that was reacted to!
+                            ```
+                        
+                        """);
+                final var groupedEvents = EventBuilder.REGISTERED_EVENTS
+                        .stream()
+                        .filter(e -> e.getCategory() != null)
+                        .collect(Collectors.groupingBy(EventBuilder::getCategory));
+                final var uncategorizedEvents = EventBuilder.REGISTERED_EVENTS
+                        .stream()
+                        .filter(e -> e.getCategory() == null)
+                        .toList();
+
+                // first, the uncategorized events
+                for (final var eventBuilder : uncategorizedEvents) {
+                    final var doc = eventBuilder.createDocumentation();
+                    if (doc == null)
+                        continue;
+
+                    builder.append(doc);
+                }
+
+                // then the categorized events
+                for (final var entry : groupedEvents.entrySet()) {
+                    builder.append("## ").append(entry.getKey().name()).append("\n\n");
+                    builder.append(String.join("\n", entry.getKey().description())).append("\n\n");
+
+                    for (final var eventBuilder : entry.getValue()) {
+                        final var doc = eventBuilder.createDocumentation();
+                        if (doc == null)
+                            continue;
+
+                        builder.append(doc);
+                    }
+                }
+
+                Files.writeString(file.toPath(), builder.toString(), StandardCharsets.UTF_8);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                sender.sendMessage(Utils.colored("&cAn error occurred while generating the events documentation!"));
+                return false;
+            }
+
+            sender.sendMessage(Utils.colored("&b------ &aSuccess! Took &2" + (System.currentTimeMillis() - before) + "ms! &b------"));
             return true;
         }
         return onCommand(sender, command, label, new String[0]);

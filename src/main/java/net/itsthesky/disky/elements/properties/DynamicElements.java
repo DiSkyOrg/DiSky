@@ -1,5 +1,6 @@
 package net.itsthesky.disky.elements.properties;
 
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.itsthesky.disky.api.skript.reflects.ReflectClassFactory;
 import net.itsthesky.disky.api.skript.reflects.state.SkriptStateRegistry;
 import net.dv8tion.jda.api.audit.ActionType;
@@ -15,6 +16,12 @@ import net.dv8tion.jda.api.requests.RestAction;
 import static net.itsthesky.disky.api.skript.reflects.ReflectClassFactory.register;
 
 public final class DynamicElements {
+
+    static {
+        registerLogs();
+        registerThreadProperties();
+        registerAutoMod();
+    }
 
     public static void registerLogs() {
         register( "logentry", "logged user", User.class, "log[ged] (user|author)", AuditLogEntry::getUser,

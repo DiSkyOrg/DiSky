@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.itsthesky.disky.elements.structures.slash.args.CustomArgument;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -29,6 +30,9 @@ public class ParsedArgument {
 
     // Set when the argument is executed
     private Object value;
+
+    // If applicable only
+    private @Nullable CustomArgument<?> customArgument;
 
     public ParsedArgument(OptionType type, String name, boolean required) {
         this.type = type;
@@ -85,7 +89,8 @@ public class ParsedArgument {
     }
 
     public boolean isAutoCompletion() {
-        return onCompletionRequest != null;
+        return onCompletionRequest != null ||
+                (customArgument != null && customArgument.isAutoCompletion());
     }
 
     @Override
@@ -102,28 +107,21 @@ public class ParsedArgument {
     }
 
     public ClassInfo<?> getTypeInfo() {
-        switch (type) {
-            case STRING:
-                return Classes.getExactClassInfo(String.class);
-            case INTEGER:
-                return Classes.getExactClassInfo(Integer.class);
-            case BOOLEAN:
-                return Classes.getExactClassInfo(Boolean.class);
-            case USER:
-                return Classes.getExactClassInfo(User.class);
-            case CHANNEL:
-                return Classes.getExactClassInfo(MessageChannel.class);
-            case ROLE:
-                return Classes.getExactClassInfo(Role.class);
-            case NUMBER:
-                return Classes.getExactClassInfo(Number.class);
-            case ATTACHMENT:
-                return Classes.getExactClassInfo(Message.Attachment.class);
-            case MENTIONABLE:
-                return Classes.getExactClassInfo(IMentionable.class);
-            default:
-                return Classes.getExactClassInfo(Object.class);
-        }
+        if (customArgument != null)
+            return Classes.getExactClassInfo(customArgument.getClazz());
+
+        return switch (type) {
+            case STRING -> Classes.getExactClassInfo(String.class);
+            case INTEGER -> Classes.getExactClassInfo(Integer.class);
+            case BOOLEAN -> Classes.getExactClassInfo(Boolean.class);
+            case USER -> Classes.getExactClassInfo(User.class);
+            case CHANNEL -> Classes.getExactClassInfo(MessageChannel.class);
+            case ROLE -> Classes.getExactClassInfo(Role.class);
+            case NUMBER -> Classes.getExactClassInfo(Number.class);
+            case ATTACHMENT -> Classes.getExactClassInfo(Message.Attachment.class);
+            case MENTIONABLE -> Classes.getExactClassInfo(IMentionable.class);
+            default -> Classes.getExactClassInfo(Object.class);
+        };
     }
 
     public Object getValue() {
@@ -132,5 +130,17 @@ public class ParsedArgument {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+
+    public @Nullable CustomArgument<?> getCustomArgument() {
+        return customArgument;
+    }
+
+    public void setCustomArgument(@Nullable CustomArgument<?> customArgument) {
+        this.customArgument = customArgument;
+    }
+
+    public boolean isCustomArgument() {
+        return customArgument != null;
     }
 }
