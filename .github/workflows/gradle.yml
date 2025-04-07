@@ -39,19 +39,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: DiSky-v4-nighty
           path: ./target
-      
+
       - name: Upload to Modrinth
         uses: cloudnode-pro/modrinth-publish@v2
         with:
           token: ${{ secrets.MODRINTH_TOKEN }}
           project: 4KA72Zn8
-          name: ${{ github.event.release.tag_name }}
+          name: ${{ github.event.release.name }}
           version: ${{ github.event.release.tag_name }}
           changelog: ${{ github.event.release.body }}
           loaders: |-
