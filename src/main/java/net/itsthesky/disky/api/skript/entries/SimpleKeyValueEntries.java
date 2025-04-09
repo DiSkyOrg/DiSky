@@ -29,7 +29,7 @@ public final class SimpleKeyValueEntries {
 
     public static <T> KeyValueEntryData<List<T>> createList(String key, List<T> def, boolean optional,
                                                             Function<String, T> singleParser) {
-        return new KeyValueEntryData<List<T>>(key, def, optional) {
+        return new KeyValueEntryData<>(key, def, optional) {
             @Override
             protected @Nullable List<T> getValue(@NotNull String value) {
                 final String[] values = LIST.split(value);
