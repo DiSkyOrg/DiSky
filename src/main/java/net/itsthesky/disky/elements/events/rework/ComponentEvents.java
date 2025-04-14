@@ -27,10 +27,17 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import net.itsthesky.disky.api.events.rework.BuiltEvent;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 
 import java.util.Objects;
 
+@EventCategory(name = "Component Interaction Events", description = {
+        "Events that are fired when a component is interacted with.",
+        "This includes buttons, select menus, and modals.",
+        "",
+        "!!! info \"Check individual details to see if you are able to show a modal!\""
+})
 public class ComponentEvents {
 
     public static final BuiltEvent<ModalInteractionEvent> MODAL_INTERACTION_EVENT;
@@ -45,7 +52,7 @@ public class ComponentEvents {
                         "!!! info \"Modal can be shown in this interaction!\"")
                 .patterns("button click[ed]")
                 .example("on button clicked:\n" +
-                        "\treply with hidden \"You clicked the button with id '%clicked id%'!\" # This will defer the interaction!")
+                        "    reply with hidden \"You clicked the button with id '%clicked id%'!\" # This will defer the interaction!")
 
                 .implementComponentInteraction(evt -> evt)
                 .implementModal(ButtonInteraction::replyModal)
@@ -72,7 +79,7 @@ public class ComponentEvents {
                         "!!! warning \"Modal can NOT be shown in this interaction!\"")
                 .patterns("modal (click[ed]|receive[d])")
                 .example("on modal received:\n" +
-                        "\treply with hidden \"You clicked the button with id '%received modal%'!\" # This will defer the interaction!")
+                        "    reply with hidden \"You clicked the button with id '%received modal%'!\" # This will defer the interaction!")
 
                 .implementInteraction(evt -> evt)
 

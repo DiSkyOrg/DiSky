@@ -7,17 +7,17 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.VariableString;
 import ch.njol.skript.lang.util.SimpleEvent;
-import net.itsthesky.disky.DiSky;
-import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
-import net.itsthesky.disky.core.Bot;
-import net.itsthesky.disky.core.BotOptions;
-import net.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
+import net.itsthesky.disky.core.Bot;
+import net.itsthesky.disky.core.BotOptions;
+import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.events.rework.BotEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -35,236 +35,245 @@ import java.util.regex.Pattern;
 
 public class StructBot extends Structure {
 
-	private static final Priority PRIORITY = new Priority(500);
+    private static final Priority PRIORITY = new Priority(500);
 
-	public static final GatewayIntent[] DefaultIntents = new GatewayIntent[] {
-			GatewayIntent.GUILD_MODERATION,
-			GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
-			GatewayIntent.GUILD_WEBHOOKS,
-			GatewayIntent.GUILD_INVITES,
-			GatewayIntent.GUILD_VOICE_STATES,
-			GatewayIntent.GUILD_MESSAGE_REACTIONS,
-			GatewayIntent.GUILD_MESSAGE_TYPING,
-			GatewayIntent.DIRECT_MESSAGES,
-			GatewayIntent.GUILD_MESSAGES,
-			GatewayIntent.GUILD_MEMBERS,
-			GatewayIntent.GUILD_PRESENCES,
-			GatewayIntent.MESSAGE_CONTENT,
-			GatewayIntent.SCHEDULED_EVENTS
-	};
+    public static final GatewayIntent[] DefaultIntents = new GatewayIntent[]{
+            GatewayIntent.GUILD_MODERATION,
+            GatewayIntent.GUILD_EXPRESSIONS,
+            GatewayIntent.GUILD_WEBHOOKS,
+            GatewayIntent.GUILD_INVITES,
+            GatewayIntent.GUILD_VOICE_STATES,
+            GatewayIntent.GUILD_MESSAGE_REACTIONS,
+            GatewayIntent.GUILD_MESSAGE_TYPING,
+            GatewayIntent.DIRECT_MESSAGES,
+            GatewayIntent.GUILD_MESSAGES,
+            GatewayIntent.GUILD_MEMBERS,
+            GatewayIntent.GUILD_PRESENCES,
+            GatewayIntent.MESSAGE_CONTENT,
+            GatewayIntent.SCHEDULED_EVENTS
+    };
 
-	static {
-		Skript.registerStructure(
-				StructBot.class,
-				EntryValidator.builder()
-						.addEntryData(new VariableStringEntryData("token", null, false))
-						.addEntryData(new KeyValueEntryData<GatewayIntent[]>("intents", DefaultIntents, false) {
-							private final Pattern pattern = Pattern.compile("\\s*,\\s*/?");
+    static {
+        Skript.registerStructure(
+                StructBot.class,
+                EntryValidator.builder()
+                        .addEntryData(new VariableStringEntryData("token", null, false))
+                        .addEntryData(new KeyValueEntryData<>("intents", DefaultIntents, false) {
+                            private final Pattern pattern = Pattern.compile("\\s*,\\s*/?");
 
-							@Override
-							protected GatewayIntent[] getValue(@NotNull String value) {
-								if (value.equalsIgnoreCase("default intents"))
-									return DefaultIntents;
+                            @Override
+                            protected GatewayIntent[] getValue(@NotNull String value) {
+                                if (value.equalsIgnoreCase("default intents"))
+                                    return DefaultIntents;
 
-								return Arrays.stream(pattern.split(value))
-										.map(str -> {
-											try {
-												return GatewayIntent.valueOf(str.toUpperCase().replace(" ", "_"));
-											} catch (Exception ex) {
-												Skript.error("The intent '" + str + "' is not valid! Use one of the following: " + Arrays.toString(GatewayIntent.values()));
-												return null;
-											}
-										})
-										.filter(Objects::nonNull)
-										.toArray(GatewayIntent[]::new);
-							}
-						})
+                                return Arrays.stream(pattern.split(value))
+                                        .map(str -> {
+                                            try {
+                                                return GatewayIntent.valueOf(str.toUpperCase().replace(" ", "_"));
+                                            } catch (Exception ex) {
+                                                Skript.error("The intent '" + str + "' is not valid! Use one of the following: " + Arrays.toString(GatewayIntent.values()));
+                                                return null;
+                                            }
+                                        })
+                                        .filter(Objects::nonNull)
+                                        .toArray(GatewayIntent[]::new);
+                            }
+                        })
 
-						//.addEntryData(new LiteralEntryData<>("compression", Compression.ZLIB.name(), true, String.class))
-						.addEntryData(new KeyValueEntryData<Compression>("compression", Compression.ZLIB, true) {
-							@Override
-							protected Compression getValue(@NotNull String value) {
-								try {
-									return Compression.valueOf(value.toUpperCase().replace(" ", "_"));
-								} catch (Exception ex) {
-									Skript.error("The compression type '" + value + "' is not valid! Use one of the following: " + Arrays.toString(Compression.values()));
-									return Compression.ZLIB;
-								}
-							}
-						})
+                        //.addEntryData(new LiteralEntryData<>("compression", Compression.ZLIB.name(), true, String.class))
+                        .addEntryData(new KeyValueEntryData<>("compression", Compression.ZLIB, true) {
+                            @Override
+                            protected Compression getValue(@NotNull String value) {
+                                try {
+                                    return Compression.valueOf(value.toUpperCase().replace(" ", "_"));
+                                } catch (Exception ex) {
+                                    Skript.error("The compression type '" + value + "' is not valid! Use one of the following: " + Arrays.toString(Compression.values()));
+                                    return Compression.ZLIB;
+                                }
+                            }
+                        })
 
-						.addEntryData(new KeyValueEntryData<CacheFlag[]>("cache flags", new CacheFlag[0], true) {
-							private final Pattern pattern = Pattern.compile("\\s*,\\s*/?");
+                        .addEntryData(new KeyValueEntryData<>("cache flags", new CacheFlag[0], true) {
+                            private final Pattern pattern = Pattern.compile("\\s*,\\s*/?");
 
-							@Override
-							protected CacheFlag[] getValue(@NotNull String value) {
-								if (value.equalsIgnoreCase("default flags"))
-									return new CacheFlag[0];
+                            @Override
+                            protected CacheFlag[] getValue(@NotNull String value) {
+                                if (value.equalsIgnoreCase("none"))
+                                    return new CacheFlag[0];
+                                if (value.equalsIgnoreCase("all"))
+                                    return CacheFlag.values();
 
-								return Arrays.stream(pattern.split(value))
-										.map(str -> {
-											try {
-												return CacheFlag.valueOf(str.toUpperCase().replace(" ", "_"));
-											} catch (Exception ex) {
-												Skript.error("The cache flag '" + str + "' is not valid! Use one of the following: " + Arrays.toString(CacheFlag.values()));
-												return null;
-											}
-										})
-										.filter(Objects::nonNull)
-										.toArray(CacheFlag[]::new);
-							}
-						})
+                                final var cacheFlags = new HashSet<CacheFlag>();
+                                if (value.equalsIgnoreCase("default flags")) {
+                                    cacheFlags.addAll(Set.of(
+                                            CacheFlag.ACTIVITY,
+                                            CacheFlag.VOICE_STATE,
+                                            CacheFlag.ONLINE_STATUS
+                                    ));
+                                }
 
-						.addEntryData(new KeyValueEntryData<MemberCachePolicy>("policy", MemberCachePolicy.DEFAULT, true) {
-							@Override
-							protected MemberCachePolicy getValue(@NotNull String value) {
-								try {
-									return (MemberCachePolicy) MemberCachePolicy.class
-											.getDeclaredField(value
-													.toUpperCase(Locale.ROOT)
-													.replaceAll(" ", "_"))
-											.get(null);
-								} catch (Exception ex) {
-									Skript.error("The member cache policy '" + value + "' is not valid!");
-									return MemberCachePolicy.DEFAULT;
-								}
-							}
-						})
+                                for (String str : pattern.split(value)) {
+                                    try {
+                                        cacheFlags.add(CacheFlag.valueOf(str.toUpperCase().replace(" ", "_")));
+                                    } catch (Exception ex) {
+                                        Skript.error("The cache flag '" + str + "' is not valid! Use one of the following: " + Arrays.toString(CacheFlag.values()));
+                                    }
+                                }
 
-						.addEntryData(new LiteralEntryData<>("auto reconnect", true, true, Boolean.class))
-						.addEntryData(new LiteralEntryData<>("force reload", false, true, Boolean.class))
+                                return cacheFlags.toArray(new CacheFlag[0]);
+                            }
+                        })
 
-						.addSection("on ready", true)
-						.addSection("on guild ready", true)
-						.addSection("on shutdown", true)
+                        .addEntryData(new KeyValueEntryData<>("policy", MemberCachePolicy.DEFAULT, true) {
+                            @Override
+                            protected MemberCachePolicy getValue(@NotNull String value) {
+                                try {
+                                    return (MemberCachePolicy) MemberCachePolicy.class
+                                            .getDeclaredField(value
+                                                    .toUpperCase(Locale.ROOT)
+                                                    .replaceAll(" ", "_"))
+                                            .get(null);
+                                } catch (Exception ex) {
+                                    Skript.error("The member cache policy '" + value + "' is not valid!");
+                                    return MemberCachePolicy.DEFAULT;
+                                }
+                            }
+                        })
 
-						.unexpectedEntryMessage(key ->
-								"Unexpected entry '" + key + "'. Check that it's spelled correctly, and ensure that you have put all code into a trigger."
-						)
+                        .addEntryData(new LiteralEntryData<>("auto reconnect", true, true, Boolean.class))
+                        .addEntryData(new LiteralEntryData<>("force reload", false, true, Boolean.class))
 
-						.build(),
-				"define [the] [new] bot (with name|named) %string%"
-		);
-	}
+                        .addSection("on ready", true)
+                        .addSection("on guild ready", true)
+                        .addSection("on shutdown", true)
 
-	private String name;
-	private EntryContainer container;
+                        .unexpectedEntryMessage(key ->
+                                "Unexpected entry '" + key + "'. Check that it's spelled correctly, and ensure that you have put all code into a trigger."
+                        )
 
-	private @Nullable BotOptions options;
+                        .build(),
+                "define [the] [new] bot (with name|named) %string%"
+        );
+    }
 
-	@Override
-	public boolean init(Literal<?>[] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, @NotNull EntryContainer entryContainer) {
-		this.name = ((Literal<String>) args[0]).getSingle();
-		this.container = entryContainer;
-		return true;
-	}
+    private String name;
+    private EntryContainer container;
 
-	@Override
-	@SuppressWarnings("ConstantConditions")
-	public boolean load() {
-		final VariableString token = container.getOptional("token", VariableString.class, true);
-		final SectionNode readySection = container.getOptional("on ready", SectionNode.class, true);
-		final SectionNode guildReadySection = container.getOptional("on guild ready", SectionNode.class, true);
-		final SectionNode shutdownSection = container.getOptional("on shutdown", SectionNode.class, true);
+    private @Nullable BotOptions options;
 
-		if (token == null) {
-			Skript.error("The token of the bot '" + name + "' is not defined! You need to define it in order to use the bot!");
-			return false;
-		}
+    @Override
+    public boolean init(Literal<?>[] args, int matchedPattern, @NotNull SkriptParser.ParseResult parseResult, @NotNull EntryContainer entryContainer) {
+        this.name = ((Literal<String>) args[0]).getSingle();
+        this.container = entryContainer;
+        return true;
+    }
 
-		@Nullable Trigger ready = null;
-		@Nullable Trigger guildReady = null;
-		@Nullable Trigger shutdown = null;
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    public boolean load() {
+        final VariableString token = container.getOptional("token", VariableString.class, true);
+        final SectionNode readySection = container.getOptional("on ready", SectionNode.class, true);
+        final SectionNode guildReadySection = container.getOptional("on guild ready", SectionNode.class, true);
+        final SectionNode shutdownSection = container.getOptional("on shutdown", SectionNode.class, true);
 
-		if (readySection != null)
-			ready = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' ready section", new SimpleEvent(),
-					SkriptUtils.loadCode(readySection, BotEvents.READY_EVENT.getBukkitEventClass()));
-		if (guildReadySection != null)
-			guildReady = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' guild ready section", new SimpleEvent(),
-					SkriptUtils.loadCode(guildReadySection, BotEvents.GUILD_READY_EVENT.getBukkitEventClass()));
-		if (shutdownSection != null)
-			shutdown = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' shutdown section", new SimpleEvent(),
-					SkriptUtils.loadCode(shutdownSection, BotEvents.SHUTDOWN_EVENT.getBukkitEventClass()));
+        if (token == null) {
+            Skript.error("The token of the bot '" + name + "' is not defined! You need to define it in order to use the bot!");
+            return false;
+        }
 
-		options = new BotOptions();
+        @Nullable Trigger ready = null;
+        @Nullable Trigger guildReady = null;
+        @Nullable Trigger shutdown = null;
 
-		options.setToken(token.getSingle(new SimpleDiSkyEvent<>()));
-		options.setName(name);
+        if (readySection != null)
+            ready = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' ready section", new SimpleEvent(),
+                    SkriptUtils.loadCode(readySection, BotEvents.READY_EVENT.getBukkitEventClass()));
+        if (guildReadySection != null)
+            guildReady = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' guild ready section", new SimpleEvent(),
+                    SkriptUtils.loadCode(guildReadySection, BotEvents.GUILD_READY_EVENT.getBukkitEventClass()));
+        if (shutdownSection != null)
+            shutdown = new Trigger(getParser().getCurrentScript(), "bot '" + name + "' shutdown section", new SimpleEvent(),
+                    SkriptUtils.loadCode(shutdownSection, BotEvents.SHUTDOWN_EVENT.getBukkitEventClass()));
 
-		options.setCompression(container.getOptional("compression", Compression.class, true));
-		options.setFlags(container.getOptional("cache flags", CacheFlag[].class, true));
-		options.setPolicy(container.getOptional("policy", MemberCachePolicy.class, true));
+        options = new BotOptions();
 
-		options.setAutoReconnect(container.getOptional("auto reconnect", Boolean.class, true));
-		options.setForceReload(container.getOptional("force reload", Boolean.class, true));
+        options.setToken(token.getSingle(new SimpleDiSkyEvent<>()));
+        options.setName(name);
 
-		options.setOnReady(ready == null ? new ArrayList<>() : Collections.singletonList(ready));
-		options.setOnGuildReady(guildReady == null ? new ArrayList<>() : Collections.singletonList(guildReady));
-		options.setOnShutdown(shutdown == null ? new ArrayList<>() : Collections.singletonList(shutdown));
+        options.setCompression(container.getOptional("compression", Compression.class, true));
+        options.setFlags(container.getOptional("cache flags", CacheFlag[].class, true));
+        options.setPolicy(container.getOptional("policy", MemberCachePolicy.class, true));
 
-		options.setIntents(container.getOptional("intents", GatewayIntent[].class, true));
+        options.setAutoReconnect(container.getOptional("auto reconnect", Boolean.class, true));
+        options.setForceReload(container.getOptional("force reload", Boolean.class, true));
 
-		// -------------------------------------------------------------------------------------------------
-		if (options == null)
-			throw new IllegalStateException("The options of the bot '" + name + "' are null! This is a bug, please report it on the DiSky GitHub!");
+        options.setOnReady(ready == null ? new ArrayList<>() : Collections.singletonList(ready));
+        options.setOnGuildReady(guildReady == null ? new ArrayList<>() : Collections.singletonList(guildReady));
+        options.setOnShutdown(shutdown == null ? new ArrayList<>() : Collections.singletonList(shutdown));
 
-		Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), () -> {
-			final BotOptions parsedEntity = options;
+        options.setIntents(container.getOptional("intents", GatewayIntent[].class, true));
 
-			final String name = parsedEntity.getName();
-			if (DiSky.getManager().exist(name)) {
-				final Bot bot = DiSky.getManager().fromName(name);
-				if (bot.isForceReload())
-					bot.getInstance().shutdownNow();
-				else
-					return;
-			}
-			final JDA jda;
-			try {
+        // -------------------------------------------------------------------------------------------------
+        if (options == null)
+            throw new IllegalStateException("The options of the bot '" + name + "' are null! This is a bug, please report it on the DiSky GitHub!");
 
-				final EventListener listener = event -> {
-					if (event instanceof net.dv8tion.jda.api.events.session.ReadyEvent)
-						parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
-					else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
-						parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
+        Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), () -> {
+            final BotOptions parsedEntity = options;
+
+            final String name = parsedEntity.getName();
+            if (DiSky.getManager().exist(name)) {
+                final Bot bot = DiSky.getManager().fromName(name);
+                if (bot.isForceReload())
+                    bot.getInstance().shutdownNow();
+                else
+                    return;
+            }
+            final JDA jda;
+            try {
+
+                final EventListener listener = event -> {
+                    if (event instanceof net.dv8tion.jda.api.events.session.ReadyEvent)
+                        parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
+                    else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
+                        parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
 				/*else if (event instanceof net.dv8tion.jda.api.events.session.ShutdownEvent)
 					parsedEntity.runShutdown((net.dv8tion.jda.api.events.session.ShutdownEvent) event);*/
-				};
+                };
 
-				jda = parsedEntity
-						.toBuilder()
-						.addEventListeners(listener)
-						.build();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				return;
-			}
+                jda = parsedEntity
+                        .toBuilder()
+                        .addEventListeners(listener)
+                        .build();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return;
+            }
 
-			DiSky.getManager().addBot(parsedEntity.asBot(jda, parsedEntity));
-		});
+            DiSky.getManager().addBot(parsedEntity.asBot(jda, parsedEntity));
+        });
 
-		return true;
-	}
+        return true;
+    }
 
-	protected MemberCachePolicy parse(String input) {
-		try {
-			return (MemberCachePolicy) MemberCachePolicy.class
-					.getDeclaredField(input
-							.toUpperCase(Locale.ROOT)
-							.replaceAll(" ", "_"))
-					.get(null);
-		} catch (Exception ex) {
-			return MemberCachePolicy.DEFAULT;
-		}
-	}
+    protected MemberCachePolicy parse(String input) {
+        try {
+            return (MemberCachePolicy) MemberCachePolicy.class
+                    .getDeclaredField(input
+                            .toUpperCase(Locale.ROOT)
+                            .replaceAll(" ", "_"))
+                    .get(null);
+        } catch (Exception ex) {
+            return MemberCachePolicy.DEFAULT;
+        }
+    }
 
-	@Override
-	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "define bot named " + name;
-	}
+    @Override
+    public @NotNull String toString(@Nullable Event e, boolean debug) {
+        return "define bot named " + name;
+    }
 
-	@Override
-	public @NotNull Priority getPriority() {
-		return PRIORITY;
-	}
+    @Override
+    public @NotNull Priority getPriority() {
+        return PRIORITY;
+    }
 }

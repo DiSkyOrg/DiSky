@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.itsthesky.disky.api.events.rework.BuiltEvent;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.SimpleGetterExpression;
@@ -50,6 +51,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@EventCategory(name = "Interaction Command Events", description = {
+        "These events are fired when a user interacts with a command:", "",
+        "- Slash Command: Fired when a user executes a slash command. (+ includes an auto-complete event)",
+        "- Message Command: Fired when a user interacts with a message command (right click on a message).",
+        "- User Command: Fired when a user interacts with a user command (right click on a user).", "",
+        "Refer to individual event documentation for more details.",
+})
 public class CommandEvents {
 
     public static final BuiltEvent<SlashCooldownEvent> SLASH_COOLDOWN_EVENT;
@@ -158,7 +166,7 @@ public class CommandEvents {
                         "Use 'event-string' to get the command name.",
                         "Use the 'return' effect to provide completion choices to the user.",
                         "You can access the focused argument with 'current argument' and other argument values with 'argument \"name\" as type'.")
-                .example("on slash completion:\n\tif event-string is \"mycommand\":\n\t\tif current argument is \"option\":\n\t\t\treturn choice \"Option 1\" with value \"option1\", choice \"Option 2\" with value \"option2\"")
+                .example("on slash completion:\n    if event-string is \"mycommand\":\n        if current argument is \"option\":\n            return choice \"Option 1\" with value \"option1\", choice \"Option 2\" with value \"option2\"")
                 .implementInteraction(evt -> evt)
 
                 .channelValues(CommandAutoCompleteInteractionEvent::getChannel)

@@ -171,13 +171,13 @@ public class EventRegistryFactory {
 
             for (final var multiExpr : builder.getListExpressionRegistrations()) {
                 final Class exprClass = multiExpr.getExpressionClass();
-                final Function mapper = multiExpr.getExpressionMapper();
+                final Function<T, ?> mapper = multiExpr.getExpressionMapper();
 
                 ReflectEventExpressionFactory.registerListEventExpression(
                         multiExpr.getPattern(),
                         (Class) bukkitEventClass,
                         exprClass,
-                        mapper
+                        evt -> (Object[]) mapper.apply((T) ((SimpleDiSkyEvent) evt).getJDAEvent())
                 );
             }
 

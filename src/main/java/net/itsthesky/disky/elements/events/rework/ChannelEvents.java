@@ -3,24 +3,22 @@ package net.itsthesky.disky.elements.events.rework;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.Timespan;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.ChannelFlag;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
-import net.dv8tion.jda.api.entities.channel.forums.BaseForumTag;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
-import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.ChannelDeleteEvent;
 import net.dv8tion.jda.api.events.channel.update.*;
 import net.itsthesky.disky.api.emojis.Emote;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.core.SkriptUtils;
 
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.stream.Stream;
-
+@EventCategory(name = "Channel Events", description = {
+        "These events are fired when a channel is created, deleted, or updated.",
+        "This include all types of channels, including text, voice, forum, private, ... channels.",
+})
 public class ChannelEvents {
 
     static {
@@ -29,7 +27,7 @@ public class ChannelEvents {
                 .name("Channel Create Event")
                 .patterns("[discord] channel creat(e|ion)")
                 .description("Fired when a channel is created.")
-                .example("on channel creation:\n\tbroadcast \"%event-channel%, %event-guild%\"")
+                .example("on channel creation:\n    broadcast \"%event-channel%, %event-guild%\"")
                 .value(Guild.class, ChannelCreateEvent::getGuild)
                 .channelValues(ChannelCreateEvent::getChannel)
                 .author(ChannelCreateEvent::getGuild)
@@ -40,7 +38,7 @@ public class ChannelEvents {
                 .name("Channel Delete Event")
                 .patterns("[discord] channel delet(e|ion)")
                 .description("Fired when a channel is deleted.")
-                .example("on channel deletion:\n\tbroadcast \"%event-channel%, %event-guild%\"")
+                .example("on channel deletion:\n    broadcast \"%event-channel%, %event-guild%\"")
                 .value(Guild.class, ChannelDeleteEvent::getGuild)
                 .channelValues(ChannelDeleteEvent::getChannel)
                 .author(ChannelDeleteEvent::getGuild)
@@ -51,7 +49,7 @@ public class ChannelEvents {
                 .name("Channel Name Update Event")
                 .patterns("[discord] channel name (change|update)")
                 .description("Fired when a channel's name is changed.")
-                .example("on channel name change:\n\tbroadcast \"Channel %event-channel% was renamed from %previous channel name% to %current channel name%\"")
+                .example("on channel name change:\n    broadcast \"Channel %event-channel% was renamed from %previous channel name% to %current channel name%\"")
                 .customTimedExpressions("[channel] name", String.class,
                         ChannelUpdateNameEvent::getNewValue, ChannelUpdateNameEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateNameEvent::getGuild)
@@ -64,7 +62,7 @@ public class ChannelEvents {
                 .name("Channel Topic Update Event")
                 .patterns("[discord] channel topic (change|update)")
                 .description("Fired when a channel's topic is changed.")
-                .example("on channel topic change:\n\tbroadcast \"Channel %event-channel% had its topic changed from '%previous channel topic%' to '%current channel topic%'\"")
+                .example("on channel topic change:\n    broadcast \"Channel %event-channel% had its topic changed from '%previous channel topic%' to '%current channel topic%'\"")
                 .customTimedExpressions("[channel] topic", String.class,
                         ChannelUpdateTopicEvent::getNewValue, ChannelUpdateTopicEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateTopicEvent::getGuild)
@@ -77,7 +75,7 @@ public class ChannelEvents {
                 .name("Channel NSFW Update Event")
                 .patterns("[discord] channel nsfw (change|update)")
                 .description("Fired when a channel's NSFW status is changed.")
-                .example("on channel nsfw change:\n\tbroadcast \"Channel %event-channel% NSFW status changed from %past nsfw state% to %current nsfw state%\"")
+                .example("on channel nsfw change:\n    broadcast \"Channel %event-channel% NSFW status changed from %past nsfw state% to %current nsfw state%\"")
                 .customTimedExpressions("[channel] nsfw state", Boolean.class,
                         ChannelUpdateNSFWEvent::getNewValue, ChannelUpdateNSFWEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateNSFWEvent::getGuild)
@@ -90,7 +88,7 @@ public class ChannelEvents {
                 .name("Channel Position Update Event")
                 .patterns("[discord] channel position (change|update)")
                 .description("Fired when a channel's position is changed.")
-                .example("on channel position change:\n\tbroadcast \"Channel %event-channel% position changed from %past channel position% to %current channel position%\"")
+                .example("on channel position change:\n    broadcast \"Channel %event-channel% position changed from %past channel position% to %current channel position%\"")
                 .customTimedExpressions("[chaannel] position", Integer.class,
                         ChannelUpdatePositionEvent::getNewValue, ChannelUpdatePositionEvent::getOldValue)
                 .value(Guild.class, ChannelUpdatePositionEvent::getGuild)
@@ -103,7 +101,7 @@ public class ChannelEvents {
                 .name("Channel Parent Update Event")
                 .patterns("[discord] channel parent (change|update)")
                 .description("Fired when a channel's parent category is changed.")
-                .example("on channel parent change:\n\tbroadcast \"Channel %event-channel% was moved from %past parent% to %parent%\"")
+                .example("on channel parent change:\n    broadcast \"Channel %event-channel% was moved from %past parent% to %parent%\"")
                 .customTimedExpressions("[category] parent", Category.class,
                         ChannelUpdateParentEvent::getNewValue, ChannelUpdateParentEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateParentEvent::getGuild)
@@ -116,7 +114,7 @@ public class ChannelEvents {
                 .name("Channel Slowmode Update Event")
                 .patterns("[discord] channel slowmode (change|update)")
                 .description("Fired when a channel's slowmode setting is changed.")
-                .example("on channel slowmode change:\n\tbroadcast \"Channel %event-channel% slowmode changed from %past channel slowmode% to %new channel slowmode% seconds\"")
+                .example("on channel slowmode change:\n    broadcast \"Channel %event-channel% slowmode changed from %past channel slowmode% to %new channel slowmode% seconds\"")
                 .customTimedExpressions("[channel] slowmode", Number.class,
                         ChannelUpdateSlowmodeEvent::getNewValue, ChannelUpdateSlowmodeEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateSlowmodeEvent::getGuild)
@@ -129,7 +127,7 @@ public class ChannelEvents {
                 .name("Channel Type Update Event")
                 .patterns("[discord] channel type (change|update)")
                 .description("Fired when a channel's type is changed.")
-                .example("on channel type change:\n\tbroadcast \"Channel %event-channel% type changed from %past channel type% to %current channel type%\"")
+                .example("on channel type change:\n    broadcast \"Channel %event-channel% type changed from %past channel type% to %current channel type%\"")
                 .customTimedExpressions("[channel] type", ChannelType.class,
                         ChannelUpdateTypeEvent::getNewValue, ChannelUpdateTypeEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateTypeEvent::getGuild)
@@ -142,7 +140,7 @@ public class ChannelEvents {
                 .name("Channel User Limit Update Event")
                 .patterns("[discord] channel user limit (change|update)")
                 .description("Fired when a voice channel's user limit is changed.")
-                .example("on channel user limit change:\n\tbroadcast \"Channel %event-channel% user limit changed from %past user limit% to %current user limit%\"")
+                .example("on channel user limit change:\n    broadcast \"Channel %event-channel% user limit changed from %past user limit% to %current user limit%\"")
                 .customTimedExpressions("[channel] user limit", Number.class,
                         ChannelUpdateUserLimitEvent::getNewValue, ChannelUpdateUserLimitEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateUserLimitEvent::getGuild)
@@ -155,7 +153,7 @@ public class ChannelEvents {
                 .name("Channel Bitrate Update Event")
                 .patterns("[discord] channel bitrate (change|update)")
                 .description("Fired when a voice channel's bitrate is changed.")
-                .example("on channel bitrate change:\n\tbroadcast \"Channel %event-channel% bitrate changed from %past bitrate% to %current bitrate%\"")
+                .example("on channel bitrate change:\n    broadcast \"Channel %event-channel% bitrate changed from %past bitrate% to %current bitrate%\"")
                 .customTimedExpressions("[channel] bitrate", Number.class,
                         ChannelUpdateBitrateEvent::getNewValue, ChannelUpdateBitrateEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateBitrateEvent::getGuild)
@@ -168,7 +166,7 @@ public class ChannelEvents {
                 .name("Channel Region Update Event")
                 .patterns("[discord] channel region (change|update)")
                 .description("Fired when a voice channel's region is changed.")
-                .example("on channel region change:\n\tbroadcast \"Channel %event-channel% region changed from %past channel region% to %current channel region%\"")
+                .example("on channel region change:\n    broadcast \"Channel %event-channel% region changed from %past channel region% to %current channel region%\"")
 
                 .customTimedExpressions("[channel] region", String.class,
                         evt -> evt.getNewValue() == null ? null : evt.getNewValue().name().toLowerCase(),
@@ -184,7 +182,7 @@ public class ChannelEvents {
                 .name("Channel Voice Status Update Event")
                 .patterns("[discord] channel voice status (change|update)")
                 .description("Fired when a voice channel's status (video or voice) is changed.")
-                .example("on channel voice status change:\n\tbroadcast \"Channel %event-channel% voice status changed from %past channel voice status% to %current channel voice status%\"")
+                .example("on channel voice status change:\n    broadcast \"Channel %event-channel% voice status changed from %past channel voice status% to %current channel voice status%\"")
                 .customTimedExpressions("[channel] voice status", String.class,
                         GenericChannelUpdateEvent::getNewValue,
                         GenericChannelUpdateEvent::getOldValue)
@@ -198,7 +196,7 @@ public class ChannelEvents {
                 .name("Channel Applied Tags Update Event")
                 .patterns("[discord] channel [applied] tags (change|update)")
                 .description("Fired when a forum channel's applied tags are changed.")
-                .example("on channel tags change:\n\tbroadcast \"Channel %event-channel% applied tags changed from %old applied tags% to %new applied tags%\"")
+                .example("on channel tags change:\n    broadcast \"Channel %event-channel% applied tags changed from %old applied tags% to %new applied tags%\"")
                 .customTimedListExpressions("[applied] tags", ForumTag.class,
                         evt -> evt.getAddedTags().toArray(ForumTag[]::new),
                         evt -> evt.getRemovedTags().toArray(ForumTag[]::new))
@@ -212,7 +210,7 @@ public class ChannelEvents {
                 .name("Channel Archived Update Event")
                 .patterns("[discord] channel archived (change|update)")
                 .description("Fired when a thread channel's archived status is changed.")
-                .example("on channel archived change:\n\tbroadcast \"Channel %event-channel% archived status changed from %past channel archived state% to %current channel archived state%\"")
+                .example("on channel archived change:\n    broadcast \"Channel %event-channel% archived status changed from %past channel archived state% to %current channel archived state%\"")
                 .customTimedExpressions("[channel] archive[d] state", Boolean.class,
                         GenericChannelUpdateEvent::getNewValue, GenericChannelUpdateEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateArchivedEvent::getGuild)
@@ -225,7 +223,7 @@ public class ChannelEvents {
                 .name("Channel Archive Timestamp/Date Update Event")
                 .patterns("[discord] channel archive (timestam|date) (change|update)")
                 .description("Fired when a thread channel's archive timestamp is changed.")
-                .example("on channel archive timestamp change:\n\tbroadcast \"Channel %event-channel% archive timestamp changed from %past channel archive timestamp% to %current channel archive timestamp%\"")
+                .example("on channel archive timestamp change:\n    broadcast \"Channel %event-channel% archive timestamp changed from %past channel archive timestamp% to %current channel archive timestamp%\"")
                 .customTimedExpressions("[channel] archive (timestamp|date)", Date.class,
                         evt -> SkriptUtils.convertDateTime(evt.getNewValue()),
                         evt -> SkriptUtils.convertDateTime(evt.getOldValue()))
@@ -239,7 +237,7 @@ public class ChannelEvents {
                 .name("Channel Auto Archive Duration Update Event")
                 .patterns("[discord] channel auto[( |-)]archive duration (change|update)")
                 .description("Fired when a thread channel's auto archive duration is changed.")
-                .example("on channel auto-archive duration change:\n\tbroadcast \"Channel %event-channel% auto archive duration changed from %past channel auto archive duration% to %current channel auto archive duration%\"")
+                .example("on channel auto-archive duration change:\n    broadcast \"Channel %event-channel% auto archive duration changed from %past channel auto archive duration% to %current channel auto archive duration%\"")
                 .customTimedExpressions("[channel] auto archive duration", Timespan.class,
                         evt -> evt.getNewValue() == null ? null : new Timespan(Timespan.TimePeriod.MINUTE, evt.getNewValue().getMinutes()),
                         evt -> evt.getOldValue() == null ? null : new Timespan(Timespan.TimePeriod.MINUTE, evt.getOldValue().getMinutes()))
@@ -253,7 +251,7 @@ public class ChannelEvents {
                 .name("Channel Default Layout Update Event")
                 .patterns("[discord] channel default layout (change|update)")
                 .description("Fired when a forum channel's default layout is changed.")
-                .example("on channel default layout change:\n\tbroadcast \"Channel %event-channel% default layout changed from %old default layout% to %new default layout%\"")
+                .example("on channel default layout change:\n    broadcast \"Channel %event-channel% default layout changed from %old default layout% to %new default layout%\"")
                 .customTimedExpressions("[channel] default layout", String.class,
                         evt -> evt.getNewValue().name().toLowerCase(),
                         evt -> evt.getOldValue().name().toLowerCase())
@@ -267,7 +265,7 @@ public class ChannelEvents {
                 .name("Channel Default Reaction Update Event")
                 .patterns("[discord] channel default reaction (change|update)")
                 .description("Fired when a forum channel's default reaction is changed.")
-                .example("on channel default reaction change:\n\tbroadcast \"Channel %event-channel% default reaction changed from %old default reaction% to %new default reaction%\"")
+                .example("on channel default reaction change:\n    broadcast \"Channel %event-channel% default reaction changed from %old default reaction% to %new default reaction%\"")
                 .customTimedExpressions("[channel] default reaction", Emote.class,
                         evt -> Emote.fromUnion(evt.getNewValue()),
                         evt -> Emote.fromUnion(evt.getOldValue()))
@@ -281,7 +279,7 @@ public class ChannelEvents {
                 .name("Channel Default Sort Order Update Event")
                 .patterns("[discord] channel default sort order (change|update)")
                 .description("Fired when a forum channel's default sort order is changed.")
-                .example("on channel default sort order change:\n\tbroadcast \"Channel %event-channel% default sort order changed from %old default sort order% to %new default sort order%\"")
+                .example("on channel default sort order change:\n    broadcast \"Channel %event-channel% default sort order changed from %old default sort order% to %new default sort order%\"")
                 .customTimedExpressions("[channel] default sort order", String.class,
                         evt -> evt.getNewValue().name().toLowerCase(),
                         evt -> evt.getOldValue().name().toLowerCase())
@@ -295,7 +293,7 @@ public class ChannelEvents {
                 .name("Channel Default Thread Slowmode Update Event")
                 .patterns("[discord] channel default thread slowmode (change|update)")
                 .description("Fired when a forum channel's default thread slowmode is changed.")
-                .example("on channel default thread slowmode change:\n\tbroadcast \"Channel %event-channel% default thread slowmode changed from %old default thread slowmode% to %new default thread slowmode%\"")
+                .example("on channel default thread slowmode change:\n    broadcast \"Channel %event-channel% default thread slowmode changed from %old default thread slowmode% to %new default thread slowmode%\"")
                 .customTimedExpressions("[channel] default thread slowmode", Number.class,
                         ChannelUpdateDefaultThreadSlowmodeEvent::getNewValue, ChannelUpdateDefaultThreadSlowmodeEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateDefaultThreadSlowmodeEvent::getGuild)
@@ -308,7 +306,7 @@ public class ChannelEvents {
                 .name("Channel Flags Update Event")
                 .patterns("[discord] channel flags (change|update)")
                 .description("Fired when a channel's flags are changed.")
-                .example("on channel flags change:\n\tbroadcast \"Channel %event-channel% flags changed from %old channel flags% to %new channel flags%\"")
+                .example("on channel flags change:\n    broadcast \"Channel %event-channel% flags changed from %old channel flags% to %new channel flags%\"")
                 .customTimedListExpressions("[channel] flags", String.class,
                         evt -> evt.getNewValue().stream()
                                 .map(ChannelFlag::name)
@@ -328,7 +326,7 @@ public class ChannelEvents {
                 .name("Channel Invitable Update Event")
                 .patterns("[discord] channel invitable (change|update)")
                 .description("Fired when a thread channel's invitable status is changed.")
-                .example("on channel invitable change:\n\tbroadcast \"Channel %event-channel% invitable status changed from %past channel invitable state% to %current channel invitable state%\"")
+                .example("on channel invitable change:\n    broadcast \"Channel %event-channel% invitable status changed from %past channel invitable state% to %current channel invitable state%\"")
                 .customTimedExpressions("[channel] invitable [state]", Boolean.class,
                         ChannelUpdateInvitableEvent::getNewValue, ChannelUpdateInvitableEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateInvitableEvent::getGuild)
@@ -341,7 +339,7 @@ public class ChannelEvents {
                 .name("Channel Locked Update Event")
                 .patterns("[discord] channel locked (change|update)")
                 .description("Fired when a thread channel's locked status is changed.")
-                .example("on channel locked change:\n\tbroadcast \"Channel %event-channel% locked status changed from %past channel locked state% to %current channel locked state%\"")
+                .example("on channel locked change:\n    broadcast \"Channel %event-channel% locked status changed from %past channel locked state% to %current channel locked state%\"")
                 .customTimedExpressions("[channel] locked [state]", Boolean.class,
                         ChannelUpdateLockedEvent::getNewValue, ChannelUpdateLockedEvent::getOldValue)
                 .value(Guild.class, ChannelUpdateLockedEvent::getGuild)

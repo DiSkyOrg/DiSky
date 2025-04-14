@@ -18,42 +18,15 @@ package net.itsthesky.disky.elements.events.rework;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import ch.njol.skript.Skript;
-import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Examples;
-import ch.njol.skript.doc.Name;
-import ch.njol.skript.lang.Effect;
-import ch.njol.skript.lang.Expression;
-import ch.njol.skript.lang.ExpressionType;
-import ch.njol.skript.lang.TriggerItem;
-import ch.njol.skript.lang.TriggerSection;
-import ch.njol.skript.sections.SecLoop;
-import ch.njol.skript.sections.SecWhile;
-import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.util.Kleenean;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.IMentionable;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
-import net.itsthesky.disky.api.events.rework.BuiltEvent;
+import net.itsthesky.disky.api.events.rework.CopyEventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
-import net.itsthesky.disky.api.skript.EasyElement;
-import net.itsthesky.disky.api.skript.MultipleGetterExpression;
-import net.itsthesky.disky.api.skript.SimpleGetterExpression;
-import net.itsthesky.disky.core.JDAUtils;
-import org.bukkit.event.Event;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+@CopyEventCategory(ComponentEvents.class)
 public class DropdownEvents {
 
 
@@ -67,7 +40,7 @@ public class DropdownEvents {
                         "This event provides access to the selected string values and dropdown details.",
                         "Don't forget to either reply to or defer the interaction to acknowledge it.",
                         "You can show a modal in response to this interaction.")
-                .example("on dropdown clicked:\n\treply with \"You selected: %selected values%\"")
+                .example("on dropdown clicked:\n    reply with \"You selected: %selected values%\"")
                 .implementComponentInteraction(evt -> evt)
                 .implementModal(StringSelectInteractionEvent::replyModal)
                 
@@ -94,7 +67,7 @@ public class DropdownEvents {
                         "This event provides access to the selected entities (users, roles, channels, etc.).",
                         "Don't forget to either reply to or defer the interaction to acknowledge it.",
                         "You can show a modal in response to this interaction.")
-                .example("on entity dropdown clicked:\n\tbroadcast \"User %event-user% selected entities: %selected entities%\"")
+                .example("on entity dropdown clicked:\n    broadcast \"User %event-user% selected entities: %selected entities%\"")
                 .implementComponentInteraction(evt -> evt)
                 .implementModal(EntitySelectInteractionEvent::replyModal)
                 

@@ -58,6 +58,7 @@ public class EventBuilder<T extends Event> {
     public static final List<EventBuilder<?>> REGISTERED_EVENTS = new ArrayList<>();
 
     private final Class<T> jdaEventClass;
+    private @Nullable EventCategory eventCategory;
     private String name;
     private String[] patterns;
     private boolean skriptRegistered = true;
@@ -79,6 +80,22 @@ public class EventBuilder<T extends Event> {
 
     EventBuilder(Class<T> jdaEventClass) {
         this.jdaEventClass = jdaEventClass;
+
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        if (stackTrace.length > 3) {
+            String className = stackTrace[3].getClassName();
+            try {
+                final var callingClass = Class.forName(className);
+                eventCategory = callingClass.getAnnotation(EventCategory.class);
+                if (eventCategory == null) {
+                    final var copy = callingClass.getAnnotation(CopyEventCategory.class);
+                    if (copy != null)
+                        eventCategory = copy.value().getAnnotation(EventCategory.class);
+                }
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Could not find calling class", e);
+            }
+        }
     }
 
     /**
@@ -115,6 +132,18 @@ public class EventBuilder<T extends Event> {
     }
 
     /**
+     * Manually changes the event-category by giving a class that holds the
+     * EventCategory annotation.
+     * @see EventCategory
+     * @param eventCategory The class that holds the EventCategory annotation
+     * @return This builder
+     */
+    public EventBuilder<T> eventCategory(Class<?> eventCategory) {
+        this.eventCategory = eventCategory.getAnnotation(EventCategory.class);
+        return this;
+    }
+
+    /**
      * Make this event cancellable by providing a get & set mapper.
      * @return This builder
      */
@@ -132,7 +161,7 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> description(String line) {
-        this.descriptionLines.add(line.replace("\t", "    "));
+        this.descriptionLines.add(line.replace("    ", "    "));
         return this;
     }
 
@@ -144,7 +173,7 @@ public class EventBuilder<T extends Event> {
      */
     public EventBuilder<T> description(String... lines) {
         for (String line : lines)
-            this.descriptionLines.add(line.replace("\t", "    "));
+            this.descriptionLines.add(line.replace("    ", "    "));
         return this;
     }
 
@@ -155,7 +184,7 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public EventBuilder<T> example(String example) {
-        this.exampleLines.add(example.replace("\t", "    "));
+        this.exampleLines.add(example.replace("    ", "    "));
         return this;
     }
 
@@ -167,7 +196,7 @@ public class EventBuilder<T extends Event> {
      */
     public EventBuilder<T> examples(String... examples) {
         for (String example : examples)
-            this.exampleLines.add(example.replace("\t", "    "));
+            this.exampleLines.add(example.replace("    ", "    "));
         return this;
     }
 
@@ -414,13 +443,21 @@ public class EventBuilder<T extends Event> {
         return EventRegistryFactory.registerEvent(this);
     }
 
+    /**
+     * Get the category annotation found for that event.
+     * @return The category annotation, or null if not found
+     */
+    public @Nullable EventCategory getCategory() {
+        return eventCategory;
+    }
+
     public @Nullable String createDocumentation() {
         if (!skriptRegistered)
             return null;
 
         StringBuilder documentation = new StringBuilder();
 
-        documentation.append("## ").append(name).append("\n\n");
+        documentation.append(getCategory() == null ? "## " : "### ").append(name).append("\n\n");
 
         documentation.append("[[[ macros.required_version('").append(DiSky.getVersion()).append("') ]]]\n");
         documentation.append("[[[ macros.is_cancellable('No') ]]]\n\n");

@@ -1,15 +1,13 @@
 package net.itsthesky.disky.elements.structures.slash.models;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.itsthesky.disky.DiSky;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class CommandGroup {
 
@@ -100,6 +98,8 @@ public class CommandGroup {
         return clone;
     }
 
+    // Modification de la méthode buildCommandData() dans CommandGroup.java
+
     public SlashCommandData buildCommandData() {
         SlashCommandData commandData = Commands.slash(name, getDescription());
 
@@ -118,10 +118,8 @@ public class CommandGroup {
                     commandData.addOptions(createOptionData(arg));
                 }
 
-                if (singleCommand.isDisabledByDefault() && singleCommand.getEnabledFor().isEmpty())
-                    commandData.setDefaultPermissions(DefaultMemberPermissions.DISABLED);
-                else if (!singleCommand.getEnabledFor().isEmpty())
-                    commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(singleCommand.getEnabledFor()));
+                // Apply permissions for SINGLE command
+                applyCommandPermissions(commandData, singleCommand);
             }
 
             return commandData;
@@ -149,7 +147,72 @@ public class CommandGroup {
             commandData.addSubcommandGroups(groupData);
         }
 
+        // Apply permissions at the root group level
+        // We'll use the most restrictive permissions from all subcommands
+        applyGroupPermissions(commandData);
+
         return commandData;
+    }
+
+    /**
+     * Apply permissions from a command to a slash command data
+     * @param commandData The command data to modify
+     * @param command The command with permissions
+     */
+    private void applyCommandPermissions(SlashCommandData commandData, ParsedCommand command) {
+        if (command.isDisabledByDefault() && command.getEnabledFor().isEmpty())
+            commandData.setDefaultPermissions(DefaultMemberPermissions.DISABLED);
+        else if (!command.getEnabledFor().isEmpty())
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(command.getEnabledFor()));
+    }
+
+    /**
+     * Apply permissions for a group command, considering all subcommands
+     * This applies the most restrictive permissions from all subcommands
+     */
+    private void applyGroupPermissions(SlashCommandData commandData) {
+        boolean anyDisabledByDefault = false;
+        List<Permission> commonPermissions = new ArrayList<>();
+        boolean first = true;
+
+        // Check all direct subcommands
+        for (ParsedCommand subCommand : subCommands.values()) {
+            if (subCommand.isDisabledByDefault()) {
+                anyDisabledByDefault = true;
+            }
+
+            if (first && !subCommand.getEnabledFor().isEmpty()) {
+                commonPermissions.addAll(subCommand.getEnabledFor());
+                first = false;
+            } else if (!first && !subCommand.getEnabledFor().isEmpty()) {
+                // Retain only permissions common to all subcommands
+                commonPermissions.retainAll(subCommand.getEnabledFor());
+            }
+        }
+
+        // Check all subcommands in groups
+        for (CommandGroup subGroup : subGroups.values()) {
+            for (ParsedCommand subCommand : subGroup.getSubCommands().values()) {
+                if (subCommand.isDisabledByDefault()) {
+                    anyDisabledByDefault = true;
+                }
+
+                if (first && !subCommand.getEnabledFor().isEmpty()) {
+                    commonPermissions.addAll(subCommand.getEnabledFor());
+                    first = false;
+                } else if (!first && !subCommand.getEnabledFor().isEmpty()) {
+                    // Retain only permissions common to all subcommands
+                    commonPermissions.retainAll(subCommand.getEnabledFor());
+                }
+            }
+        }
+
+        // Apply the most restrictive permissions
+        if (anyDisabledByDefault && commonPermissions.isEmpty()) {
+            commandData.setDefaultPermissions(DefaultMemberPermissions.DISABLED);
+        } else if (!commonPermissions.isEmpty()) {
+            commandData.setDefaultPermissions(DefaultMemberPermissions.enabledFor(commonPermissions));
+        }
     }
 
     private OptionData createOptionData(ParsedArgument arg) {

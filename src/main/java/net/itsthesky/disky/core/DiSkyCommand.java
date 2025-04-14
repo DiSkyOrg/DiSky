@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DiSkyCommand implements CommandExecutor {
     @Override
@@ -189,14 +191,64 @@ public class DiSkyCommand implements CommandExecutor {
             final var file = new File(DiSky.getInstance().getDataFolder(), "events-docs.txt");
             if (file.exists())
                 file.delete();
+
             try {
                 final var builder = new StringBuilder();
-                for (final var eventBuilder : EventBuilder.REGISTERED_EVENTS) {
+                builder.append("""
+                        ---
+                        icon: material/check-all
+                        ---
+                        
+                        # Events
+                        
+                        [[[% import 'macros.html' as macros %]]]
+                        
+                        ## Information: Retrieve-Values
+                        
+                        For some event, you can see a `retrieve values` section. Some values are given by Discord directly, and others needs another **request** to Discord to get the value (those are in as `retrieve values`).
+                        
+                        !!! example ""
+                            For instance in the [Reaction Add Event](#reaction-add), Discord gives us the message ID only, so you can use its retrieve value to get the actual message:
+                        
+                            ```applescript
+                            on reaction add:
+                                # </>
+                        
+                                retrieve event value "message" and store it in {_message}
+                                # now you can use {_message} as the message that was reacted to!
+                            ```
+                        
+                        """);
+                final var groupedEvents = EventBuilder.REGISTERED_EVENTS
+                        .stream()
+                        .filter(e -> e.getCategory() != null)
+                        .collect(Collectors.groupingBy(EventBuilder::getCategory));
+                final var uncategorizedEvents = EventBuilder.REGISTERED_EVENTS
+                        .stream()
+                        .filter(e -> e.getCategory() == null)
+                        .toList();
+
+                // first, the uncategorized events
+                for (final var eventBuilder : uncategorizedEvents) {
                     final var doc = eventBuilder.createDocumentation();
                     if (doc == null)
                         continue;
 
                     builder.append(doc);
+                }
+
+                // then the categorized events
+                for (final var entry : groupedEvents.entrySet()) {
+                    builder.append("## ").append(entry.getKey().name()).append("\n\n");
+                    builder.append(String.join("\n", entry.getKey().description())).append("\n\n");
+
+                    for (final var eventBuilder : entry.getValue()) {
+                        final var doc = eventBuilder.createDocumentation();
+                        if (doc == null)
+                            continue;
+
+                        builder.append(doc);
+                    }
                 }
 
                 Files.writeString(file.toPath(), builder.toString(), StandardCharsets.UTF_8);

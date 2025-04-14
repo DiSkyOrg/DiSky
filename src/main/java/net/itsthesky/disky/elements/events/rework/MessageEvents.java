@@ -9,9 +9,14 @@ import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.managers.MessageManager;
 
+@EventCategory(name = "Message Events", description = {
+        "These events are fired when a message is received, edited or deleted.",
+        "This will be fired, by default, both guild & private messages, use the `event is from guild` condition to avoid confusion in your events."
+})
 public class MessageEvents {
 
     static {
@@ -21,10 +26,10 @@ public class MessageEvents {
                 .description("Fired when any bot receive an actual message.",
                         "This will be fired, by default, both guild & private messages, use the 'event is from guild' condition to avoid confusion.")
                 .example("on message received:")
-                .example("\tif message is from guild:")
-                .example("\t\treply with \"I just received '%event-message%' from %mention tag of event-channel%!\"")
-                .example("\telse:")
-                .example("\t\treply with \"I just received '%event-message%' from %mention tag of event-user%!\"")
+                .example("    if message is from guild:")
+                .example("        reply with \"I just received '%event-message%' from %mention tag of event-channel%!\"")
+                .example("    else:")
+                .example("        reply with \"I just received '%event-message%' from %mention tag of event-user%!\"")
                 .implementMessage(GenericMessageEvent::getChannel)
                 .value(Message.class, MessageReceivedEvent::getMessage)
                 .value(Guild.class, MessageReceivedEvent::getGuild)

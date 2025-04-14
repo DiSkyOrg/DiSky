@@ -143,10 +143,6 @@ public final class DiSky extends JavaPlugin {
         addonInstance = Skript.registerAddon(this);
         moduleManager = new ModuleManager(new File(getDataFolder(), "modules"), this, addonInstance);
         try {
-            DynamicElements.registerLogs();
-            DynamicElements.registerThreadProperties();
-            DynamicElements.registerAutoMod();
-
             addonInstance.loadClasses("net.itsthesky.disky.elements");
             moduleManager.loadModules();
         } catch (IOException e) {

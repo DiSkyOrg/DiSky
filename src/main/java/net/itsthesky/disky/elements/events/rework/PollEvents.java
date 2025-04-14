@@ -19,13 +19,6 @@ package net.itsthesky.disky.elements.events.rework;
  */
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.poll.MessagePollVoteAddEvent;
 import net.dv8tion.jda.api.events.message.poll.MessagePollVoteRemoveEvent;
@@ -35,6 +28,7 @@ public class PollEvents {
 
     static {
         EventRegistryFactory.builder(MessagePollVoteAddEvent.class)
+                .eventCategory(MessageEvents.class)
                 .name("Poll Vote Add")
                 .patterns("[message] poll vote add[ed]")
                 .description("Fired when a user adds their vote to a poll in a message.")
@@ -53,11 +47,12 @@ public class PollEvents {
                 .register();
 
         EventRegistryFactory.builder(MessagePollVoteRemoveEvent.class)
+                .eventCategory(MessageEvents.class)
                 .name("Poll Vote Remove")
                 .patterns("[message] poll vote remove[d]")
                 .description("Fired when a user removes their vote from a poll in a message.")
                 .example("on poll vote remove:")
-                .example("\tsend \"User %event-user% removed their vote from a poll in %event-channel%!\" to console")
+                .example("    send \"User %event-user% removed their vote from a poll in %event-channel%!\" to console")
 
                 .restValue("message", MessagePollVoteRemoveEvent::retrieveMessage)
                 .restValue("member", MessagePollVoteRemoveEvent::retrieveMember)
