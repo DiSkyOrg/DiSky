@@ -1,17 +1,19 @@
 # This workflow will build a Java project with Gradle
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Build and Publish
 
 on:
   push:
     branches: [ master, dev ]
   pull_request:
     branches: [ master, dev ]
+  release:
+    types: [ published ]
 
 jobs:
   build:
-
+    name: Java CI with Gradle
     runs-on: windows-latest
 
     steps:
@@ -21,8 +23,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'adopt'
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
     - name: Build with build
       run: ./gradlew shadowJar
     - name: Upload a Build Artifact
@@ -30,3 +30,34 @@ jobs:
       with:
         name: DiSky-v4-nighty
         path: build/libs/
+
+  publish:
+    name: Publish
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DiSky-v4-nighty
+          path: ./target
+
+      - name: Upload to Modrinth
+        uses: cloudnode-pro/modrinth-publish@v2
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project: 4KA72Zn8
+          name: ${{ github.event.release.name }}
+          version: ${{ github.event.release.tag_name }}
+          changelog: ${{ github.event.release.body }}
+          loaders: |-
+            paper
+            spigot
+          game-versions: |-
+            1.21.x
+            1.20.x
+          files: "target/DiSky ${{ github.event.release.tag_name }}.jar"
