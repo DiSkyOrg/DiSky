@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.bot;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -9,6 +10,7 @@ import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.NodeInformation;
 import net.dv8tion.jda.api.entities.Activity;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,14 +30,14 @@ public class ExprPresence extends SimpleExpression<Activity> {
 	private int pattern;
 	private Expression<String> exprInput;
 	private Expression<String> exprURL;
-	private NodeInformation node;
+	private Node node;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
 		pattern = matchedPattern;
 		exprInput = (Expression<String>) exprs[0];
-		node = new NodeInformation();
+		node = getParser().getNode();
 		if (matchedPattern == 3) exprURL = (Expression<String>) exprs[1];
 		return true;
 	}
@@ -58,9 +60,9 @@ public class ExprPresence extends SimpleExpression<Activity> {
 				break;
 			case 3:
 				if (url == null)
-					DiSky.getErrorHandler().exception(e, "The streaming URL cannot be null or not set!");
+					DiSkyRuntimeHandler.exprNotSet(node, exprURL);
 				if (!Activity.isValidStreamingUrl(url))
-					DiSky.getErrorHandler().exception(e, "The streaming URL specified for the presence is NOT valid! (Input: "+url+")");
+					DiSkyRuntimeHandler.error(new IllegalArgumentException("The streaming URL specified for the presence is NOT valid!"), node, false);
 				activity = Activity.streaming(input, url);
 				break;
 			case 4:

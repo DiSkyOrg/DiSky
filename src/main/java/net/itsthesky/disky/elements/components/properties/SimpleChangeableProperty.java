@@ -7,21 +7,27 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public abstract class SimpleChangeableProperty<F, T> extends SimplePropertyExpression<F, T> {
 
-	protected abstract void set(@NotNull F entity, @Nullable T value);
+	protected abstract void set(@NotNull F entity, @Nullable T values);
 
 	@Override
 	public void change(@NotNull Event e, @NotNull Object[] delta, @NotNull Changer.ChangeMode mode) {
-		final F entity = EasyElement.parseSingle(getExpr(), e, null);
+		final var entities = EasyElement.parseList(getExpr(), e, null);
 		final T value = (T) delta[0];
 
-		if (EasyElement.anyNull(this, entity, value))
+		if (EasyElement.anyNull(this, value))
 			return;
 		if (!EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.RESET))
 			return;
 
-		set(entity, mode == Changer.ChangeMode.SET ? value : null);
+		for (final var entity : entities) {
+			if (entity != null)
+				set(entity, mode == Changer.ChangeMode.SET ? value : null);
+		}
 	}
 
 	@Override
