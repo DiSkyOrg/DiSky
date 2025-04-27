@@ -5,11 +5,16 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.automod.AutoModResponse;
 import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.api.events.automod.AutoModExecutionEvent;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
+import net.dv8tion.jda.api.events.sticker.GenericGuildStickerEvent;
+import net.dv8tion.jda.api.events.sticker.GuildStickerAddedEvent;
+import net.dv8tion.jda.api.events.sticker.GuildStickerRemovedEvent;
+import net.dv8tion.jda.api.events.sticker.update.GenericGuildStickerUpdateEvent;
 import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 
@@ -81,6 +86,42 @@ public class GuildEvents {
                 .value(User.class, GuildUnbanEvent::getUser, 0)
                 .value(Guild.class, GuildUnbanEvent::getGuild, 0)
                 .author(GuildUnbanEvent::getGuild)
+                .register();
+
+        // Guild Sticker Add Event
+        // Fired when a sticker is ADDED to a guild
+        EventRegistryFactory.builder(GuildStickerAddedEvent.class)
+                .name("Guild Sticker Add")
+                .patterns("[discord] guild sticker add[ed]")
+                .description("Fired when someone or something adds a sticker to a guild.")
+                .example("on guild sticker add:\n    broadcast \"%event-user% added %event-string% to %event-guild%\"")
+                .value(Guild.class, GuildStickerAddedEvent::getGuild, 0)
+                .restValue("sticker", event -> event.getGuild().retrieveSticker(event.getSticker()))
+                .restValue("author", event -> event.getGuild().retrieveMemberById(event.getGuild().getOwnerId()))
+                .register();
+
+        // Guild Sticker Removed Event
+        // Fired when a sticker is REMOVED from a guild
+        EventRegistryFactory.builder(GuildStickerRemovedEvent.class)
+                .name("Guild Sticker Remove")
+                .patterns("[discord] guild sticker remove[d]")
+                .description("Fired when someone or something removes a sticker from a guild")
+                .example("on guild sticker remove:\n    broadcast \"%event-user% removed %event-sticker% from %event-guild%\"")
+                .value(Guild.class, GuildStickerRemovedEvent::getGuild, 0)
+                .restValue("sticker", event -> event.getGuild().retrieveSticker(event.getSticker()))
+                .restValue("author", event -> event.getGuild().retrieveMemberById(event.getGuild().getOwnerId()))
+                .register();
+
+        // Guild Sticker Update Event
+        // Fired when a sticker updated in a guild
+        EventRegistryFactory.builder(GenericGuildStickerUpdateEvent.class)
+                .name("Guild Sticker Update")
+                .patterns("[discord] guild sticker update[d]")
+                .description("Fired when someone or something updates a sticker in a guild")
+                .example("on guild sticker update:\n    broadcast \"%event-user% updated %event-sticker% in %event-guild%\"")
+                .value(Guild.class, GenericGuildStickerUpdateEvent::getGuild, 0)
+                .restValue("sticker", event -> event.getGuild().retrieveSticker(event.getSticker()))
+                .restValue("author", event -> event.getGuild().retrieveMemberById(event.getGuild().getOwnerId()))
                 .register();
     }
 }
