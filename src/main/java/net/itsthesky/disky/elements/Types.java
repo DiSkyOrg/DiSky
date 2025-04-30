@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements;
 
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
+import net.dv8tion.jda.api.entities.sticker.GuildSticker;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
 import net.itsthesky.disky.api.emojis.Emote;
@@ -268,6 +269,10 @@ public class Types {
                 null
         ).eventExpression().register();
         new DiSkyType<>(Sticker.class, "sticker",
+                Sticker::getName,
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(GuildSticker.class, "guildsticker",
                 Sticker::getName,
                 null
         ).eventExpression().register();
