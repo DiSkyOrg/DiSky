@@ -223,7 +223,9 @@ public class Types {
         new DiSkyType<>(Command.Choice.class, "slashchoice",
                 Command.Choice::getName,
                 null).eventExpression().register();
-        DiSkyType.fromEnum(OptionType.class, "optiontype", "optiontype").register();
+
+        final var suffix = ConfigManager.get("suffix-option-types", false) ? " option" : null;
+        DiSkyType.fromEnum(OptionType.class, "optiontype", "optiontype", suffix).register();
 
         /*
         Guild Entities
