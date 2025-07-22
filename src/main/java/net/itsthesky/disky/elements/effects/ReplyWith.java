@@ -12,6 +12,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.components.container.Container;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.itsthesky.disky.api.events.specific.MessageEvent;
@@ -32,6 +33,7 @@ import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import net.dv8tion.jda.api.utils.messages.MessagePollBuilder;
+import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +64,7 @@ public class ReplyWith extends AsyncEffectSection {
 	static {
 		Skript.registerSection(
 				ReplyWith.class,
-				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]",
+				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder/containers% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]",
 				"reply with premium [required] message"
 		);
 	}
@@ -203,7 +205,7 @@ public class ReplyWith extends AsyncEffectSection {
 				SkriptUtils.error(node, "You can't reply with a sticker in a guild channel!");
 				return;
 			}
-			messageRestAction =((GuildMessageChannel) event.getMessageChannel())
+			messageRestAction = ((GuildMessageChannel) event.getMessageChannel())
 					.sendStickers((Sticker) message)
 					.setMessageReference(reference);
 		} else {
@@ -214,6 +216,10 @@ public class ReplyWith extends AsyncEffectSection {
 				builder = parseAdditionalData(e).addEmbeds(((EmbedBuilder) message).build());
 			else if (message instanceof MessagePollBuilder)
 				builder = parseAdditionalData(e).setPoll(((MessagePollBuilder) message).build());
+			else if (message instanceof final ContainerBuilder containerBuilder)
+				builder = new MessageCreateBuilder()
+						.useComponentsV2()
+						.addComponents(containerBuilder.buildWithId());
 			else
 				builder = parseAdditionalData(e).setContent((String) message);
 

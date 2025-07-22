@@ -4,8 +4,10 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
+import net.dv8tion.jda.api.components.ActionComponent;
+import net.dv8tion.jda.api.components.Component;
 import net.dv8tion.jda.api.entities.ISnowflake;
-import net.dv8tion.jda.api.interactions.components.ActionComponent;
+import net.itsthesky.disky.elements.componentsv2.base.INewComponentBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +21,7 @@ public class DiscordId extends SimplePropertyExpression<Object, String> {
 		register(DiscordId.class,
 				String.class,
 				"discord id",
-				"channel/role/user/threadchannel/scheduledevent/member/sticker/message/dropdown/button/guild/applicationinfo/webhook");
+				"channel/role/user/threadchannel/scheduledevent/member/sticker/message/dropdown/button/guild/applicationinfo/webhook/newcomponent");
 	}
 
 	@Override
@@ -29,10 +31,12 @@ public class DiscordId extends SimplePropertyExpression<Object, String> {
 
 	@Override
 	public @Nullable String convert(Object entity) {
-		if (entity instanceof ISnowflake)
-			return ((ISnowflake) entity).getId();
-		if (entity instanceof ActionComponent)
-			return ((ActionComponent) entity).getId();
+		if (entity instanceof final ISnowflake snowflake)
+			return snowflake.getId();
+		if (entity instanceof final ActionComponent component)
+			return component.getCustomId();
+		if (entity instanceof final INewComponentBuilder<?> newComponentBuilder)
+			return newComponentBuilder.getCustomId();
 		return null;
 	}
 

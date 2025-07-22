@@ -37,6 +37,7 @@ public class MessageWrapper extends ReceivedMessage {
 				message.getMessageSnapshots(),
 				MessageFlag.toBitField(message.getFlags()),
 				message.getInteraction(),
+				message.getInteractionMetadata(),
 				message.getStartedThread(),
 				-1);
 	}

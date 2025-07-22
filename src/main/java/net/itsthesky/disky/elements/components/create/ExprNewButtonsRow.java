@@ -8,6 +8,8 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -19,19 +21,32 @@ import org.jetbrains.annotations.NotNull;
 public class ExprNewButtonsRow extends SimpleExpression<ComponentRow> {
 
     static {
-        Skript.registerExpression(ExprNewButtonsRow.class, ComponentRow.class, ExpressionType.SIMPLE,
-                "[a] new component[s] row");
+        Skript.registerExpression(
+                ExprNewButtonsRow.class,
+                ComponentRow.class,
+                ExpressionType.COMBINED,
+                "[a] new component[s] row [with [the] [buttons[s]] %-buttons%]"
+        );
     }
+
+    private Expression<Button> exprButtons;
 
     @SuppressWarnings("unchecked")
     @Override
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
+        exprButtons = (Expression<Button>) exprs[0];
         return true;
     }
 
     @Override
     protected ComponentRow @NotNull [] get(@NotNull Event e) {
-        return new ComponentRow[] {new ComponentRow()};
+        final var buttons = EasyElement.parseList(exprButtons, e, new Button[0]);
+        final var row = new ComponentRow();
+
+        for (Button button : buttons)
+            row.add(button);
+
+        return new ComponentRow[]{row};
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ExprAttFileName extends SimplePropertyExpression<Message.Attachment
 
     static {
         register(ExprAttFileName.class, String.class,
-                "[discord] file name",
+                "attachment file name",
                 "attachment"
         );
     }

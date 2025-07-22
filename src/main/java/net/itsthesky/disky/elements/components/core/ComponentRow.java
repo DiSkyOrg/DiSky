@@ -1,100 +1,111 @@
 package net.itsthesky.disky.elements.components.core;
 
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Component;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import net.dv8tion.jda.api.components.Component;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.selections.SelectMenu;
+import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.itsthesky.disky.elements.componentsv2.base.IContainerComponentBuilder;
+import net.itsthesky.disky.elements.componentsv2.base.ISectionAccessoryBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ComponentRow {
+@Getter
+@Setter
+@NoArgsConstructor
+public class ComponentRow implements IContainerComponentBuilder<ActionRow> {
 
-	private SelectMenu menu;
-	private TextInput input;
-	private final List<Button> buttons;
+    private final List<Button> buttons = new ArrayList<>();
+    private SelectMenu menu;
+    private TextInput input;
+    private int uniqueId = -1;
 
-	public ComponentRow(SelectMenu menu, TextInput input, List<Button> buttons) {
-		this.menu = menu;
-		this.input = input;
-		this.buttons = buttons;
-	}
+    public ComponentRow(SelectMenu menu, TextInput input, List<Button> buttons) {
+        this.menu = menu;
+        this.input = input;
+        if (buttons != null)
+            this.buttons.addAll(buttons);
+    }
 
-	public ComponentRow() {
-		menu = null;
-		input = null;
-		buttons = new ArrayList<>();
-	}
+    public ComponentRow(List<Object> components) {
+        this();
 
-	public ComponentRow(List<Object> components) {
-		this();
+        for (Object component : components) {
+            if (component instanceof final SelectMenu menu)
+                setMenu(menu);
+            else if (component instanceof final Button button)
+                add(button);
+            else if (component instanceof final TextInput input)
+                setInput(input);
 
-		for (Object component : components) {
-			if (component instanceof final SelectMenu menu)
-				setMenu(menu);
-			else if (component instanceof final Button button)
-				add(button);
-			else if (component instanceof final TextInput input)
-				setInput(input);
+            else if (component instanceof final SelectMenu.Builder<?, ?> menuBuilder)
+                setMenu(menuBuilder.build());
+            else if (component instanceof final TextInput.Builder inputBuilder)
+                setInput(inputBuilder.build());
+        }
+    }
 
-			else if (component instanceof final SelectMenu.Builder<?, ?> menuBuilder)
-				setMenu(menuBuilder.build());
-			else if (component instanceof final TextInput.Builder inputBuilder)
-				setInput(inputBuilder.build());
-		}
-	}
+    public List<ItemComponent> asComponents() {
+        if (getMenu() != null)
+            return Collections.singletonList(getMenu());
+        if (getInput() != null)
+            return Collections.singletonList(getInput());
+        return new ArrayList<>(getButtons());
+    }
 
-	public TextInput getInput() {
-		return input;
-	}
+    public void add(Button button) {
+        buttons.add(button);
+    }
 
-	public void setInput(TextInput input) {
-		this.input = input;
-	}
+    public ActionRow asActionRow() {
+        return ActionRow.of(asComponents());
+    }
 
-	public List<ItemComponent> asComponents() {
-		if (getMenu() != null)
-			return Collections.singletonList(getMenu());
-		if (getInput() != null)
-			return Collections.singletonList(getInput());
-		return new ArrayList<>(getButtons());
-	}
+    public void addAll(List<Component> components) {
+        for (Component component : components) {
+            if (component instanceof SelectMenu)
+                setMenu((SelectMenu) component);
+            else if (component instanceof Button)
+                add((Button) component);
+            else if (component instanceof TextInput)
+                setInput((TextInput) component);
+        }
+    }
 
-	public void setMenu(SelectMenu menu) {
-		this.menu = menu;
-	}
+    public boolean isEmpty() {
+        return menu == null && input == null && buttons.isEmpty();
+    }
 
-	public void add(Button button) {
-		buttons.add(button);
-	}
+    @Override
+    public void loadFrom(ActionRow component) {
+        if (component == null) {
+            menu = null;
+            input = null;
+            buttons.clear();
+            return;
+        }
 
-	public SelectMenu getMenu() {
-		return menu;
-	}
+        addAll(component.getActionComponents()
+                .stream()
+                .map(c -> (Component) c)
+                .toList());
+    }
 
-	public List<Button> getButtons() {
-		return buttons;
-	}
+    @Override
+    public ActionRow build() {
+        return asActionRow();
+    }
 
-	public ActionRow asActionRow() {
-		return ActionRow.of(asComponents());
-	}
+    public Button getSingleButton() {
+        if (buttons.size() != 1)
+            throw new IllegalStateException("Cannot get single button from a row with " + buttons.size() + " buttons.");
 
-	public void addAll(List<Component> components) {
-		for (Component component : components) {
-			if (component instanceof SelectMenu)
-				setMenu((SelectMenu) component);
-			else if (component instanceof Button)
-				add((Button) component);
-			else if (component instanceof TextInput)
-				setInput((TextInput) component);
-		}
-	}
-
-	public boolean isEmpty() {
-		return menu == null && input == null && buttons.isEmpty();
-	}
+        return buttons.get(0);
+    }
 }

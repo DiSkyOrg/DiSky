@@ -13,6 +13,7 @@ import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.core.Bot;
+import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -54,7 +55,7 @@ public class PostMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder% (in|to) [the] %channel% [(using|with) [the] [bot] %-bot%] [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]",
+				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder/container% (in|to) [the] %channel% [(using|with) [the] [bot] %-bot%] [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]",
 				"(post|dispatch) voice message %string% (in|to) [the] %channel% [(using|with) [the] [bot] %-bot%] [and store (it|the message) in %-~objects%]"
 		);
 	}
@@ -108,7 +109,7 @@ public class PostMessage extends AsyncEffect {
 			return;
 		}
 
-		final MessageCreateAction action;
+		MessageCreateAction action;
 		if (message instanceof Sticker) {
 			final MessageChannel messageChannel = (MessageChannel) channel;
 			if (!(messageChannel instanceof GuildMessageChannel)) {
@@ -125,19 +126,21 @@ public class PostMessage extends AsyncEffect {
 				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
 			else if (message instanceof MessagePollBuilder)
 				builder = new MessageCreateBuilder().setPoll(((MessagePollBuilder) message).build());
+			else if (message instanceof ContainerBuilder)
+				builder = new MessageCreateBuilder().useComponentsV2().setComponents(((ContainerBuilder) message).build());
 			else
 				builder = new MessageCreateBuilder().setContent((String) message);
 
 			action = ((MessageChannel) channel).sendMessage(builder.build());
 			if (reference != null) // see https://github.com/discord-jda/JDA/pull/2749
-				action.setMessageReference(reference);
+				action = action.setMessageReference(reference);
 			if (builder.getPoll() != null)
-				action.setPoll(builder.getPoll());
+				action = action.setPoll(builder.getPoll());
 		}
 
 		final Message finalMessage;
 		try {
-			finalMessage = action.complete(true);
+			finalMessage = action.complete();
 		} catch (Exception ex) {
 			DiSkyRuntimeHandler.error(ex, node);
 			return;

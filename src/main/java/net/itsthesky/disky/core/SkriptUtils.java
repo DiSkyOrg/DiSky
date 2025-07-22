@@ -4,9 +4,8 @@ import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
-import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.skript.lang.util.SimpleLiteral;
@@ -49,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
@@ -257,6 +257,39 @@ public final class SkriptUtils {
         if (classes.length > 0)
             ParserInstance.get().setCurrentEvent("custom section node", classes);
         return ScriptLoader.loadItems(sectionNode);
+    }
+
+    @SafeVarargs
+    public static Trigger loadCode(SectionNode sectionNode,
+                                  @NotNull Section section,
+                                  String name,
+
+                                  @Nullable Consumer<ParserInstance> beforeLoading,
+                                  @Nullable Runnable afterLoading,
+                                  Class<? extends Event>... events) {
+        ParserInstance parser = section.getParser();
+
+        // backup the existing data
+        ParserInstance.Backup parserBackup = parser.backup();
+        parser.reset();
+
+        // set our new data for parsing this section
+        parser.setCurrentEvent(name, events);
+        SkriptEvent skriptEvent = new SectionSkriptEvent(name, section);
+        parser.setCurrentStructure(skriptEvent);
+
+        if (beforeLoading != null)
+            beforeLoading.accept(parser);
+
+        List<TriggerItem> triggerItems = ScriptLoader.loadItems(sectionNode);
+
+        if (afterLoading != null)
+            afterLoading.run();
+
+        // return the parser to its original state
+        parser.restoreBackup(parserBackup);
+
+        return new Trigger(parser.getCurrentScript(), name, skriptEvent, triggerItems);
     }
 
     public static OffsetDateTime convertDate(Date date) {

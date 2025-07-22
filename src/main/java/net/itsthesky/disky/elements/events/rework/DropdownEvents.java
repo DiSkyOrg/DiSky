@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.itsthesky.disky.api.events.rework.CopyEventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 

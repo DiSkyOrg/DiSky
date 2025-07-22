@@ -1,7 +1,11 @@
 package net.itsthesky.disky.elements;
 
+import net.dv8tion.jda.api.components.ActionComponent;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
 import net.itsthesky.disky.api.emojis.Emote;
@@ -9,6 +13,10 @@ import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.elements.commands.CommandEvent;
 import net.itsthesky.disky.elements.commands.CommandObject;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
+import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
+import net.itsthesky.disky.elements.componentsv2.base.INewComponentBuilder;
+import net.itsthesky.disky.elements.componentsv2.base.SectionBuilder;
+import net.itsthesky.disky.elements.componentsv2.base.sub.*;
 import net.itsthesky.disky.elements.properties.polls.PollAnswerData;
 import net.itsthesky.disky.elements.sections.automod.FilterType;
 import net.itsthesky.disky.managers.ConfigManager;
@@ -33,13 +41,10 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
-import net.dv8tion.jda.api.interactions.components.ActionComponent;
 import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
-import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.selections.SelectMenu;
+import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
@@ -69,7 +74,8 @@ public class Types {
             Converters.registerConverter(ISnowflake.class, String.class, ISnowflake::getId);
 
             Converters.registerConverter(Button.class, ComponentRow.class, btn -> new ComponentRow(null, null, Collections.singletonList(btn)));
-            Converters.registerConverter(SelectMenu.class, ComponentRow.class, menu -> new ComponentRow(menu, null, new ArrayList<>()));
+            Converters.registerConverter(SelectMenu.Builder.class, ComponentRow.class, menu -> new ComponentRow(menu.build(), null, new ArrayList<>()));
+            Converters.registerConverter(Button.class, ButtonBuilder.class, btn -> (ButtonBuilder) INewComponentBuilder.of(btn));
 
             Comparators.registerComparator(Channel.class, ChannelType.class, (channel, type) -> Relation.get(channel.getType().compareTo(type)));
 
@@ -206,6 +212,33 @@ public class Types {
         DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
 
         /*
+        Components V2
+         */
+        new DiSkyType<>(INewComponentBuilder.class, "newcomponent",
+                c -> "new component builder",
+                null).eventExpression().register();
+
+        new DiSkyType<>(ContainerBuilder.class, "container",
+                c -> "container builder",
+                null).eventExpression().register();
+        new DiSkyType<>(SectionBuilder.class, "containersection",
+                c -> "section builder",
+                null).eventExpression().register();
+
+        new DiSkyType<>(FileDisplayBuilder.class, "filedisplaycomponent",
+                FileDisplayBuilder::toString,
+                null).eventExpression().register();
+        new DiSkyType<>(TextDisplayBuilder.class, "textdisplaycomponent",
+                TextDisplayBuilder::toString,
+                null).eventExpression().register();
+        new DiSkyType<>(SeparatorBuilder.class, "separatorcomponent",
+                SeparatorBuilder::toString,
+                null).eventExpression().register();
+        new DiSkyType<>(ThumbnailBuilder.class, "thumbnailcomponent",
+                ThumbnailBuilder::toString,
+                null).eventExpression().register();
+
+        /*
         Slash commands
          */
         new DiSkyType<>(SlashCommandData.class, "slashcommand",
@@ -296,6 +329,10 @@ public class Types {
         ).eventExpression().register();
         new DiSkyType<>(MessagePoll.class, "messagepoll",
                 v -> v.getQuestion().getText(),
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(FileUpload.class, "fileupload",
+                FileUpload::getName,
                 null
         ).eventExpression().register();
 

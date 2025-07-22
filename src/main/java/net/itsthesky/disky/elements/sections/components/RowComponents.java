@@ -7,9 +7,9 @@ import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.selections.SelectMenu;
+import net.dv8tion.jda.api.components.textinput.TextInput;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 

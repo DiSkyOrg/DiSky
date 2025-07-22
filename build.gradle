@@ -7,13 +7,14 @@ plugins {
     id 'java'
     id 'idea'
     id "com.gradleup.shadow" version "9.0.0-beta4"
+    id "io.freefair.lombok" version "8.13.1"
 }
 
 group = 'net.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '23'
+def minor = '24'
 def patch = '0'
 
 def channel = ''
@@ -38,15 +39,19 @@ dependencies {
     // Jetbrains Annotations
     shadow 'org.jetbrains:annotations:23.0.0'
 
-    // Commits: com.github.dv8fromtheworld:jda
-    // Stable: net.dv8tion:JDA
-    implementation 'net.dv8tion:JDA:5.2.3'
+    // Stable: net.dv8tion:JDA:5.2.3
+    // Components V2: io.github.freya022:JDA:93b3e7abb2
+    implementation 'io.github.freya022:JDA:0c9c4e9d78'
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'
 
     // Class manipulation
-    implementation 'net.bytebuddy:byte-buddy:1.11.22'
+    implementation 'net.bytebuddy:byte-buddy:1.14.10'
+    implementation 'net.bytebuddy:byte-buddy-agent:1.14.10'
+
+    // Lombok
+    implementation 'org.projectlombok:lombok:1.18.28'
 }
 
 shadowJar {

@@ -1,12 +1,12 @@
 package net.itsthesky.disky.elements.components.properties;
 
 import ch.njol.skript.classes.Changer;
+import net.dv8tion.jda.api.components.selections.EntitySelectMenu;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
-import net.dv8tion.jda.api.interactions.components.selections.EntitySelectMenu;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
