@@ -26,7 +26,6 @@ import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.sticker.Sticker;
 import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.callbacks.IPremiumRequiredReplyCallback;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
@@ -64,8 +63,7 @@ public class ReplyWith extends AsyncEffectSection {
 	static {
 		Skript.registerSection(
 				ReplyWith.class,
-				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder/containers% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]",
-				"reply with premium [required] message"
+				"reply with [hidden] %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder/containers% [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-objects%]"
 		);
 	}
 
@@ -81,7 +79,6 @@ public class ReplyWith extends AsyncEffectSection {
 	private Expression<Message> exprReference;
 	private Expression<Object> exprResult;
 	private boolean hidden;
-	private boolean premium;
 	private @Nullable SectionNode sectionNode;
 
 	//region Section Values
@@ -99,14 +96,11 @@ public class ReplyWith extends AsyncEffectSection {
 		}
 
 		this.node = getParser().getNode();
-		this.premium = matchedPattern == 1;
 
-		if (!premium) {
-			this.hidden = parseResult.expr.startsWith("reply with hidden");
-			this.exprMessage = (Expression<Object>) expressions[0];
-			this.exprReference = (Expression<Message>) expressions[1];
-			this.exprResult = (Expression<Object>) expressions[2];
-		}
+		this.hidden = parseResult.expr.startsWith("reply with hidden");
+		this.exprMessage = (Expression<Object>) expressions[0];
+		this.exprReference = (Expression<Message>) expressions[1];
+		this.exprResult = (Expression<Object>) expressions[2];
 
 		if (sectionNode != null) {
 			this.sectionNode = sectionNode;
@@ -170,27 +164,6 @@ public class ReplyWith extends AsyncEffectSection {
 
 	@Override
 	public void execute(@NotNull Event e) {
-		if (premium) {
-			if (e instanceof InteractionEvent) {
-				final InteractionEvent event = (InteractionEvent) e;
-				final Interaction interaction = event.getInteractionEvent().getInteraction();
-				if (!(interaction instanceof IPremiumRequiredReplyCallback)) {
-					SkriptUtils.error(node, "You can only use the premium required message in an interaction event!");
-					return;
-				}
-
-				try {
-					((IPremiumRequiredReplyCallback) interaction).replyWithPremiumRequired().complete();
-				} catch (Exception ex) {
-					DiSky.getErrorHandler().exception(e, ex);
-				}
-
-            } else {
-				SkriptUtils.error(node, "You can only use the premium required message in an interaction event!");
-            }
-            return;
-        }
-
 		final Object message = parseSingle(exprMessage, e);
 		final Message reference = parseSingle(exprReference, e);
 		if (message == null)

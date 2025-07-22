@@ -5,10 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.dv8tion.jda.api.components.Component;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.itsthesky.disky.elements.componentsv2.base.IContainerComponentBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.ISectionAccessoryBuilder;
 
@@ -51,7 +51,7 @@ public class ComponentRow implements IContainerComponentBuilder<ActionRow> {
         }
     }
 
-    public List<ItemComponent> asComponents() {
+    public List<ActionRowChildComponent> asComponents() {
         if (getMenu() != null)
             return Collections.singletonList(getMenu());
         if (getInput() != null)

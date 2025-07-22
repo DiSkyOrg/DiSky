@@ -3,10 +3,10 @@ package net.itsthesky.disky.elements.sections.components;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
+import net.dv8tion.jda.api.components.ActionComponent;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
@@ -58,8 +58,8 @@ public class RowComponents extends MultiplyPropertyExpression<ComponentRow, Obje
 	}
 
 	@Override
-	public @NotNull Class<? extends ItemComponent> getReturnType() {
-		return ItemComponent.class;
+	public @NotNull Class<? extends ActionComponent> getReturnType() {
+		return ActionComponent.class;
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class RowComponents extends MultiplyPropertyExpression<ComponentRow, Obje
 	}
 
 	@Override
-	protected ItemComponent[] convert(ComponentRow row) {
-		return row.asComponents().toArray(new ItemComponent[0]);
+	protected ActionComponent[] convert(ComponentRow row) {
+		return row.asComponents().toArray(new ActionComponent[0]);
 	}
 }

@@ -192,7 +192,7 @@ public class Types {
          */
 
         new DiSkyType<>(ComponentRow.class, "row",
-                row -> row.asComponents().stream().map(c -> c.toData().toString()).collect(Collectors.toList()).toString(),
+                row -> row.asComponents().stream().map(Object::toString).toList().toString(),
                 null).eventExpression().register();
         new DiSkyType<>(Modal.Builder.class, "modal",
                 Modal.Builder::getId,

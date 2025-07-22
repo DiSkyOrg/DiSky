@@ -221,13 +221,13 @@ public class SecApplyReplacement extends Section {
 
                     for (final var key : data.keys())
                         DiSky.debug("Error in component: " + key + " - " + data.getObject(key));
-
-                    DiSky.debug("Sent component structure: " + "["
-                            + replacedTree.stream()
-                            .map(Component::toData)
-                            .map(DataObject::toString)
-                            .reduce((a, b) -> a + ", " + b)
-                            .orElse("[]") + "]");
+//
+//                    DiSky.debug("Sent component structure: " + "["
+//                            + replacedTree.stream()
+//                            .map(Component::toData)
+//                            .map(DataObject::toString)
+//                            .reduce((a, b) -> a + ", " + b)
+//                            .orElse("[]") + "]");
                 }
 
                 throw new RuntimeException("Failed to apply replacement to message: " + message.getId(), e);

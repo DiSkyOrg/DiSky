@@ -3,11 +3,12 @@ package net.itsthesky.disky.elements.sections.message;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
+import net.dv8tion.jda.api.components.ActionComponent;
+import net.dv8tion.jda.api.components.Component;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
-import net.dv8tion.jda.api.interactions.components.LayoutComponent;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
@@ -87,9 +88,9 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 	@Override
 	protected Object[] convert(Object object) {
 		if (object instanceof MessageCreateBuilder)
-			return ((MessageCreateBuilder) object).getComponents().toArray(new LayoutComponent[0]);
+			return ((MessageCreateBuilder) object).getComponents().toArray(new Component[0]);
 		else if (object instanceof Modal.Builder)
-			return ((Modal.Builder) object).getComponents().toArray(new LayoutComponent[0]);
+			return ((Modal.Builder) object).getComponents().toArray(new Component[0]);
 
 		return new Object[0];
 	}
