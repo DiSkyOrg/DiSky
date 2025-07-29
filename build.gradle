@@ -41,7 +41,7 @@ dependencies {
 
     // Stable: net.dv8tion:JDA:5.2.3
     // Components V2: io.github.freya022:JDA:93b3e7abb2
-    implementation 'net.dv8tion:JDA:6.0.0-rc.1'
+    implementation 'net.dv8tion:JDA:6.0.0-rc.2'
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'
