@@ -4,7 +4,7 @@
 # The version of the configuration file.
 # DO NOT TOUCH THIS!
 # It may erase your configuration.
-version: 2
+version: 3
 
 # In the DiSky error handler, which error code should not be shown in the console?
 # You can take a took at every discord error code here:
@@ -46,3 +46,13 @@ stop-bots-timeout: 5
 # - States that are not supposed to be reached
 # - And more...
 developer-debug: false
+
+# Make the slash command option type use alternative name for its values.
+# This may help you solve some comparaison issues (c.f. https://github.com/DiSkyOrg/DiSky/issues/248)
+# as, for instance, 'number' already represents Skript's 'Number' type.
+# This may also fix usage of 'string' in some cases, as it is a material/item type.
+# By enabling this option, every option type will pe suffixed with 'option', e.g.:
+# - 'number' will now be 'number option'
+# - 'string' will now be 'string option'
+# ... and so on.
+suffix-option-types: false

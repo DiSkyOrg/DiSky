@@ -2,12 +2,19 @@ package net.itsthesky.disky.elements.sections.handler;
 
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
+import lombok.Getter;
+import lombok.Setter;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.JDAUtils;
+import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.core.UpdateCheckerTask;
 import net.itsthesky.disky.core.Utils;
 import net.itsthesky.disky.managers.ConfigManager;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,20 +38,32 @@ public class DiSkyRuntimeHandler {
         error(error, node, true);
     }
 
-    public static void error(Exception error, Node node, boolean shouldDisplayStacktrace) {
-        if (!shouldDisplayStacktrace && ConfigManager.get("debug", false))
-            shouldDisplayStacktrace = true;
+    public static void error(Exception error, Node node,
+                             final boolean shouldDisplayStacktraceFinal) {
+        var internalException = node != null
+                ? new NodeException(error, node)
+                : error;
 
-        if (!isHandling) {
-            //DiSky.getErrorHandler().exception(null, error, node);
-            printException(node, error, shouldDisplayStacktrace);
-            return;
-        }
+        SkriptUtils.sync(() -> {
+            var event = new DiSkyRuntimeErrorEvent(internalException);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                // If the event is cancelled, we do not log the error.
+                return;
+            }
 
-        if (node != null)
-            errors.add(new NodeException(error, node));
-        else
-            errors.add(error);
+            var shouldDisplayStacktrace = shouldDisplayStacktraceFinal;
+            if (!shouldDisplayStacktrace && ConfigManager.get("debug", false))
+                shouldDisplayStacktrace = true;
+
+            if (!isHandling) {
+                //DiSky.getErrorHandler().exception(null, error, node);
+                printException(node, error, shouldDisplayStacktrace);
+                return;
+            }
+
+            errors.add(internalException);
+        });
     }
 
     public static List<Exception> end() {
@@ -172,15 +191,46 @@ public class DiSkyRuntimeHandler {
      * Represents an exception that occurred during the execution of a node,
      * with a direct link to the node that caused the exception.
      */
+    @Getter
     public static class NodeException extends Exception {
         private final Node node;
         public NodeException(Exception exception, Node node) {
             super(exception);
             this.node = node;
         }
+    }
 
-        public Node getNode() {
-            return node;
+    @Getter @Setter
+    public static class DiSkyRuntimeErrorEvent extends Event implements Cancellable {
+
+        private final Exception exception;
+        private boolean cancelled = false;
+
+        public DiSkyRuntimeErrorEvent(Exception exception) {
+            this.exception = exception;
+        }
+
+        public @Nullable Node getNode() {
+            if (exception instanceof NodeException nodeException)
+                return nodeException.getNode();
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return "DiSkyRuntimeErrorEvent{" +
+                    "exception=" + exception +
+                    ", node=" + getNode() +
+                    '}';
+        }
+
+        private static final HandlerList handlers = new HandlerList();
+        @Override
+        public @NotNull HandlerList getHandlers() {
+            return handlers;
+        }
+        public static HandlerList getHandlerList() {
+            return handlers;
         }
     }
 }

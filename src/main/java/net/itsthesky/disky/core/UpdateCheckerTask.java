@@ -52,7 +52,7 @@ public class UpdateCheckerTask extends BukkitRunnable {
             final var latestVersionNumber = new Version(latestVersion.version_number);
 
             final var currentVersion = DiSky.getVersion();
-            if (currentVersion.equals(latestVersionNumber)) {
+            if (currentVersion.equals(latestVersionNumber) || currentVersion.isLargerThan(latestVersionNumber)) {
                 plugin.getLogger().info("You are using the latest version of DiSky: " + currentVersion);
                 STATE = VersionState.LATEST;
             } else {

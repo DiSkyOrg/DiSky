@@ -30,7 +30,6 @@ public final class ConfigManager {
         if (localVersion < currentVersion) {
             instance.getLogger().info("Your configuration file is outdated! (v" + localVersion + " -> v" + currentVersion + ")");
             updateConfig(instance, localYaml);
-            instance.getLogger().info("Configuration file updated!");
         }
 
         CONFIG = localYaml;

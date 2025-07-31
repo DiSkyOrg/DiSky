@@ -6,14 +6,15 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.components.ActionComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.interactions.components.ActionComponent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Component;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.Component;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.selections.SelectMenu;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,11 +59,12 @@ public class EditMessageComponent extends AsyncEffect {
 
         // Then iterate over each row and edit the comp if found
         for (final ActionRow current : rows) {
-            final List<ActionComponent> components = new ArrayList<>();
-            for (ActionComponent actionComponent : current.getActionComponents()) {
-                ActionComponent componentToAdd = actionComponent;
+            final List<ActionRowChildComponent> components = new ArrayList<>();
+            for (ActionRowChildComponent actionComponent : current.getComponents()) {
+                ActionRowChildComponent componentToAdd = actionComponent;
+                final var componentId = actionComponent instanceof final ActionComponent comp ? comp.getCustomId() : null;
 
-                if (id.equalsIgnoreCase(actionComponent.getId())) {
+                if (id.equalsIgnoreCase(componentId)) {
                     if (actionComponent.getType().equals(Component.Type.BUTTON) && component instanceof Button)
                         componentToAdd = (Button) component;
                     else if (actionComponent.getType().name().contains("SELECT") && component instanceof SelectMenu.Builder)

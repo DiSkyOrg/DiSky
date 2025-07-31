@@ -12,6 +12,7 @@ import ch.njol.util.Kleenean;
 import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
+import net.itsthesky.disky.elements.componentsv2.base.sub.FileDisplayBuilder;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -34,7 +35,7 @@ public class DiscordName extends SimplePropertyExpression<Object, String> implem
                 DiscordName.class,
                 String.class,
                 "[the] discord name",
-                "channel/user/member/sticker/scheduledevent/emote/threadchannel/role/guild/embedfield/applicationinfo/webhook"
+                "channel/user/member/sticker/scheduledevent/emote/threadchannel/role/guild/embedfield/applicationinfo/webhook/newcomponent"
         );
     }
 
@@ -117,6 +118,8 @@ public class DiscordName extends SimplePropertyExpression<Object, String> implem
             return ((ApplicationInfo) entity).getName();
         } else if (entity instanceof Webhook) {
             return ((Webhook) entity).getName();
+        } else if (entity instanceof FileDisplayBuilder) {
+            return ((FileDisplayBuilder) entity).getFileName();
         } else {
             return null;
         }

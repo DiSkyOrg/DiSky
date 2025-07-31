@@ -10,11 +10,11 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.SkuSnowflake;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.components.buttons.Button;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 

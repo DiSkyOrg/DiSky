@@ -13,6 +13,7 @@ import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
 import net.itsthesky.disky.managers.wrappers.RegisteredWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -41,7 +42,7 @@ public class EditMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				EditMessage.class,
-				"edit [:direct] [the] [message] %message% (with|to show) %string/messagecreatebuilder/embedbuilder%"
+				"edit [:direct] [the] [message] %message% (with|to show) %string/messagecreatebuilder/embedbuilder/container%"
 		);
 	}
 
@@ -75,6 +76,8 @@ public class EditMessage extends AsyncEffect {
 			builder = (MessageCreateBuilder) message;
 		else if (message instanceof EmbedBuilder)
 			builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
+		else if (message instanceof ContainerBuilder)
+			builder = new MessageCreateBuilder().useComponentsV2().setComponents(((ContainerBuilder) message).build());
 		else
 			builder = new MessageCreateBuilder().setContent((String) message);
 		final MessageEditBuilder editBuilder = new MessageEditBuilder().applyCreateData(builder.build());

@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Name("Message Builder Attachments")
@@ -40,6 +41,7 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
+		DiSky.debug("Initializing Message Attachments Expression with exprs: " + Arrays.toString(exprs));
 		if (!getParser().isCurrentSection(CreateMessage.class)) {
 			Skript.error("You can only use the 'message attachments' expression inside a 'create message' section");
 			return false;
@@ -53,10 +55,14 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 			if (DiSky.isSkImageInstalled())
 				return new Class[]{
 						String.class, String[].class,
-						BufferedImage.class, BufferedImage[].class
+						BufferedImage.class, BufferedImage[].class,
+						FileUpload.class, FileUpload[].class,
 				};
 			else
-				return new Class[]{String.class, String[].class};
+				return new Class[]{
+						String.class, String[].class,
+						FileUpload.class, FileUpload[].class,
+			};
 		return new Class[0];
 	}
 
@@ -80,7 +86,6 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 					continue;
 				uploads.add(FileUpload.fromData(f));
 			} else if (file instanceof BufferedImage) {
-
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				try {
 					ImageIO.write((BufferedImage) file, "png", baos);
@@ -92,10 +97,15 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 				final byte[] bytes = baos.toByteArray();
 				uploads.add(FileUpload.fromData(bytes, "image"+ imageCount +".png"));
 				imageCount++;
+				DiSky.debug("MSG ATT: Added image, as named: image" + imageCount + ".png");
+			} else if (file instanceof FileUpload) {
+				uploads.add((FileUpload) file);
+				DiSky.debug("MSG ATT: Added FileUpload: " + ((FileUpload) file).getName());
 			}
 		}
 
 		builder.addFiles(uploads);
+		DiSky.debug("MSG ATT: Attachments changed successfully, new attachments: " + builder.getAttachments().stream().map(FileUpload::getName).toList());
 	}
 
 	@Override

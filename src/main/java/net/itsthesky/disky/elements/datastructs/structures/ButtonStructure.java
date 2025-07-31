@@ -1,10 +1,10 @@
 package net.itsthesky.disky.elements.datastructs.structures;
 
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.itsthesky.disky.api.datastruct.DataStructureEntry;
 import net.itsthesky.disky.api.datastruct.base.BasicDS;
 import net.itsthesky.disky.api.emojis.Emote;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.components.buttons.Button;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class ButtonStructure implements BasicDS<Button> {
 
     @DataStructureEntry(value = "disabled",
             description = "Whether the button is disabled or not.")
-    public boolean disabled;
+    public Boolean disabled = false;
 
     @DataStructureEntry(value = "id",
             description = "The ID of the button to represent it. Must be unique within all a message's components. If this is null, the URL must be set.")

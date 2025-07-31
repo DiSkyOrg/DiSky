@@ -118,12 +118,22 @@ public class DiSkyType<T> {
     }
 
     public static <T extends Enum<?>> DiSkyType<T> fromEnum(Class<T> enumClass, String typeName, String user) {
+        return fromEnum(enumClass, typeName, user, null);
+    }
+
+    public static <T extends Enum<?>> DiSkyType<T> fromEnum(Class<T> enumClass, String typeName, String user,
+                                                            @Nullable String suffix) {
         final DiSkyType<T> type = new DiSkyType<>(
                 enumClass,
                 typeName,
                 user,
                 entity -> entity.name().toLowerCase(Locale.ROOT).replaceAll("_", " "),
                 input -> {
+                    if (suffix != null && !input.endsWith(suffix))
+                        return null;
+                    if (suffix != null)
+                        input = input.substring(0, input.length() - suffix.length());
+
                     try {
                         return ReflectionUtils.invokeMethodEx(enumClass, "valueOf", null, input.toUpperCase(Locale.ROOT).replaceAll(" ", "_"));
                     } catch (Exception ex) {
@@ -132,9 +142,16 @@ public class DiSkyType<T> {
                 },
                 true
         );
+
         final String[] formatted = Arrays
                 .stream(enumClass.getEnumConstants())
                 .map(value -> value.name().replaceAll("_", " ").toLowerCase(Locale.ROOT))
+                .map(value -> {
+                    if (suffix != null)
+                        return value + suffix;
+
+                    return value;
+                })
                 .toArray(String[]::new);
         type.classInfo.examples(String.join(", ", formatted));
         return type;
