@@ -17,7 +17,7 @@ public class SuppressEmbed extends SpecificBotEffect {
     static {
         Skript.registerEffect(
                 SuppressEmbed.class,
-                "(suppress|hide) [the] [discord] embed[s] [message] (of|from) [the] [discord] [message] %message%"
+                "(suppress|hide) [the] [discord] [link] embed[s] [message] (of|from) [the] [discord] [message] %message%"
         );
     }
 
