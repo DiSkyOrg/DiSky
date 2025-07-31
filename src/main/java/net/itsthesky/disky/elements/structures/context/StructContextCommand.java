@@ -47,8 +47,8 @@ public class StructContextCommand extends Structure {
         Skript.registerStructure(
                 StructContextCommand.class,
                 VALIDATOR,
-                "user command %string%",
-                "message command %string%"
+                "user command <([^\\s]+)( .+)?$>",
+                "message command <([^\\s]+)( .+)?$>"
         );
     }
 
@@ -66,11 +66,7 @@ public class StructContextCommand extends Structure {
         parsedCommand = new ParsedContextCommand(type);
 
         // Get the command name from the first argument
-        String name = args[0] == null ? null : (String) args[0].getSingle();
-        if (name == null) {
-            Skript.error("Command name cannot be null");
-            return false;
-        }
+        String name = parseResult.regexes.get(0).group();
         parsedCommand.setName(name);
 
         return true;
