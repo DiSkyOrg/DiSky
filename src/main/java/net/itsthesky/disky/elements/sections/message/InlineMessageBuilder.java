@@ -43,7 +43,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 				InlineMessageBuilder.class,
 				MessageCreateBuilder.class,
 				ExpressionType.COMBINED,
-				"[rich] [:silent] message %string/embedbuilder/messagepollbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-strings%] [with poll %-messagepollbuilder%]",
+				"[rich] [:silent] message %string/embedbuilder/messagepollbuilder% [with embed[s] %-embedbuilders%] [with (component[s]|row[s]) %-rows/buttons/dropdowns%] [with (file|attachment)[s] %-fileuploads%] [with poll %-messagepollbuilder%]",
 				"rich [:silent] component[s] %rows/buttons/dropdowns%"
 		);
 	}
@@ -51,7 +51,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 	private Expression<Object> exprBase;
 	private Expression<EmbedBuilder> exprEmbeds;
 	private Expression<Object> exprRows;
-	private Expression<String> exprFiles;
+	private Expression<FileUpload> exprFiles;
 	private Expression<MessagePollBuilder> exprPoll;
 
 	private boolean isComponentOnly;
@@ -65,7 +65,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 		if (!isComponentOnly) {
 			exprEmbeds = (Expression<EmbedBuilder>) exprs[1];
 			exprRows = (Expression<Object>) exprs[2];
-			exprFiles = (Expression<String>) exprs[3];
+			exprFiles = (Expression<FileUpload>) exprs[3];
 			exprPoll = (Expression<MessagePollBuilder>) exprs[4];
 		}
 		return true;
@@ -75,7 +75,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 	protected @Nullable MessageCreateBuilder[] get(@NotNull Event e) {
 		final EmbedBuilder[] embeds = EasyElement.parseList(exprEmbeds, e, null);
 		final Object[] rows = EasyElement.parseList(exprRows, e, null);
-		final String[] files = EasyElement.parseList(exprFiles, e, null);
+		final FileUpload[] files = EasyElement.parseList(exprFiles, e, null);
 		final MessagePollBuilder poll = EasyElement.parseSingle(exprPoll, e, null);
 		final MessageCreateBuilder builder = new MessageCreateBuilder()
 				.setSuppressedNotifications(isSilent);
@@ -111,8 +111,7 @@ public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder>
 				builder.addEmbeds(embed.build());
 
 		if (files != null)
-			for (String path : files)
-				builder.addFiles(FileUpload.fromData(new File(path)));
+			builder.addFiles(files);
 
 		if (poll != null)
 			builder.setPoll(poll.build());

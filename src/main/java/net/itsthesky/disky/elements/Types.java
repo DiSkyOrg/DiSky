@@ -334,9 +334,9 @@ public class Types {
                 v -> v.getQuestion().getText(),
                 null
         ).eventExpression().register();
-        new DiSkyType<>(FileUpload.class, "fileupload",
+        new DiSkyType<>(FileUpload.class, "fileupload", "fileuploads?",
                 FileUpload::getName,
-                null
+                null, false
         ).eventExpression().register();
         new DiSkyType<>(PinnedMessagePaginationAction.PinnedMessage.class, "pinnedmessage",
                 msg -> msg.getMessage().getContentRaw(),

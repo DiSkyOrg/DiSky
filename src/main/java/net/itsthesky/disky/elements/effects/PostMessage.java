@@ -34,7 +34,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
+import static net.itsthesky.disky.api.skript.EasyElement.parseList;
 import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Post Message")
@@ -55,7 +57,7 @@ public class PostMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				PostMessage.class,
-				"(post|dispatch) %string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder/container% (in|to) [the] %channel% [(using|with) [the] [bot] %-bot%] [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]",
+				"(post|dispatch) %fileuploads/string/messagecreatebuilder/sticker/embedbuilder/messagepollbuilder/container% (in|to) [the] %channel% [(using|with) [the] [bot] %-bot%] [with [the] reference[d] [message] %-message%] [and store (it|the message) in %-~objects%]",
 				"(post|dispatch) voice message %string% (in|to) [the] %channel% [(using|with) [the] [bot] %-bot%] [and store (it|the message) in %-~objects%]"
 		);
 	}
@@ -91,16 +93,24 @@ public class PostMessage extends AsyncEffect {
 
 	@Override
 	public void execute(@NotNull Event e) {
-		final Object message = parseSingle(exprMessage, e);
+		final Object message = exprMessage.isSingle() ? parseSingle(exprMessage, e) : null;
+		final Object[] rawUploads = !exprMessage.isSingle() ? exprMessage.getArray(e) : null;
+
 		Channel channel = parseSingle(exprChannel, e);
 		final @Nullable Message reference = parseSingle(exprReference, e);
 		final Bot bot = Bot.fromContext(exprBot, e);
 
-		if (message == null || channel == null)
+		if (message == null && (rawUploads == null || rawUploads.length == 0)) {
+			DiSkyRuntimeHandler.error(new IllegalArgumentException("Given message or file uploads is empty or invalid."), node, false);
+			return;
+		}
+
+		if (!DiSkyRuntimeHandler.checkSet(node, exprChannel, channel))
 			return;
 
 		if (!MessageChannel.class.isAssignableFrom(channel.getClass())) {
-			Skript.error("The specified channel must be a message channel.");
+			//Skript.error("The specified channel must be a message channel.");
+			DiSkyRuntimeHandler.error(new IllegalArgumentException("The specified channel must be a message channel. (got a " + channel.getClass().getSimpleName() + ")"), node, false);
 			return;
 		}
 
@@ -113,14 +123,19 @@ public class PostMessage extends AsyncEffect {
 		if (message instanceof Sticker) {
 			final MessageChannel messageChannel = (MessageChannel) channel;
 			if (!(messageChannel instanceof GuildMessageChannel)) {
-				Skript.error("You can't reply with a sticker in a guild channel!");
+				DiSkyRuntimeHandler.error(new IllegalArgumentException("Stickers can only be sent in guild message channels."), node, false);
 				return;
 			}
 
 			action = ((GuildMessageChannel) messageChannel).sendStickers((Sticker) message);
 		} else {
 			final MessageCreateBuilder builder;
-			if (message instanceof MessageCreateBuilder)
+			if (rawUploads != null) {
+				final var uploads = new ArrayList<FileUpload>();
+				for (Object upload : rawUploads)
+					uploads.add((FileUpload) upload);
+				builder = new MessageCreateBuilder().addFiles(uploads);
+			} else if (message instanceof MessageCreateBuilder)
 				builder = (MessageCreateBuilder) message;
 			else if (message instanceof EmbedBuilder)
 				builder = new MessageCreateBuilder().addEmbeds(((EmbedBuilder) message).build());
