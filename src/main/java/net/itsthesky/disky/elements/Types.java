@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
+import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
@@ -76,6 +77,8 @@ public class Types {
             Converters.registerConverter(Button.class, ComponentRow.class, btn -> new ComponentRow(null, null, Collections.singletonList(btn)));
             Converters.registerConverter(SelectMenu.Builder.class, ComponentRow.class, menu -> new ComponentRow(menu.build(), null, new ArrayList<>()));
             Converters.registerConverter(Button.class, ButtonBuilder.class, btn -> (ButtonBuilder) INewComponentBuilder.of(btn));
+
+            Converters.registerConverter(PinnedMessagePaginationAction.PinnedMessage.class, Message.class, PinnedMessagePaginationAction.PinnedMessage::getMessage);
 
             Comparators.registerComparator(Channel.class, ChannelType.class, (channel, type) -> Relation.get(channel.getType().compareTo(type)));
 
@@ -333,6 +336,10 @@ public class Types {
         ).eventExpression().register();
         new DiSkyType<>(FileUpload.class, "fileupload",
                 FileUpload::getName,
+                null
+        ).eventExpression().register();
+        new DiSkyType<>(PinnedMessagePaginationAction.PinnedMessage.class, "pinnedmessage",
+                msg -> msg.getMessage().getContentRaw(),
                 null
         ).eventExpression().register();
 
