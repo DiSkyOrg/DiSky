@@ -14917,6 +14917,14 @@
         "face_holding_back_tears"
       ],
       "supportsFitzpatrick": false
+    },
+    {
+      "subpage": "jellyfish",
+      "unicode": "\uD83E\uDEBC",
+      "shortcodes": [
+        "jellyfish"
+      ],
+      "supportsFitzpatrick": false
     }
   ]
 }
