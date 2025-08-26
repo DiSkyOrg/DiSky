@@ -18,7 +18,7 @@ def minor = '24'
 def patch = '0'
 
 def channel = 'beta'
-def channelVersion = '3'
+def channelVersion = '4'
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
@@ -41,7 +41,7 @@ dependencies {
 
     // Stable: net.dv8tion:JDA:5.2.3
     // Components V2: io.github.freya022:JDA:93b3e7abb2
-    implementation 'net.dv8tion:JDA:6.0.0-rc.2'
+    implementation 'net.dv8tion:JDA:6.0.0-rc.3'
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'
