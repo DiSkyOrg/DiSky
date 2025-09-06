@@ -18,7 +18,7 @@ public class RegisterClient extends Effect {
     static {
         Skript.registerEffect(
                 RegisterClient.class,
-                "register [a] [new] webhook[s] [client] (in|using) [the] [bot] %bot% (with [the] name|named) %string% (and|with) [the] [webhook] url %string%"
+                "register [a] [new] webhook[s] [client] (in|using) [the] [bot] %bot% (with [the] name|named) %string% (and|with) [the] [webhook] url %string% [for thread with id %-string%]"
         );
     }
 
@@ -26,12 +26,14 @@ public class RegisterClient extends Effect {
     private Expression<Bot> exprBot;
     private Expression<String> exprName;
     private Expression<String> exprURL;
+    private Expression<String> exprThreadId;
 
     @Override
     public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
         exprBot = (Expression<Bot>) expressions[0];
         exprName = (Expression<String>) expressions[1];
         exprURL = (Expression<String>) expressions[2];
+        exprThreadId = (Expression<String>) expressions[3];
         node = getParser().getNode();
         return true;
     }
@@ -41,6 +43,7 @@ public class RegisterClient extends Effect {
         final Bot bot = exprBot.getSingle(event);
         final String name = exprName.getSingle(event);
         final String url = exprURL.getSingle(event);
+        final String threadId = exprThreadId == null ? null : exprThreadId.getSingle(event);
         if (bot == null || name == null || url == null)
             return;
 
@@ -49,11 +52,13 @@ public class RegisterClient extends Effect {
             return;
         }
 
-        DiSky.getWebhooksManager().registerWebhook(bot, name, url);
+        DiSky.getWebhooksManager().registerWebhook(bot, name, url, threadId);
     }
 
     @Override
     public @NotNull String toString(@Nullable Event event, boolean debug) {
+        if (exprThreadId != null)
+            return "register a new webhook client in bot " + exprBot.toString(event, debug) + " with name " + exprName.toString(event, debug) + " and url " + exprURL.toString(event, debug) + " for thread with id " + exprThreadId.toString(event, debug);
         return "register a new webhook client in bot " + exprBot.toString(event, debug) + " with name " + exprName.toString(event, debug) + " and url " + exprURL.toString(event, debug);
     }
 }

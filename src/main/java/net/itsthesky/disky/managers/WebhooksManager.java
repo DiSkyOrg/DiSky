@@ -26,9 +26,9 @@ public final class WebhooksManager {
         this.webhooks = new HashMap<>();
     }
 
-    public void registerWebhook(Bot bot, String name, String url) {
+    public void registerWebhook(Bot bot, String name, String url, @Nullable String threadId) {
         final WebhookClient<Message> client = WebhookClient.createClient(bot.getInstance(), url);
-        final RegisteredWebhook webhook = new RegisteredWebhook(name, bot, client);
+        final RegisteredWebhook webhook = new RegisteredWebhook(name, bot, client, threadId);
 
         webhooks.put(name, webhook);
     }
@@ -51,7 +51,7 @@ public final class WebhooksManager {
     public @Nullable RegisteredWebhook getWebhookById(String id) {
         return webhooks.values()
                 .stream()
-                .filter(webhook -> webhook.getClient().getId().equals(id))
+                .filter(webhook -> webhook.client().getId().equals(id))
                 .findFirst().orElse(null);
     }
 

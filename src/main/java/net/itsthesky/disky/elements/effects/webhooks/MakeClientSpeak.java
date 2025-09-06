@@ -71,7 +71,7 @@ public class MakeClientSpeak extends AsyncEffect {
             builder = new MessageCreateBuilder().setContent((String) message);
 
         final RegisteredWebhook registerClient = DiSky.getWebhooksManager().getWebhook(name);
-        final WebhookClient<Message> client = registerClient.getClient();
+        final WebhookClient<Message> client = registerClient.client();
 
         final Message resultMessage;
         try {
@@ -79,6 +79,7 @@ public class MakeClientSpeak extends AsyncEffect {
             resultMessage = client.sendMessage(builder.build())
                     .setUsername(username)
                     .setAvatarUrl(avatar)
+                    .setThreadId(registerClient.threadId())
                     .complete();
 
         } catch (Exception ex) {

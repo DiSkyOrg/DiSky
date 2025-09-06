@@ -14,7 +14,6 @@ import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.managers.wrappers.RegisteredWebhook;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.Webhook;
@@ -65,7 +64,7 @@ public class DestroyEntity extends AsyncEffect {
 					DiSky.getWebhooksManager().getWebhookById(message.getAuthor().getId());
 			if (webhook != null) {
 				DiSky.debug("Deleting message with webhook");
-				action = webhook.getClient().deleteMessageById(message.getId());
+				action = webhook.client().deleteMessageById(message.getId()).setThreadId(webhook.threadId());
 			} else {
 				DiSky.debug("Deleting message without webhook");
 				action = message.delete();

@@ -112,7 +112,7 @@ public class EditMessage extends AsyncEffect {
 				if (authorWebhook == null) {
 					((Message) target).editMessage(editBuilder.build()).complete();
 				} else {
-					authorWebhook.getClient().editMessageById(targetMsg.getId(), editBuilder.build()).complete();
+					authorWebhook.client().editMessageById(targetMsg.getId(), editBuilder.build()).setThreadId(authorWebhook.threadId()).complete();
 				}
 			}
 		} catch (Exception ex) {
