@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import ch.njol.util.coll.CollectionUtils;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.changers.ChangeablePropertyExpression;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.core.Bot;
@@ -40,7 +40,7 @@ public class BotToken extends ChangeablePropertyExpression<Bot, String> {
         final String value = delta[0].toString();
         if (value == null || bot == null) return;
 
-        bot.getInstance().getSelfUser().getManager().setName(value).queue(null, ex -> DiSky.getErrorHandler().exception(e, ex));
+        bot.getInstance().getSelfUser().getManager().setName(value).queue(null, ex -> DiSkyRuntimeHandler.error((Exception) ex));
     }
 
     @Override

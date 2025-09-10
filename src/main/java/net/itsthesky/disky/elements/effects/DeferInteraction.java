@@ -11,6 +11,7 @@ import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.itsthesky.disky.api.skript.EasyElement;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
@@ -76,7 +77,7 @@ public class DeferInteraction extends AsyncEffect {
                     ((ModalInteractionEvent) event).deferEdit().complete();
             }
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
         }
     }
 

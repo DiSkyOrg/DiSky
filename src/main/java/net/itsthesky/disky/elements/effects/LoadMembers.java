@@ -11,6 +11,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
@@ -59,7 +60,7 @@ public class LoadMembers extends AsyncEffect {
 		try {
 			members = guild.loadMembers().get();
 		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(e, ex);
+			DiSkyRuntimeHandler.error((Exception) ex);
 			return;
 		}
 

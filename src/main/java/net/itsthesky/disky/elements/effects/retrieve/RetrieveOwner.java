@@ -7,6 +7,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
@@ -44,7 +45,7 @@ public class RetrieveOwner extends AsyncEffect {
         try {
             owner = guild.retrieveOwner().complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

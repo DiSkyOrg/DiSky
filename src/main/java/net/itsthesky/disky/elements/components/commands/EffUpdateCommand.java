@@ -4,7 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.skript.WaiterEffect;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.Debug;
@@ -71,7 +71,7 @@ public class EffUpdateCommand extends WaiterEffect {
 		updateAction.addCommands(commands)
 				.queue(this::restart, ex -> {
 					restart();
-					DiSky.getErrorHandler().exception(e, ex);
+					DiSkyRuntimeHandler.error((Exception) ex);
 				});
 	}
 

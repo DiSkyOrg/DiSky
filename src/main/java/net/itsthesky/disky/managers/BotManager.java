@@ -1,7 +1,6 @@
 package net.itsthesky.disky.managers;
 
 import com.google.common.collect.Sets;
-import net.itsthesky.disky.api.skript.ErrorHandler;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.MemberRemoveEventListener;
 import net.itsthesky.disky.core.ReactionListener;
@@ -89,9 +88,6 @@ public class BotManager {
         bots.forEach(consumer);
     }
 
-    public ErrorHandler errorHandler() {
-        return new DiSkyErrorHandler();
-    }
 
     public @Nullable Bot fromName(String name) {
         return bots

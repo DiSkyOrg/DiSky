@@ -11,6 +11,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
@@ -98,7 +99,7 @@ public class EditMessage extends AsyncEffect {
 					componentInteraction.editMessage(editBuilder.build()).complete();
 				}
 			} catch (Exception ex) {
-				DiSky.getErrorHandler().exception(e, ex);
+				DiSkyRuntimeHandler.error(ex, node);
 			}
 			return;
 		}
@@ -116,7 +117,7 @@ public class EditMessage extends AsyncEffect {
 				}
 			}
 		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(e, ex);
+			DiSkyRuntimeHandler.error(ex, node);
 		}
 	}
 

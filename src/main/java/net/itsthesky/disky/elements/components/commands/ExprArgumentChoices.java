@@ -4,6 +4,7 @@ import ch.njol.skript.classes.Changer;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.bukkit.event.Event;
@@ -29,7 +30,7 @@ public class ExprArgumentChoices extends MultiplyPropertyExpression<OptionData, 
 		try {
 			optionData.addChoices(choice);
 		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(e, ex);
+			DiSkyRuntimeHandler.error((Exception) ex);
 		}
 	}
 

@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.entities.Message;
-import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
@@ -85,7 +84,7 @@ public class EditMessageComponent extends AsyncEffect {
         try {
             message.editMessageComponents(newRows).complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error(ex, node);
         }
     }
 

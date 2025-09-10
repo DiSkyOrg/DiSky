@@ -9,6 +9,7 @@ import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.managers.wrappers.RegisteredWebhook;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -82,7 +83,7 @@ public class MakeClientSpeak extends AsyncEffect {
                     .complete();
 
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

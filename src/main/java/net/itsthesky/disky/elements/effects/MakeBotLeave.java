@@ -7,6 +7,7 @@ import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +44,7 @@ public class MakeBotLeave extends AsyncEffect {
                 return;
             botGuild.leave().complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
         }
     }
 

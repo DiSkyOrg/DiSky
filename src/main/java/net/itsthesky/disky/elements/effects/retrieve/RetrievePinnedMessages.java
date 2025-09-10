@@ -12,8 +12,8 @@ import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
-import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.EasyElement;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +60,7 @@ public class RetrievePinnedMessages extends AsyncEffect {
             else
                 messages = channel.retrievePinnedMessages().complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error(ex);
             return;
         }
 

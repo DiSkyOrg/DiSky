@@ -8,7 +8,7 @@ import net.itsthesky.disky.api.emojis.EmojiStore;
 import net.itsthesky.disky.api.generator.DocBuilder;
 import net.itsthesky.disky.api.modules.DiSkyModule;
 import net.itsthesky.disky.api.modules.ModuleManager;
-import net.itsthesky.disky.api.skript.ErrorHandler;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.core.DiSkyCommand;
 import net.itsthesky.disky.core.DiSkyMetrics;
 import net.itsthesky.disky.core.UpdateCheckerTask;
@@ -37,7 +37,6 @@ public final class DiSky extends JavaPlugin {
 
     private static DiSky instance;
     private static SkriptAddon addonInstance;
-    private static ErrorHandler errorHandler;
     private static BotManager botManager;
     private static boolean skImageInstalled;
     private static ModuleManager moduleManager;
@@ -63,7 +62,6 @@ public final class DiSky extends JavaPlugin {
         botManager = new BotManager(this);
         builder = new DocBuilder(this);
         webhooksManager = new WebhooksManager(this);
-        errorHandler = botManager.errorHandler();
         skImageInstalled = getServer().getPluginManager().isPluginEnabled("SkImage2");
 
         getCommand("disky").setExecutor(new DiSkyCommand());
@@ -74,12 +72,12 @@ public final class DiSky extends JavaPlugin {
          * Check for Skript
          */
         if (!getServer().getPluginManager().isPluginEnabled("Skript")) {
-            errorHandler.exception(null, new RuntimeException("Skript is not found, cannot start DiSky."));
+            DiSkyRuntimeHandler.error(new RuntimeException("Skript is not found, cannot start DiSky."));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
         if (!Skript.isAcceptRegistrations()) {
-            errorHandler.exception(null, new RuntimeException("Skript found, but it doesn't accept registration. Cannot start DiSky."));
+            DiSkyRuntimeHandler.error(new RuntimeException("Skript found, but it doesn't accept registration. Cannot start DiSky."));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -146,7 +144,7 @@ public final class DiSky extends JavaPlugin {
             addonInstance.loadClasses("net.itsthesky.disky.elements");
             moduleManager.loadModules();
         } catch (IOException e) {
-            errorHandler.exception(null, e);
+            DiSkyRuntimeHandler.error(e);
             return;
         } catch (ClassNotFoundException | InvalidConfigurationException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -155,7 +153,7 @@ public final class DiSky extends JavaPlugin {
         /*
         Default JDA's error handler
          */
-        RestAction.setDefaultFailure(throwable -> DiSky.getErrorHandler().exception(null, throwable));
+        RestAction.setDefaultFailure(throwable -> DiSkyRuntimeHandler.error((Exception) throwable));
 
     }
 
@@ -189,9 +187,6 @@ public final class DiSky extends JavaPlugin {
         return builder;
     }
 
-    public static ErrorHandler getErrorHandler() {
-        return errorHandler;
-    }
 
     public static SkriptAddon getAddonInstance() {
         return addonInstance;

@@ -7,6 +7,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
@@ -55,7 +56,7 @@ public class RetrieveEmotes extends AsyncEffect {
         try {
             emotes = guild.retrieveEmojis().complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

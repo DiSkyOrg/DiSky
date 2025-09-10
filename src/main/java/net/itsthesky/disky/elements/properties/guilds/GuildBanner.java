@@ -10,6 +10,7 @@ import net.itsthesky.disky.api.changers.ChangeablePropertyExpression;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.Utils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Icon;
 import org.bukkit.event.Event;
@@ -51,7 +52,7 @@ public class GuildBanner extends ChangeablePropertyExpression<Guild, String> {
             try {
                 iconStream = new URL(value).openStream();
             } catch (IOException ex) {
-                DiSky.getErrorHandler().exception(e, ex);
+                DiSkyRuntimeHandler.error((Exception) ex);
                 return;
             }
         } else {
@@ -61,7 +62,7 @@ public class GuildBanner extends ChangeablePropertyExpression<Guild, String> {
             try {
                 iconStream = new FileInputStream(iconFile);
             } catch (FileNotFoundException ex) {
-                DiSky.getErrorHandler().exception(e, ex);
+                DiSkyRuntimeHandler.error((Exception) ex);
                 return;
             }
         }
@@ -70,7 +71,7 @@ public class GuildBanner extends ChangeablePropertyExpression<Guild, String> {
         try {
             icon = Icon.from(iconStream);
         } catch (IOException ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

@@ -8,6 +8,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.api.skript.WaiterEffect;
 import net.itsthesky.disky.core.Bot;
@@ -46,7 +47,7 @@ public class BaseBotEffect extends WaiterEffect<Object> {
         final @NotNull Bot bot =
                 parseSingle(exprBot, e, DiSky.getManager().findAny());
         if (bot == null) {
-            DiSky.getErrorHandler().exception(e, new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
+            DiSkyRuntimeHandler.error(new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
             restart();
             return;
         }

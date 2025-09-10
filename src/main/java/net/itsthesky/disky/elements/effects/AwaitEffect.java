@@ -12,6 +12,7 @@ import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.ReflectionUtils;
 import net.itsthesky.disky.elements.changers.IAsyncChangeableExpression;
 import net.itsthesky.disky.elements.changers.IAsyncGettableExpression;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,7 +79,7 @@ public class AwaitEffect extends AsyncEffect {
 
                 return;
             } catch (Exception ex) {
-                DiSky.getErrorHandler().exception(event, ex);
+                DiSkyRuntimeHandler.error((Exception) ex);
                 return;
             }
         }

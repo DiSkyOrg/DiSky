@@ -10,6 +10,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.bukkit.event.Event;
@@ -57,7 +58,7 @@ public class RetrieveMessages extends AsyncEffect {
         try {
             messages = channel.getHistory().retrievePast(number.intValue()).complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

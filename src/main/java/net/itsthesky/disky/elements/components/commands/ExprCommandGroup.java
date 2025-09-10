@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Name;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.bukkit.event.Event;
@@ -63,7 +64,7 @@ public class ExprCommandGroup extends MultiplyPropertyExpression<SlashCommandDat
 		try {
 			command.addSubcommandGroups(current);
 		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(e, ex);
+			DiSkyRuntimeHandler.error((Exception) ex);
 		}
 	}
 

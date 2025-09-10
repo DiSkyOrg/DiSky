@@ -12,6 +12,7 @@ import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.core.JDAUtils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Icon;
 import org.bukkit.event.Event;
@@ -80,7 +81,7 @@ public class CreateEmote extends AsyncEffect {
         try {
             emote = Emote.fromJDA(guild.createEmoji(name, icon).complete());
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

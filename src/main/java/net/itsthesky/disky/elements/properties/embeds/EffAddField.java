@@ -6,6 +6,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -41,11 +42,11 @@ public class EffAddField extends Effect {
         if (name == null || desc == null || embed == null) return;
 
         if (name.length() > 256) {
-            DiSky.getErrorHandler().exception(e, new RuntimeException("The title of a field cannot be bigger than 256 characters. The one you're trying to set is '"+name.length()+"' length!"));
+            DiSkyRuntimeHandler.error(new RuntimeException("The title of a field cannot be bigger than 256 characters. The one you're trying to set is '"+name.length()+"' length!"));
             return;
         }
         if (desc.length() > 1024) {
-            DiSky.getErrorHandler().exception(e, new RuntimeException("The value of a field cannot be bigger than 1024 characters. The one you're trying to set is '"+desc.length()+"' length!"));
+            DiSkyRuntimeHandler.error(new RuntimeException("The value of a field cannot be bigger than 1024 characters. The one you're trying to set is '"+desc.length()+"' length!"));
             return;
         }
 

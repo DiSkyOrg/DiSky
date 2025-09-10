@@ -111,7 +111,7 @@ public final class SkriptStateRegistry {
                 if (ConfigManager.get("debug", false))
                     ex.printStackTrace();
 
-                DiSkyRuntimeHandler.error(ex, ((INodeHolder) element).getNode());
+                DiSkyRuntimeHandler.error(ex);
                 return false;
             }
         }
@@ -152,7 +152,7 @@ public final class SkriptStateRegistry {
                 if (ConfigManager.get("debug", false))
                     ex.printStackTrace();
 
-                DiSkyRuntimeHandler.error(ex, ((INodeHolder) property).getNode());
+                DiSkyRuntimeHandler.error(ex);
             }
         }
     }

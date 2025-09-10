@@ -9,6 +9,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.WaiterEffect;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Message;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -61,7 +62,7 @@ public class EffAttDownload extends WaiterEffect {
                     file.isDirectory() ? Paths.get(file.getPath() + "/" + attachment.getFileName()) : Paths.get(file.getPath())
             );
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
         }
         restart();
     }

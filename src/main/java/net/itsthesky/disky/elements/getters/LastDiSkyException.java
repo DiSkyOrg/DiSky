@@ -32,10 +32,10 @@ public class LastDiSkyException extends SimpleExpression<String> {
 
 	@Override
 	protected String @NotNull [] get(@NotNull Event e) {
-		final @Nullable Throwable throwable = DiSky.getErrorHandler().getErrorValue(e);
-		if (throwable == null)
-			return new String[0];
-		return new String[] {throwable.getMessage()};
+		// Note: This functionality is temporarily disabled after migration to DiSkyRuntimeHandler
+		// The new DiSkyRuntimeHandler doesn't provide event-based error storage
+		// TODO: Implement new error tracking mechanism if needed
+		return new String[0];
 	}
 
 	@Override

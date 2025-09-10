@@ -7,6 +7,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.ApplicationInfo;
 import org.bukkit.event.Event;
@@ -43,7 +44,7 @@ public class RetrieveApplicationInfo extends AsyncEffect {
         try {
             applicationInfo = bot.getInstance().retrieveApplicationInfo().complete();
         } catch (Exception ex ) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

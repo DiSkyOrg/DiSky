@@ -6,7 +6,7 @@ import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.Variable;
 import ch.njol.skript.lang.parser.ParserInstance;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.core.Debug;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -51,11 +51,11 @@ public abstract class EasyElement extends Effect {
     }
 
     protected void exception(Event event, Throwable throwable) {
-        DiSky.getErrorHandler().exception(event, throwable);
+        DiSkyRuntimeHandler.error((Exception) throwable);
     }
 
     public static void exception(Throwable throwable) {
-        DiSky.getErrorHandler().exception(null, throwable);
+        DiSkyRuntimeHandler.error((Exception) throwable);
     }
 
     /**
