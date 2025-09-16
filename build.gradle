@@ -14,11 +14,11 @@ group = 'net.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '24'
+def minor = '25'
 def patch = '0'
 
-def channel = 'beta'
-def channelVersion = '4'
+def channel = ''
+def channelVersion = ''
 
 version = major + '.' + minor + '.' + patch + (channel ? '-' + channel + channelVersion : '')
 
@@ -41,7 +41,7 @@ dependencies {
 
     // Stable: net.dv8tion:JDA:5.2.3
     // Components V2: io.github.freya022:JDA:93b3e7abb2
-    implementation 'net.dv8tion:JDA:6.0.0-rc.3'
+    implementation 'net.dv8tion:JDA:6.0.0-rc.5'
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'

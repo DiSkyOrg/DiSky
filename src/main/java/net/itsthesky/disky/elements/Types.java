@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements;
 
 import net.dv8tion.jda.api.components.ActionComponent;
+import net.dv8tion.jda.api.components.ModalTopLevelComponent;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
@@ -199,6 +200,9 @@ public class Types {
                 null).eventExpression().register();
         new DiSkyType<>(Modal.Builder.class, "modal",
                 Modal.Builder::getId,
+                null).eventExpression().register();
+        new DiSkyType<>(ModalTopLevelComponent.class, "modalcomponent",
+                comp -> Integer.toString(comp.getUniqueId()),
                 null).eventExpression().register();
         new DiSkyType<>(Button.class, "button",
                 ActionComponent::getId,

@@ -54,8 +54,6 @@ public class ComponentRow implements IContainerComponentBuilder<ActionRow> {
     public List<ActionRowChildComponent> asComponents() {
         if (getMenu() != null)
             return Collections.singletonList(getMenu());
-        if (getInput() != null)
-            return Collections.singletonList(getInput());
         return new ArrayList<>(getButtons());
     }
 
