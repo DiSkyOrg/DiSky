@@ -43,13 +43,14 @@ public class EditMessage extends AsyncEffect {
 	static {
 		Skript.registerEffect(
 				EditMessage.class,
-				"edit [:direct] [the] [message] %message% (with|to show) %string/messagecreatebuilder/embedbuilder/container%"
+				"edit [replace:([and] replace|[by] replacing)] [:direct] [the] [message] %message% (with|to show) %string/messagecreatebuilder/embedbuilder/container%"
 		);
 	}
 
 	private Expression<Object> exprTarget;
 	private Expression<Object> exprMessage;
 	private boolean direct = false;
+    private boolean replace = false;
 	private Node node;
 
 	@Override
@@ -59,6 +60,7 @@ public class EditMessage extends AsyncEffect {
 		exprTarget = (Expression<Object>) expressions[0];
 		exprMessage = (Expression<Object>) expressions[1];
 		direct = parseResult.hasTag("direct");
+        replace = parseResult.hasTag("replace");
 		node = getParser().getNode();
 
 		return true;
@@ -87,16 +89,17 @@ public class EditMessage extends AsyncEffect {
 		// and also if the provided message's ID is the original message of the interaction.
 		// ==> Why? In interactions, we have to edit the interaction itself, and not the message.
 		if (e instanceof InteractionEvent
-				&& ((InteractionEvent) e).getInteractionEvent().getInteraction() instanceof ComponentInteraction
+				&& ((InteractionEvent) e).getInteractionEvent().getInteraction() instanceof ComponentInteraction componentInteraction
 				&&  ((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction()).getMessageId().equals(((Message) target).getId())
 				&& !direct) {
 			try {
-				final ComponentInteraction componentInteraction = ((ComponentInteraction) ((InteractionEvent) e).getInteractionEvent().getInteraction());
-				if (componentInteraction.isAcknowledged()) {
+                if (componentInteraction.isAcknowledged()) {
 					SkriptUtils.error(node, "You're trying to edit a message's interaction, but you already acknowledged it! You may want to use the 'direct' option to edit the message itself!");
 					return;
 				} else {
-					componentInteraction.editMessage(editBuilder.build()).complete();
+					componentInteraction.editMessage(editBuilder.build())
+                            .setReplace(replace)
+                            .complete();
 				}
 			} catch (Exception ex) {
 				DiSkyRuntimeHandler.error(ex, node);
@@ -111,9 +114,13 @@ public class EditMessage extends AsyncEffect {
 				final @Nullable RegisteredWebhook authorWebhook =
 						DiSky.getWebhooksManager().getWebhookById(targetMsg.getAuthor().getId());
 				if (authorWebhook == null) {
-					((Message) target).editMessage(editBuilder.build()).complete();
+					((Message) target).editMessage(editBuilder.build())
+                            .setReplace(replace)
+                            .complete();
 				} else {
-					authorWebhook.getClient().editMessageById(targetMsg.getId(), editBuilder.build()).complete();
+					authorWebhook.getClient().editMessageById(targetMsg.getId(), editBuilder.build())
+                            .setReplace(replace)
+                            .complete();
 				}
 			}
 		} catch (Exception ex) {
