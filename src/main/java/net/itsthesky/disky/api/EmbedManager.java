@@ -1,7 +1,9 @@
 package net.itsthesky.disky.api;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 
 /**
@@ -26,10 +28,11 @@ public class EmbedManager {
 
     /**
      * Get an embed instance via its ID.
-     * @param id the embed id template
-     * @return The template linked with the ID if exist, else an empty embed
+     * @param id the embed id template, may be null
+     * @return The template linked with the ID if existed, else an empty embed
      */
-    public static EmbedBuilder getTemplate(String id) {
+    public static @NotNull EmbedBuilder getTemplate(@Nullable String id) {
+        if (id == null) return new EmbedBuilder();
         if (!templates.containsKey(id)) return new EmbedBuilder();
         return new EmbedBuilder(templates.get(id));
     }
