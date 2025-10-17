@@ -24,11 +24,11 @@ public class ExprNewThumbnail extends SimpleExpression<ThumbnailBuilder> {
                 ExprNewThumbnail.class,
                 ThumbnailBuilder.class,
                 ExpressionType.COMBINED,
-                "[a] new thumbnail [display] [with [the] source] %fileupload% [with [unique] id %-integer%]"
+                "[a] new thumbnail [display] [with [the] (source|url)] %fileupload/string% [with [unique] id %-integer%]"
         );
     }
 
-    private Expression<FileUpload> exprSource;
+    private Expression<Object> exprSource;
     private Expression<Integer> exprUniqueId;
     private Node node;
 
@@ -36,7 +36,7 @@ public class ExprNewThumbnail extends SimpleExpression<ThumbnailBuilder> {
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
         node = getParser().getNode();
 
-        exprSource = (Expression<FileUpload>) exprs[0];
+        exprSource = (Expression<Object>) exprs[0];
         exprUniqueId = (Expression<Integer>) exprs[1];
 
         return true;
@@ -51,9 +51,13 @@ public class ExprNewThumbnail extends SimpleExpression<ThumbnailBuilder> {
             return new ThumbnailBuilder[0];
         }
 
-        return new ThumbnailBuilder[]{
-                new ThumbnailBuilder(source, uniqueId, null)
-        };
+        if (source instanceof FileUpload upload)
+            return new ThumbnailBuilder[]{ new ThumbnailBuilder(upload, uniqueId) };
+        else if (source instanceof String url)
+            return new ThumbnailBuilder[]{ new ThumbnailBuilder(url, uniqueId) };
+
+        DiSkyRuntimeHandler.error(new IllegalArgumentException("The source of a thumbnail must be a FileUpload or a String (url)."));
+        return new ThumbnailBuilder[0];
     }
 
     @Override
