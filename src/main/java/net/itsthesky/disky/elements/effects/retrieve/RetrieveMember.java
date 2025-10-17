@@ -18,7 +18,7 @@ public class RetrieveMember extends AsyncEffect {
     static {
         Skript.registerEffect(
                 RetrieveMember.class,
-                "retrieve [the] member (with|from) id %string% (from|with|of|in) %guild% [(with|using) [the] [bot] %-bot%] and store (it|the member) in %~objects%"
+                "retrieve [the] member (with|from) id %string% (from|with|of|in) %guild% [(with|using) [the] [bot] %-bot%] and store (them|it|the member) in %~objects%"
         );
     }
 
