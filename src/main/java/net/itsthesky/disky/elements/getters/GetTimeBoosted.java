@@ -6,6 +6,7 @@ import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Date;
 import net.dv8tion.jda.api.entities.Member;
+import net.itsthesky.disky.core.SkriptUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.OffsetDateTime;
@@ -28,10 +29,7 @@ public class GetTimeBoosted extends SimplePropertyExpression<Member, Date> {
     @Override
     public @Nullable Date convert(Member m) {
         OffsetDateTime boostTime = m.getTimeBoosted();
-        if (boostTime == null) {
-            return null;
-        }
-        return new Date(boostTime.toInstant().toEpochMilli());
+        return SkriptUtils.convertDateTime(boostTime);
     }
 
     @Override
