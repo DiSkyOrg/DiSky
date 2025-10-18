@@ -6,7 +6,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.events.specific.ComponentInteractionEvent;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.core.SkriptUtils;
@@ -86,7 +86,7 @@ public class EditComponent extends AsyncEffect {
         try {
             action.complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error(ex, node);
         }
     }
 

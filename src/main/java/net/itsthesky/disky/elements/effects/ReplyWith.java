@@ -13,7 +13,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.components.container.Container;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.events.specific.InteractionEvent;
 import net.itsthesky.disky.api.events.specific.MessageEvent;
 import net.itsthesky.disky.api.skript.AsyncEffectSection;
@@ -236,7 +236,7 @@ public class ReplyWith extends AsyncEffectSection {
 			try {
 				result = messageRestAction.complete();
 			} catch (Exception ex) {
-				DiSky.getErrorHandler().exception(e, ex);
+				DiSkyRuntimeHandler.error(ex, node);
 				return;
 			}
 
@@ -249,7 +249,7 @@ public class ReplyWith extends AsyncEffectSection {
 			try {
 				interactionHook = otherRestAction.complete();
 			} catch (Exception ex) {
-				DiSky.getErrorHandler().exception(e, ex);
+				DiSkyRuntimeHandler.error(ex, node);
 				return;
 			}
 			if (exprResult != null) {

@@ -9,6 +9,7 @@ import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -84,7 +85,7 @@ public class FindMembersWithRoles extends AsyncEffect {
         try {
             members = guild.findMembersWithRoles(roles).get();
         } catch (Exception e) {
-            DiSky.getErrorHandler().exception(event, e);
+            DiSkyRuntimeHandler.error((Exception) e);
             return;
         }
 

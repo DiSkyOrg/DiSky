@@ -17,6 +17,7 @@ import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyRegistry;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.Bukkit;
@@ -114,7 +115,7 @@ public class FindMemberSection extends Section {
 
                 exprResult.change(e, members.toArray(new Member[0]), Changer.ChangeMode.SET);
             } catch (Exception ex) {
-                DiSky.getErrorHandler().exception(e, ex);
+                DiSkyRuntimeHandler.error((Exception) ex);
             }
 
             // Restarts the following code

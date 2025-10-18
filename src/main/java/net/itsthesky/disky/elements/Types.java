@@ -1,10 +1,12 @@
 package net.itsthesky.disky.elements;
 
 import net.dv8tion.jda.api.components.ActionComponent;
+import net.dv8tion.jda.api.components.ModalTopLevelComponent;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
+import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
@@ -45,7 +47,7 @@ import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -76,6 +78,8 @@ public class Types {
             Converters.registerConverter(Button.class, ComponentRow.class, btn -> new ComponentRow(null, null, Collections.singletonList(btn)));
             Converters.registerConverter(SelectMenu.Builder.class, ComponentRow.class, menu -> new ComponentRow(menu.build(), null, new ArrayList<>()));
             Converters.registerConverter(Button.class, ButtonBuilder.class, btn -> (ButtonBuilder) INewComponentBuilder.of(btn));
+
+            Converters.registerConverter(PinnedMessagePaginationAction.PinnedMessage.class, Message.class, PinnedMessagePaginationAction.PinnedMessage::getMessage);
 
             Comparators.registerComparator(Channel.class, ChannelType.class, (channel, type) -> Relation.get(channel.getType().compareTo(type)));
 
@@ -196,6 +200,9 @@ public class Types {
                 null).eventExpression().register();
         new DiSkyType<>(Modal.Builder.class, "modal",
                 Modal.Builder::getId,
+                null).eventExpression().register();
+        new DiSkyType<>(ModalTopLevelComponent.class, "modalcomponent",
+                comp -> Integer.toString(comp.getUniqueId()),
                 null).eventExpression().register();
         new DiSkyType<>(Button.class, "button",
                 ActionComponent::getId,
@@ -331,8 +338,12 @@ public class Types {
                 v -> v.getQuestion().getText(),
                 null
         ).eventExpression().register();
-        new DiSkyType<>(FileUpload.class, "fileupload",
+        new DiSkyType<>(FileUpload.class, "fileupload", "fileuploads?",
                 FileUpload::getName,
+                null, false
+        ).eventExpression().register();
+        new DiSkyType<>(PinnedMessagePaginationAction.PinnedMessage.class, "pinnedmessage",
+                msg -> msg.getMessage().getContentRaw(),
                 null
         ).eventExpression().register();
 

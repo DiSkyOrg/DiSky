@@ -12,6 +12,7 @@ import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.core.Bot;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -71,7 +72,7 @@ public class SuppressReaction extends SpecificBotEffect {
 
 		RestAction.allOf(actions).queue(this::restart, ex -> {
 			restart();
-			DiSky.getErrorHandler().exception(event, ex);
+			DiSkyRuntimeHandler.error((Exception) ex);
 		});
 	}
 

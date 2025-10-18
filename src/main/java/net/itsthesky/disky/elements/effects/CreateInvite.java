@@ -10,6 +10,7 @@ import ch.njol.skript.util.Timespan;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.channel.attribute.IInviteContainer;
@@ -97,7 +98,7 @@ public class CreateInvite extends AsyncEffect {
                     .complete();
 
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
             return;
         }
 

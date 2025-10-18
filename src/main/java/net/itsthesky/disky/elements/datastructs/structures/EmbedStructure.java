@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.datastructs.structures;
 import ch.njol.skript.util.Color;
 import ch.njol.skript.util.Date;
 import ch.njol.skript.util.SkriptColor;
+import net.itsthesky.disky.api.EmbedManager;
 import net.itsthesky.disky.api.datastruct.DataStructure;
 import net.itsthesky.disky.api.datastruct.DataStructureEntry;
 import net.itsthesky.disky.api.datastruct.base.BasicDS;
@@ -50,9 +51,12 @@ public class EmbedStructure implements BasicDS<EmbedBuilder> {
     @DataStructureEntry(value = "field", subStructureType = EmbedFieldStructure.class)
     public List<MessageEmbed.Field> fields;
 
+    @DataStructureEntry(value = "template")
+    public String template;
+
     @Override
     public EmbedBuilder build() {
-        EmbedBuilder builder = new EmbedBuilder();
+        EmbedBuilder builder = EmbedManager.getTemplate(template);
         if (title != null) builder.setTitle(title);
         if (description != null) builder.setDescription(description);
         if (color != null) builder.setColor(SkriptUtils.convert(color));

@@ -1,6 +1,6 @@
 package net.itsthesky.disky.api.emojis;
 
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ExecutorService;
@@ -41,7 +41,7 @@ public class ActionImpl<T> implements Action<T> {
 				if (onThrow != null) {
 					onThrow.accept(e);
 				} else {
-					DiSky.getErrorHandler().exception(null, e);
+					DiSkyRuntimeHandler.error((Exception) e);
 				}
 			}
 		});

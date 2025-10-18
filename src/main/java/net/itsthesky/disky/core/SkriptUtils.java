@@ -353,7 +353,7 @@ public final class SkriptUtils {
             try {
                 return Icon.from(new URL(input).openStream());
             } catch (IOException ex) {
-                DiSky.getErrorHandler().exception(null, ex);
+                DiSkyRuntimeHandler.error(ex);
                 return null;
             }
         } else {
@@ -363,7 +363,7 @@ public final class SkriptUtils {
             try {
                 return Icon.from(new FileInputStream(iconFile));
             } catch (IOException ex) {
-                DiSky.getErrorHandler().exception(null, ex);
+                DiSkyRuntimeHandler.error(ex);
                 return null;
             }
         }

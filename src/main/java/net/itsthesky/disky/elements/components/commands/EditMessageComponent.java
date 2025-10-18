@@ -7,14 +7,14 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.components.ActionComponent;
-import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
-import net.itsthesky.disky.DiSky;
-import net.itsthesky.disky.core.SkriptUtils;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.Component;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
+import net.dv8tion.jda.api.entities.Message;
+import net.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +50,7 @@ public class EditMessageComponent extends AsyncEffect {
         final String id = exprID.getSingle(event);
         final Message message = exprMessage.getSingle(event);
         final Object component = exprComponent.getSingle(event);
-        if (id == null || message == null || component == null)
+        if (!DiSkyRuntimeHandler.checkSet(node, exprID, id, exprMessage, message, exprComponent, component))
             return;
 
         // First gather components rows
@@ -84,7 +84,7 @@ public class EditMessageComponent extends AsyncEffect {
         try {
             message.editMessageComponents(newRows).complete();
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error(ex, node);
         }
     }
 

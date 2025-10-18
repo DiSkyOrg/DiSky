@@ -29,15 +29,30 @@ import net.itsthesky.disky.elements.componentsv2.base.ISectionAccessoryBuilder;
 import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Setter
 @Getter
 public class ThumbnailBuilder implements ISectionAccessoryBuilder<Thumbnail> {
 
     private FileUpload source;
+    private String rawUrl;
+
     private int uniqueId;
 
     private @Nullable Thumbnail component = null;
+
+    public ThumbnailBuilder(FileUpload uploadSource, int uniqueId) {
+        this.source = uploadSource;
+        this.rawUrl = null;
+
+        this.uniqueId = uniqueId;
+    }
+
+    public ThumbnailBuilder(String urlSource, int uniqueId) {
+        this.source = null;
+        this.rawUrl = urlSource;
+
+        this.uniqueId = uniqueId;
+    }
 
     @Override
     public void loadFrom(Thumbnail component) {
@@ -51,6 +66,8 @@ public class ThumbnailBuilder implements ISectionAccessoryBuilder<Thumbnail> {
         if (component != null)
             return component;
 
+        if (rawUrl != null)
+            return Thumbnail.fromUrl(rawUrl);
         return Thumbnail.fromFile(source);
     }
 
@@ -59,6 +76,7 @@ public class ThumbnailBuilder implements ISectionAccessoryBuilder<Thumbnail> {
         return "ThumbnailBuilder{" +
                 "uniqueId=" + uniqueId +
                 ", component=" + component +
+                ", source=" + source +
                 '}';
     }
 }

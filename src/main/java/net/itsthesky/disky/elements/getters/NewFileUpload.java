@@ -26,6 +26,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.EasyElement;
@@ -51,6 +52,8 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
         patterns.add("[new] file (data|upload) from [local] file %string% " + suffix);
         // From URL
         patterns.add("[new] file (data|upload) from ur(l|i) %string% " + suffix);
+        // From attachment
+        patterns.add("[new] file (data|upload) from attachment %attachment% " + suffix);
         // If SkImage2 is installed, from image
         if (DiSky.isSkImageInstalled())
             patterns.add("[new] file (data|upload) from image %image% " + suffix);
@@ -131,6 +134,30 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
                     return new FileUpload[0];
                 }
             }
+            case ATTACHMENT -> {
+                if (!(source instanceof Message.Attachment attachment)) {
+                    DiSkyRuntimeHandler.error(new IllegalArgumentException("Expected a FileUpload for attachment, got: " + source.getClass().getSimpleName()), node, false);
+                    return new FileUpload[0];
+                }
+//                if (attachment.isEphemeral()) {
+//                    DiSkyRuntimeHandler.error(new IllegalArgumentException("Cannot upload ephemeral attachments"), node, false);
+//                    return new FileUpload[0];
+//                }
+
+                fileName = (fileName != null ? fileName : attachment.getFileName());
+                try {
+                    var stream = attachment.getProxy().download().get();
+                    if (stream == null) {
+                        DiSkyRuntimeHandler.error(new IllegalArgumentException("Failed to download attachment: " + attachment.getFileName()), node, false);
+                        return new FileUpload[0];
+                    }
+
+                    upload = FileUpload.fromData(stream, fileName);
+                } catch (final Exception e) {
+                    DiSkyRuntimeHandler.error(e, node);
+                    return new FileUpload[0];
+                }
+            }
             case URL -> {
                 final var url = source.toString();
                 if (url.isBlank()) {
@@ -196,6 +223,7 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
         final var qualifier = switch (fileSource) {
             case LOCAL_FILE -> "local file";
             case URL -> "url";
+            case ATTACHMENT -> "attachment";
             case IMAGE -> "image";
         };
         return "new file data from " + qualifier + " " + exprSource.toString(event, debug) + suffix;
@@ -204,6 +232,7 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
     public enum FileSource {
         LOCAL_FILE,
         URL,
+        ATTACHMENT,
         IMAGE
     }
 

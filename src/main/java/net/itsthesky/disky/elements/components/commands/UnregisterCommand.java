@@ -11,6 +11,7 @@ import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.Debug;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -76,7 +77,7 @@ public class UnregisterCommand extends SpecificBotEffect {
 
             action.queue(this::restart, ex -> {
                 restart();
-                DiSky.getErrorHandler().exception(e, ex);
+                DiSkyRuntimeHandler.error((Exception) ex);
             });
         });
     }

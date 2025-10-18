@@ -10,6 +10,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,7 @@ public class GetBot extends SimpleExpression<Bot> {
             return new Bot[0];
         final @Nullable Bot bot = DiSky.getManager().fromName(name);
         if (bot == null)
-            DiSky.getErrorHandler().exception(e, new RuntimeException("Unable to get the bot named " + name + ", its not loaded or not enabled."));
+            DiSkyRuntimeHandler.error(new RuntimeException("Unable to get the bot named " + name + ", its not loaded or not enabled."));
         return bot == null ? new Bot[0] : new Bot[] {bot};
     }
 

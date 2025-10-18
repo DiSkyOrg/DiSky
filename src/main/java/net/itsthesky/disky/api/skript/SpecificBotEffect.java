@@ -1,6 +1,7 @@
 package net.itsthesky.disky.api.skript;
 
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ public abstract class SpecificBotEffect<T> extends WaiterEffect<T> {
     public void runEffect(@NotNull Event e) {
         final Bot bot = getBot();
         if (bot == null) {
-            DiSky.getErrorHandler().exception(e, new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
+            DiSkyRuntimeHandler.error(new RuntimeException("No bot is currently loaded on the server. You cannot use any DiSky syntaxes without least one loaded."));
             return;
         }
 

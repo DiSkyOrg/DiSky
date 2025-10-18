@@ -5,6 +5,7 @@ import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import net.dv8tion.jda.api.components.ActionComponent;
 import net.dv8tion.jda.api.components.Component;
+import net.dv8tion.jda.api.components.ModalTopLevelComponent;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
@@ -12,11 +13,13 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
-import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.itsthesky.disky.elements.componentsv2.base.sub.TextDisplayBuilder;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,8 +44,9 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 					ComponentRow.class, ComponentRow[].class,
 					Button.class, Button[].class,
 					SelectMenu.Builder.class, SelectMenu.Builder[].class,
-					TextInput.Builder.class, TextInput.Builder[].class,
-					Modal.Builder.class, Modal.Builder[].class
+					Modal.Builder.class, Modal.Builder[].class,
+                    ModalTopLevelComponent.class, ModalTopLevelComponent[].class,
+                    TextDisplayBuilder.class, TextDisplayBuilder[].class
 		};
 		return new Class[0];
 	}
@@ -53,26 +57,33 @@ public class MessageModalRows extends MultiplyPropertyExpression<Object, Object>
 			return;
 
 		final Object builder = EasyElement.parseSingle(getExpr(), e, null);
-		final List<ActionRow> rows = new LinkedList<>();
 
 		if (builder == null)
 			return;
 
-		for (Object obj : delta) {
-			if (obj instanceof Button)
-				rows.add(ActionRow.of((Button) obj));
-			else if (obj instanceof ComponentRow)
-				rows.add(((ComponentRow) obj).asActionRow());
-			else if (obj instanceof SelectMenu.Builder)
-				rows.add(ActionRow.of(((SelectMenu.Builder) obj).build()));
-			else if (obj instanceof TextInput.Builder)
-				rows.add(ActionRow.of(((TextInput.Builder) obj).build()));
-		}
+        if (builder instanceof final MessageCreateBuilder messageBuilder) {
+            final List<ActionRow> rows = new LinkedList<>();
+            for (Object obj : delta) {
+                if (obj instanceof Button)
+                    rows.add(ActionRow.of((Button) obj));
+                else if (obj instanceof ComponentRow)
+                    rows.add(((ComponentRow) obj).asActionRow());
+                else if (obj instanceof SelectMenu.Builder)
+                    rows.add(ActionRow.of(((SelectMenu.Builder) obj).build()));
+            }
 
-		if (builder instanceof MessageCreateBuilder)
-			((MessageCreateBuilder) builder).addComponents(rows);
-		else if (builder instanceof Modal.Builder)
-			((Modal.Builder) builder).addComponents(rows);
+            messageBuilder.addComponents(rows);
+        } else if (builder instanceof final Modal.Builder modalBuilder) {
+            final List<ModalTopLevelComponent> components = new ArrayList<>();
+            for (Object obj : delta) {
+                if (obj instanceof ModalTopLevelComponent)
+                    components.add((ModalTopLevelComponent) obj);
+                else if (obj instanceof TextDisplayBuilder)
+                    components.add(((TextDisplayBuilder) obj).build());
+            }
+
+            modalBuilder.addComponents(components);
+        }
 	}
 
 	@Override

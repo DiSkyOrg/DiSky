@@ -9,6 +9,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
@@ -57,7 +58,7 @@ public class RetrieveInterestedMembers extends AsyncEffect {
 		try {
 			members = scheduledEvent.retrieveInterestedMembers().complete();
 		} catch (Exception ex) {
-			DiSky.getErrorHandler().exception(event, ex);
+			DiSkyRuntimeHandler.error((Exception) ex);
 			return;
 		}
 

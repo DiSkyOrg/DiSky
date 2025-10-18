@@ -1,5 +1,6 @@
 package net.itsthesky.disky.elements.components.properties;
 
+import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +12,7 @@ public class ExprRequireState extends SimpleChangeableProperty<Object, Boolean> 
 				ExprRequireState.class,
 				Boolean.class,
 				"require[d] state",
-				"textinput"
+				"object"
 		);
 	}
 
@@ -24,6 +25,8 @@ public class ExprRequireState extends SimpleChangeableProperty<Object, Boolean> 
 	public @Nullable Boolean convert(Object entity) {
 		if (entity instanceof TextInput.Builder)
 			return ((TextInput.Builder) entity).isRequired();
+        if (entity instanceof SelectMenu.Builder<?,?>)
+            return ((SelectMenu.Builder<?,?>) entity).isRequired();
 		return null;
 	}
 
@@ -36,5 +39,7 @@ public class ExprRequireState extends SimpleChangeableProperty<Object, Boolean> 
 	protected void set(@NotNull Object entity, @Nullable Boolean value) {
 		if (entity instanceof TextInput.Builder)
 			((TextInput.Builder) entity).setRequired(Boolean.TRUE.equals(value));
+        if (entity instanceof SelectMenu.Builder<?,?>)
+            ((SelectMenu.Builder<?,?>) entity).setRequired(Boolean.TRUE.equals(value));
 	}
 }

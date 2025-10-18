@@ -8,6 +8,7 @@ import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import net.itsthesky.disky.api.skript.WaiterEffect;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +77,7 @@ public class RetrieveEventValue extends WaiterEffect<Object> {
 				},
 				ex -> {
 					restart();
-					DiSky.getErrorHandler().exception(e, ex);
+					DiSkyRuntimeHandler.error((Exception) ex);
 				});
 	}
 

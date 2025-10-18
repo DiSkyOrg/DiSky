@@ -70,9 +70,7 @@ public class DestroyEntity extends AsyncEffect {
 				DiSky.debug("Deleting message without webhook");
 				action = message.delete();
 			}
-		} else if (entity instanceof Guild)
-			action = ((Guild) entity).delete();
-		else if (entity instanceof Role)
+		} else if (entity instanceof Role)
 			action = ((Role) entity).delete();
 		else if (entity instanceof Channel)
 			action = ((Channel) entity).delete();

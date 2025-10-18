@@ -6,6 +6,8 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.components.ModalTopLevelComponent;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.itsthesky.disky.api.skript.EasyElement;
@@ -18,41 +20,37 @@ public class ExprNewInput extends SimpleExpression<TextInput.Builder> {
 	static {
 		Skript.registerExpression(
 				ExprNewInput.class,
-				TextInput.Builder.class,
+                TextInput.Builder.class,
 				ExpressionType.COMBINED,
-				"[a] [new] [(:required)] text[( |-)]input [with] [the] [id] %string% (named|with name) %string% [with [the] value %-string%]",
-				"[a] [new] [(:required)] short text[( |-)]input [with] [the] [id] %string% (named|with name) %string% [with [the] value %-string%]"
+				"[a] [new] [(:required)] [(:short)] text[( |-)]input [with] [the] [id] %string% [with [the] value %-string%]"
 		);
 	}
 
 	private boolean required;
 	private Expression<String> exprId;
-	private Expression<String> exprName;
 	private TextInputStyle style;
 	private Expression<String> exprValue;
 
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
 		required = parseResult.hasTag("required");
+        style = parseResult.hasTag("short") ? TextInputStyle.SHORT : TextInputStyle.PARAGRAPH;
+
 		exprId = (Expression<String>) exprs[0];
-		exprName = (Expression<String>) exprs[1];
-		style = matchedPattern == 0 ? TextInputStyle.PARAGRAPH : TextInputStyle.SHORT;
-		exprValue = (Expression<String>) exprs[2];
+		exprValue = (Expression<String>) exprs[1];
 		return true;
 	}
 
 	@Override
 	protected TextInput.Builder @NotNull [] get(@NotNull Event e) {
 		final String id = EasyElement.parseSingle(exprId, e, null);
-		final String name = EasyElement.parseSingle(exprName, e, null);
 		final @Nullable String value = EasyElement.parseSingle(exprValue, e, null);
-		if (EasyElement.anyNull(this, id, name))
+		if (EasyElement.anyNull(this, id))
 			return new TextInput.Builder[0];
-		final var input = TextInput.create(id, name, style)
-				.setRequired(required);
-		if (value != null)
-			input.setValue(value);
 
+        final var input = TextInput.create(id, style)
+                .setRequired(required)
+                .setValue(value);
 		return new TextInput.Builder[] {input};
 	}
 
@@ -62,7 +60,7 @@ public class ExprNewInput extends SimpleExpression<TextInput.Builder> {
 	}
 
 	@Override
-	public @NotNull Class<? extends TextInput.Builder> getReturnType() {
+	public @NotNull Class<TextInput.Builder> getReturnType() {
 		return TextInput.Builder.class;
 	}
 
@@ -70,7 +68,6 @@ public class ExprNewInput extends SimpleExpression<TextInput.Builder> {
 	public @NotNull String toString(@Nullable Event e, boolean debug) {
 		return "new " + (required ? "required " : "") + style.name().toLowerCase()
 				+ " text input with id " + exprId.toString(e, debug)
-				+ " named " + exprName.toString(e, debug)
 				+ (exprValue == null ? "" : " with value " + exprValue.toString(e, debug));
 	}
 

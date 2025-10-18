@@ -2,7 +2,7 @@ package net.itsthesky.disky.core;
 
 import ch.njol.util.NonNullPair;
 import com.google.common.collect.Lists;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -59,7 +59,7 @@ public final class Utils {
     }
 
     public static <T> void catchAction(RestAction<T> action, Event event) {
-        catchAction(action, (v) -> {}, ex -> DiSky.getErrorHandler().exception(event, ex));
+        catchAction(action, (v) -> {}, ex -> DiSkyRuntimeHandler.error((Exception) ex));
     }
 
     public static boolean isURL(String url) {

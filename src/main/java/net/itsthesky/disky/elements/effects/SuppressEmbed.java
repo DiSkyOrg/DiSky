@@ -5,7 +5,7 @@ import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Message;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
@@ -40,7 +40,7 @@ public class SuppressEmbed extends SpecificBotEffect {
 
         message.suppressEmbeds(true).queue(this::restart, ex -> {
             restart();
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
         });
     }
 

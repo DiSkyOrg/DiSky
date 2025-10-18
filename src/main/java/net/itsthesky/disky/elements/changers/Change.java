@@ -38,7 +38,7 @@ import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Patterns;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.Kleenean;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.api.changers.DiSkyChangerElement;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.NodeInformation;
@@ -293,7 +293,7 @@ public class Change extends Effect {
             return;
         }
         if (bot == null) {
-            DiSky.getErrorHandler().exception(e, "DiSky tried to change \"" + changed.toString(e, false) + "\", but the bot wasn't found.");
+            DiSkyRuntimeHandler.error(new RuntimeException("DiSky tried to change \"" + changed.toString(e, false) + "\", but the bot wasn't found."));
             return;
         }
 
@@ -305,7 +305,7 @@ public class Change extends Effect {
                 changed.change(e, delta, mode);
             }
         } catch (Exception ex) {
-            DiSky.getErrorHandler().exception(e, ex);
+            DiSkyRuntimeHandler.error(ex);
         } finally {
             currentBot = null;
         }

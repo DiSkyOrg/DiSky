@@ -2,6 +2,7 @@ package net.itsthesky.disky.elements.sections.message;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
@@ -12,6 +13,7 @@ import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.MultiplyPropertyExpression;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,13 +41,15 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 		);
 	}
 
+	private Node node;
+
 	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
-		DiSky.debug("Initializing Message Attachments Expression with exprs: " + Arrays.toString(exprs));
 		if (!getParser().isCurrentSection(CreateMessage.class)) {
 			Skript.error("You can only use the 'message attachments' expression inside a 'create message' section");
 			return false;
 		}
+		this.node = getParser().getNode();
 		return super.init(exprs, matchedPattern, isDelayed, parseResult);
 	}
 
@@ -80,10 +84,15 @@ public class MessageAttachments extends MultiplyPropertyExpression<MessageCreate
 
 		int imageCount = 1;
 		for (Object file : delta) {
-			if (file instanceof String) {
+			if (file instanceof final FileUpload upload) {
+				uploads.add(upload);
+			} else if (file instanceof String) {
 				final File f = new File((String) file);
 				if (!f.exists())
+				{
+					DiSkyRuntimeHandler.error(new IllegalArgumentException("File does not exist: " + f.getAbsolutePath() + ". If you want to use an external URL, create a new file upload instead of giving the text directly."), node, false);
 					continue;
+				}
 				uploads.add(FileUpload.fromData(f));
 			} else if (file instanceof BufferedImage) {
 				final ByteArrayOutputStream baos = new ByteArrayOutputStream();

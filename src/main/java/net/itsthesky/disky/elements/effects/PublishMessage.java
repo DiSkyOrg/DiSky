@@ -7,6 +7,7 @@ import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.core.Bot;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Message;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,7 @@ public class PublishMessage extends SpecificBotEffect {
         message.crosspost().queue(
                 (v)-> restart(),
                 ex -> {
-                    DiSky.getErrorHandler().exception(e, ex);
+                    DiSkyRuntimeHandler.error((Exception) ex);
                     restart();
                 });
     }

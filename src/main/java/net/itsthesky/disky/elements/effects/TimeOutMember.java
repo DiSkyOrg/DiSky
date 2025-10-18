@@ -13,6 +13,7 @@ import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.Utils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Member;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ public class TimeOutMember extends SpecificBotEffect {
 		if (matchedPattern == 2 && !anyNull(this, this, member)) {
 			Utils.catchAction(member.removeTimeout(),
 					v -> restart(), ex -> {
-						DiSky.getErrorHandler().exception(e, ex);
+						DiSkyRuntimeHandler.error((Exception) ex);
 						restart();
 					});
 			return;
@@ -77,7 +78,7 @@ public class TimeOutMember extends SpecificBotEffect {
 							.timeoutFor(Duration.ofMillis(((Timespan) entity).getAs(Timespan.TimePeriod.MILLISECOND)))
 							.reason(reason),
 					v -> restart(), ex -> {
-						DiSky.getErrorHandler().exception(e, ex);
+						DiSkyRuntimeHandler.error((Exception) ex);
 						restart();
 					});
 		} else if (matchedPattern == 1) {
@@ -85,7 +86,7 @@ public class TimeOutMember extends SpecificBotEffect {
 							.timeoutUntil(Instant.ofEpochMilli(((Date) entity).getTime()))
 							.reason(reason),
 					v -> restart(), ex -> {
-						DiSky.getErrorHandler().exception(e, ex);
+						DiSkyRuntimeHandler.error((Exception) ex);
 						restart();
 			});
 		}

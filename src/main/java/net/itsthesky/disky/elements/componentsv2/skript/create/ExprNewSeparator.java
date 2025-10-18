@@ -7,6 +7,8 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.elements.componentsv2.base.sub.SeparatorBuilder;
 import org.bukkit.event.Event;
@@ -20,7 +22,7 @@ public class ExprNewSeparator extends SimpleExpression<SeparatorBuilder> {
             ExprNewSeparator.class,
             SeparatorBuilder.class,
             ExpressionType.SIMPLE,
-            "[a] new [invisible] (small|large) (separator|divider) [with [unique] id %-integer%]"
+            "[a] new [invisible] [(small|:large)] (separator|divider) [with [unique] id %-integer%]"
         );
     }
 
@@ -30,7 +32,7 @@ public class ExprNewSeparator extends SimpleExpression<SeparatorBuilder> {
 
     @Override
     public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull SkriptParser.ParseResult parseResult) {
-        isLarge = parseResult.expr.contains("new large") || parseResult.expr.contains("new invisible large");
+        isLarge = parseResult.hasTag("large");
         isInvisible = parseResult.expr.contains("new invisible");
         exprUniqueId = (Expression<Integer>) exprs[0];
         return true;

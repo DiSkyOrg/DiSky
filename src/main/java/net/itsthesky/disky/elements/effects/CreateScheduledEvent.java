@@ -12,6 +12,7 @@ import ch.njol.skript.util.Date;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.SkriptUtils;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.ScheduledEvent;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
@@ -97,7 +98,7 @@ public class CreateScheduledEvent extends AsyncEffect {
 						.createScheduledEvent(name, place, SkriptUtils.convertDate(start), SkriptUtils.convertDate(end))
 						.complete();
 			} catch (Exception ex) {
-				DiSky.getErrorHandler().exception(e, ex);
+				DiSkyRuntimeHandler.error((Exception) ex);
 				return;
 			}
 
@@ -110,7 +111,7 @@ public class CreateScheduledEvent extends AsyncEffect {
 			try {
 				event = channel.getGuild().createScheduledEvent(name, channel, SkriptUtils.convertDate(date)).complete();
 			} catch (Exception ex) {
-				DiSky.getErrorHandler().exception(e, ex);
+				DiSkyRuntimeHandler.error((Exception) ex);
 				return;
 			}
 		}

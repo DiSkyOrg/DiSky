@@ -5,6 +5,8 @@ import ch.njol.skript.classes.Parser;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
+import net.dv8tion.jda.api.components.Component;
+import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,17 +79,24 @@ public class DiSkyType<T> {
                     }
 
                     @Override
-                    public @NotNull String toString(T o, int flags) {
-                        return toVariableNameString(o);
-                    }
-
-                    @Override
-                    public @NotNull String toVariableNameString(T entity) {
+                    public @NotNull String toString(T entity, int flags) {
                         try {
                             return toString.apply(entity);
                         } catch (Exception ex) {
                             return entity.toString();
                         }
+                    }
+
+                    @Override
+                    public @NotNull String toVariableNameString(T entity) {
+                        if (entity instanceof final ISnowflake snowflake)
+                            return snowflake.getId();
+                        else if (entity instanceof final Component component)
+                            return Integer.toString(component.getUniqueId());
+                        else if (entity instanceof final Enum<?> enumValue)
+                            return enumValue.name().toLowerCase(Locale.ROOT).replaceAll("_", " ");
+
+                        return toString(entity, 0);
                     }
                 });
     }

@@ -22,6 +22,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class SlashManager extends ListenerAdapter {
 
@@ -35,16 +38,23 @@ public final class SlashManager extends ListenerAdapter {
     public static void shutdownAll() {
         MANAGERS.values().forEach(SlashManager::shutdown);
         MANAGERS.clear();
+        retryScheduler.shutdown();
     }
 
     // Instance Fields
     private final Map<String, List<Runnable>> waitingGuildCommands = new HashMap<>();
+    private final Map<String, AtomicInteger> guildRetryAttempts = new ConcurrentHashMap<>();
     private final Set<String> readyGuilds = new HashSet<>();
     private final List<Runnable> waitingGlobalCommands = new ArrayList<>();
     private final List<RegisteredGroup> registeredGroups = new ArrayList<>();
     private final Map<String, CommandGroup> commandGroups = new ConcurrentHashMap<>();
     private final Bot bot;
     private boolean readyGlobal = false;
+
+    // Retry configuration
+    private static final int MAX_RETRY_ATTEMPTS = 5;
+    private static final long BASE_RETRY_DELAY_MS = 1000; // 1 second
+    private static final ScheduledExecutorService retryScheduler = Executors.newScheduledThreadPool(2);
 
     private SlashManager(Bot bot) {
         this.bot = bot;
@@ -110,11 +120,14 @@ public final class SlashManager extends ListenerAdapter {
                 );
             };
 
-            if (readyGuilds.contains(guildId)) {
+            if (isGuildReady(guildId)) {
                 registrationTask.run();
             } else {
                 waitingGuildCommands.computeIfAbsent(guildId, k -> new ArrayList<>()).add(registrationTask);
                 DiSky.debug("Guild " + guildId + " is not ready yet, waiting for ready event to register command group");
+
+                // Schedule a retry attempt
+                scheduleGuildRegistrationRetry(guildId);
             }
         }
     }
@@ -247,14 +260,75 @@ public final class SlashManager extends ListenerAdapter {
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         final String guildId = event.getGuild().getId();
+        processGuildReady(guildId);
+    }
+
+    /**
+     * Checks if a guild is ready for command registration
+     * Uses both cached state and active verification
+     */
+    private boolean isGuildReady(String guildId) {
+        // First check our cached state
+        if (readyGuilds.contains(guildId)) {
+            return true;
+        }
+
+        // Active verification - check if guild exists and is accessible
+        Guild guild = bot.getInstance().getGuildById(guildId);
+        if (guild != null) {
+            // Guild exists and can be accessed, consider it ready
+            readyGuilds.add(guildId);
+            DiSky.debug("Guild " + guildId + " was ready but not in cache, adding to ready set");
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Processes a guild becoming ready and executes pending commands
+     */
+    private void processGuildReady(String guildId) {
         if (!waitingGuildCommands.containsKey(guildId)) {
+            readyGuilds.add(guildId);
             return;
         }
 
         readyGuilds.add(guildId);
+        guildRetryAttempts.remove(guildId); // Clear retry attempts
         final List<Runnable> tasks = waitingGuildCommands.remove(guildId);
         DiSky.debug("Guild " + guildId + " is ready, registering commands (" + tasks.size() + ")");
         tasks.forEach(Runnable::run);
+    }
+
+    /**
+     * Schedules a retry attempt for guild command registration
+     */
+    private void scheduleGuildRegistrationRetry(String guildId) {
+        AtomicInteger attempts = guildRetryAttempts.computeIfAbsent(guildId, k -> new AtomicInteger(0));
+        int currentAttempt = attempts.incrementAndGet();
+
+        if (currentAttempt >= MAX_RETRY_ATTEMPTS) {
+            DiSky.debug("Max retry attempts (" + MAX_RETRY_ATTEMPTS + ") reached for guild " + guildId + ", giving up");
+            return;
+        }
+
+        long delay = BASE_RETRY_DELAY_MS * (1L << (currentAttempt - 1)); // Exponential backoff
+        DiSky.debug("Scheduling retry attempt " + currentAttempt + " for guild " + guildId + " in " + delay + "ms");
+
+        retryScheduler.schedule(() -> {
+            try {
+                if (isGuildReady(guildId)) {
+                    DiSky.debug("Guild " + guildId + " became ready during retry attempt " + currentAttempt);
+                    processGuildReady(guildId);
+                } else {
+                    DiSky.debug("Guild " + guildId + " still not ready on retry attempt " + currentAttempt);
+                    scheduleGuildRegistrationRetry(guildId);
+                }
+            } catch (Exception e) {
+                DiSky.debug("Error during retry attempt for guild " + guildId + ": " + e.getMessage());
+            }
+        }, delay, TimeUnit.MILLISECONDS);
     }
 
     // Command Execution Methods
@@ -335,6 +409,9 @@ public final class SlashManager extends ListenerAdapter {
         cleanupRegisteredGroups();
         registeredGroups.clear();
         commandGroups.clear();
+
+        // Clear retry tracking
+        guildRetryAttempts.clear();
     }
 
     private void cleanupRegisteredGroups() {

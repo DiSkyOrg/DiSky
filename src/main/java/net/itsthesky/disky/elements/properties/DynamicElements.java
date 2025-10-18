@@ -1,6 +1,8 @@
 package net.itsthesky.disky.elements.properties;
 
+import ch.njol.skript.util.Date;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
 import net.itsthesky.disky.api.skript.reflects.ReflectClassFactory;
 import net.itsthesky.disky.api.skript.reflects.state.SkriptStateRegistry;
 import net.dv8tion.jda.api.audit.ActionType;
@@ -12,6 +14,7 @@ import net.dv8tion.jda.api.entities.automod.AutoModResponse;
 import net.dv8tion.jda.api.entities.automod.AutoModTriggerType;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.itsthesky.disky.core.SkriptUtils;
 
 import static net.itsthesky.disky.api.skript.reflects.ReflectClassFactory.register;
 
@@ -21,6 +24,7 @@ public final class DynamicElements {
         registerLogs();
         registerThreadProperties();
         registerAutoMod();
+        registerOtherProperties();
     }
 
     public static void registerLogs() {
@@ -95,6 +99,13 @@ public final class DynamicElements {
                 }
         );
 
+    }
+
+    public static void registerOtherProperties() {
+        register("pinnedmessage", "pin[ned] (date|time)", Date.class, "pinned message date", msg ->
+                        SkriptUtils.convertDateTime(((PinnedMessagePaginationAction.PinnedMessage) msg).getTimePinned()),
+                new ReflectClassFactory.Documentation("Date of Pinned Message", "The date when the message was pinned.",
+                        "pinned date of {_msg}", "4.24.0"));
     }
 
     public static void registerAutoMod() {

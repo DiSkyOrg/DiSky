@@ -1,5 +1,6 @@
 package net.itsthesky.disky.elements.components.properties;
 
+import net.dv8tion.jda.api.components.ModalTopLevelComponent;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,7 @@ public class ExprPlaceholder extends SimpleChangeableProperty<Object, String> {
 				ExprPlaceholder.class,
 				String.class,
 				"[discord] place[( |-)]holder",
-				"dropdown/textinput"
+				"object"
 		);
 	}
 
@@ -25,7 +26,7 @@ public class ExprPlaceholder extends SimpleChangeableProperty<Object, String> {
 	public @Nullable String convert(Object entity) {
 		if (entity instanceof SelectMenu.Builder)
 			return ((SelectMenu.Builder<?, ?>) entity).getPlaceholder();
-		if (entity instanceof TextInput.Builder)
+		if (entity instanceof ModalTopLevelComponent)
 			return ((TextInput.Builder) entity).getPlaceholder();
 		return null;
 	}

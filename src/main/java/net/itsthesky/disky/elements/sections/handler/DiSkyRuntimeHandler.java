@@ -57,7 +57,7 @@ public class DiSkyRuntimeHandler {
                 shouldDisplayStacktrace = true;
 
             if (!isHandling) {
-                //DiSky.getErrorHandler().exception(null, error, node);
+                //DiSkyRuntimeHandler.error(error, node);
                 printException(node, error, shouldDisplayStacktrace);
                 return;
             }

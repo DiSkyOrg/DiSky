@@ -11,7 +11,7 @@ import ch.njol.skript.lang.parser.ParserInstance;
 import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
-import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +87,7 @@ public abstract class WaiterEffect<T> extends EasyElement {
 
     @Override
     protected void exception(Event event, Throwable throwable) {
-        DiSky.getErrorHandler().exception(event, throwable);
+        DiSkyRuntimeHandler.error((Exception) throwable);
         restart();
     }
 
@@ -111,7 +111,7 @@ public abstract class WaiterEffect<T> extends EasyElement {
         try {
             runEffect(e);
         } catch (Throwable ex) {
-            DiSky.getErrorHandler().exception(event, ex);
+            DiSkyRuntimeHandler.error((Exception) ex);
         }
 
         return null;
