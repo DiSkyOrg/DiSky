@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.OffsetDateTime;
 
-@Name("Member Boost Time")
-@Description("Get the time when a member started boosting the server. Returns null if the member is not boosting.")
+@Name("Member Boost Date")
+@Description("Get the date when a member started boosting the server. Returns null if the member is not boosting.")
 @Examples({
-        "set {_time} to boost time of event-member",
-        "send \"Member has been boosting since: %boost time of {_member}%\"",
+        "set {_time} to boost date of event-member",
+        "send \"Member has been boosting since: %boost date of {_member}%\"",
         "This expression cannot be changed."
 })
 public class GetTimeBoosted extends SimplePropertyExpression<Member, Date> {
@@ -23,18 +23,17 @@ public class GetTimeBoosted extends SimplePropertyExpression<Member, Date> {
     static {
         register(GetTimeBoosted.class,
                 Date.class,
-                "[discord] boost[ing] (time|date)", "member");
+                "[discord] boost[ing] date", "member");
     }
 
     @Override
-    public @Nullable Date convert(Member m) {
-        OffsetDateTime boostTime = m.getTimeBoosted();
-        return SkriptUtils.convertDateTime(boostTime);
+    public @Nullable Date convert(Member member) {
+        return SkriptUtils.convertDateTime(member.getTimeBoosted());
     }
 
     @Override
     protected @NotNull String getPropertyName() {
-        return "boost time";
+        return "boost date";
     }
 
     @Override
