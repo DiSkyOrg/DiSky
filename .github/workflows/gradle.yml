@@ -46,6 +46,9 @@ jobs:
           name: DiSky-v4-nighty
           path: ./target
 
+      - name: Rename JAR with version
+        run: mv target/*.jar "target/DiSky ${{ github.event.release.tag_name }}.jar"
+
       - name: Upload to Modrinth
         uses: cloudnode-pro/modrinth-publish@v2
         with:
