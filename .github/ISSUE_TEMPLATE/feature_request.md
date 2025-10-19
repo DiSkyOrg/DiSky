@@ -17,4 +17,4 @@ A clear and concise description of any alternative solutions or features you've 
 
 ## Aknowledgement
 
-- [ ] I already **searched** for this feature on [**DiSky's Documentation/Wiki**](https://disky.me/docs/home/) and I'm sure it's not there
+- [ ] I already **searched** for this feature on [**DiSky's Documentation/Wiki**](https://docs.disky.me/latest/home/) and I'm sure it's not there
