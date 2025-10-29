@@ -43,6 +43,7 @@ public class MemberEvents {
                 .example("on member leave:\n    broadcast \"%event-member% has left %event-guild%\"")
                 .value(Guild.class, GuildMemberRemoveEvent::getGuild)
                 .value(Member.class, GuildMemberRemoveEvent::getMember)
+                .value(User.class, GuildMemberRemoveEvent::getUser)
                 .author(GuildMemberRemoveEvent::getGuild)
                 .register();
 
