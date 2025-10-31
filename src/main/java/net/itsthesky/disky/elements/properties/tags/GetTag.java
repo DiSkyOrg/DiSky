@@ -49,7 +49,9 @@ public class GetTag extends SimpleExpression<ForumTag> {
 		if (name == null || channel == null)
 			return new ForumTag[0];
 
-		return new ForumTag[] {channel.getAvailableTags().stream().filter(tag -> tag.getName().equals(name)).findFirst().orElse(null)};
+		// Use the native JDA method instead of stream filtering
+		final List<ForumTag> tags = channel.getAvailableTagsByName(name, true);
+		return new ForumTag[] {tags.isEmpty() ? null : tags.get(0)};
 	}
 
 	@Override

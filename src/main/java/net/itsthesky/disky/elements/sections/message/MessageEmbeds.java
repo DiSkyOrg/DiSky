@@ -62,7 +62,7 @@ public class MessageEmbeds extends MultiplyPropertyExpression<MessageCreateBuild
 
 		final List<MessageEmbed> embeds = Stream.of(builders)
 				.map(EmbedBuilder::build)
-				.collect(Collectors.toList());
+				.toList();
 
 		switch (mode) {
 			case ADD:

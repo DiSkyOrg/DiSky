@@ -114,7 +114,7 @@ public class CreatePost extends AsyncEffect {
 		final ThreadChannel threadChannel;
 		try {
 			threadChannel = channel.createForumPost(name, builder.build())
-					.setTags(parsedTags.stream().map(tag -> ForumTagSnowflake.fromId(tag.getId())).collect(Collectors.toList()))
+					.setTags(parsedTags.stream().map(tag -> ForumTagSnowflake.fromId(tag.getId())).toList())
 					.complete()
 					.getThreadChannel();
 		} catch (Exception ex) {

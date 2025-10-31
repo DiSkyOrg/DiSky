@@ -143,7 +143,7 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 			action = threadChannel.getManager().setAppliedTags(current
 					.stream()
 					.map(tag -> ForumTagSnowflake.fromId(tag.getIdLong()))
-					.collect(Collectors.toList()));
+					.toList());
 
 		} else {
 

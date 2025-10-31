@@ -69,11 +69,11 @@ public class UnregisterCommand extends SpecificBotEffect {
         restAction.queue(commands -> {
             final List<Command> toDelete = commands.stream()
                     .filter(command -> Stream.of(names).anyMatch(name -> name.equalsIgnoreCase(command.getName())))
-                    .collect(Collectors.toList());
+                    .toList();
 
             final RestAction<?> action = RestAction.allOf(toDelete.stream()
                     .map(Command::delete)
-                    .collect(Collectors.toList()));
+                    .toList());
 
             action.queue(this::restart, ex -> {
                 restart();
