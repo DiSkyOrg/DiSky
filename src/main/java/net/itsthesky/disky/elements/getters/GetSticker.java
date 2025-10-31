@@ -84,7 +84,7 @@ public class GetSticker extends SimpleExpression<Sticker> implements IAsyncGetta
             return new Sticker[] {found};
 
         final List<GuildSticker> retrieveFound = guild.retrieveStickers().complete()
-                .stream().filter(sticker -> sticker.getName().equalsIgnoreCase(id)).collect(Collectors.toList());
+                .stream().filter(sticker -> sticker.getName().equalsIgnoreCase(id)).toList();
 
         return retrieveFound.isEmpty() ? new Sticker[0] : new Sticker[] {retrieveFound.get(0)};
     }

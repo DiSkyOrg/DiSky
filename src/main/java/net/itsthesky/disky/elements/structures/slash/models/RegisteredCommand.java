@@ -43,7 +43,8 @@ public class RegisteredCommand {
     }
 
     public boolean isInCooldown(User user) {
-        return cooldowns.containsKey(user) && cooldowns.get(user) > System.currentTimeMillis();
+        Long cooldownTime = cooldowns.get(user);
+        return cooldownTime != null && cooldownTime > System.currentTimeMillis();
     }
 
     public long getCooldown(User user) {

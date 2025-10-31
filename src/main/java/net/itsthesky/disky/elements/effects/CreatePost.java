@@ -39,6 +39,8 @@ import static net.itsthesky.disky.api.skript.EasyElement.*;
 })
 public class CreatePost extends AsyncEffect {
 
+	private static final Pattern NUMERAL_PATTERN = Pattern.compile("^([0-9]+)$");
+
 	static {
 		Skript.registerEffect(
 				CreatePost.class,
@@ -86,7 +88,7 @@ public class CreatePost extends AsyncEffect {
 		final List<ForumTag> parsedTags = new ArrayList<>();
 		// Parsing tags
 		for (String input : tags) {
-			final Matcher numeral = Pattern.compile("^([0-9]+)$").matcher(input);
+			final Matcher numeral = NUMERAL_PATTERN.matcher(input);
 			if (numeral.matches()) {
 				final ForumTag tag = channel.getAvailableTagById(input);
 				if (tag == null) {
@@ -112,7 +114,7 @@ public class CreatePost extends AsyncEffect {
 		final ThreadChannel threadChannel;
 		try {
 			threadChannel = channel.createForumPost(name, builder.build())
-					.setTags(parsedTags.stream().map(tag -> ForumTagSnowflake.fromId(tag.getId())).collect(Collectors.toList()))
+					.setTags(parsedTags.stream().map(tag -> ForumTagSnowflake.fromId(tag.getId())).toList())
 					.complete()
 					.getThreadChannel();
 		} catch (Exception ex) {

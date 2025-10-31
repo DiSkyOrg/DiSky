@@ -131,7 +131,7 @@ public final class Emoji {
 	public List<String> getUnicodeCodepoints() {
 		return unicode.codePoints()
 				.mapToObj(codepoint -> "U+" + Integer.toHexString(codepoint).toUpperCase())
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	/**
@@ -144,7 +144,7 @@ public final class Emoji {
 	public List<String> getHexCodepoints() {
 		return unicode.codePoints()
 				.mapToObj(Integer::toHexString)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	/**

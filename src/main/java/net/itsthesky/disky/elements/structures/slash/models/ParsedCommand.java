@@ -163,8 +163,15 @@ public class ParsedCommand {
     public void prepareArguments(SlashCommandInteractionEvent event) {
         final var options = event.getOptions();
         DiSky.debug("Found '" + arguments.size() + " args' for '" + options.size() + " options'");
+        
+        // Convert options list to map for O(1) lookup instead of O(n) stream filtering
+        final Map<String, OptionMapping> optionMap = new HashMap<>(options.size());
+        for (OptionMapping opt : options) {
+            optionMap.put(opt.getName(), opt);
+        }
+        
         for (ParsedArgument argument : arguments) {
-            final OptionMapping option = options.stream().filter(opt -> opt.getName().equals(argument.getName())).findFirst().orElse(null);
+            final OptionMapping option = optionMap.get(argument.getName());
             if (option == null) {
                 argument.setValue(null);
                 continue;
@@ -184,8 +191,15 @@ public class ParsedCommand {
     public void prepareArguments(CommandAutoCompleteInteractionEvent event) {
         final var options = event.getOptions();
         DiSky.debug("Found '" + arguments.size() + " args' for '" + options.size() + " options'");
+        
+        // Convert options list to map for O(1) lookup instead of O(n) stream filtering
+        final Map<String, OptionMapping> optionMap = new HashMap<>(options.size());
+        for (OptionMapping opt : options) {
+            optionMap.put(opt.getName(), opt);
+        }
+        
         for (ParsedArgument argument : arguments) {
-            final OptionMapping option = options.stream().filter(opt -> opt.getName().equals(argument.getName())).findFirst().orElse(null);
+            final OptionMapping option = optionMap.get(argument.getName());
             if (option == null) {
                 argument.setValue(null);
                 continue;

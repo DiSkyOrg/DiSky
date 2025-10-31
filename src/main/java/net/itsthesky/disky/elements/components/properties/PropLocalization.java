@@ -121,8 +121,8 @@ public class PropLocalization extends MultiplyPropertyExpression<Object, PropLoc
 			final Map<DiscordLocale, String> map = localizationMap.toMap();
 			final LocaleData[] locales = new LocaleData[map.size()];
 			int i = 0;
-			for (DiscordLocale locale : map.keySet())
-				locales[i++] = new LocaleData(locale, map.get(locale));
+			for (Map.Entry<DiscordLocale, String> entry : map.entrySet())
+				locales[i++] = new LocaleData(entry.getKey(), entry.getValue());
 			return locales;
 		}
 

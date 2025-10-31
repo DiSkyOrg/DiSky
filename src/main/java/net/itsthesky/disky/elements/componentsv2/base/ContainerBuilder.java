@@ -75,7 +75,7 @@ public class ContainerBuilder implements INewComponentBuilder<Container> {
     public Container build() {
         var base = Container.of(components.stream()
                 .map(IContainerComponentBuilder::buildWithId)
-                .collect(Collectors.toList()));
+                .toList());
 
         if (accentColor != null)
             base = base.withAccentColor(SkriptUtils.convert(accentColor));

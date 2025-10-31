@@ -332,10 +332,11 @@ public class CommandFactory {
     }
 
     public boolean remove(String name) {
-        for (CommandData commandData : commandMap.keySet()) {
-            CommandObject commandObject = commandData.getCommand();
-            if (commandObject.getName().equalsIgnoreCase(name)) {
-                commandMap.remove(commandData);
+        Iterator<Map.Entry<CommandData, CommandObject>> iterator = commandMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<CommandData, CommandObject> entry = iterator.next();
+            if (entry.getValue().getName().equalsIgnoreCase(name)) {
+                iterator.remove();
                 return true;
             }
         }
