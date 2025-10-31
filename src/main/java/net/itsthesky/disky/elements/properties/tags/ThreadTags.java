@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 	implements IAsyncChangeableExpression {
 
+	private static final Pattern NUMERAL_PATTERN = Pattern.compile("^([0-9]+)$");
+
 	static {
 		register(
 				ThreadTags.class,
@@ -101,7 +103,7 @@ public class ThreadTags extends MultiplyPropertyExpression<Object, BaseForumTag>
 			for (Object in : delta) {
 				if (in instanceof String) {
 					final String input = (String) in;
-					final Matcher numeral = Pattern.compile("^([0-9]+)$").matcher(input);
+					final Matcher numeral = NUMERAL_PATTERN.matcher(input);
 					if (numeral.matches()) {
 						final ForumTag tag = channel.getAvailableTagById(input);
 						if (tag == null) {

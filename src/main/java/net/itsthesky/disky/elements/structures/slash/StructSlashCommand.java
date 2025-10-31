@@ -164,8 +164,8 @@ public class StructSlashCommand extends Structure {
         //region Debug
         DiSky.debug("------------------- Name -------------------");
         DiSky.debug("Default: " + parsedCommand.getName());
-        for (DiscordLocale locale : parsedCommand.getNameLocalizations().keySet())
-            DiSky.debug(" - Locale: " + locale + " | Value: " + parsedCommand.getNameLocalizations().get(locale));
+        for (Map.Entry<DiscordLocale, String> entry : parsedCommand.getNameLocalizations().entrySet())
+            DiSky.debug(" - Locale: " + entry.getKey() + " | Value: " + entry.getValue());
         if (parsedCommand.getNameLocalizations().isEmpty())
             DiSky.debug("No localizations found.");
 
@@ -175,8 +175,8 @@ public class StructSlashCommand extends Structure {
             DiSky.debug("Custom Argument: " + arg.getCustomArgument());
             if (arg.hasChoices()) {
                 DiSky.debug(" - Choices (" + arg.getChoices().size() + "):");
-                for (String choice : arg.getChoices().keySet()) {
-                    DiSky.debug("   - " + choice + " | Value: " + arg.getChoices().get(choice));
+                for (Map.Entry<String, Object> choiceEntry : arg.getChoices().entrySet()) {
+                    DiSky.debug("   - " + choiceEntry.getKey() + " | Value: " + choiceEntry.getValue());
                 }
             }
             DiSky.debug(" - Description: " + arg.getDescription());
@@ -184,8 +184,8 @@ public class StructSlashCommand extends Structure {
 
         DiSky.debug("------------------- Description -------------------");
         DiSky.debug("Default: " + parsedCommand.getDescription());
-        for (DiscordLocale locale : parsedCommand.getDescriptionLocalizations().keySet())
-            DiSky.debug(" - Locale: " + locale + " | Value: " + parsedCommand.getDescriptionLocalizations().get(locale));
+        for (Map.Entry<DiscordLocale, String> entry : parsedCommand.getDescriptionLocalizations().entrySet())
+            DiSky.debug(" - Locale: " + entry.getKey() + " | Value: " + entry.getValue());
         if (parsedCommand.getDescriptionLocalizations().isEmpty())
             DiSky.debug("No localizations found.");
 

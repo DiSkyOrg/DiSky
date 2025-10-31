@@ -59,7 +59,7 @@ public class ExprArgument extends SimpleExpression<Object> {
                 LAST_ARGUMENTS = new ArrayList<>();
             }
         }
-        if (currentArguments.size() == 0) {
+        if (currentArguments.isEmpty()) {
             Skript.error("This command doesn't have any arguments", ErrorQuality.SEMANTIC_ERROR);
             return false;
         }

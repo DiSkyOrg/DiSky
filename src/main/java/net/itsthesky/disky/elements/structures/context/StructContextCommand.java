@@ -97,8 +97,8 @@ public class StructContextCommand extends Structure {
         // Debug information
         DiSky.debug("------------------- Name -------------------");
         DiSky.debug("Default: " + parsedCommand.getName());
-        for (DiscordLocale locale : parsedCommand.getNameLocalizations().keySet()) {
-            DiSky.debug(" - Locale: " + locale + " | Value: " + parsedCommand.getNameLocalizations().get(locale));
+        for (Map.Entry<DiscordLocale, String> entry : parsedCommand.getNameLocalizations().entrySet()) {
+            DiSky.debug(" - Locale: " + entry.getKey() + " | Value: " + entry.getValue());
         }
         if (parsedCommand.getNameLocalizations().isEmpty()) {
             DiSky.debug("No localizations found.");
