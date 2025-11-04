@@ -26,6 +26,7 @@ import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.components.ModalTopLevelComponent;
+import net.dv8tion.jda.api.components.attachmentupload.AttachmentUpload;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
@@ -73,8 +74,10 @@ public class ExprNewLabel extends SimpleExpression<ModalTopLevelComponent> {
             lbl = Label.of(label, desc, textBuilder.build());
         else if (component instanceof final SelectMenu.Builder selectBuilder)
             lbl = Label.of(label, desc, selectBuilder.build());
+        else if (component instanceof final AttachmentUpload attachmentUpload)
+            lbl = Label.of(label, desc, attachmentUpload);
         else {
-            DiSkyRuntimeHandler.error(new IllegalStateException("The component provided cannot fit into a label (only text inputs & select menus are allowed)"), node);
+            DiSkyRuntimeHandler.error(new IllegalStateException("The component provided cannot fit into a label (only text inputs, select menus, and attachment uploads are allowed)"), node);
             return new ModalTopLevelComponent[0];
         }
 

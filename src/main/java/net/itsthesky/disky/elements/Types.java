@@ -2,6 +2,7 @@ package net.itsthesky.disky.elements;
 
 import net.dv8tion.jda.api.components.ActionComponent;
 import net.dv8tion.jda.api.components.ModalTopLevelComponent;
+import net.dv8tion.jda.api.components.attachmentupload.AttachmentUpload;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
@@ -215,6 +216,9 @@ public class Types {
                 null).eventExpression().register();
         new DiSkyType<>(TextInput.Builder.class, "textinput",
                 TextInput.Builder::getId,
+                null).eventExpression().register();
+        new DiSkyType<>(AttachmentUpload.class, "attachmentupload",
+                AttachmentUpload::getId,
                 null).eventExpression().register();
         DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
 

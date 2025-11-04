@@ -9,6 +9,7 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import net.dv8tion.jda.api.entities.Message;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.elements.events.rework.ComponentEvents;
 import org.bukkit.event.Event;
@@ -16,10 +17,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Modal Component Value / Values")
-@Description({"Get the current value(s) of a sent component, currently only working in modals with text input & select menus.",
-		"You have to precise what type of component you are trying to get, either 'textinput' or 'dropdown'."})
+@Description({"Get the current value(s) of a sent component, currently only working in modals with text input, select menus, and attachment uploads.",
+		"You have to precise what type of component you are trying to get: 'textinput', 'dropdown', or 'attachment'."})
 @Examples({"values of dropdown with id \"XXX\"",
-		"value of textinput with id \"XXX\""})
+		"value of textinput with id \"XXX\"",
+		"attachments of attachment with id \"user_avatar\""})
 public class ComponentValue extends SimpleExpression<Object> {
 
 	static {
@@ -27,7 +29,8 @@ public class ComponentValue extends SimpleExpression<Object> {
 				ComponentValue.class,
 				Object.class,
 				ExpressionType.COMBINED,
-				"[the] [current] value[s] of [the] (1¦text[( |-)]input|2¦drop[( |-)]down) [with [the] id] %string%"
+				"[the] [current] value[s] of [the] (1¦text[( |-)]input|2¦drop[( |-)]down) [with [the] id] %string%",
+				"[the] [current] attachment[s] of [the] (3¦attachment[( |-)]upload) [with [the] id] %string%"
 		);
 	}
 
@@ -37,19 +40,27 @@ public class ComponentValue extends SimpleExpression<Object> {
 	protected Object @NotNull [] get(@NotNull Event e) {
 		final String id = EasyElement.parseSingle(exprId, e, null);
 		if (EasyElement.anyNull(this, id))
-			return new String[0];
+			return new Object[0];
 		final var event = ComponentEvents.MODAL_INTERACTION_EVENT.getJDAEvent(e);
 		if (event == null)
-			return new String[0];
+			return new Object[0];
 
 		final var mapping = event.getValue(id);
 		if (mapping == null)
-			return new String[0];
+			return new Object[0];
 
+		// Handle attachment uploads (mark 3)
+		if (returnType == Message.Attachment.class) {
+			final var attachments = mapping.getAsAttachmentList();
+			return attachments.toArray(new Message.Attachment[0]);
+		}
+
+		// Handle text input (mark 1) - single value
 		if (isSingle())
 			return new String[] { mapping.getAsString() };
-		else
-			return mapping.getAsStringList().toArray(new String[0]);
+
+		// Handle dropdown (mark 2) - multiple values
+		return mapping.getAsStringList().toArray(new String[0]);
 	}
 
 	@Override
@@ -77,8 +88,17 @@ public class ComponentValue extends SimpleExpression<Object> {
 			return false;
 		}
 
-		returnType = parseResult.mark == 1 ? String.class : String[].class;
-		isSingle = parseResult.mark == 1;
+		// mark 1 = textinput (single String)
+		// mark 2 = dropdown (multiple Strings)
+		// mark 3 = attachment upload (multiple Attachments)
+		if (parseResult.mark == 3) {
+			returnType = Message.Attachment.class;
+			isSingle = false;
+		} else {
+			returnType = parseResult.mark == 1 ? String.class : String.class;
+			isSingle = parseResult.mark == 1;
+		}
+
 		exprId = (Expression<String>) exprs[0];
 		return true;
 	}
