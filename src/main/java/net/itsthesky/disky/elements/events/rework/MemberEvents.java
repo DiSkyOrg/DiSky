@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.itsthesky.disky.api.events.rework.CopyEventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.core.SkriptUtils;
+import java.util.Set;
 
 @CopyEventCategory(UserEvents.class)
 public class MemberEvents {
@@ -142,12 +143,19 @@ public class MemberEvents {
                 .value(User.class, MessageReceivedEvent::getAuthor)
                 .channelValues(GenericMessageEvent::getChannel)
                 .author(MessageReceivedEvent::getGuild)
-                .checker(event -> event.isFromGuild()
-                        && event.getMessage().getType().isSystem()
-                        && (event.getMessage().getType().equals(MessageType.GUILD_MEMBER_BOOST)
-                        || event.getMessage().getType().equals(MessageType.GUILD_BOOST_TIER_1)
-                        || event.getMessage().getType().equals(MessageType.GUILD_BOOST_TIER_2)
-                        || event.getMessage().getType().equals(MessageType.GUILD_BOOST_TIER_3)))
+                .checker(event -> {
+                    if (!event.isFromGuild())
+                        return false;
+                    MessageType type = event.getMessage().getType();
+                    if (!type.isSystem())
+                        return false;
+                    return Set.of(
+                            MessageType.GUILD_MEMBER_BOOST,
+                            MessageType.GUILD_BOOST_TIER_1,
+                            MessageType.GUILD_BOOST_TIER_2,
+                            MessageType.GUILD_BOOST_TIER_3
+                    ).contains(type);
+                })
                 .register();
 
         // Member Timeout Event
