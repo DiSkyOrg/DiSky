@@ -155,12 +155,7 @@ public class MemberEvents {
                     MessageType type = event.getMessage().getType();
                     if (!type.isSystem())
                         return false;
-                    return Set.of(
-                            MessageType.GUILD_MEMBER_BOOST,
-                            MessageType.GUILD_BOOST_TIER_1,
-                            MessageType.GUILD_BOOST_TIER_2,
-                            MessageType.GUILD_BOOST_TIER_3
-                    ).contains(type);
+                    return BOOST_MESSAGE_TYPES.contains(type);
                 })
                 .register();
 
