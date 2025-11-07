@@ -144,7 +144,10 @@ public class MemberEvents {
                 .author(MessageReceivedEvent::getGuild)
                 .checker(event -> event.isFromGuild()
                         && event.getMessage().getType().isSystem()
-                        && event.getMessage().getType().equals(MessageType.GUILD_MEMBER_BOOST))
+                        && (event.getMessage().getType().equals(MessageType.GUILD_MEMBER_BOOST)
+                        || event.getMessage().getType().equals(MessageType.GUILD_BOOST_TIER_1)
+                        || event.getMessage().getType().equals(MessageType.GUILD_BOOST_TIER_2)
+                        || event.getMessage().getType().equals(MessageType.GUILD_BOOST_TIER_3)))
                 .register();
 
         // Member Timeout Event
