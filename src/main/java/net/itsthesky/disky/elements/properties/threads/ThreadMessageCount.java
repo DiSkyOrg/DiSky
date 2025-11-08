@@ -19,7 +19,7 @@ public class ThreadMessageCount extends SimplePropertyExpression<ThreadChannel, 
 		register(
 				ThreadMessageCount.class,
 				Number.class,
-				"[thread] message count",
+				"[the] [thread] message count",
 				"threadchannel"
 		);
 	}
