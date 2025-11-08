@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.itsthesky.disky.api.events.rework.CopyEventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.core.SkriptUtils;
+import java.util.Set;
 
 @CopyEventCategory(UserEvents.class)
 public class MemberEvents {
@@ -43,6 +44,7 @@ public class MemberEvents {
                 .example("on member leave:\n    broadcast \"%event-member% has left %event-guild%\"")
                 .value(Guild.class, GuildMemberRemoveEvent::getGuild)
                 .value(Member.class, GuildMemberRemoveEvent::getMember)
+                .value(User.class, GuildMemberRemoveEvent::getUser)
                 .author(GuildMemberRemoveEvent::getGuild)
                 .register();
 
@@ -130,6 +132,12 @@ public class MemberEvents {
                 .register();
 
         // Member Boost Event
+        final Set<MessageType> BOOST_MESSAGE_TYPES = Set.of(
+                MessageType.GUILD_MEMBER_BOOST,
+                MessageType.GUILD_BOOST_TIER_1,
+                MessageType.GUILD_BOOST_TIER_2,
+                MessageType.GUILD_BOOST_TIER_3
+        );
         EventRegistryFactory.builder(MessageReceivedEvent.class)
                 .name("Member Boost Event")
                 .patterns("member boost[ed]")
@@ -141,9 +149,14 @@ public class MemberEvents {
                 .value(User.class, MessageReceivedEvent::getAuthor)
                 .channelValues(GenericMessageEvent::getChannel)
                 .author(MessageReceivedEvent::getGuild)
-                .checker(event -> event.isFromGuild()
-                        && event.getMessage().getType().isSystem()
-                        && event.getMessage().getType().equals(MessageType.GUILD_MEMBER_BOOST))
+                .checker(event -> {
+                    if (!event.isFromGuild())
+                        return false;
+                    MessageType type = event.getMessage().getType();
+                    if (!type.isSystem())
+                        return false;
+                    return BOOST_MESSAGE_TYPES.contains(type);
+                })
                 .register();
 
         // Member Timeout Event
