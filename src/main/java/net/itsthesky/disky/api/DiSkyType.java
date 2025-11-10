@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * @author ItsTheSky
@@ -53,6 +54,7 @@ public class DiSkyType<T> {
         this.classInfo = new DiSkyTypeWrapper<>(clazz, codeName)
                 .diskyType(this)
                 .user(user)
+                .supplier(isEnum ? clazz.getEnumConstants() : (T[]) new Object[0])
                 .parser(new Parser<T>() {
                     @Override
                     public @NotNull T parse(final @NotNull String input, final @NotNull ParseContext context) {
