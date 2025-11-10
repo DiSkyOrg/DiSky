@@ -339,7 +339,7 @@ public class DocBuilder {
             examples = info.getExamples();
             since = info.getSince();
             requiredPlugins = info.getRequiredPlugins();
-            eventValues = parseValues(info, inculdeTimes);
+            eventValues = null; //parseValues(info, inculdeTimes);
             cancellable = parseCancellable(info);
             retrieveValues = RetrieveEventValue.VALUES.getOrDefault(info.events[0], new ArrayList<>())
                     .stream()
@@ -405,7 +405,8 @@ public class DocBuilder {
             this.description = getAnnotationOrs(info, Description.class, null);
             this.patterns = info.getPatterns();
             this.examples = getAnnotationOrs(info, Examples.class, null);
-            this.since = getAnnotationOr(info, Since.class, null);
+            var sinces = getAnnotationOrs(info, Since.class, null);
+            this.since = sinces == null ? null : String.join(", ", sinces);
             this.requiredPlugins = getAnnotationOrs(info, RequiredPlugins.class, null);
             this.module = getAnnotationOr(info, Module.class, null);
         }
