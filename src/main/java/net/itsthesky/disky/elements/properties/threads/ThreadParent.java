@@ -14,7 +14,7 @@ public class ThreadParent extends SimplePropertyExpression<ThreadChannel, GuildC
 		register(
 				ThreadParent.class,
 				GuildChannel.class,
-				"[the] thread parent [channel]",
+				"thread parent [channel]",
 				"threadchannel"
 		);
 	}

@@ -20,7 +20,7 @@ public class ThreadOwner extends SimplePropertyExpression<ThreadChannel, Member>
 		register(
 				ThreadOwner.class,
 				Member.class,
-				"[the] thread owner",
+				"thread owner",
 				"threadchannel"
 		);
 	}
