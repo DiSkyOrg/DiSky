@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -15,6 +19,11 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Pin / Unpin Message")
+@Description("Pin or unpin a message in a channel. Each channel can have up to 50 pinned messages.")
+@Examples({"pin event-message",
+        "unpin last message in event-channel"})
+@Since("4.0.0")
 public class PinMessage extends AsyncEffect {
 
     static {
