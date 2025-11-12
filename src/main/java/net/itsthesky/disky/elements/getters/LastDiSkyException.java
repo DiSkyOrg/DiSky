@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 "This expression is event-based, means you cannot get the last error that happened on another event.",
 "Once this has been called, it will remove the returned value from the errors list to avoid having two times the same error message."})
 @Examples("if last disky exception is set: # an error occurred")
+@Since("4.0.0")
 public class LastDiSkyException extends SimpleExpression<String> {
 
 	static {
