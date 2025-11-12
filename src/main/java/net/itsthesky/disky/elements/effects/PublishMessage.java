@@ -1,6 +1,10 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
@@ -13,6 +17,11 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Publish/Crosspost Message")
+@Description("Publish/Crosspost a message from a news channel to all following guilds. Only works in news channels.")
+@Examples({"publish event-message",
+        "crosspost message with id \"000\" in channel with id \"123\""})
+@Since("4.0.0")
 public class PublishMessage extends SpecificBotEffect {
 
     static {
