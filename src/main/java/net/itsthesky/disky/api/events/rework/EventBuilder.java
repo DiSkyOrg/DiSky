@@ -36,12 +36,14 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.specific.*;
+import net.itsthesky.disky.api.generator.DocBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -124,6 +126,7 @@ public class EventBuilder<T extends Event> {
      * Disable the Skript event registration for that event.
      * Only the DiSky/Simple Event classes will be created, but
      * not registered in Skript.
+     *
      * @return This builder
      */
     public EventBuilder<T> noRegistration() {
@@ -134,9 +137,10 @@ public class EventBuilder<T extends Event> {
     /**
      * Manually changes the event-category by giving a class that holds the
      * EventCategory annotation.
-     * @see EventCategory
+     *
      * @param eventCategory The class that holds the EventCategory annotation
      * @return This builder
+     * @see EventCategory
      */
     public EventBuilder<T> eventCategory(Class<?> eventCategory) {
         this.eventCategory = eventCategory.getAnnotation(EventCategory.class);
@@ -145,6 +149,7 @@ public class EventBuilder<T extends Event> {
 
     /**
      * Make this event cancellable by providing a get & set mapper.
+     *
      * @return This builder
      */
     public EventBuilder<T> cancellable(@NotNull Function<T, Boolean> isCancelledMapper,
@@ -204,14 +209,14 @@ public class EventBuilder<T extends Event> {
      * Implements an interface for this event.
      * This allows providing specific functionalities to the event through a given interface.
      *
-     * @param <I> The type of the interface to implement
-     * @param <R> The return type of the interface method</r>
-     * @param <P> The parameter type of the interface method (can be null)
-     * @param interfaceClass The class of the interface to implement
-     * @param returnTypeClass The class of the return type
+     * @param <I>                The type of the interface to implement
+     * @param <R>                The return type of the interface method</r>
+     * @param <P>                The parameter type of the interface method (can be null)
+     * @param interfaceClass     The class of the interface to implement
+     * @param returnTypeClass    The class of the return type
      * @param parameterTypeClass The class of the parameter type (null if no parameter)
-     * @param methodName The name of the method to implement
-     * @param function The function that implements the interface method
+     * @param methodName         The name of the method to implement
+     * @param function           The function that implements the interface method
      * @return This builder instance
      */
     public <I, R, P> EventBuilder<T> implement(Class<I> interfaceClass, Class<R> returnTypeClass, @Nullable Class<P> parameterTypeClass,
@@ -249,6 +254,7 @@ public class EventBuilder<T extends Event> {
     /**
      * Sets a checker for the event. It will be called before the event is executed
      * to determine if the event should be executed or not.
+     *
      * @param checker The checker function
      * @return This builder
      */
@@ -260,6 +266,7 @@ public class EventBuilder<T extends Event> {
     /**
      * Sets a checker for the log event. It will be called before the event is executed
      * to determine if the event should be executed or not.
+     *
      * @param checker The checker function
      * @return This builder
      */
@@ -272,7 +279,7 @@ public class EventBuilder<T extends Event> {
      * Registers a value that can be accessed in scripts.
      *
      * @param valueClass The class of the value
-     * @param mapper A function to extract the value from the JDA event
+     * @param mapper     A function to extract the value from the JDA event
      * @return This builder
      */
     public <V> EventBuilder<T> value(Class<V> valueClass, Function<T, V> mapper) {
@@ -317,8 +324,8 @@ public class EventBuilder<T extends Event> {
      * Registers a value that can be accessed in scripts, with a specific time.
      *
      * @param valueClass The class of the value
-     * @param mapper A function to extract the value from the JDA event
-     * @param time The time (-1 for past, 0 for present, 1 for future)
+     * @param mapper     A function to extract the value from the JDA event
+     * @param time       The time (-1 for past, 0 for present, 1 for future)
      * @return This builder
      */
     public <V> EventBuilder<T> value(Class<V> valueClass, Function<T, V> mapper, int time) {
@@ -330,7 +337,7 @@ public class EventBuilder<T extends Event> {
      * Registers past value (time = -1) that can be accessed in scripts.
      *
      * @param valueClass The class of the value
-     * @param mapper A function to extract the value from the JDA event
+     * @param mapper     A function to extract the value from the JDA event
      * @return This builder
      */
     public <V> EventBuilder<T> pastValue(Class<V> valueClass, Function<T, V> mapper) {
@@ -341,7 +348,7 @@ public class EventBuilder<T extends Event> {
      * Registers future value (time = 1) that can be accessed in scripts.
      *
      * @param valueClass The class of the value
-     * @param mapper A function to extract the value from the JDA event
+     * @param mapper     A function to extract the value from the JDA event
      * @return This builder
      */
     public <V> EventBuilder<T> futureValue(Class<V> valueClass, Function<T, V> mapper) {
@@ -352,10 +359,10 @@ public class EventBuilder<T extends Event> {
      * Registers an expression that can be used within that event only.
      * This is useful for creating custom expressions that are specific to the event.
      *
-     * @param <E> The type of the expression
-     * @param pattern The patterns used in the expression
+     * @param <E>             The type of the expression
+     * @param pattern         The patterns used in the expression
      * @param expressionClass The class of the expression
-     * @param mapper A function to extract the expression from the JDA event
+     * @param mapper          A function to extract the expression from the JDA event
      * @return This builder
      */
     public <E> EventBuilder<T> singleExpression(String pattern, Class<E> expressionClass, Function<T, E> mapper) {
@@ -371,7 +378,7 @@ public class EventBuilder<T extends Event> {
     }
 
     public <E> EventBuilder<T> customTimedListExpressions(String baseProperty, Class<E> expressionClass,
-                                                      Function<T, E[]> currentMapper, Function<T, E[]> pastMapper) {
+                                                          Function<T, E[]> currentMapper, Function<T, E[]> pastMapper) {
         listExpression("[(new|current)] " + baseProperty, expressionClass, currentMapper);
         listExpression("(old|past|previous) " + baseProperty, expressionClass, pastMapper);
         return this;
@@ -381,10 +388,10 @@ public class EventBuilder<T extends Event> {
      * Registers an expression that can be used within that event only.
      * This is useful for creating custom expressions that are specific to the event.
      *
-     * @param <E> The type of the expression
-     * @param pattern The patterns used in the expression
+     * @param <E>             The type of the expression
+     * @param pattern         The patterns used in the expression
      * @param expressionClass The class of the expression
-     * @param mapper A function to extract the expression from the JDA event
+     * @param mapper          A function to extract the expression from the JDA event
      * @return This builder
      */
     public <E> EventBuilder<T> listExpression(String pattern, Class<E> expressionClass, Function<T, E[]> mapper) {
@@ -408,7 +415,7 @@ public class EventBuilder<T extends Event> {
      * This is primarily used for values that need to be retrieved asynchronously
      * via JDA's RestAction API.
      *
-     * @param codeName The code name used in 'event-codename' expressions
+     * @param codeName     The code name used in 'event-codename' expressions
      * @param actionMapper A function to extract the RestAction from the JDA event
      * @return This builder
      */
@@ -422,7 +429,7 @@ public class EventBuilder<T extends Event> {
      * This is primarily used for values that need to be retrieved asynchronously
      * via JDA's RestAction API and then transformed to a different type.
      *
-     * @param codeName The code name used in 'event-codename' expressions
+     * @param codeName     The code name used in 'event-codename' expressions
      * @param actionMapper A function to extract the RestAction from the JDA event
      * @param resultMapper A function to map the result of the RestAction
      * @return This builder
@@ -445,6 +452,7 @@ public class EventBuilder<T extends Event> {
 
     /**
      * Get the category annotation found for that event.
+     *
      * @return The category annotation, or null if not found
      */
     public @Nullable EventCategory getCategory() {
@@ -583,5 +591,44 @@ public class EventBuilder<T extends Event> {
 
     boolean isSkriptRegistered() {
         return skriptRegistered;
+    }
+
+    public DocBuilder.EventDocElement toDocElement() {
+        final List<String> eventValues = new ArrayList<>();
+        for (EventSingleExpressionRegistration<T, ?> registration : singleExpressionRegistrations) {
+            final var clazz = registration.getExpressionClass();
+            final var codeName = Classes.getExactClassName(clazz);
+            eventValues.add(codeName);
+        }
+
+        final List<DocBuilder.EventExpressionEntry> eventExpressions = new ArrayList<>();
+        for (EventListExpressionRegistration<T, ?> registration : listExpressionRegistrations) {
+            final var clazz = registration.getExpressionClass();
+            final var codeName = Classes.getExactClassName(clazz);
+
+            eventExpressions.add(new DocBuilder.EventExpressionEntry(registration.getPattern(), codeName, true));
+        }
+
+        for (EventSingleExpressionRegistration<T, ?> registration : singleExpressionRegistrations) {
+            final var clazz = registration.getExpressionClass();
+            final var codeName = Classes.getExactClassName(clazz);
+
+            eventExpressions.add(new DocBuilder.EventExpressionEntry(registration.getPattern(), codeName, false));
+        }
+
+        return new DocBuilder.EventDocElement(
+                getJdaEventClass().getSimpleName() + "_" + getName().toLowerCase()
+                        .replace(" ", "_")
+                        .replace("/", ""),
+                getName(),
+                "4.28.0",
+                getDescriptionLines(),
+                getPatterns(),
+                getExampleLines(),
+                null,
+                eventValues.toArray(new String[0]),
+                null,
+                eventExpressions.toArray(new DocBuilder.EventExpressionEntry[0]),
+                isCancellable());
     }
 }
