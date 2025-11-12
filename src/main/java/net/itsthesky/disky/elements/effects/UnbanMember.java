@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -19,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Unban User")
-@Description({"Unbans a user from a guild."})
-@Examples({"unban event-user in guild with id \"818182471140114432\""})
-
+@Description("Unbans a user from a guild.")
+@Examples("unban event-user in guild with id \"818182471140114432\"")
+@Since("4.0.0")
 public class UnbanMember extends AsyncEffect {
 
     static {

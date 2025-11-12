@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 		"Using the force pattern will cancel all requests and shutdown the bot instantly."})
 @Examples({"shutdown bot named \"name\"",
 		"stop bot \"name\""})
+@Since("4.0.0")
 public class StopBot extends WaiterEffect {
 
 	static {

@@ -1,6 +1,10 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -10,6 +14,13 @@ import net.itsthesky.disky.api.EmbedManager;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+@Name("Register Embed Template")
+@Description({"Register an embed template that can be reused throughout your code.",
+        "Once registered, you can use the template when creating a new embed using its section or data structure."})
+@Examples({"register embed template with {_embed} with name \"embed_name\"",
+        "# When re-creating an embed:",
+        "make a new embed using template named \"embed_name\" and store it in {_new_embed}"})
+@Since("4.26.0")
 public class EffRegisterEmbedTemplate extends Effect {
 
     static {

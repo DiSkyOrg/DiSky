@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -18,11 +19,13 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
-@Name("Move Member")
-@Description({"Move a member to another voice chat.",
-        "You can only move a member if they were previously in a voice channel."})
-@Examples({"move event-member to {_voice}"})
-
+@Name("Move/Disconnect Member")
+@Description({"Move a member to another voice chat or disconnect them from their current voice channel.",
+        "You can only move a member if they were previously in a voice channel.",
+        "Use the second pattern to disconnect/kick the member from its current voice channel."})
+@Examples({"move discord event-member to {_voice}",
+        "disconnect discord event-member"})
+@Since("4.14.2")
 public class MoveMember extends AsyncEffect {
 
     static {

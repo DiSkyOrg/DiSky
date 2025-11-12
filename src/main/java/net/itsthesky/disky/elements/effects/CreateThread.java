@@ -3,7 +3,9 @@ package net.itsthesky.disky.elements.effects;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -28,6 +30,9 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
         "If you create a private thread, then you cannot specify a message.",
         "Else, the Thread will be created based on the specified message.",
         "Creating private thread need the guild to be level 2 or more, else it'll throw an exception."})
+@Examples({"create thread named \"Discussion\" in event-channel and store it in {_thread}",
+        "create private thread named \"Staff Room\" in channel with id \"000\""})
+@Since("4.0.0")
 public class CreateThread extends AsyncEffect {
 
     static {

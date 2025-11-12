@@ -1,6 +1,10 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
@@ -12,6 +16,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Suppress Embeds")
+@Description("Suppress/hide link embeds from a specific message.")
+@Examples("suppress embeds from event-message")
+@Since("4.0.0")
 public class SuppressEmbed extends SpecificBotEffect {
 
     static {

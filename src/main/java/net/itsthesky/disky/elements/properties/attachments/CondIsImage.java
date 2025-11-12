@@ -2,6 +2,7 @@ package net.itsthesky.disky.elements.properties.attachments;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
@@ -13,6 +14,9 @@ import org.bukkit.event.Event;
 
 @Name("Is Attachment Image")
 @Description("See if a specific attachment is an image.")
+@Examples({"loop attachments of event-message:",
+        "\tif loop-value is an image:",
+        "\t\treply with \"Found an image!\""})
 @Since("1.7")
 public class CondIsImage extends Condition {
 

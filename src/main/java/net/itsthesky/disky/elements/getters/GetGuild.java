@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @Description({"Get a guild from a guild using its unique ID.",
         "This expression cannot be changed."})
 @Examples("guild with id \"000\"")
+@Since("4.0.0")
 public class GetGuild extends BaseGetterExpression<Guild> {
 
     static {

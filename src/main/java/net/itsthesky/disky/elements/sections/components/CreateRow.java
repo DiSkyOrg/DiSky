@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.sections.components;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.api.skript.ReturningSection;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
 import org.bukkit.event.Event;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 		"        \n" +
 		"    add new danger button with id \"test\" named \"Hello World\" with reaction \"smile\" to the components of the row\n" +
 		"    add new success button with id \"test2\" named \"yuss\" to the components of the row")
+@Since("4.0.0")
 public class CreateRow extends ReturningSection<ComponentRow> {
 
 	@Name("Last Row Builder")
