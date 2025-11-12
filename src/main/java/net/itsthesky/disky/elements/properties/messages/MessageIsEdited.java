@@ -4,12 +4,14 @@ import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import net.dv8tion.jda.api.entities.Message;
 import org.jetbrains.annotations.NotNull;
 
 @Name("Is Edited")
 @Description("Return true if the message was edited. Because of discord limitations, we cannot get the editing date.")
 @Examples("event-message is edited")
+@Since("4.0.0")
 public class MessageIsEdited extends PropertyCondition<Message> {
 
     static {

@@ -1,12 +1,23 @@
 package net.itsthesky.disky.elements.conditions;
 
 import ch.njol.skript.conditions.base.PropertyCondition;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 
+@Name("Member is muted")
+@Description({"Check if a member is muted in a voice channel.",
+        "You can specify if you want to get its guild or self state.",
+        "Keep in mind the default condition (e.g. '... is muted') will check both states!"})
+@Examples({"if event-member is muted:",
+        "if event-member is self muted:"})
+@Since("4.14.3")
 public class IsMuted extends PropertyCondition<Member> {
 
     static {

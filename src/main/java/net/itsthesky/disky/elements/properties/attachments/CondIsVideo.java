@@ -13,6 +13,9 @@ import org.bukkit.event.Event;
 
 @Name("Is Attachment Video")
 @Description("See if a specific attachment is a video.")
+@Examples({"loop attachments of event-message:",
+        "\tif loop-value is a video:",
+        "\t\treply with \"Found a video attachment!\""})
 @Since("1.7")
 public class CondIsVideo extends Condition {
 
