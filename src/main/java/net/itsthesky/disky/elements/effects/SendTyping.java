@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Sends the typing status to discord. This is what is used to make the message \"X is typing...\" appear.",
         "Typing status lasts for 10 seconds."})
 @Examples({"show typing status in event-channel"})
+@Since("4.0.0")
 public class SendTyping extends AsyncEffect {
 
     static {
