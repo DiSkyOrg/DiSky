@@ -20,7 +20,7 @@ It provides more than **600** different syntax, such as:
 ## Useful links
 
 * [**Wiki**](https://docs.disky.me/latest/home/)
-* [Discord Server](https://disky.me/discord)
+* [Discord Server](https://discord.gg/GUSnZaZQ)
 * [Documentation](https://docs.disky.me/latest/home/)
 
 ## Modules
