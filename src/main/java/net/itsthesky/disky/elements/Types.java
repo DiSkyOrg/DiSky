@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.DiSky;
@@ -14,7 +15,11 @@ import net.itsthesky.disky.api.emojis.Emote;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.elements.commands.CommandEvent;
 import net.itsthesky.disky.elements.commands.CommandObject;
+import net.itsthesky.disky.elements.components.OpenModal;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
+import net.itsthesky.disky.elements.components.create.ExprNewButton;
+import net.itsthesky.disky.elements.components.create.ExprNewButtonsRow;
+import net.itsthesky.disky.elements.components.create.ExprNewModal;
 import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.INewComponentBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.SectionBuilder;
@@ -253,25 +258,42 @@ public class Types {
 
         new DiSkyType<>(ComponentRow.class, "row",
                 row -> row.asComponents().stream().map(Object::toString).toList().toString(),
-                null).eventExpression().register();
+                null).documentation("ComponentRow",
+                "The **ComponentRow** type represents a row of components in Discord. It can contain buttons, select menus, and other interactive elements.",
+                        ExprNewButtonsRow.class)
+                .eventExpression().register();
         new DiSkyType<>(Modal.Builder.class, "modal",
                 Modal.Builder::getId,
-                null).eventExpression().register();
+                null).documentation("Modal",
+                "The **Modal.Builder** type is used to build modals in Discord. Modals are pop-up forms that can collect user input.",
+                        ExprNewModal.class, OpenModal.class)
+        .eventExpression().register();
         new DiSkyType<>(ModalTopLevelComponent.class, "modalcomponent",
                 comp -> Integer.toString(comp.getUniqueId()),
-                null).eventExpression().register();
+                null).documentation("Modal Component",
+                "The **ModalTopLevelComponent** type represents a top-level component in a modal.")
+        .eventExpression().register();
         new DiSkyType<>(Button.class, "button",
                 ActionComponent::getId,
-                null).eventExpression().register();
+                null).documentation("Button",
+                "The **Button** type represents a button component in Discord. Buttons can be clicked to trigger interactions.",
+                        ExprNewButton.class)
+        .eventExpression().register();
         new DiSkyType<>(SelectMenu.Builder.class, "dropdown",
                 SelectMenu.Builder::getId,
-                null).eventExpression().register();
+                null).documentation("Dropdown",
+                "The **SelectMenu.Builder** type is used to build select menus in Discord. Select menus allow users to choose from a list of options.")
+                .eventExpression().register();
         new DiSkyType<>(SelectOption.class, "selectoption",
                 option -> option.toData().toString(),
-                null).eventExpression().register();
+                null).documentation("Select Option",
+                "The **SelectOption** type represents an option in a select menu.")
+        .eventExpression().register();
         new DiSkyType<>(TextInput.Builder.class, "textinput",
                 TextInput.Builder::getId,
-                null).eventExpression().register();
+                null).documentation("Text Input",
+                "The **TextInput.Builder** type is used to build text input fields in modals.")
+        .eventExpression().register();
         DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
 
         /*

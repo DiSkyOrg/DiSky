@@ -9,6 +9,7 @@ import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.Classes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
@@ -184,6 +185,7 @@ public class DocBuilder {
         return getAddon(elementInfo.getElementClass().getName());
     }
 
+    @Getter
     public static class DocDocument {
 
         private final EventDocElement[] events;
@@ -207,29 +209,6 @@ public class DocBuilder {
             this.types = types.toArray(new TypeDocElement[0]);
         }
 
-        public EventDocElement[] getEvents() {
-            return events;
-        }
-
-        public SimpleDocElement[] getConditions() {
-            return conditions;
-        }
-
-        public SimpleDocElement[] getEffects() {
-            return effects;
-        }
-
-        public SimpleDocElement[] getSections() {
-            return sections;
-        }
-
-        public SimpleDocElement[] getExpressions() {
-            return expressions;
-        }
-
-        public TypeDocElement[] getTypes() {
-            return types;
-        }
     }
 
     @Nullable
@@ -305,7 +284,9 @@ public class DocBuilder {
         private final @Nullable String name;
         private final @Nullable String since;
         private final @Nullable String codeName;
+        @Getter
         private final @Nullable String[] description;
+        @Getter
         private final @Nullable String[] examples;
         private final @Nullable String[] values;
         private final @Nullable String[] seeAlso;
@@ -353,15 +334,9 @@ public class DocBuilder {
             return codeName;
         }
 
-        public String[] getDescription() {
-            return description;
-        }
-
-        public String[] getExamples() {
-            return examples;
-        }
     }
 
+    @Getter
     public static class EventDocElement {
 
         private final @Nullable String id;
@@ -373,6 +348,7 @@ public class DocBuilder {
         private final @Nullable String[] requiredPlugins;
         private final @Nullable String[] eventValues;
         private final @Nullable String[] retrieveValues;
+        private final @Nullable EventExpressionEntry[] eventExpressions;
         private final boolean cancellable;
 
         public EventDocElement(SkriptEventInfo<?> info, boolean inculdeTimes) {
@@ -383,53 +359,49 @@ public class DocBuilder {
             examples = info.getExamples();
             since = info.getSince();
             requiredPlugins = info.getRequiredPlugins();
-            eventValues = null; //parseValues(info, inculdeTimes);
             cancellable = parseCancellable(info);
             retrieveValues = RetrieveEventValue.VALUES.getOrDefault(info.events[0], new ArrayList<>())
                     .stream()
                     .map(RetrieveEventValue.RetrieveValueInfo::getCodeName)
                     .toArray(String[]::new);
+
+            this.eventValues = null;
+            this.eventExpressions = null;
         }
 
-        public @Nullable String getId() {
-            return id;
+        public EventDocElement(@Nullable String id,
+                               @Nullable String name,
+                               @Nullable String since,
+                               @Nullable String[] description,
+                               @Nullable String[] patterns,
+                               @Nullable String[] examples,
+                               @Nullable String[] requiredPlugins,
+                               @Nullable String[] eventValues,
+                               @Nullable String[] retrieveValues,
+                               @Nullable EventExpressionEntry[] eventExpressions,
+                               boolean cancellable) {
+            this.id = id;
+            this.name = name;
+            this.since = since;
+            this.description = description;
+            this.patterns = patterns;
+            this.examples = examples;
+            this.requiredPlugins = requiredPlugins;
+            this.eventValues = eventValues;
+            this.retrieveValues = retrieveValues;
+            this.eventExpressions = eventExpressions;
+            this.cancellable = cancellable;
         }
+    }
 
-        public @Nullable String getName() {
-            return name;
-        }
+    @Getter
+    @AllArgsConstructor
+    public static class EventExpressionEntry {
 
-        public String[] getDescription() {
-            return description;
-        }
+        private final String pattern;
+        private final String returnType;
+        private final boolean isList;
 
-        public String[] getPatterns() {
-            return patterns;
-        }
-
-        public String[] getExamples() {
-            return examples;
-        }
-
-        public @Nullable String getSince() {
-            return since;
-        }
-
-        public String[] getRequiredPlugins() {
-            return requiredPlugins;
-        }
-
-        public String[] getEventValues() {
-            return eventValues;
-        }
-
-        public String[] getRetrieveValues() {
-            return retrieveValues;
-        }
-
-        public boolean isCancellable() {
-            return cancellable;
-        }
     }
 
     public static class SimpleDocElement {
@@ -437,9 +409,13 @@ public class DocBuilder {
         private final @Nullable String id;
         private final @Nullable String name;
         private final @Nullable String since;
+        @Getter
         private final @Nullable String[] description;
+        @Getter
         private final @Nullable String[] patterns;
+        @Getter
         private final @Nullable String[] examples;
+        @Getter
         private final @Nullable String[] requiredPlugins;
         private final @Nullable String module;
 
@@ -463,24 +439,8 @@ public class DocBuilder {
             return name;
         }
 
-        public String[] getDescription() {
-            return description;
-        }
-
-        public String[] getPatterns() {
-            return patterns;
-        }
-
-        public String[] getExamples() {
-            return examples;
-        }
-
         public @Nullable String getSince() {
             return since;
-        }
-
-        public String[] getRequiredPlugins() {
-            return requiredPlugins;
         }
 
         public @Nullable String getModule() {
@@ -488,6 +448,7 @@ public class DocBuilder {
         }
     }
 
+    @Getter
     public static class ExpressionDocElement extends SimpleDocElement {
 
         private final String returnType;
@@ -497,8 +458,5 @@ public class DocBuilder {
             this.returnType = parseClassInfo(info.getReturnType());
         }
 
-        public String getReturnType() {
-            return returnType;
-        }
     }
 }
