@@ -1,18 +1,19 @@
 package net.itsthesky.disky.elements.properties.reactions;
 
+import ch.njol.skript.doc.Name;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.itsthesky.disky.api.emojis.Emote;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Emote of Reaction")
 public class ReactionEmote extends SimplePropertyExpression<MessageReaction, Emote> {
 
     static {
         register(
                 ReactionEmote.class, Emote.class,
-                "[the] [reaction] emote",
-                "reaction"
+                "[reaction] emo(te|ji)", "reaction"
         );
     }
 

@@ -23,7 +23,7 @@ public class ExprTagRequired extends SimplePropertyExpression<ForumChannel, Bool
 
 	static {
 		register(ExprTagRequired.class, Boolean.class,
-				"[the] tag required",
+				"tag required",
 				"forumchannel"
 		);
 	}

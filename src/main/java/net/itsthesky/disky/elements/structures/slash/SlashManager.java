@@ -14,33 +14,25 @@ import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.events.rework.CommandEvents;
 import net.itsthesky.disky.elements.events.rework.custom.SlashCooldownEvent;
-import net.itsthesky.disky.elements.structures.slash.models.*;
+import net.itsthesky.disky.elements.structures.slash.models.CommandGroup;
+import net.itsthesky.disky.elements.structures.slash.models.CommandType;
+import net.itsthesky.disky.elements.structures.slash.models.ParsedCommand;
+import net.itsthesky.disky.elements.structures.slash.models.RegisteredGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class SlashManager extends ListenerAdapter {
 
     // Static Management
-    private static final Map<Bot, SlashManager> MANAGERS = new HashMap<>();
-
-    public static SlashManager getManager(Bot bot) {
-        return MANAGERS.computeIfAbsent(bot, SlashManager::new);
-    }
-
-    public static void shutdownAll() {
-        MANAGERS.values().forEach(SlashManager::shutdown);
-        MANAGERS.clear();
-        retryScheduler.shutdown();
-    }
-
+    private static final Map<Bot, SlashManager> MANAGERS = new ConcurrentHashMap<>();
+    // Retry configuration
+    private static final int MAX_RETRY_ATTEMPTS = 5;
+    private static final long BASE_RETRY_DELAY_MS = 1000; // 1 second
+    private static final ScheduledExecutorService retryScheduler = Executors.newScheduledThreadPool(2);
     // Instance Fields
     private final Map<String, List<Runnable>> waitingGuildCommands = new HashMap<>();
     private final Map<String, AtomicInteger> guildRetryAttempts = new ConcurrentHashMap<>();
@@ -50,16 +42,21 @@ public final class SlashManager extends ListenerAdapter {
     private final Map<String, CommandGroup> commandGroups = new ConcurrentHashMap<>();
     private final Bot bot;
     private boolean readyGlobal = false;
-
-    // Retry configuration
-    private static final int MAX_RETRY_ATTEMPTS = 5;
-    private static final long BASE_RETRY_DELAY_MS = 1000; // 1 second
-    private static final ScheduledExecutorService retryScheduler = Executors.newScheduledThreadPool(2);
-
     private SlashManager(Bot bot) {
         this.bot = bot;
         DiSky.debug("Created SlashManager for bot " + bot.getName());
         this.bot.getInstance().addEventListener(this);
+    }
+
+    public static SlashManager getManager(Bot bot) {
+        return MANAGERS.computeIfAbsent(bot, SlashManager::new);
+    }
+
+    public static void shutdownAll() {
+        List<SlashManager> snapshot = new ArrayList<>(MANAGERS.values());
+        snapshot.forEach(SlashManager::shutdown);
+        MANAGERS.clear();
+        retryScheduler.shutdown();
     }
 
     // Main Registration Methods

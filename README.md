@@ -19,15 +19,15 @@ It provides more than **600** different syntax, such as:
 * And much, much more!
 ## Useful links
 
-* [**Wiki**](https://disky.me/docs/)
+* [**Wiki**](https://docs.disky.me/latest/home/)
 * [Discord Server](https://disky.me/discord)
-* [Documentation](https://disky.me/docs/home/)
+* [Documentation](https://docs.disky.me/latest/home/)
 
 ## Modules
 
-* [Lavaplayer](https://disky.me/docs/docs/lavaplayer/) *Turn your bot into a private disco with music streaming.*
-* [TranSkript](https://disky.me/docs/docs/transkript/) *Website generation to re-create conversation, including the replies, attachments, colors, references, and much more!*
-* [ConsoleLogs](https://disky-docs.equipable.org/docs/consolelogs/) *Use your bot to send logs from your minecraft console to a discord channel, or send log messages to console, and much more!*
+* [Lavaplayer](https://docs.disky.me/latest/docs/lavaplayer/) *Turn your bot into a private disco with music streaming.*
+* [TranSkript](https://docs.disky.me/latest/docs/transkript/) *Website generation to re-create conversation, including the replies, attachments, colors, references, and much more!*
+* [ConsoleLogs](https://docs.disky.me/latest/docs/consolelogs/) *Use your bot to send logs from your minecraft console to a discord channel, or send log messages to console, and much more!*
 
 ## Requirements
 
@@ -39,4 +39,4 @@ It provides more than **600** different syntax, such as:
 ## Incompatibilities
 
 * DiscordSRV *(it uses an older version of JDA that DiSky is not based on)*
-* any other JDA-compiled plugin, that doesn't have JDA 5 as JDA version.
+* any other JDA-compiled plugin, that doesn't have JDA 6 as JDA version.

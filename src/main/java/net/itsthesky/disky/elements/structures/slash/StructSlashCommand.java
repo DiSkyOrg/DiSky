@@ -43,7 +43,7 @@ public class StructSlashCommand extends Structure {
     public static final Set<SlashCommandInformation> REMOVED_COMMANDS = new HashSet<>();
 
     private static final Pattern ARGUMENT =
-            Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>\\w+)\">(\\])?");
+            Pattern.compile("(\\[)?<(?<type>\\w+)=\"(?<name>[\\w-]+)\">(])?");
     private static final Pattern STRUCTURE =
             Pattern.compile("slash command (([A-Za-z0-9_\\-]+ )?([A-Za-z0-9_\\-]+ )?([A-Za-z0-9_\\-]+)?)([^<]*<.+)?");
     private static final Pattern LIST =

@@ -34,7 +34,7 @@ public class DiscordName extends SimplePropertyExpression<Object, String> implem
         register(
                 DiscordName.class,
                 String.class,
-                "[the] discord name",
+                "discord name",
                 "channel/user/member/sticker/scheduledevent/emote/threadchannel/role/guild/embedfield/applicationinfo/webhook/newcomponent"
         );
     }
