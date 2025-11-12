@@ -5,6 +5,7 @@ import ch.njol.skript.classes.Parser;
 import ch.njol.skript.expressions.base.EventValueExpression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.registrations.Classes;
+import lombok.Getter;
 import net.dv8tion.jda.api.components.Component;
 import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.requests.RestAction;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 /**
  * @author ItsTheSky
  */
+@Getter
 public class DiSkyType<T> {
 
     public static final List<DiSkyType<?>> DISKY_CLASSES = new ArrayList<>();
@@ -33,6 +35,8 @@ public class DiSkyType<T> {
     private final Function<String, T> parser;
     private final boolean isEnum;
     private final ClassInfo<T> classInfo;
+
+    private final List<Class> docsSeeAlso = new ArrayList<>();
 
     private @Nullable Function<String, RestAction<T>> restParser;
 
@@ -178,6 +182,13 @@ public class DiSkyType<T> {
         Classes.registerClass(classInfo);
     }
 
+    public DiSkyType<T> documentation(String name, String description, Class... seeAlso) {
+        this.classInfo.name(name);
+        this.classInfo.description(description);
+        this.docsSeeAlso.addAll(Arrays.asList(seeAlso));
+        return this;
+    }
+
     public void register() {
         register(this.classInfo);
     }
@@ -197,42 +208,15 @@ public class DiSkyType<T> {
         return this;
     }
 
-    public boolean isEnum() {
-        return isEnum;
-    }
-
-    public ClassInfo<T> getClassInfo() {
-        return classInfo;
-    }
-
-    public Class<T> getClazz() {
-        return clazz;
-    }
-
     public Class<? extends Enum> getEnumClass() {
         return (Class<? extends Enum>) clazz;
-    }
-
-    public String getCodeName() {
-        return codeName;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public Function<String, T> getParser() {
-        return parser;
-    }
-
-    public Function<T, String> getToString() {
-        return toString;
     }
 
     public @Nullable Function<String, RestAction<T>> getRestParser() {
         return restParser;
     }
 
+    @Getter
     public static class DiSkyTypeWrapper<T> extends ClassInfo<T> {
 
         private DiSkyType<T> diSkyType;
@@ -243,10 +227,6 @@ public class DiSkyType<T> {
          */
         public DiSkyTypeWrapper(Class<T> c, String codeName) {
             super(c, codeName);
-        }
-
-        public DiSkyType<T> getDiSkyType() {
-            return diSkyType;
         }
 
         public DiSkyTypeWrapper<T> diskyType(DiSkyType<T> diSkyType) {

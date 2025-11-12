@@ -19,6 +19,7 @@ import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.INewComponentBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.SectionBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.sub.*;
+import net.itsthesky.disky.elements.getters.*;
 import net.itsthesky.disky.elements.properties.polls.PollAnswerData;
 import net.itsthesky.disky.elements.sections.automod.FilterType;
 import net.itsthesky.disky.managers.ConfigManager;
@@ -109,50 +110,105 @@ public class Types {
          */
         new DiSkyType<>(Channel.class, "channel",
                 Channel::getName,
-                null).eventExpression().register();
+                null)
+                .documentation("Channel",
+                        "The **Channel** type is the base type for all channels, and is used to represent a channel in Discord. For instance, it can be a voice or text channel from a guild, or a private channel.",
+                        GetChannel.class, GetAudioChannel.class, GetMessageChannel.class, GetGuildChannel.class,
+                        GetForumChannel.class, GetTextChannel.class, GetVoiceChannel.class, GetThread.class,
+                        GetNewsChannel.class, GetStageChannel.class, GetForumChannel.class,
+                        GetCategory.class)
+                .eventExpression().register();
+
+        // TODO: document
         new DiSkyType<>(ComponentInteraction.class, "interaction",
                 null, null).eventExpression().register();
+
         new DiSkyType<>(GuildChannel.class, "guildchannel",
                 Channel::getName,
-                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildChannelById(input))
-        ).eventExpression().register();
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getGuildChannelById(input)))
+                .documentation("Guild Channel",
+                        "The **GuildChannel** type is the base type for all channels that are in a guild, and is used to represent a channel in Discord.",
+                        GetGuildChannel.class)
+                .eventExpression().register();
+
         new DiSkyType<>(TextChannel.class, "textchannel",
                 Channel::getName,
-                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getTextChannelById(input))
-        ).eventExpression().register();
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getTextChannelById(input)))
+                .documentation("TextChannel",
+                        "The **TextChannel** is a concrete type that represents a text channel in Discord. It holds several messages, and can be used to send messages. They have a topic, slow mode, and can be marked as NSFW.",
+                        GetTextChannel.class)
+                .eventExpression().register();
+
         new DiSkyType<>(VoiceChannel.class, "voicechannel",
                 Channel::getName,
-                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getVoiceChannelById(input))
-        ).eventExpression().register();
-        new DiSkyType<>(AudioChannel.class, "audiochannel", Channel::getName, null).eventExpression().register();
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getVoiceChannelById(input)))
+                .documentation("VoiceChannel",
+                        "The **VoiceChannel** is a concrete type that represents a voice channel in Discord. It can be used to connect to voice, and has several voice-related settings.",
+                        GetVoiceChannel.class)
+                .eventExpression().register();
+
+        new DiSkyType<>(AudioChannel.class, "audiochannel",
+                Channel::getName,
+                null)
+                .documentation("AudioChannel",
+                        "The **AudioChannel** type is the base type for all channels that can be used for voice communication in Discord. This includes VoiceChannels and StageChannels.",
+                        GetAudioChannel.class)
+                .eventExpression().register();
+
         new DiSkyType<>(ThreadChannel.class, "threadchannel",
                 Channel::getName,
-                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getThreadChannelById(input))
-        ).eventExpression().register();
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getThreadChannelById(input)))
+                .documentation("ThreadChannel",
+                        "The **ThreadChannel** is a concrete type that represents a thread channel in Discord. Threads are sub-channels within text channels that allow for focused discussions.",
+                        GetThread.class)
+                .eventExpression().register();
+
         new DiSkyType<>(Category.class, "category",
                 Channel::getName,
-                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getCategoryById(input))
-        ).eventExpression().register();
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getCategoryById(input)))
+                .documentation("Category",
+                        "The **Category** type represents a category in Discord. Categories are used to group channels together in a guild.",
+                        GetCategory.class)
+                .eventExpression().register();
+
         new DiSkyType<>(NewsChannel.class, "newschannel",
                 Channel::getName,
-                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getNewsChannelById(input))
-        ).eventExpression().register();
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getNewsChannelById(input)))
+                .documentation("NewsChannel",
+                        "The **NewsChannel** is a concrete type that represents an announcement channel in Discord. These channels are used for broadcasting messages to a wider audience and can be followed by other servers.",
+                        GetNewsChannel.class)
+                .eventExpression().register();
+
         new DiSkyType<>(StageChannel.class, "stagechannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getStageChannelById(input))
-        ).eventExpression().register();
+        ).documentation("StageChannel",
+                "The **StageChannel** is a concrete type that represents a stage channel in Discord. Stage channels are used for hosting events where speakers can share their voice and screen with the audience.",
+                GetStageChannel.class)
+        .eventExpression().register();
+
         new DiSkyType<>(PrivateChannel.class, "privatechannel",
                 PrivateChannel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getPrivateChannelById(input))
-        ).eventExpression().register();
+        ).documentation("PrivateChannel",
+                "The **PrivateChannel** is a concrete type that represents a private channel in Discord. Private channels are direct message channels between users.")
+        .eventExpression().register();
+
         new DiSkyType<>(ForumChannel.class, "forumchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getForumChannelById(input))
-        ).eventExpression().register();
+        ).documentation("ForumChannel",
+                "The **ForumChannel** is a concrete type that represents a forum channel in Discord. Forum channels allow users to create and discuss topics in a structured way.",
+                GetForumChannel.class)
+        .eventExpression().register();
+
         new DiSkyType<>(MediaChannel.class, "mediachannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getMediaChannelById(input))
-        ).eventExpression().register();
+        ).documentation("MediaChannel",
+                "The **MediaChannel** is a concrete type that represents a media channel in Discord. Media channels are designed for sharing images, videos, and other media content.")
+        .eventExpression().register();
+
         new DiSkyType<>(ChannelAction.class, "channelaction",
                 action -> action.getType().name(),
                 null

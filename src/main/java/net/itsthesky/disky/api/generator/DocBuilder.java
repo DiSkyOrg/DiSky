@@ -4,11 +4,14 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.*;
+import ch.njol.skript.expressions.ExprSets;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.Classes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.Getter;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.DiSkyType;
 import net.itsthesky.disky.api.modules.DiSkyModule;
 import net.itsthesky.disky.elements.effects.RetrieveEventValue;
 import org.bukkit.event.Cancellable;
@@ -21,10 +24,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Mostly copied from Skylyxx's DocBuilder, changed two/three things for module support
  */
+@Getter
 public class DocBuilder {
 
     private final DiSky instance;
@@ -37,31 +42,58 @@ public class DocBuilder {
 
     public void generate(boolean includeTypesInEventValues, @Nullable String specificModule) {
         getInstance().getLogger().info("Generating documentation...");
+
+        // Map of element class to generated/specified ID
+        final var ids = new HashMap<Class, String>();
+
         final List<SimpleDocElement> effects = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Effect> doc : Skript.getEffects())
-            if (isFromDiSky(doc)) effects.add(new SimpleDocElement(doc));
+        for (final SyntaxElementInfo<? extends Effect> doc : Skript.getEffects()) {
+            if (isFromDiSky(doc)) {
+                final var element = new SimpleDocElement(doc);
+                effects.add(element);
+                ids.put(doc.getElementClass(), element.getId());
+            }
+        }
 
         final List<SimpleDocElement> conditions = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Condition> doc : Skript.getConditions())
-            if (isFromDiSky(doc)) conditions.add(new SimpleDocElement(doc));
+        for (final SyntaxElementInfo<? extends Condition> doc : Skript.getConditions()) {
+            if (isFromDiSky(doc)) {
+                final var element = new SimpleDocElement(doc);
+                conditions.add(element);
+                ids.put(doc.getElementClass(), element.getId());
+            }
+        }
 
         final List<SimpleDocElement> sections = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Section> doc : Skript.getSections())
-            if (isFromDiSky(doc)) sections.add(new SimpleDocElement(doc));
+        for (final SyntaxElementInfo<? extends Section> doc : Skript.getSections()) {
+            if (isFromDiSky(doc)) {
+                final var element = new SimpleDocElement(doc);
+                sections.add(element);
+                ids.put(doc.getElementClass(), element.getId());
+            }
+        }
 
         final List<EventDocElement> events = new ArrayList<>();
-        for (final SkriptEventInfo<?> doc : Skript.getEvents())
-            if (isFromDiSky(doc)) events.add(new EventDocElement(doc, includeTypesInEventValues));
-
-        final List<TypeDocElement> types = new ArrayList<>();
-        for (final ClassInfo<?> classInfo : Classes.getClassInfos())
-            if (isFromDiSky(classInfo)) types.add(new TypeDocElement(classInfo));
+        for (final SkriptEventInfo<?> doc : Skript.getEvents()) {
+            if (isFromDiSky(doc)) {
+                events.add(new EventDocElement(doc, includeTypesInEventValues));
+                ids.put(doc.getElementClass(), new EventDocElement(doc, includeTypesInEventValues).getId());
+            }
+        }
 
         final List<ExpressionDocElement> expressions = new ArrayList<>();
         for (Iterator<ExpressionInfo<?, ?>> it = Skript.getExpressions(); it.hasNext(); ) {
             ExpressionInfo<?, ?> doc = it.next();
-            if (isFromDiSky(doc)) expressions.add(new ExpressionDocElement(doc));
+            if (isFromDiSky(doc)) {
+                expressions.add(new ExpressionDocElement(doc));
+                ids.put(doc.getElementClass(), new ExpressionDocElement(doc).getId());
+            }
         }
+
+        final List<TypeDocElement> types = new ArrayList<>();
+        for (final ClassInfo<?> classInfo : Classes.getClassInfos())
+            if (isFromDiSky(classInfo))
+                types.add(new TypeDocElement(classInfo, ids));
 
         // Filter by module
         if (specificModule != null) {
@@ -82,14 +114,6 @@ public class DocBuilder {
             e.printStackTrace();
         }
         getInstance().getLogger().info("Successfully generated documentation!");
-    }
-
-    public DiSky getInstance() {
-        return instance;
-    }
-
-    public Gson getGson() {
-        return gson;
     }
 
     private boolean isFromDiSky(Object element) {
@@ -283,29 +307,49 @@ public class DocBuilder {
         private final @Nullable String codeName;
         private final @Nullable String[] description;
         private final @Nullable String[] examples;
+        private final @Nullable String[] values;
+        private final @Nullable String[] seeAlso;
 
-        public TypeDocElement(ClassInfo<?> classInfo) {
+        public TypeDocElement(ClassInfo<?> classInfo, Map<Class, String> ids) {
             this.id = classInfo.getDocumentationID();
             this.name = classInfo.getDocName();
             this.since = classInfo.getSince();
             this.codeName = classInfo.getCodeName();
             this.description = classInfo.getDescription();
             this.examples = classInfo.getExamples();
+            this.values = classInfo.getSupplier() == null
+                    ? null
+                    : Stream.of(classInfo.getSupplier().get())
+                    .map(obj -> {
+                        if (obj == null)
+                            return null;
+                        return obj.toString().toLowerCase();
+                    })
+                    .filter(Objects::nonNull)
+                    .toArray(String[]::new);
+            if (classInfo instanceof final DiSkyType.DiSkyTypeWrapper<?> wrapper) {
+                this.seeAlso = wrapper.getDiSkyType().getDocsSeeAlso().stream()
+                        .map(ids::get)
+                        .filter(Objects::nonNull)
+                        .toArray(String[]::new);
+            } else {
+                this.seeAlso = null;
+            }
         }
 
-        public String getId() {
+        public @Nullable String getId() {
             return id;
         }
 
-        public String getName() {
+        public @Nullable String getName() {
             return name;
         }
 
-        public String getSince() {
+        public @Nullable String getSince() {
             return since;
         }
 
-        public String getCodeName() {
+        public @Nullable String getCodeName() {
             return codeName;
         }
 
