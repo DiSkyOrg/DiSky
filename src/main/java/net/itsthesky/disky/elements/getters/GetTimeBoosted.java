@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Date;
 import net.dv8tion.jda.api.entities.Member;
@@ -18,6 +19,7 @@ import java.time.OffsetDateTime;
         "send \"Member has been boosting since: %boost date of {_member}%\"",
         "This expression cannot be changed."
 })
+@Since("4.0.0")
 public class GetTimeBoosted extends SimplePropertyExpression<Member, Date> {
 
     static {

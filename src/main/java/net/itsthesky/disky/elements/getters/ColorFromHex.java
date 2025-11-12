@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Get a color from a hexadecimal string.",
 "Do not include the # in the string."})
 @Examples("set embed color of embed to hex \"ff0000\"")
+@Since("4.0.0")
 public class ColorFromHex extends SimpleExpression<Color> {
 
     static {

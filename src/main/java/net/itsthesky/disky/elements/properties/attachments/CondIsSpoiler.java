@@ -2,6 +2,7 @@ package net.itsthesky.disky.elements.properties.attachments;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
@@ -13,6 +14,9 @@ import org.bukkit.event.Event;
 
 @Name("Is Attachment Spoiler")
 @Description("See if a specific attachment is marked as a spoil.")
+@Examples({"loop attachments of event-message:",
+        "\tif loop-value is a spoiler:",
+        "\t\treply with \"This attachment is marked as spoiler!\""})
 @Since("1.7")
 public class CondIsSpoiler extends Condition {
 

@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
@@ -18,6 +22,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@Name("ReactSection")
+@Description("React to a message with an emote and execute code when a user reacts. Can be set to run once or wait for a specific user.")
+@Examples({"react to event-message with reaction \"joy\" to run:",
+        "\treply with \"You clicked the reaction!\""})
+@Since("4.0.0")
 public class ReactSection extends EffectSection {
 
 	static {

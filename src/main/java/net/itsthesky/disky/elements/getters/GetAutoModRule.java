@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -15,6 +19,10 @@ import net.dv8tion.jda.api.entities.automod.AutoModRule;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Get AutoMod Rule")
+@Description("Get an automod rule from a guild using its unique ID.")
+@Examples("automod rule with id \"000\" in event-guild")
+@Since("4.17.0")
 public class GetAutoModRule extends SimpleExpression<AutoModRule>
         implements IAsyncGettableExpression<AutoModRule> {
 

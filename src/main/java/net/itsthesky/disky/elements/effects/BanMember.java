@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -20,9 +21,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
-@Name("Ban Member")
-@Description({"Bans a member or the given user ID from a guild."})
-@Examples({"ban discord event-member because of \"being lame\" and delete 10 days worth of messages"})
+@Name("Ban User")
+@Description({"Ban a member or user ID from a guild, with optional reason and message deletion.",
+	"Starting DiSky v4.20.0, you can specify a USER ID to ban a user without retrieving the member first."})
+@Examples({"ban discord event-member because of \"being lame\" and delete 10 days worth of messages",
+	"ban discord member \"00000000000\" from guild with id \"000\" due to \"being lame\""})
+@Since("4.0.0")
 
 public class BanMember extends AsyncEffect {
 

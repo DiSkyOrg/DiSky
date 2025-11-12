@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -25,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
         "To be sure it will return the corresponding member, use the retrieve member effect.",
         "This expression cannot be changed"})
 @Examples({"member with id \"000\" in event-guild"})
+@Since("4.0.0")
 public class GetMember extends SimpleExpression<Member> implements IAsyncGettableExpression<Member> {
 
     static {

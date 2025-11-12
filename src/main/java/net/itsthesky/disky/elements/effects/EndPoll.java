@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -14,6 +18,11 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("End Poll")
+@Description("End a poll attached to a message immediately, preventing further votes.")
+@Examples({"end poll of event-message",
+        "end the poll of {_msg} now"})
+@Since("4.17.0")
 public class EndPoll extends AsyncEffect {
 
     static {
