@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
+import net.itsthesky.disky.api.events.rework.EventBuilder;
 import net.itsthesky.disky.api.modules.DiSkyModule;
 import net.itsthesky.disky.elements.effects.RetrieveEventValue;
 import org.bukkit.event.Cancellable;
@@ -26,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Mostly copied from Skylyxx's DocBuilder, changed two/three things for module support
@@ -75,11 +77,8 @@ public class DocBuilder {
         }
 
         final List<EventDocElement> events = new ArrayList<>();
-        for (final SkriptEventInfo<?> doc : Skript.getEvents()) {
-            if (isFromDiSky(doc)) {
-                events.add(new EventDocElement(doc, includeTypesInEventValues));
-                ids.put(doc.getElementClass(), new EventDocElement(doc, includeTypesInEventValues).getId());
-            }
+        for (final var evt : EventBuilder.REGISTERED_EVENTS) {
+            events.add(evt.toDocElement());
         }
 
         final List<ExpressionDocElement> expressions = new ArrayList<>();
@@ -300,7 +299,7 @@ public class DocBuilder {
             this.examples = classInfo.getExamples();
             this.values = classInfo.getSupplier() == null
                     ? null
-                    : Stream.of(classInfo.getSupplier().get())
+                    : StreamSupport.stream(Spliterators.spliteratorUnknownSize(classInfo.getSupplier().get(), Spliterator.ORDERED), false)
                     .map(obj -> {
                         if (obj == null)
                             return null;

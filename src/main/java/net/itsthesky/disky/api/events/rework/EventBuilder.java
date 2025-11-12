@@ -595,10 +595,11 @@ public class EventBuilder<T extends Event> {
 
     public DocBuilder.EventDocElement toDocElement() {
         final List<String> eventValues = new ArrayList<>();
-        for (EventSingleExpressionRegistration<T, ?> registration : singleExpressionRegistrations) {
-            final var clazz = registration.getExpressionClass();
+        for (EventValueRegistration<T, ?> registration : valueRegistrations) {
+            final var clazz = registration.getValueClass();
             final var codeName = Classes.getExactClassName(clazz);
-            eventValues.add(codeName);
+            final var prefix = registration.getTime() == 0 ? "" : registration.getTime() == -1 ? "past " : "future ";
+            eventValues.add(prefix + codeName);
         }
 
         final List<DocBuilder.EventExpressionEntry> eventExpressions = new ArrayList<>();
