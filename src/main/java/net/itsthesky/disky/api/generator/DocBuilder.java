@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.DiSkyType;
 import net.itsthesky.disky.api.events.rework.EventBuilder;
@@ -91,9 +92,20 @@ public class DocBuilder {
         }
 
         final List<TypeDocElement> types = new ArrayList<>();
-        for (final ClassInfo<?> classInfo : Classes.getClassInfos())
-            if (isFromDiSky(classInfo))
-                types.add(new TypeDocElement(classInfo, ids));
+        for (final ClassInfo<?> classInfo : Classes.getClassInfos()) {
+            if (isFromDiSky(classInfo)) {
+                var typeElement = new TypeDocElement(classInfo, ids);
+                types.add(typeElement);
+                ids.put(classInfo.getC(), typeElement.getId());
+            }
+        }
+
+        // Process see also references
+        expressions.forEach(element -> element.ProcessSeeAlso(ids));
+        effects.forEach(element -> element.ProcessSeeAlso(ids));
+        conditions.forEach(element -> element.ProcessSeeAlso(ids));
+        sections.forEach(element -> element.ProcessSeeAlso(ids));
+        // Types don't need processing as it's done in the constructor!
 
         // Filter by module
         if (specificModule != null) {
@@ -250,6 +262,18 @@ public class DocBuilder {
         }
     }
 
+    private static @Nullable Class<?>[] getAnnotationOrs(SyntaxElementInfo<?> elementInfo, Class<? extends Annotation> annotationClass) {
+        final Class<?> clazz = elementInfo.getElementClass();
+        if (!clazz.isAnnotationPresent(annotationClass))
+            return null;
+        final Annotation annotation = clazz.getAnnotation(annotationClass);
+        try {
+            return (Class<?>[]) annotationClass.getDeclaredMethod("value").invoke(annotation);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            return null;
+        }
+    }
+
     private static boolean parseCancellable(SkriptEventInfo<?> info) {
         boolean cancellable = true;
         for (Class<? extends Event> clazz : info.events) {
@@ -403,20 +427,21 @@ public class DocBuilder {
 
     }
 
+    @Getter
     public static class SimpleDocElement {
 
         private final @Nullable String id;
         private final @Nullable String name;
         private final @Nullable String since;
-        @Getter
         private final @Nullable String[] description;
-        @Getter
         private final @Nullable String[] patterns;
-        @Getter
         private final @Nullable String[] examples;
-        @Getter
         private final @Nullable String[] requiredPlugins;
         private final @Nullable String module;
+
+        @Setter
+        private String[] seeAlso;
+        private final transient Class<?>[] rawSeeAlso;
 
         public SimpleDocElement(SyntaxElementInfo<?> info) {
             this.id = getAnnotationOr(info, DocumentationId.class, info.getElementClass().getSimpleName());
@@ -428,6 +453,7 @@ public class DocBuilder {
             this.since = sinces == null ? null : String.join(", ", sinces);
             this.requiredPlugins = getAnnotationOrs(info, RequiredPlugins.class, null);
             this.module = getAnnotationOr(info, Module.class, null);
+            this.rawSeeAlso = getAnnotationOrs(info, SeeAlso.class);
         }
 
         public @Nullable String getId() {
@@ -444,6 +470,23 @@ public class DocBuilder {
 
         public @Nullable String getModule() {
             return module;
+        }
+
+        public void ProcessSeeAlso(Map<Class, String> ids) {
+            if (rawSeeAlso == null) {
+                this.seeAlso = null;
+                return;
+            }
+
+            List<String> seeAlsoIds = new ArrayList<>();
+            for (Class<?> clazz : rawSeeAlso) {
+                String seeAlsoId = ids.get(clazz);
+                if (seeAlsoId != null) {
+                    seeAlsoIds.add(seeAlsoId);
+                }
+            }
+
+            this.seeAlso = seeAlsoIds.toArray(new String[0]);
         }
     }
 

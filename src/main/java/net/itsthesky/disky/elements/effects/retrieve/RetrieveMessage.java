@@ -3,19 +3,38 @@ package net.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
+import jdk.jfr.Description;
+import jdk.jfr.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.itsthesky.disky.elements.getters.GetMessageChannel;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Retrieve Message by ID")
+@Description("Retrieve a message from a message channel, with the specified ID.\n" +
+        "If the message does not exist, or the bot does not have access to it/the channel, nothing will be stored (and existing value will be cleared).")
+@Examples({
+        """
+        retrieve message with id "123456789012345678" from event-channel and store it in {_msg}
+        send "The content of the message is: %{_msg}%" to console
+        """
+})
+@Since("4.12.0")
+@SeeAlso({
+        GetMessageChannel.class, Message.class
+})
 public class RetrieveMessage extends AsyncEffect {
 
     static {
@@ -69,7 +88,7 @@ public class RetrieveMessage extends AsyncEffect {
             return;
         }
 
-        exprResult.change(event, new Message[] {message}, Changer.ChangeMode.SET);
+        exprResult.change(event, new Message[]{message}, Changer.ChangeMode.SET);
     }
 
     @Override

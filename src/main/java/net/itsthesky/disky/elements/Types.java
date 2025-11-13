@@ -16,17 +16,27 @@ import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.elements.commands.CommandEvent;
 import net.itsthesky.disky.elements.commands.CommandObject;
 import net.itsthesky.disky.elements.components.OpenModal;
+import net.itsthesky.disky.elements.components.commands.ExprNewOptionChoice;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
-import net.itsthesky.disky.elements.components.create.ExprNewButton;
-import net.itsthesky.disky.elements.components.create.ExprNewButtonsRow;
-import net.itsthesky.disky.elements.components.create.ExprNewModal;
+import net.itsthesky.disky.elements.components.create.*;
 import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.INewComponentBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.SectionBuilder;
 import net.itsthesky.disky.elements.componentsv2.base.sub.*;
+import net.itsthesky.disky.elements.effects.PostMessage;
+import net.itsthesky.disky.elements.effects.retrieve.RetrieveMessage;
 import net.itsthesky.disky.elements.getters.*;
+import net.itsthesky.disky.elements.properties.attachments.*;
+import net.itsthesky.disky.elements.properties.channels.*;
+import net.itsthesky.disky.elements.properties.embeds.EmbedAuthor;
+import net.itsthesky.disky.elements.properties.embeds.EmbedFields;
+import net.itsthesky.disky.elements.properties.embeds.EmbedTimeStamp;
+import net.itsthesky.disky.elements.properties.messages.*;
 import net.itsthesky.disky.elements.properties.polls.PollAnswerData;
+import net.itsthesky.disky.elements.sections.EmbedSection;
+import net.itsthesky.disky.elements.sections.ReactSection;
 import net.itsthesky.disky.elements.sections.automod.FilterType;
+import net.itsthesky.disky.elements.sections.message.CreateMessage;
 import net.itsthesky.disky.managers.ConfigManager;
 import net.itsthesky.disky.managers.wrappers.AutoModRuleBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -90,7 +100,7 @@ public class Types {
             Comparators.registerComparator(Channel.class, ChannelType.class, (channel, type) -> Relation.get(channel.getType().compareTo(type)));
 
 
-            final Class[] channelClasses = new Class[] {
+            final Class[] channelClasses = new Class[]{
                     MessageChannel.class, GuildChannel.class,
                     AudioChannel.class, ThreadChannel.class, Category.class,
                     NewsChannel.class, StageChannel.class, PrivateChannel.class,
@@ -139,7 +149,7 @@ public class Types {
         new DiSkyType<>(TextChannel.class, "textchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getTextChannelById(input)))
-                .documentation("TextChannel",
+                .documentation("Text Channel",
                         "The **TextChannel** is a concrete type that represents a text channel in Discord. It holds several messages, and can be used to send messages. They have a topic, slow mode, and can be marked as NSFW.",
                         GetTextChannel.class)
                 .eventExpression().register();
@@ -147,7 +157,7 @@ public class Types {
         new DiSkyType<>(VoiceChannel.class, "voicechannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getVoiceChannelById(input)))
-                .documentation("VoiceChannel",
+                .documentation("Voice Channel",
                         "The **VoiceChannel** is a concrete type that represents a voice channel in Discord. It can be used to connect to voice, and has several voice-related settings.",
                         GetVoiceChannel.class)
                 .eventExpression().register();
@@ -155,7 +165,7 @@ public class Types {
         new DiSkyType<>(AudioChannel.class, "audiochannel",
                 Channel::getName,
                 null)
-                .documentation("AudioChannel",
+                .documentation("Audio Channel",
                         "The **AudioChannel** type is the base type for all channels that can be used for voice communication in Discord. This includes VoiceChannels and StageChannels.",
                         GetAudioChannel.class)
                 .eventExpression().register();
@@ -163,7 +173,7 @@ public class Types {
         new DiSkyType<>(ThreadChannel.class, "threadchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getThreadChannelById(input)))
-                .documentation("ThreadChannel",
+                .documentation("Thread Channel",
                         "The **ThreadChannel** is a concrete type that represents a thread channel in Discord. Threads are sub-channels within text channels that allow for focused discussions.",
                         GetThread.class)
                 .eventExpression().register();
@@ -172,14 +182,14 @@ public class Types {
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getCategoryById(input)))
                 .documentation("Category",
-                        "The **Category** type represents a category in Discord. Categories are used to group channels together in a guild.",
+                        "The **Category** type represents a category in Discord. Categories are used to group channels together in a guild.\n\n!!! warning \"Be aware; in Discord, a category is also a channel!\"",
                         GetCategory.class)
                 .eventExpression().register();
 
         new DiSkyType<>(NewsChannel.class, "newschannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getNewsChannelById(input)))
-                .documentation("NewsChannel",
+                .documentation("News Channel",
                         "The **NewsChannel** is a concrete type that represents an announcement channel in Discord. These channels are used for broadcasting messages to a wider audience and can be followed by other servers.",
                         GetNewsChannel.class)
                 .eventExpression().register();
@@ -187,41 +197,47 @@ public class Types {
         new DiSkyType<>(StageChannel.class, "stagechannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getStageChannelById(input))
-        ).documentation("StageChannel",
-                "The **StageChannel** is a concrete type that represents a stage channel in Discord. Stage channels are used for hosting events where speakers can share their voice and screen with the audience.",
-                GetStageChannel.class)
-        .eventExpression().register();
+        ).documentation("Stage Channel",
+                        "The **StageChannel** is a concrete type that represents a stage channel in Discord. Stage channels are used for hosting events where speakers can share their voice and screen with the audience.",
+                        GetStageChannel.class)
+                .eventExpression().register();
 
         new DiSkyType<>(PrivateChannel.class, "privatechannel",
                 PrivateChannel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getPrivateChannelById(input))
-        ).documentation("PrivateChannel",
-                "The **PrivateChannel** is a concrete type that represents a private channel in Discord. Private channels are direct message channels between users.")
-        .eventExpression().register();
+        ).documentation("Private Channel",
+                        "The **PrivateChannel** is a concrete type that represents a private channel in Discord. Private channels are direct message channels between users.")
+                .eventExpression().register();
 
         new DiSkyType<>(ForumChannel.class, "forumchannel",
                 Channel::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getForumChannelById(input))
-        ).documentation("ForumChannel",
-                "The **ForumChannel** is a concrete type that represents a forum channel in Discord. Forum channels allow users to create and discuss topics in a structured way.",
-                GetForumChannel.class)
-        .eventExpression().register();
+        ).documentation("Forum Channel",
+                        "The **ForumChannel** is a concrete type that represents a forum channel in Discord. Forum channels allow users to create and discuss topics in a structured way.",
+                        GetForumChannel.class)
+                .eventExpression().register();
 
         new DiSkyType<>(MediaChannel.class, "mediachannel",
                 Channel::getName,
-                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getMediaChannelById(input))
-        ).documentation("MediaChannel",
-                "The **MediaChannel** is a concrete type that represents a media channel in Discord. Media channels are designed for sharing images, videos, and other media content.")
-        .eventExpression().register();
+                input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getMediaChannelById(input)))
+                .documentation("Media Channel",
+                        "The **MediaChannel** is a concrete type that represents a media channel in Discord. Media channels are designed for sharing images, videos, and other media content.")
+                .eventExpression().register();
 
         new DiSkyType<>(ChannelAction.class, "channelaction",
                 action -> action.getType().name(),
-                null
-        ).eventExpression().register();
+                null)
+                .documentation("Channel Action",
+                        "Represents a channel action; it's not a channel itself, but an action, including all its step (like name, topic, ...), before the channel is actually created.",
+                        NewForumChannel.class, NewCategoryAction.class, NewMediaChannel.class, NewNewsChannel.class, NewStageChannel.class, NewTextAction.class, NewVoiceAction.class)
+                .eventExpression().register();
         new DiSkyType<>(MessageChannel.class, "messagechannel",
                 Channel::getName,
-                null
-        ).eventExpression().register();
+                null)
+                .documentation("Message Channel",
+                        "The **MessageChannel** type is the base type for all channels that can send and receive messages in Discord. This includes TextChannels, PrivateChannels, ...",
+                        GetMessageChannel.class, PostMessage.class)
+                .eventExpression().register();
         new DiSkyType<>(RoleAction.class, "roleaction",
                 action -> "role action",
                 null
@@ -245,8 +261,10 @@ public class Types {
                         return ChannelType.GUILD_NEWS_THREAD;
 
                     return ChannelType.valueOf(input.toUpperCase());
-                }, true
-        ).eventExpression().register();
+                }, true)
+                .documentation("Channel Type",
+                        "This enum represents the different types of channels available in Discord, such as text channels, voice channels, categories, and more.")
+                .eventExpression().register();
         new DiSkyType<>(AutoModExecution.class, "automod",
                 AutoModExecution::toString,
                 null
@@ -259,42 +277,49 @@ public class Types {
         new DiSkyType<>(ComponentRow.class, "row",
                 row -> row.asComponents().stream().map(Object::toString).toList().toString(),
                 null).documentation("ComponentRow",
-                "The **ComponentRow** type represents a row of components in Discord. It can contain buttons, select menus, and other interactive elements.",
+                        "The **ComponentRow** type represents a row of components in Discord. It can contain buttons, select menus, and other interactive elements.",
                         ExprNewButtonsRow.class)
                 .eventExpression().register();
         new DiSkyType<>(Modal.Builder.class, "modal",
                 Modal.Builder::getId,
                 null).documentation("Modal",
-                "The **Modal.Builder** type is used to build modals in Discord. Modals are pop-up forms that can collect user input.",
+                        "The **Modal.Builder** type is used to build modals in Discord. Modals are pop-up forms that can collect user input.",
                         ExprNewModal.class, OpenModal.class)
-        .eventExpression().register();
+                .eventExpression().register();
         new DiSkyType<>(ModalTopLevelComponent.class, "modalcomponent",
                 comp -> Integer.toString(comp.getUniqueId()),
                 null).documentation("Modal Component",
-                "The **ModalTopLevelComponent** type represents a top-level component in a modal.")
-        .eventExpression().register();
+                        "The **ModalTopLevelComponent** type represents a top-level component in a modal.")
+                .eventExpression().register();
         new DiSkyType<>(Button.class, "button",
                 ActionComponent::getId,
                 null).documentation("Button",
-                "The **Button** type represents a button component in Discord. Buttons can be clicked to trigger interactions.",
-                        ExprNewButton.class)
-        .eventExpression().register();
+                        "The **Button** type represents a button component in Discord. Buttons can be clicked to trigger interactions.",
+                        ExprNewButton.class, ExprNewButtonsRow.class)
+                .eventExpression().register();
         new DiSkyType<>(SelectMenu.Builder.class, "dropdown",
                 SelectMenu.Builder::getId,
                 null).documentation("Dropdown",
-                "The **SelectMenu.Builder** type is used to build select menus in Discord. Select menus allow users to choose from a list of options.")
+                        "The **SelectMenu.Builder** type is used to build select menus in Discord. Select menus allow users to choose from a list of options.",
+                        ExprNewDropdown.class)
                 .eventExpression().register();
         new DiSkyType<>(SelectOption.class, "selectoption",
                 option -> option.toData().toString(),
                 null).documentation("Select Option",
-                "The **SelectOption** type represents an option in a select menu.")
-        .eventExpression().register();
+                        "The **SelectOption** type represents an option in a **string** select menu.",
+                        ExprNewDropdownOption.class)
+                .eventExpression().register();
         new DiSkyType<>(TextInput.Builder.class, "textinput",
                 TextInput.Builder::getId,
                 null).documentation("Text Input",
-                "The **TextInput.Builder** type is used to build text input fields in modals.")
-        .eventExpression().register();
-        DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle").register();
+                        "The **TextInput.Builder** type is used to build text input fields in modals.",
+                        ExprNewInput.class)
+                .eventExpression().register();
+        DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle")
+                .documentation("Button Style",
+                        "This enum represents the different styles of buttons available in Discord, such as primary, secondary, success, danger, and link buttons.",
+                        ExprNewButton.class)
+                .register();
 
         /*
         Components V2
@@ -371,19 +396,42 @@ public class Types {
          */
         new DiSkyType<>(Message.class, "message",
                 Message::getContentRaw,
-                id -> CommandEvent.lastEvent == null ? null : CommandEvent.lastEvent.getMessageChannel().getHistory().getMessageById(id)
-        ).eventExpression().register();
+                id -> CommandEvent.lastEvent == null ? null : CommandEvent.lastEvent.getMessageChannel().getHistory().getMessageById(id))
+                .documentation("Message",
+                        "Represents a message sent in a Discord channel. It contains information about the content, author, timestamp, and other properties of the message. This also includes a content (text, embeds, ...), components, ...",
+                        RetrieveMessage.class, PostMessage.class, MessageAuthor.class, MessageContent.class, MessageEmbeds.class)
+                .eventExpression().register();
+
         new DiSkyType<>(Message.Attachment.class, "attachment",
                 Message.Attachment::getUrl,
-                null
-        ).eventExpression().register();
+                null)
+                .documentation("Attachment",
+                        "Represents a file attachment in a Discord message. It contains information about the file, such as its name, size, URL, and proxy URL.",
+                        MessageAttachments.class,
+                        CondIsVideo.class, CondIsImage.class, CondIsAudio.class, CondIsSpoiler.class,
+                        ExprAttDuration.class, ExprAttFileExt.class, ExprAttURL.class, ExprAttFileName.class,
+                        EffAttDownload.class,
+                        NewFileUpload.class
+                ).eventExpression().register();
+
         new DiSkyType<>(MessageCreateBuilder.class, "messagecreatebuilder",
-                MessageCreateBuilder::getContent, null
-        ).eventExpression().register();
+                MessageCreateBuilder::getContent, null)
+                .documentation("Message Create Builder",
+                        "Used to build rich/complex messages to be sent in Discord. It allows you to set the content, embeds, components, and other properties of the message before sending it.",
+                        CreateMessage.class,
+                        PostMessage.class)
+                .eventExpression().register();
+
         new DiSkyType<>(Emote.class, "emote",
                 Emote::getAsMention,
-                null
-        ).eventExpression().register();
+                null)
+                .documentation("Emote",
+                        "Represents a custom emote (emoji) in Discord. It contains information about the emote, such as its name, ID, and whether it's animated.",
+                        MessageReactions.class,
+                        ReactSection.class,
+                        ExprEmoji.class)
+                .eventExpression().register();
+
         new DiSkyType<>(MessageReaction.class, "reaction",
                 messageReaction -> Emote.fromUnion(messageReaction.getEmoji()).getAsMention(),
                 null
@@ -398,8 +446,12 @@ public class Types {
         ).eventExpression().register();
         new DiSkyType<>(EmbedBuilder.class, "embedbuilder",
                 embedBuilder -> embedBuilder.getDescriptionBuilder().toString(),
-                null
-        ).eventExpression().register();
+                null)
+                .documentation("Embed Builder",
+                        "The **EmbedBuilder** type is used to build rich embed messages in Discord. Embeds can contain a title, description, fields, images, and other visual elements to enhance the appearance of messages.",
+                        MessageEmbeds.class, EmbedSection.class,
+                        EmbedAuthor.class, EmbedFields.class, EmbedTimeStamp.class)
+                .eventExpression().register();
         new DiSkyType<>(MessageEmbed.Field.class, "embedfield",
                 MessageEmbed.Field::getValue,
                 null
