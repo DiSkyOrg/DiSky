@@ -5,6 +5,7 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -27,6 +28,7 @@ import java.util.List;
 @Examples({"react to event-message with reaction \"joy\" to run:",
         "\treply with \"You clicked the reaction!\""})
 @Since("4.0.0")
+@SeeAlso(Message.class)
 public class ReactSection extends EffectSection {
 
 	static {

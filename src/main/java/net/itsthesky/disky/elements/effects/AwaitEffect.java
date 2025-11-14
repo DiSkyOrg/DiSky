@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.effects.EffChange;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
@@ -17,6 +21,13 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Await Effect")
+@Description({"Forces an effect to be executed asynchronously and waits for its completion.",
+        "This is useful for non-async effects that need to run in an async context.",
+        "Note: If the effect is already async, using await is redundant."})
+@Examples({"await set {_value} to mention tag \"test\" with id \"000\" # Forces async execution",
+        "await add role with id \"000\" to event-member # Waits for role addition"})
+@Since("4.0.0")
 public class AwaitEffect extends AsyncEffect {
 
     static {

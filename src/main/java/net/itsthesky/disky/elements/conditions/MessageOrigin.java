@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"if event is from guild:",
 "if message come from private message:"})
 @Since("4.0.0")
+@SeeAlso(net.dv8tion.jda.api.entities.Message.class)
 public class MessageOrigin extends Condition {
 
 	static {

@@ -7,6 +7,7 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.*;
@@ -43,6 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
         "\treturn true",
         "reply with \"I have found %size of {_members::*}% that has the role and is muted!\""})
 @Since("4.14.3")
+@SeeAlso({Member.class, Guild.class})
 public class FindMemberSection extends Section {
 
     static {

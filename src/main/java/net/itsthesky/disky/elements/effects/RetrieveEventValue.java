@@ -1,6 +1,10 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.parser.ParserInstance;
@@ -20,6 +24,15 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Name("Retrieve Event Value")
+@Description({"Retrieves specific event values asynchronously in certain DiSky events.",
+        "These values need to be fetched from Discord's API and cannot be provided directly in the event.",
+        "The value must be stored in a variable for later use.",
+        "Each event has its own set of retrievable values - check the event documentation for available values."})
+@Examples({"on guild member join:",
+        "\tretrieve event-value \"user\" and store it in {_user}",
+        "\tsend \"Welcome %{_user}%!\" to event-channel"})
+@Since("4.0.0")
 @SuppressWarnings("ALL")
 public class RetrieveEventValue extends WaiterEffect<Object> {
 

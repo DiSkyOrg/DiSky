@@ -6,6 +6,7 @@ import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
@@ -27,6 +28,7 @@ import org.skriptlang.skript.registration.SyntaxRegistry;
 @Examples({"if event-member has discord permission administrator: # global permission",
 "if event-member has discord permission send message in event-channel: # channel specific permission"})
 @Since("4.0.0")
+@SeeAlso({Member.class, Permission.class, GuildChannel.class})
 public class HasPermissions extends Condition {
 
     static {

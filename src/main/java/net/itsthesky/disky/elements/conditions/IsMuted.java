@@ -4,6 +4,7 @@ import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 @Examples({"if event-member is muted:",
         "if event-member is self muted:"})
 @Since("4.14.3")
+@SeeAlso(Member.class)
 public class IsMuted extends PropertyCondition<Member> {
 
     static {
