@@ -6,6 +6,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"forward event-message to channel with id \"000\"",
         "forward {_msg} to {_channel} and store it in {_forwarded}"})
 @Since("4.20.0")
+@SeeAlso({Message.class, MessageChannel.class})
 public class ForwardMessage extends AsyncEffect implements INodeHolder {
 
     static {

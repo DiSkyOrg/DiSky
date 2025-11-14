@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -27,6 +28,7 @@ import java.util.List;
 @Examples({"retrieve last 50 messages from event-channel and store them in {_msg::*}",
 "purge {_msg::*}"})
 @Since("4.0.0")
+@SeeAlso({Message.class, MessageChannel.class})
 public class PurgeMessages extends SpecificBotEffect {
 
     static {

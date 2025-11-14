@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -42,6 +43,7 @@ import java.util.regex.Pattern;
         "emote \"disky\" in event-guild",
 })
 @Since("4.0.0")
+@SeeAlso({Guild.class, RichCustomEmoji.class})
 public class ExprEmoji extends SimpleExpression<Emote> implements IAsyncGettableExpression<Emote> {
     static {
         Skript.registerExpression(ExprEmoji.class, Emote.class, ExpressionType.SIMPLE,

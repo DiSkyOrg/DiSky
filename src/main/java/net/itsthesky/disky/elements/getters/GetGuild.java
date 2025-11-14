@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.Guild;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
         "This expression cannot be changed."})
 @Examples("guild with id \"000\"")
 @Since("4.0.0")
+@SeeAlso(Guild.class)
 public class GetGuild extends BaseGetterExpression<Guild> {
 
     static {

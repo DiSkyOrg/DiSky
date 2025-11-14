@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -22,6 +23,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 @Description("Kick a specific member out of its guild. You can also specify a reason if needed.")
 @Examples("kick discord event-member due to \"ur bad guys!\"")
 @Since("4.0.0")
+@SeeAlso(Member.class)
 public class KickMember extends AsyncEffect {
 
     static {

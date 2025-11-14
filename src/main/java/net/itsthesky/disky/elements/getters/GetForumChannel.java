@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
         "This expression cannot be changed."})
 @Examples("forum channel with id \"000\"")
 @Since("4.4.4")
+@SeeAlso(ForumChannel.class)
 public class GetForumChannel extends BaseGetterExpression<ForumChannel> {
 
     static {

@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -30,6 +31,7 @@ import java.util.List;
 @Examples({"suppress reaction \"x\" of event-user from event-message",
 		"suppress reaction \"joy\" from event-message # Remove the reaction ADDED BY THE BOT"})
 @Since("4.1.1")
+@SeeAlso({Message.class, User.class})
 public class SuppressReaction extends SpecificBotEffect {
 
 	static {

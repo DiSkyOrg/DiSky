@@ -5,6 +5,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -33,6 +34,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 @Examples({"create thread named \"Discussion\" in event-channel and store it in {_thread}",
         "create private thread named \"Staff Room\" in channel with id \"000\""})
 @Since("4.0.0")
+@SeeAlso({Message.class, ThreadChannel.class})
 public class CreateThread extends AsyncEffect {
 
     static {

@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"publish event-message",
         "crosspost message with id \"000\" in channel with id \"123\""})
 @Since("4.0.0")
+@SeeAlso(Message.class)
 public class PublishMessage extends SpecificBotEffect {
 
     static {

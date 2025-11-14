@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"archive event-threadchannel",
 		"unarchive thread channel with id \"000\""})
 @Since("4.4.0")
+@SeeAlso(ThreadChannel.class)
 public class ArchiveUnarchiveThread extends AsyncEffect {
 
 	static {

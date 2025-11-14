@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -28,6 +29,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 })
 @Examples({"connect bot \"bot_name\" to voice channel with id \"000\"",
 		"disconnect from event-guild"})
+@SeeAlso({AudioChannel.class, Guild.class})
 @Since("4.9.0")
 public class ConnectBot extends AsyncEffect {
 
