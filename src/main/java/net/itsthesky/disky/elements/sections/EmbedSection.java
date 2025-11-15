@@ -4,6 +4,7 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -21,6 +22,7 @@ import java.util.List;
 @Name("Embed Builder")
 @Description("This builder allow you to make embed easily. You can specify the template used, you must register this template before use it!")
 @Since("3.0")
+@SeeAlso(EmbedBuilder.class)
 @Examples("discord command embed:\n" +
         "    prefixes: !\n" +
         "    trigger:\n" +

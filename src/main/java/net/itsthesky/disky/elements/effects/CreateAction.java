@@ -6,6 +6,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -26,6 +27,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 @Examples({"create {_action} and store it in {_channel}",
         "create {_roleaction} and store the role in {_role}"})
 @Since("4.0.0")
+@SeeAlso(AuditableRestAction.class)
 @SuppressWarnings("unchecked")
 public class CreateAction extends AsyncEffect implements INodeHolder {
 

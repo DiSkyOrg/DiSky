@@ -6,6 +6,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -46,6 +47,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 @Examples({"post \"Hello world!\" to text channel with id \"000\"",
 		"post last embed to thread channel with id \"000\" and store it in {_message}"})
 @Since("4.4.0")
+@SeeAlso({Message.class, Channel.class, GuildMessageChannel.class})
 public class PostMessage extends AsyncEffect {
 
 	private static final long MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB en bytes

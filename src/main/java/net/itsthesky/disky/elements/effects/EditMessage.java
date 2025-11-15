@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -38,6 +39,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 				"edit {_msg} to show \"Abracadabra!\""
 )
 @Since("4.4.0")
+@SeeAlso(Message.class)
 public class EditMessage extends AsyncEffect {
 
 	static {

@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Examples({"ban discord event-member because of \"being lame\" and delete 10 days worth of messages",
 	"ban discord member \"00000000000\" from guild with id \"000\" due to \"being lame\""})
 @Since("4.0.0")
+@SeeAlso({Guild.class, Member.class})
 
 public class BanMember extends AsyncEffect {
 

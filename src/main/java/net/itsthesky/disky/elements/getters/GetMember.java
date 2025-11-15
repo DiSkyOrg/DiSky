@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
         "This expression cannot be changed"})
 @Examples({"member with id \"000\" in event-guild"})
 @Since("4.0.0")
+@SeeAlso({Guild.class, Member.class})
 public class GetMember extends SimpleExpression<Member> implements IAsyncGettableExpression<Member> {
 
     static {

@@ -5,6 +5,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -34,6 +35,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 		"create scheduled event named \"Concerto\" at \"6 routes of XXX\" starting (1 hour after now) and ending (5 hours after now) in event-guild and store it in {_event}"
 })
 @Since("4.0.0")
+@SeeAlso({Guild.class, ScheduledEvent.class})
 public class CreateScheduledEvent extends AsyncEffect {
 
 	static {

@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -35,6 +36,7 @@ import java.util.Set;
 "defer the interaction and wait",
 "defer the interaction and wait silently"})
 @Since("4.0.0")
+@SeeAlso(IReplyCallback.class)
 public class DeferInteraction extends AsyncEffect {
 
     public static final Set<Long> WAITING_INTERACTIONS = new HashSet<>();

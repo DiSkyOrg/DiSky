@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 "User can have multiple instance according to which guild they are in, therefore they are considered as member."})
 @Examples("event-user in event-guild")
 @Since("4.0.0")
+@SeeAlso({Guild.class, Member.class, User.class})
 public class GetUserInGuild extends SimpleExpression<Member> implements IAsyncGettableExpression<Member> {
 
 	static {

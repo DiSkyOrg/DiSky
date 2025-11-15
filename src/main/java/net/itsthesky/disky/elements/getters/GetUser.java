@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.User;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
         "This expression cannot be changed."})
 @Examples("user with id \"000\"")
 @Since("4.0.0")
+@SeeAlso({User.class, TextChannel.class})
 public class GetUser extends BaseGetterExpression<User> {
 
     static {
