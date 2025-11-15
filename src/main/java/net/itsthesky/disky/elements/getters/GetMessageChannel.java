@@ -3,7 +3,7 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import ch.njol.skript.doc.SeeAlso;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
