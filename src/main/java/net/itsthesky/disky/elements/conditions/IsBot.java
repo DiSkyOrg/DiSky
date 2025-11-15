@@ -4,6 +4,7 @@ import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import net.dv8tion.jda.api.entities.User;
 
@@ -12,6 +13,7 @@ import net.dv8tion.jda.api.entities.User;
 @Examples({"event-user is a discord bot",
 "event-member is not a discord bot"})
 @Since("4.0.0")
+@SeeAlso(User.class)
 public class IsBot extends PropertyCondition<User> {
 
 	static {

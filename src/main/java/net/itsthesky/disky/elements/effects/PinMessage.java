@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"pin event-message",
         "unpin last message in event-channel"})
 @Since("4.0.0")
+@SeeAlso(Message.class)
 public class PinMessage extends AsyncEffect {
 
     static {

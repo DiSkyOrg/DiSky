@@ -5,6 +5,7 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
         "Typing status lasts for 10 seconds."})
 @Examples({"show typing status in event-channel"})
 @Since("4.0.0")
+@SeeAlso({Channel.class, MessageChannel.class})
 public class SendTyping extends AsyncEffect {
 
     static {

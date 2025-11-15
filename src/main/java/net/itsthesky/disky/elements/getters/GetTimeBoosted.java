@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.util.Date;
@@ -20,6 +21,7 @@ import java.time.OffsetDateTime;
         "This expression cannot be changed."
 })
 @Since("4.0.0")
+@SeeAlso(Member.class)
 public class GetTimeBoosted extends SimplePropertyExpression<Member, Date> {
 
     static {

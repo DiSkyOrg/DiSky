@@ -5,6 +5,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -31,6 +32,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.anyNull;
 @Examples({"create new emote named \"test\" with url \"https://static.wikia.nocookie.net/leagueoflegends/images/a/ae/This_Changes_Everything_Emote.png/revision/latest/scale-to-width-down/250?cb=20211019231749\" in event-guild and store it in {_emote}",
 "make emote with name \"test2\" with path \"plugins/path/image.png\" in event-guild and store it in {_emote}"})
 @Since("4.0.0")
+@SeeAlso({Guild.class, Icon.class})
 public class CreateEmote extends AsyncEffect {
 
     static {
