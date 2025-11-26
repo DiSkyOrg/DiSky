@@ -2,7 +2,10 @@ package net.itsthesky.disky.elements.conditions;
 
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
@@ -16,6 +19,10 @@ import org.jetbrains.annotations.NotNull;
 @Name("Member / Bot is in Thread")
 @Description({"Check if a specific member or bot is in a guild thread.",
 "Useful to avoid exception while using join & leave effects."})
+@Examples({"if event-member is in event-threadchannel:",
+        "if bot named \"MyBot\" is not in {_thread}:"})
+@Since("4.0.0")
+@SeeAlso({Member.class, ThreadChannel.class})
 public class BotMemberIsInThread extends EasyPropertyCondition<Object> {
 
     static {

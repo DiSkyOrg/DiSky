@@ -3,6 +3,11 @@ package net.itsthesky.disky.elements.effects;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -17,6 +22,12 @@ import org.jetbrains.annotations.Nullable;
 import static net.itsthesky.disky.api.skript.EasyElement.anyNull;
 import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
+@Name("Create Action Channel/Role")
+@Description("Create a channel or role action (manager) and store the created entity in a variable.")
+@Examples({"create {_action} and store it in {_channel}",
+        "create {_roleaction} and store the role in {_role}"})
+@Since("4.0.0")
+@SeeAlso(AuditableRestAction.class)
 @SuppressWarnings("unchecked")
 public class CreateAction extends AsyncEffect implements INodeHolder {
 

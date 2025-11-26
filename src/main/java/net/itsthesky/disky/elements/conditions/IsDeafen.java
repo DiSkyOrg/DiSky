@@ -1,12 +1,25 @@
 package net.itsthesky.disky.elements.conditions;
 
 import ch.njol.skript.conditions.base.PropertyCondition;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
 
+@Name("Member is Deafened")
+@Description({"Check if a member is deafened in a voice channel.",
+        "You can specify if you want to get its guild or self state.",
+        "Keep in mind the default condition (e.g. '... is deafened') will check both states!"})
+@Examples({"if event-member is deafened:",
+        "if event-member is guild deafened:"})
+@Since("4.14.3")
+@SeeAlso(Member.class)
 public class IsDeafen extends PropertyCondition<Member> {
 
     static {

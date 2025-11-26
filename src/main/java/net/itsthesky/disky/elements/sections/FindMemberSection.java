@@ -4,6 +4,11 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -29,6 +34,17 @@ import org.skriptlang.skript.registration.SyntaxRegistry;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Name("Find Members")
+@Description({"Find member filter! It's a section that lets you filter by yourself the members you want to retrieve.",
+        "Wants only members with a role, or specific nickname, that are not connected to a channel? You've got it!"})
+@Examples({"find members in event-guild and store them in {_members::*} with filter var {_m}:",
+        "\t# {_m} now contains the member to apply the filter to. For instance:",
+        "\t{_m} has discord role with id \"XXX\"",
+        "\t{_m} is muted",
+        "\treturn true",
+        "reply with \"I have found %size of {_members::*}% that has the role and is muted!\""})
+@Since("4.14.3")
+@SeeAlso({Member.class, Guild.class})
 public class FindMemberSection extends Section {
 
     static {

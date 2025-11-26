@@ -5,6 +5,8 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -31,6 +33,8 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 @Description("Destroy on Discord the wanted entity.")
 @Examples({"destroy event-channel",
 "destroy event-message"})
+@Since("4.0.0")
+@SeeAlso({Guild.class, Message.class, Role.class})
 public class DestroyEntity extends AsyncEffect {
 
 	static {

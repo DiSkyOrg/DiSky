@@ -1,6 +1,11 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -12,6 +17,11 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Make Bot Leave Guild")
+@Description("Make a bot leave a specific guild. The bot will no longer have access to that server.")
+@Examples("make bot \"MyBot\" leave event-guild")
+@Since("4.0.0")
+@SeeAlso(Guild.class)
 public class MakeBotLeave extends AsyncEffect {
 
     static {

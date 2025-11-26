@@ -4,12 +4,16 @@ import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 @Name("Field is inline")
 @Description("Check whether the provided field is inline or not.")
 @Examples({"if first element of (fields of last embed) is inline:",
         "if first element of (fields of last embed) is not in-line:"})
+@Since("4.0.0")
+@SeeAlso(MessageEmbed.Field.class)
 public class isInline extends PropertyCondition<MessageEmbed.Field> {
 
     static {

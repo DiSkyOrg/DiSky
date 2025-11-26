@@ -6,6 +6,8 @@ import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -25,6 +27,8 @@ import org.skriptlang.skript.registration.SyntaxRegistry;
 @Description("Check if a member has permissions in an optional channel.")
 @Examples({"if event-member has discord permission administrator: # global permission",
 "if event-member has discord permission send message in event-channel: # channel specific permission"})
+@Since("4.0.0")
+@SeeAlso({Member.class, Permission.class, GuildChannel.class})
 public class HasPermissions extends Condition {
 
     static {

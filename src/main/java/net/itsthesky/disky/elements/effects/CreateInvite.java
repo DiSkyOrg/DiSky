@@ -3,6 +3,11 @@ package net.itsthesky.disky.elements.effects;
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -22,6 +27,13 @@ import org.jetbrains.annotations.Nullable;
 import static net.itsthesky.disky.api.skript.EasyElement.anyNull;
 import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
+@Name("Create Invite")
+@Description({"Create a new invite for a guild or channel with optional max uses and expiration time.",
+        "The invite will be stored in the specified variable."})
+@Examples({"create invite in event-guild and store it in {_invite}",
+        "create invite in event-channel with max uses 10 and store it in {_inv}"})
+@Since("4.0.0")
+@SeeAlso({Guild.class, Invite.class})
 public class CreateInvite extends AsyncEffect {
 
     static {

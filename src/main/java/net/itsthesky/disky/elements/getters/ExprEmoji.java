@@ -5,6 +5,8 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -32,7 +34,7 @@ import java.util.regex.Pattern;
         "Get an emoji or an emote from its name, ID or unicode.",
         "- An emoji is discord-side only, can be used everywhere, and don't have any attached guild.",
         "- An emote is guild-side only, have a custom long ID and are attached to a guild.",
-        "It the specified reaction doesn't exist, DiSky will simply return null and say it in console.",
+        "If the specified reaction doesn't exist, DiSky will simply return null and say it in console.",
         "We highly recommend the specification of the guild when retrieving an emote, to avoid conflicts with other that potentially have the same name."
 })
 @Examples({
@@ -40,6 +42,8 @@ import java.util.regex.Pattern;
         "emoji \"sparkles\"",
         "emote \"disky\" in event-guild",
 })
+@Since("4.0.0")
+@SeeAlso({Guild.class, RichCustomEmoji.class})
 public class ExprEmoji extends SimpleExpression<Emote> implements IAsyncGettableExpression<Emote> {
     static {
         Skript.registerExpression(ExprEmoji.class, Emote.class, ExpressionType.SIMPLE,

@@ -4,11 +4,17 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.*;
+import ch.njol.skript.expressions.ExprSets;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.Classes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.DiSkyType;
+import net.itsthesky.disky.api.events.rework.EventBuilder;
 import net.itsthesky.disky.api.modules.DiSkyModule;
 import net.itsthesky.disky.elements.effects.RetrieveEventValue;
 import org.bukkit.event.Cancellable;
@@ -21,10 +27,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Mostly copied from Skylyxx's DocBuilder, changed two/three things for module support
  */
+@Getter
 public class DocBuilder {
 
     private final DiSky instance;
@@ -37,31 +46,66 @@ public class DocBuilder {
 
     public void generate(boolean includeTypesInEventValues, @Nullable String specificModule) {
         getInstance().getLogger().info("Generating documentation...");
+
+        // Map of element class to generated/specified ID
+        final var ids = new HashMap<Class, String>();
+
         final List<SimpleDocElement> effects = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Effect> doc : Skript.getEffects())
-            if (isFromDiSky(doc)) effects.add(new SimpleDocElement(doc));
+        for (final SyntaxElementInfo<? extends Effect> doc : Skript.getEffects()) {
+            if (isFromDiSky(doc)) {
+                final var element = new SimpleDocElement(doc);
+                effects.add(element);
+                ids.put(doc.getElementClass(), element.getId());
+            }
+        }
 
         final List<SimpleDocElement> conditions = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Condition> doc : Skript.getConditions())
-            if (isFromDiSky(doc)) conditions.add(new SimpleDocElement(doc));
+        for (final SyntaxElementInfo<? extends Condition> doc : Skript.getConditions()) {
+            if (isFromDiSky(doc)) {
+                final var element = new SimpleDocElement(doc);
+                conditions.add(element);
+                ids.put(doc.getElementClass(), element.getId());
+            }
+        }
 
         final List<SimpleDocElement> sections = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Section> doc : Skript.getSections())
-            if (isFromDiSky(doc)) sections.add(new SimpleDocElement(doc));
+        for (final SyntaxElementInfo<? extends Section> doc : Skript.getSections()) {
+            if (isFromDiSky(doc)) {
+                final var element = new SimpleDocElement(doc);
+                sections.add(element);
+                ids.put(doc.getElementClass(), element.getId());
+            }
+        }
 
         final List<EventDocElement> events = new ArrayList<>();
-        for (final SkriptEventInfo<?> doc : Skript.getEvents())
-            if (isFromDiSky(doc)) events.add(new EventDocElement(doc, includeTypesInEventValues));
-
-        final List<TypeDocElement> types = new ArrayList<>();
-        for (final ClassInfo<?> classInfo : Classes.getClassInfos())
-            if (isFromDiSky(classInfo)) types.add(new TypeDocElement(classInfo));
+        for (final var evt : EventBuilder.REGISTERED_EVENTS) {
+            events.add(evt.toDocElement());
+        }
 
         final List<ExpressionDocElement> expressions = new ArrayList<>();
         for (Iterator<ExpressionInfo<?, ?>> it = Skript.getExpressions(); it.hasNext(); ) {
             ExpressionInfo<?, ?> doc = it.next();
-            if (isFromDiSky(doc)) expressions.add(new ExpressionDocElement(doc));
+            if (isFromDiSky(doc)) {
+                expressions.add(new ExpressionDocElement(doc));
+                ids.put(doc.getElementClass(), new ExpressionDocElement(doc).getId());
+            }
         }
+
+        final List<TypeDocElement> types = new ArrayList<>();
+        for (final ClassInfo<?> classInfo : Classes.getClassInfos()) {
+            if (isFromDiSky(classInfo)) {
+                var typeElement = new TypeDocElement(classInfo, ids);
+                types.add(typeElement);
+                ids.put(classInfo.getC(), typeElement.getId());
+            }
+        }
+
+        // Process see also references
+        expressions.forEach(element -> element.ProcessSeeAlso(ids));
+        effects.forEach(element -> element.ProcessSeeAlso(ids));
+        conditions.forEach(element -> element.ProcessSeeAlso(ids));
+        sections.forEach(element -> element.ProcessSeeAlso(ids));
+        // Types don't need processing as it's done in the constructor!
 
         // Filter by module
         if (specificModule != null) {
@@ -82,14 +126,6 @@ public class DocBuilder {
             e.printStackTrace();
         }
         getInstance().getLogger().info("Successfully generated documentation!");
-    }
-
-    public DiSky getInstance() {
-        return instance;
-    }
-
-    public Gson getGson() {
-        return gson;
     }
 
     private boolean isFromDiSky(Object element) {
@@ -160,6 +196,7 @@ public class DocBuilder {
         return getAddon(elementInfo.getElementClass().getName());
     }
 
+    @Getter
     public static class DocDocument {
 
         private final EventDocElement[] events;
@@ -183,29 +220,6 @@ public class DocBuilder {
             this.types = types.toArray(new TypeDocElement[0]);
         }
 
-        public EventDocElement[] getEvents() {
-            return events;
-        }
-
-        public SimpleDocElement[] getConditions() {
-            return conditions;
-        }
-
-        public SimpleDocElement[] getEffects() {
-            return effects;
-        }
-
-        public SimpleDocElement[] getSections() {
-            return sections;
-        }
-
-        public SimpleDocElement[] getExpressions() {
-            return expressions;
-        }
-
-        public TypeDocElement[] getTypes() {
-            return types;
-        }
     }
 
     @Nullable
@@ -248,6 +262,18 @@ public class DocBuilder {
         }
     }
 
+    private static @Nullable Class<?>[] getAnnotationOrs(SyntaxElementInfo<?> elementInfo, Class<? extends Annotation> annotationClass) {
+        final Class<?> clazz = elementInfo.getElementClass();
+        if (!clazz.isAnnotationPresent(annotationClass))
+            return null;
+        final Annotation annotation = clazz.getAnnotation(annotationClass);
+        try {
+            return (Class<?>[]) annotationClass.getDeclaredMethod("value").invoke(annotation);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            return null;
+        }
+    }
+
     private static boolean parseCancellable(SkriptEventInfo<?> info) {
         boolean cancellable = true;
         for (Class<? extends Event> clazz : info.events) {
@@ -281,43 +307,59 @@ public class DocBuilder {
         private final @Nullable String name;
         private final @Nullable String since;
         private final @Nullable String codeName;
+        @Getter
         private final @Nullable String[] description;
+        @Getter
         private final @Nullable String[] examples;
+        private final @Nullable String[] values;
+        private final @Nullable String[] seeAlso;
 
-        public TypeDocElement(ClassInfo<?> classInfo) {
+        public TypeDocElement(ClassInfo<?> classInfo, Map<Class, String> ids) {
             this.id = classInfo.getDocumentationID();
             this.name = classInfo.getDocName();
             this.since = classInfo.getSince();
             this.codeName = classInfo.getCodeName();
             this.description = classInfo.getDescription();
             this.examples = classInfo.getExamples();
+            this.values = classInfo.getSupplier() == null
+                    ? null
+                    : StreamSupport.stream(Spliterators.spliteratorUnknownSize(classInfo.getSupplier().get(), Spliterator.ORDERED), false)
+                    .map(obj -> {
+                        if (obj == null)
+                            return null;
+                        return obj.toString().toLowerCase();
+                    })
+                    .filter(Objects::nonNull)
+                    .toArray(String[]::new);
+            if (classInfo instanceof final DiSkyType.DiSkyTypeWrapper<?> wrapper) {
+                this.seeAlso = wrapper.getDiSkyType().getDocsSeeAlso().stream()
+                        .map(ids::get)
+                        .filter(Objects::nonNull)
+                        .toArray(String[]::new);
+            } else {
+                this.seeAlso = null;
+            }
         }
 
-        public String getId() {
+        public @Nullable String getId() {
             return id;
         }
 
-        public String getName() {
+        public @Nullable String getName() {
             return name;
         }
 
-        public String getSince() {
+        public @Nullable String getSince() {
             return since;
         }
 
-        public String getCodeName() {
+        public @Nullable String getCodeName() {
             return codeName;
         }
 
-        public String[] getDescription() {
-            return description;
-        }
-
-        public String[] getExamples() {
-            return examples;
-        }
     }
 
+    @Getter
     public static class EventDocElement {
 
         private final @Nullable String id;
@@ -329,6 +371,7 @@ public class DocBuilder {
         private final @Nullable String[] requiredPlugins;
         private final @Nullable String[] eventValues;
         private final @Nullable String[] retrieveValues;
+        private final @Nullable EventExpressionEntry[] eventExpressions;
         private final boolean cancellable;
 
         public EventDocElement(SkriptEventInfo<?> info, boolean inculdeTimes) {
@@ -339,55 +382,52 @@ public class DocBuilder {
             examples = info.getExamples();
             since = info.getSince();
             requiredPlugins = info.getRequiredPlugins();
-            eventValues = null; //parseValues(info, inculdeTimes);
             cancellable = parseCancellable(info);
             retrieveValues = RetrieveEventValue.VALUES.getOrDefault(info.events[0], new ArrayList<>())
                     .stream()
                     .map(RetrieveEventValue.RetrieveValueInfo::getCodeName)
                     .toArray(String[]::new);
+
+            this.eventValues = null;
+            this.eventExpressions = null;
         }
 
-        public @Nullable String getId() {
-            return id;
-        }
-
-        public @Nullable String getName() {
-            return name;
-        }
-
-        public String[] getDescription() {
-            return description;
-        }
-
-        public String[] getPatterns() {
-            return patterns;
-        }
-
-        public String[] getExamples() {
-            return examples;
-        }
-
-        public @Nullable String getSince() {
-            return since;
-        }
-
-        public String[] getRequiredPlugins() {
-            return requiredPlugins;
-        }
-
-        public String[] getEventValues() {
-            return eventValues;
-        }
-
-        public String[] getRetrieveValues() {
-            return retrieveValues;
-        }
-
-        public boolean isCancellable() {
-            return cancellable;
+        public EventDocElement(@Nullable String id,
+                               @Nullable String name,
+                               @Nullable String since,
+                               @Nullable String[] description,
+                               @Nullable String[] patterns,
+                               @Nullable String[] examples,
+                               @Nullable String[] requiredPlugins,
+                               @Nullable String[] eventValues,
+                               @Nullable String[] retrieveValues,
+                               @Nullable EventExpressionEntry[] eventExpressions,
+                               boolean cancellable) {
+            this.id = id;
+            this.name = name;
+            this.since = since;
+            this.description = description;
+            this.patterns = patterns;
+            this.examples = examples;
+            this.requiredPlugins = requiredPlugins;
+            this.eventValues = eventValues;
+            this.retrieveValues = retrieveValues;
+            this.eventExpressions = eventExpressions;
+            this.cancellable = cancellable;
         }
     }
 
+    @Getter
+    @AllArgsConstructor
+    public static class EventExpressionEntry {
+
+        private final String pattern;
+        private final String returnType;
+        private final boolean isList;
+
+    }
+
+    @Getter
     public static class SimpleDocElement {
 
         private final @Nullable String id;
@@ -399,6 +439,10 @@ public class DocBuilder {
         private final @Nullable String[] requiredPlugins;
         private final @Nullable String module;
 
+        @Setter
+        private String[] seeAlso;
+        private final transient Class<?>[] rawSeeAlso;
+
         public SimpleDocElement(SyntaxElementInfo<?> info) {
             this.id = getAnnotationOr(info, DocumentationId.class, info.getElementClass().getSimpleName());
             this.name = getAnnotationOr(info, Name.class, null);
@@ -409,6 +453,7 @@ public class DocBuilder {
             this.since = sinces == null ? null : String.join(", ", sinces);
             this.requiredPlugins = getAnnotationOrs(info, RequiredPlugins.class, null);
             this.module = getAnnotationOr(info, Module.class, null);
+            this.rawSeeAlso = getAnnotationOrs(info, SeeAlso.class);
         }
 
         public @Nullable String getId() {
@@ -419,31 +464,33 @@ public class DocBuilder {
             return name;
         }
 
-        public String[] getDescription() {
-            return description;
-        }
-
-        public String[] getPatterns() {
-            return patterns;
-        }
-
-        public String[] getExamples() {
-            return examples;
-        }
-
         public @Nullable String getSince() {
             return since;
-        }
-
-        public String[] getRequiredPlugins() {
-            return requiredPlugins;
         }
 
         public @Nullable String getModule() {
             return module;
         }
+
+        public void ProcessSeeAlso(Map<Class, String> ids) {
+            if (rawSeeAlso == null) {
+                this.seeAlso = null;
+                return;
+            }
+
+            List<String> seeAlsoIds = new ArrayList<>();
+            for (Class<?> clazz : rawSeeAlso) {
+                String seeAlsoId = ids.get(clazz);
+                if (seeAlsoId != null) {
+                    seeAlsoIds.add(seeAlsoId);
+                }
+            }
+
+            this.seeAlso = seeAlsoIds.toArray(new String[0]);
+        }
     }
 
+    @Getter
     public static class ExpressionDocElement extends SimpleDocElement {
 
         private final String returnType;
@@ -453,8 +500,5 @@ public class DocBuilder {
             this.returnType = parseClassInfo(info.getReturnType());
         }
 
-        public String getReturnType() {
-            return returnType;
-        }
     }
 }

@@ -4,6 +4,7 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.lang.TriggerItem;
@@ -67,6 +68,7 @@ import java.util.List;
 		"    add {_image} to attachments of message\n" +
 		"\n" +
 		"reply with {_message}")
+@Since("4.0.0")
 public class CreateMessage extends ReturningSection<MessageCreateBuilder> {
 
 	@Name("Last Message Builder")

@@ -5,6 +5,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -28,6 +29,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 "consider calling this effect once, then use the default member expression to get the members."})
 @Examples("load members of event-guild and store them in {_members::*}")
 @Since("4.0.0")
+@SeeAlso({Guild.class, Member.class})
 public class LoadMembers extends AsyncEffect {
 
 	static {

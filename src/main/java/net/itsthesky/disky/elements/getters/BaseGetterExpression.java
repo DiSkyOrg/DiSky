@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -15,6 +19,13 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Base Getter Expression")
+@Description({"Abstract base class for DiSky getter expressions.",
+        "Provides common functionality for expressions that retrieve Discord entities by ID.",
+        "This is an internal utility class extended by specific getter implementations.",
+        "Not directly usable in Skript code."})
+@Examples("# This is a base class - see specific getter expressions like 'guild with id', 'user with id', etc.")
+@Since("4.0.0")
 @SuppressWarnings({"unchecked"})
 public abstract class BaseGetterExpression<T> extends SimpleExpression<T> implements IAsyncGettableExpression<T> {
 

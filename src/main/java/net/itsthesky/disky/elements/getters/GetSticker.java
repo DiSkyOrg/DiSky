@@ -4,6 +4,8 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -27,6 +29,8 @@ import java.util.stream.Collectors;
         "If you success to get a sticker's ID, use the retrieve sticker effect instead!",
         "This expression cannot be changed"})
 @Examples({"sticker with named \"meliodas\" from event-guild"})
+@Since("4.9.0")
+@SeeAlso({Guild.class, GuildSticker.class, Sticker.class})
 public class GetSticker extends SimpleExpression<Sticker> implements IAsyncGettableExpression<Sticker> {
 
     static {

@@ -3,6 +3,8 @@ package net.itsthesky.disky.elements.getters;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
         "Channels are global on discord, means different channels cannot have the same ID.",
         "This expression cannot be changed."})
 @Examples("stage channel with id \"000\"")
+@Since("4.0.0")
+@SeeAlso(StageChannel.class)
 public class GetStageChannel extends BaseGetterExpression<StageChannel> {
 
     static {

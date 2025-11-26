@@ -6,6 +6,8 @@ import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -22,9 +24,12 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Open Private Channel")
 @Description({"Opens a private channel with a specific user.",
-        "The channel will be null if the id is not valid or if the target is the bot",
-             "WARNING: THIS DOESNT RETURN NULL WHEN THE USER BLOCKED THE BOT OR IS NOT ABLE TO SEND THE USER A MESSAGE"})
-@Examples("open private channel of event-user and store it in {_channel}")
+        "The opened channel can be null and an exception can be thrown if the user does not accept messages."})
+@Examples({"open private channel of event-user and store it in {_channel}",
+        "if {_channel} is not set:",
+        "\treply with \"Please enable your private messages!\""})
+@Since("4.0.0")
+@SeeAlso({User.class, PrivateChannel.class})
 public class OpenPrivateChannel extends AsyncEffect {
 
     static {
