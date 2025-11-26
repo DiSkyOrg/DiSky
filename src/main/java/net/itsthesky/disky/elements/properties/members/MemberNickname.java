@@ -50,7 +50,7 @@ public class MemberNickname extends MemberProperty<String>
             return;
         final Member member = EasyElement.parseSingle(getExpr(), e, null);
         final String name = (String) delta[0];
-        if (EasyElement.anyNull(this, member, name))
+        if ((mode != Changer.ChangeMode.RESET && mode != Changer.ChangeMode.DELETE) && EasyElement.anyNull(this, member, name))
             return;
 
         if (!member.getGuild().getSelfMember().canInteract(member)) {
