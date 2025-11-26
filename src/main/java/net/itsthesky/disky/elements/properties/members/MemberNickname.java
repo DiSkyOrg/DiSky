@@ -40,7 +40,7 @@ public class MemberNickname extends MemberProperty<String>
 
     @Override
     public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
-        if (EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.RESET))
+        if (EasyElement.equalAny(mode, Changer.ChangeMode.SET, Changer.ChangeMode.RESET, Changer.ChangeMode.DELETE))
             return new Class[] {String.class};
         return new Class[0];
     }
@@ -50,7 +50,9 @@ public class MemberNickname extends MemberProperty<String>
             return;
         final Member member = EasyElement.parseSingle(getExpr(), e, null);
         final String name = (String) delta[0];
-        if ((mode != Changer.ChangeMode.RESET && mode != Changer.ChangeMode.DELETE) && EasyElement.anyNull(this, member, name))
+        if ((mode != Changer.ChangeMode.RESET && mode != Changer.ChangeMode.DELETE) && EasyElement.anyNull(this, member))
+            return;
+        if (mode != Changer.ChangeMode.RESET && mode != Changer.ChangeMode.DELETE && name == null)
             return;
 
         if (!member.getGuild().getSelfMember().canInteract(member)) {
