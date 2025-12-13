@@ -10,6 +10,8 @@ import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
@@ -22,7 +24,10 @@ import static net.bytebuddy.matcher.ElementMatchers.named;
  */
 public class EasyDSRegistry {
 
+    public record DataStructureEntry(Class<? extends DataStruct<?>> clazz, String pattern) {}
+
     private static final AtomicInteger COUNT = new AtomicInteger(0);
+    public static final List<DataStructureEntry> REGISTERED_STRUCTS = new ArrayList<>();
 
     public static <T, D extends DataStruct<T>> void registerBasicDataStructure(Class<D> clazz,
                                                                                Class<T> returnType,
@@ -48,7 +53,9 @@ public class EasyDSRegistry {
                     ExpressionType.SIMPLE,
                     pattern
             );
+
             DiSky.debug("Registered new data structure element: " + elementClass.getSimpleName() + " with pattern: " + pattern);
+            REGISTERED_STRUCTS.add(new DataStructureEntry(clazz, pattern));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -79,5 +86,13 @@ public class EasyDSRegistry {
     }
 
     //endregion
+
+    public static <T, DS extends DataStruct<T>> DS createDataStructureInstance(Class<DS> clazz) {
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (Exception ex) {
+            throw new RuntimeException("Could not create instance of data structure: " + clazz.getName(), ex);
+        }
+    }
 
 }

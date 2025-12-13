@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ModalCallbackAction;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.ReflectionUtils;
 import net.itsthesky.disky.api.events.specific.*;
 import net.itsthesky.disky.api.generator.DocBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,7 @@ public class EventBuilder<T extends Event> {
     public static final List<EventBuilder<?>> REGISTERED_EVENTS = new ArrayList<>();
 
     private final Class<T> jdaEventClass;
+    private final Class<?> originClass;
     private @Nullable EventCategory eventCategory;
     private String name;
     private String[] patterns;
@@ -81,6 +83,7 @@ public class EventBuilder<T extends Event> {
     private Predicate<GuildAuditLogEntryCreateEvent> logChecker;
 
     EventBuilder(Class<T> jdaEventClass) {
+        this.originClass = ReflectionUtils.getCallerClass(clz -> clz.contains("elements.events"));
         this.jdaEventClass = jdaEventClass;
 
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
@@ -617,7 +620,9 @@ public class EventBuilder<T extends Event> {
             eventExpressions.add(new DocBuilder.EventExpressionEntry(registration.getPattern(), codeName, false));
         }
 
+        final var originClass = this.originClass.getName();
         return new DocBuilder.EventDocElement(
+                originClass,
                 getJdaEventClass().getSimpleName() + "_" + getName().toLowerCase()
                         .replace(" ", "_")
                         .replace("/", ""),

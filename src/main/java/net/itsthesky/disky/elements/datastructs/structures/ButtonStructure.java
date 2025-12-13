@@ -1,14 +1,28 @@
 package net.itsthesky.disky.elements.datastructs.structures;
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Since;
+import jdk.jfr.Name;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
+import net.itsthesky.disky.api.datastruct.DataStructure;
 import net.itsthesky.disky.api.datastruct.DataStructureEntry;
 import net.itsthesky.disky.api.datastruct.base.BasicDS;
 import net.itsthesky.disky.api.emojis.Emote;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@DataStructure(clazz = Button.class, validationRules = {
+        "Either `label` or `emote` must be set.",
+        "Either `id` or `url` must be set.",
+        "If `url` is set, the button will be a link button and `style` will be ignored."
+})
+@Name("Button Data Structure")
+@Description("Create a button with all the specified fields.  See [the wiki about Data Structures](https://docs.disky.me/latest/docs/ds/) for more infos.")
+@Since("4.21.0")
+@SeeAlso({Button.class, ButtonStyle.class})
 public class ButtonStructure implements BasicDS<Button> {
 
     @DataStructureEntry(value = "emote",

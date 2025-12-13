@@ -21,4 +21,8 @@ public @interface DataStructure {
      */
     boolean canBeCreated() default true;
 
+    //region Documentation
+    String[] validationRules() default {};
+    //endregion
+
 }

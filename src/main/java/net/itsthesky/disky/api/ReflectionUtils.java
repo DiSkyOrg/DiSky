@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Just a simple reflection class, just to not depend on Skript 2.2+ (I think it is the only thing I use from it)
@@ -288,5 +289,18 @@ public class ReflectionUtils {
 
     public static Class<?> getGenericType(Field field) {
         return (Class<?>) ((java.lang.reflect.ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+    }
+
+    public static Class<?> getCallerClass(Predicate<String> filter) {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        for (int i = 2; i < stack.length; i++) {
+            try {
+                String className = stack[i].getClassName();
+                if (filter.test(className)) {
+                    return Class.forName(className);
+                }
+            } catch (ClassNotFoundException ignored) {}
+        }
+        return null;
     }
 }

@@ -37,6 +37,13 @@ public @interface DataStructureEntry {
      */
     String description() default "";
 
+    /**
+     * Give additional information about accepted values. <br />
+     * Example: String, but a URL
+     * @return Additional information about accepted values
+     */
+    String additionalInfoForAcceptedValues() default "";
+
     //endregion
 
 }
