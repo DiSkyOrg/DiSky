@@ -622,7 +622,7 @@ public class EventBuilder<T extends Event> {
                         .replace(" ", "_")
                         .replace("/", ""),
                 getName(),
-                "4.28.0",
+                new String[] {"4.28.0"},
                 getDescriptionLines(),
                 getPatterns(),
                 getExampleLines(),

@@ -364,7 +364,7 @@ public class DocBuilder {
 
         private final @Nullable String id;
         private final @Nullable String name;
-        private final @Nullable String since;
+        private final @Nullable String[] since;
         private final @Nullable String[] description;
         private final @Nullable String[] patterns;
         private final @Nullable String[] examples;
@@ -394,7 +394,7 @@ public class DocBuilder {
 
         public EventDocElement(@Nullable String id,
                                @Nullable String name,
-                               @Nullable String since,
+                               @Nullable String[] since,
                                @Nullable String[] description,
                                @Nullable String[] patterns,
                                @Nullable String[] examples,
