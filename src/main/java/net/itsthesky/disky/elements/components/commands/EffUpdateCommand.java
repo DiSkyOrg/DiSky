@@ -3,82 +3,84 @@ package net.itsthesky.disky.elements.components.commands;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
-import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
-import net.itsthesky.disky.api.skript.WaiterEffect;
-import net.itsthesky.disky.core.Bot;
-import net.itsthesky.disky.core.Debug;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.itsthesky.disky.core.Bot;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EffUpdateCommand extends WaiterEffect {
+import static net.itsthesky.disky.api.skript.EasyElement.parseList;
+import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
-	static {
-		Skript.registerEffect(
-				EffUpdateCommand.class,
-				"(update|register) [the] [command[s]] %slashcommands% [(1¦globally|2¦locally)] in [the] [(bot|guild)] %bot/guild%"
-		);
-	}
+public class EffUpdateCommand extends AsyncEffect {
 
-	private boolean isGlobal;
-	private Expression<SlashCommandData> exprCommands;
-	private Expression<Object> exprEntity;
+    static {
+        Skript.registerEffect(
+                EffUpdateCommand.class,
+                "(update|register) [the] [command[s]] %slashcommands% [(1¦globally|2¦locally)] in [the] [(bot|guild)] %bot/guild%"
+        );
+    }
 
-	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
-		exprCommands = (Expression<SlashCommandData>) expressions[0];
-		exprEntity = (Expression<Object>) expressions[1];
-		isGlobal = (parseResult.mark & 1) != 0;
-		return true;
-	}
+    private boolean isGlobal;
+    private Expression<SlashCommandData> exprCommands;
+    private Expression<Object> exprEntity;
 
-	@Override
-	public void runEffect(Event e) {
-		final SlashCommandData[] commands = parseList(exprCommands, e, new SlashCommandData[0]);
-		final Object entity = parseSingle(exprEntity, e, null);
-		if (commands.length == 0) {
-			Debug.debug(this, Debug.Type.EMPTY_LIST, "No commands found.");
-			restart();
-			return;
-		}
-		if (anyNull(this, entity)) {
-			restart();
-			return;
-		}
+    @Override
+    public boolean init(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
 
-		if (isGlobal && !(entity instanceof Bot)) {
-			Debug.debug(this, Debug.Type.INCOMPATIBLE_TYPE, "The entity must be a bot to update commands globally!");
-			restart();
-			return;
-		}
+        exprCommands = (Expression<SlashCommandData>) expressions[0];
+        exprEntity = (Expression<Object>) expressions[1];
+        isGlobal = (parseResult.mark & 1) != 0;
+        return true;
+    }
 
-		if (!isGlobal && !(entity instanceof Guild)) {
-			Debug.debug(this, Debug.Type.INCOMPATIBLE_TYPE, "The entity must be a guild to update commands locally!");
-			restart();
-			return;
-		}
+    @Override
+    public void execute(Event e) {
+        final SlashCommandData[] commands = parseList(exprCommands, e, new SlashCommandData[0]);
+        final Object entity = parseSingle(exprEntity, e, null);
+        if (commands.length == 0) {
+            DiSkyRuntimeHandler.error(new IllegalArgumentException("Cannot update 0 commands!"), getNode());
+            return;
+        }
 
-		final CommandListUpdateAction updateAction;
-		if (isGlobal)
-			updateAction = ((Bot) entity).getInstance().updateCommands();
-		else
-			updateAction = ((Guild) entity).updateCommands();
+        if (entity == null) {
+            DiSkyRuntimeHandler.error(new NullPointerException("The bot/guild provided is null!"), getNode());
+            return;
+        }
 
-		updateAction.addCommands(commands)
-				.queue(this::restart, ex -> {
-					restart();
-					DiSkyRuntimeHandler.error((Exception) ex);
-				});
-	}
+        if (isGlobal && !(entity instanceof Bot)) {
+            DiSkyRuntimeHandler.error(new IllegalArgumentException("The entity must be a bot to update commands globally!"), getNode());
+            return;
+        }
 
-	@Override
-	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "update commands " + exprCommands.toString(e, debug) + " in " +
-				exprEntity.toString(e, debug);
-	}
+        if (!isGlobal && !(entity instanceof Guild)) {
+            DiSkyRuntimeHandler.error(new IllegalArgumentException("The entity must be a guild to update commands locally!"), getNode());
+            return;
+        }
+
+        final CommandListUpdateAction updateAction;
+        if (isGlobal)
+            updateAction = ((Bot) entity).getInstance().updateCommands();
+        else
+            updateAction = ((Guild) entity).updateCommands();
+
+        try {
+            updateAction.addCommands(commands).complete();
+        } catch (Exception ex) {
+            DiSkyRuntimeHandler.error(ex, getNode());
+        }
+    }
+
+    @Override
+    public @NotNull String toString(@Nullable Event e, boolean debug) {
+        return "update commands " + exprCommands.toString(e, debug) + " in " +
+                exprEntity.toString(e, debug);
+    }
 
 }

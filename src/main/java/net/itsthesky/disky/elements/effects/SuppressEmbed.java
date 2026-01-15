@@ -4,25 +4,26 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Message;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
-import net.itsthesky.disky.api.skript.SpecificBotEffect;
-import net.itsthesky.disky.core.Bot;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 
 @Name("Suppress Embeds")
 @Description("Suppress/hide link embeds from a specific message.")
 @Examples("suppress embeds from event-message")
 @Since("4.0.0")
 @SeeAlso(Message.class)
-public class SuppressEmbed extends SpecificBotEffect {
+public class SuppressEmbed extends AsyncEffect {
 
     static {
         Skript.registerEffect(
@@ -34,24 +35,25 @@ public class SuppressEmbed extends SpecificBotEffect {
     private Expression<Message> exprMessage;
 
     @Override
-    public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
+    public boolean init(Expression[] expressions, int i, Kleenean kleenean, SkriptParser.ParseResult parseResult) {
         exprMessage = (Expression<Message>) expressions[0];
         return true;
     }
 
     @Override
-    public void runEffect(@NotNull Event e, @NotNull Bot bot) {
+    public void execute(@NotNull Event e) {
         final Message message = parseSingle(exprMessage, e, null);
 
-        if (anyNull(this, message)) {
-            restart();
+        if (message == null) {
+            DiSkyRuntimeHandler.error(new NullPointerException("Message to suppress embeds from is null"), getNode());
             return;
         }
 
-        message.suppressEmbeds(true).queue(this::restart, ex -> {
-            restart();
-            DiSkyRuntimeHandler.error((Exception) ex);
-        });
+        try {
+            message.suppressEmbeds(true).complete();
+        } catch (Exception ex) {
+            DiSkyRuntimeHandler.error(ex, getNode());
+        }
     }
 
     @Override
