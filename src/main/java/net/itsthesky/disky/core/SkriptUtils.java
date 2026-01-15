@@ -44,10 +44,7 @@ import java.net.URL;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -385,5 +382,19 @@ public final class SkriptUtils {
         }
 
         return expressions;
+    }
+
+    public static <T> List<T> getAllValues(Event event, Expression<T> expression) {
+        if (expression == null) return new ArrayList<>();
+        if (expression.isSingle()) {
+            final var value = expression.getSingle(event);
+            if (value == null) return new ArrayList<>();
+
+            return Collections.singletonList(value);
+        }
+
+        T[] array = expression.getArray(event);
+        if (array == null) return new ArrayList<>();
+        return Arrays.asList(array);
     }
 }
