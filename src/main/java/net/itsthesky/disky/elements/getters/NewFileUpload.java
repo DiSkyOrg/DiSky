@@ -19,13 +19,12 @@ package net.itsthesky.disky.elements.getters;
  */
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
-import ch.njol.skript.classes.Changer;
-import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -34,6 +33,7 @@ import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import net.itsthesky.disky.api.skript.EasyElement;
 import net.itsthesky.disky.api.skript.reflects.ReflectChangeablePropertyFactory;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
@@ -172,7 +172,7 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
                 }
             }
             case URL -> {
-                final var url = source.toString();
+                final var url = cleanupString(source.toString());
                 if (url.isBlank()) {
                     DiSkyRuntimeHandler.error(new IllegalArgumentException("URL cannot be blank"), node, false);
                     return new FileUpload[0];
@@ -195,7 +195,7 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
                 }
             }
             case LOCAL_FILE -> {
-                final var filePath = source.toString();
+                final var filePath = cleanupString(source.toString());
                 if (filePath.isBlank()) {
                     DiSkyRuntimeHandler.error(new IllegalArgumentException("File path cannot be blank"), node, false);
                     return new FileUpload[0];
@@ -217,6 +217,17 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
         upload = (spoiler ? upload.asSpoiler() : upload)
                 .setName(fileName);
         return new FileUpload[]{upload};
+    }
+
+    /**
+     * Cleanup the given string, by "un-formatting" what format Skript does (& -> §, etc).
+     *
+     * @param input The input string.
+     * @return The cleaned-up string.
+     */
+    private static String cleanupString(String input) {
+        if (input == null) return null;
+        return input.replace('§', '&');
     }
 
     @Override
