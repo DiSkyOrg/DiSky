@@ -32,7 +32,7 @@ public class CommandFactory {
     private static final CommandFactory INSTANCE = new CommandFactory();
     private final Method PARSE_I;
     private final Pattern commandPattern = Pattern.compile("(?i)^(on )?discord command (\\S+)(\\s+(.+))?$");
-    private final Pattern argumentPattern = Pattern.compile("<\\s*(?:(.+?)\\s*:\\s*)?(.+?)\\s*(?:=\\s*(" + SkriptParser.wildcard + "))?\\s*>");
+    private final Pattern argumentPattern = Pattern.compile("<\\s*(?:(.+?)\\s*:\\s*)?(.+?)\\s*(?:=\\s*(" + SkriptParser.WILDCARD + "))?\\s*>");
     private final Pattern escape = Pattern.compile("[" + Pattern.quote("(|)<>%\\") + "]");
     private final String listPattern = "\\s*,\\s*|\\s+(and|or|, )\\s+";
 

@@ -244,7 +244,7 @@ public class FindMemberSection extends Section {
             }
 
             if (event instanceof FunctionEvent) {
-                ((ScriptFunction) function).setReturnValue(value.getArray(event));
+                ((ScriptFunction) function).returnValues(event, value);
             } else {
                 assert false : event;
             }
