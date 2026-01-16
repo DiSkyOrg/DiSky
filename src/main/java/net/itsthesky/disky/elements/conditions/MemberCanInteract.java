@@ -17,7 +17,7 @@ public class MemberCanInteract extends Condition {
         DiSkyRegistry.registerCondition(
                 MemberCanInteract.class,
                 ConditionType.PROPERTY,
-                "%member% can interact with %members/roles",
+                "%member% can interact with %members/roles%",
                 "%member% (can't|cannot|can not) interact with %members/roles%"
         );
     }
