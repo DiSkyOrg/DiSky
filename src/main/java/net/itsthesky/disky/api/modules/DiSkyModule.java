@@ -1,7 +1,8 @@
 package net.itsthesky.disky.api.modules;
 
-import ch.njol.skript.SkriptAddon;
+import lombok.Getter;
 import net.itsthesky.disky.DiSky;
+import org.skriptlang.skript.addon.SkriptAddon;
 import org.skriptlang.skript.util.ClassLoader;
 
 import java.io.File;
@@ -10,9 +11,28 @@ import java.net.URLClassLoader;
 public abstract class DiSkyModule {
 
     private final DiSkyModuleInfo info;
+    /**
+     * -- GETTER --
+     *
+     * @return The module jar file
+     */
+    @Getter
     private final File moduleJar;
+    /**
+     * -- GETTER --
+     *  Get the origin for syntax registration, representing this module.
+     *
+     * @return The origin
+     */
+    @Getter
     private final ModuleOrigin origin;
 
+    /**
+     * -- GETTER --
+     *
+     * @return The URL class loader for this module
+     */
+    @Getter
     private URLClassLoader loader;
 
     public DiSkyModule(DiSkyModuleInfo info, File moduleJar) {
@@ -60,28 +80,6 @@ public abstract class DiSkyModule {
      */
     public DiSkyModuleInfo getModuleInfo() {
         return info;
-    }
-
-    /**
-     * @return The module jar file
-     */
-    public File getModuleJar() {
-        return moduleJar;
-    }
-
-    /**
-     * Get the origin for syntax registration, representing this module.
-     * @return The origin
-     */
-    public ModuleOrigin getOrigin() {
-        return origin;
-    }
-
-    /**
-     * @return The URL class loader for this module
-     */
-    public URLClassLoader getLoader() {
-        return loader;
     }
 
     /**

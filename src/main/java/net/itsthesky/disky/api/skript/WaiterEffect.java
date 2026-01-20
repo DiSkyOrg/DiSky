@@ -44,7 +44,7 @@ public abstract class WaiterEffect<T> extends EasyElement {
         return isStopped;
     }
 
-    public NodeInformation getNode() {
+    public NodeInformation getNodeInfo() {
         return node;
     }
 

@@ -4,14 +4,14 @@ import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.expressions.base.PropertyExpression;
 import ch.njol.skript.lang.*;
 import net.itsthesky.disky.DiSky;
+import org.skriptlang.skript.docs.Origin;
 import org.skriptlang.skript.registration.SyntaxInfo;
-import org.skriptlang.skript.registration.SyntaxOrigin;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
 public final class DiSkyRegistry {
 
     public static <E extends Expression<T>, T> void registerExpression(
-            Class<E> expressionType, Class<T> returnType, ExpressionType type, SyntaxOrigin origin, String... patterns
+            Class<E> expressionType, Class<T> returnType, ExpressionType type, Origin origin, String... patterns
     ) throws IllegalArgumentException {
         var addon = DiSky.getAddonInstance();
         addon.syntaxRegistry().register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(expressionType, returnType)
@@ -25,10 +25,10 @@ public final class DiSkyRegistry {
     public static <E extends Expression<T>, T> void registerExpression(
             Class<E> expressionType, Class<T> returnType, ExpressionType type, String... patterns
     ) throws IllegalArgumentException {
-        registerExpression(expressionType, returnType, type, SyntaxOrigin.of(DiSky.getAddonInstance()), patterns);
+        registerExpression(expressionType, returnType, type, Origin.of(DiSky.getAddonInstance()), patterns);
     }
 
-    public static <E extends Condition> void registerCondition(Class<E> conditionClass, Condition.ConditionType type, SyntaxOrigin origin, String... patterns) throws IllegalArgumentException {
+    public static <E extends Condition> void registerCondition(Class<E> conditionClass, Condition.ConditionType type, Origin origin, String... patterns) throws IllegalArgumentException {
         var addon = DiSky.getAddonInstance();
         addon.syntaxRegistry().register(SyntaxRegistry.CONDITION, SyntaxInfo.builder(conditionClass)
                 .priority(type.priority())
@@ -38,7 +38,7 @@ public final class DiSkyRegistry {
         );
     }
 
-    public static <E extends Effect> void registerEffect(Class<E> effectClass, SyntaxOrigin origin, String... patterns) throws IllegalArgumentException {
+    public static <E extends Effect> void registerEffect(Class<E> effectClass, Origin origin, String... patterns) throws IllegalArgumentException {
         var addon = DiSky.getAddonInstance();
         addon.syntaxRegistry().register(SyntaxRegistry.EFFECT, SyntaxInfo.builder(effectClass)
                 .origin(origin)
@@ -48,10 +48,10 @@ public final class DiSkyRegistry {
     }
 
     public static <E extends Effect> void registerEffect(Class<E> effectClass, String... patterns) throws IllegalArgumentException {
-        registerEffect(effectClass, SyntaxOrigin.of(DiSky.getAddonInstance()), patterns);
+        registerEffect(effectClass, Origin.of(DiSky.getAddonInstance()), patterns);
     }
 
-    public static <E extends Section> void registerSection(Class<E> sectionClass, SyntaxOrigin origin, String... patterns) throws IllegalArgumentException {
+    public static <E extends Section> void registerSection(Class<E> sectionClass, Origin origin, String... patterns) throws IllegalArgumentException {
         var addon = DiSky.getAddonInstance();
         addon.syntaxRegistry().register(SyntaxRegistry.SECTION, SyntaxInfo.builder(sectionClass)
                 .origin(origin)
@@ -61,11 +61,11 @@ public final class DiSkyRegistry {
     }
 
     public static <E extends Section> void registerSection(Class<E> sectionClass, String... patterns) throws IllegalArgumentException {
-        registerSection(sectionClass, SyntaxOrigin.of(DiSky.getAddonInstance()), patterns);
+        registerSection(sectionClass, Origin.of(DiSky.getAddonInstance()), patterns);
     }
 
     public static <E extends Condition> void registerCondition(Class<E> conditionClass, Condition.ConditionType type, String... patterns) throws IllegalArgumentException {
-        registerCondition(conditionClass, type, SyntaxOrigin.of(DiSky.getAddonInstance()), patterns);
+        registerCondition(conditionClass, type, Origin.of(DiSky.getAddonInstance()), patterns);
     }
 
     public static boolean unregisterElement(SyntaxRegistry.Key syntaxKey, Class<?> element) {

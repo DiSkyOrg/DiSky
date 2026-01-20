@@ -1,8 +1,8 @@
 package net.itsthesky.disky;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.util.Version;
+import lombok.Getter;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.itsthesky.disky.api.emojis.EmojiStore;
 import net.itsthesky.disky.api.generator.DocBuilder;
@@ -19,12 +19,15 @@ import net.itsthesky.disky.elements.structures.slash.SlashManager;
 import net.itsthesky.disky.managers.BotManager;
 import net.itsthesky.disky.managers.ConfigManager;
 import net.itsthesky.disky.managers.WebhooksManager;
+import net.itsthesky.disky.modules.DiSkyCore;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.addon.SkriptAddon;
+import org.skriptlang.skript.common.CommonModule;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.io.File;
@@ -35,13 +38,13 @@ import java.nio.file.Files;
 
 public final class DiSky extends JavaPlugin {
 
-    private static DiSky instance;
-    private static SkriptAddon addonInstance;
-    private static BotManager botManager;
-    private static boolean skImageInstalled;
-    private static ModuleManager moduleManager;
-    private static DocBuilder builder;
-    private static WebhooksManager webhooksManager;
+    @Getter private static DiSky instance;
+    @Getter private static SkriptAddon addonInstance;
+    @Getter private static BotManager botManager;
+    @Getter private static boolean skImageInstalled;
+    @Getter private static ModuleManager moduleManager;
+    @Getter private static DocBuilder builder;
+    @Getter private static WebhooksManager webhooksManager;
 
     public static DiSkyModule getModule(String moduleName) {
         return getModuleManager()
@@ -138,10 +141,10 @@ public final class DiSky extends JavaPlugin {
 
         if (skImageInstalled)
             getLogger().info("SkImage has been found! Enabling images syntax.");
-        addonInstance = Skript.registerAddon(this);
+        addonInstance = Skript.instance().registerAddon(DiSky.class, "DiSky");
         moduleManager = new ModuleManager(new File(getDataFolder(), "modules"), this, addonInstance);
         try {
-            addonInstance.loadClasses("net.itsthesky.disky.elements");
+            addonInstance.loadModules(new DiSkyCore());
             moduleManager.loadModules();
         } catch (IOException e) {
             DiSkyRuntimeHandler.error(e);
@@ -175,33 +178,13 @@ public final class DiSky extends JavaPlugin {
         botManager.shutdown();
     }
 
-    public static boolean isSkImageInstalled() {
-        return skImageInstalled;
-    }
-
-    public static DiSky getInstance() {
-        return instance;
-    }
-
     public static DocBuilder getDocBuilder() {
         return builder;
     }
 
 
-    public static SkriptAddon getAddonInstance() {
-        return addonInstance;
-    }
-
-    public static ModuleManager getModuleManager() {
-        return moduleManager;
-    }
-
     public static BotManager getManager() {
         return botManager;
-    }
-
-    public static WebhooksManager getWebhooksManager() {
-        return webhooksManager;
     }
 
     public static void runtimeError(String description, @Nullable Object... data) {

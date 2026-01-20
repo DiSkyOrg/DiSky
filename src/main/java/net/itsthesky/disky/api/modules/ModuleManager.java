@@ -1,6 +1,6 @@
 package net.itsthesky.disky.api.modules;
 
-import ch.njol.skript.SkriptAddon;
+import org.skriptlang.skript.addon.SkriptAddon;
 import net.itsthesky.disky.DiSky;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,16 +45,16 @@ public class ModuleManager {
         config.loadFromString(moduleYml);
         final DiSkyModuleInfo info = DiSkyModuleInfo.fromYaml(config);
         if (info == null) {
-            getLogger().severe("The module '"+file.getName()+"' was made for an older (4.20 or below) version of DiSky and cannot be loaded.");
+            getLogger().severe("The module '" + file.getName() + "' was made for an older (4.20 or below) version of DiSky and cannot be loaded.");
             getLogger().severe("Please update the module at https://patreon.disky.me/ or on the wiki page (https://disky.me/docs)!");
             return null;
         }
         if (DiSky.getVersion().isSmallerThan(info.requiredMinVersion)) {
-            getLogger().severe("The module '"+info.name+"' v"+info.version+" by '"+info.author+"' requires at least DiSky v"+info.requiredMinVersion+" to work! (You're using v"+DiSky.getVersion()+")");
+            getLogger().severe("The module '" + info.name + "' v" + info.version + " by '" + info.author + "' requires at least DiSky v" + info.requiredMinVersion + " to work! (You're using v" + DiSky.getVersion() + ")");
             return null;
         }
 
-        final URL[] urls = {new URL("jar:file:"+file.getAbsolutePath()+"!/")};
+        final URL[] urls = {new URL("jar:file:" + file.getAbsolutePath() + "!/")};
         final URLClassLoader loader = new URLClassLoader(urls, getClass().getClassLoader());
         final Class<DiSkyModule> clazz = (Class<DiSkyModule>) loader.loadClass(info.mainClass);
 
@@ -71,33 +71,33 @@ public class ModuleManager {
                 continue; // Skip directories
 
             if (!moduleFile.getName().endsWith(".jar")) {
-                getLogger().warning("Skipping file '"+moduleFile.getPath()+"' as it's not a valid module file.");
+                getLogger().warning("Skipping file '" + moduleFile.getPath() + "' as it's not a valid module file.");
                 continue;
             }
 
-            getLogger().warning("Loading module from file '"+moduleFile.getPath()+"'...");
+            getLogger().warning("Loading module from file '" + moduleFile.getPath() + "'...");
             final DiSkyModule module;
             try {
                 module = loadModule(moduleFile);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                getLogger().severe("Unable to initialize module '"+moduleFile.getPath()+"'! Maybe a wrong Java version?");
+                getLogger().severe("Unable to initialize module '" + moduleFile.getPath() + "'! Maybe a wrong Java version?");
                 return;
             }
             if (module == null) // If the module is null, it means the version is not compatible
                 continue;
 
 
-            getLogger().info("Successfully loaded module '"+module.getModuleInfo().name+"' v"+module.getModuleInfo().version+" by '"+module.getModuleInfo().author+"'! Enabling ...");
+            getLogger().info("Successfully loaded module '" + module.getModuleInfo().name + "' v" + module.getModuleInfo().version + " by '" + module.getModuleInfo().author + "'! Enabling ...");
             try {
                 module.init(this.instance, this.addon);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                getLogger().severe("Failed to enable module '"+module.getModuleInfo().name+"' v"+module.getModuleInfo().version+" by '"+module.getModuleInfo().author+"':");
+                getLogger().severe("Failed to enable module '" + module.getModuleInfo().name + "' v" + module.getModuleInfo().version + " by '" + module.getModuleInfo().author + "':");
                 continue;
             }
             modules.put(module.getModuleInfo().name, module);
-            getLogger().info("Successfully enabled module '"+module.getModuleInfo().name+"'!");
+            getLogger().info("Successfully enabled module '" + module.getModuleInfo().name + "'!");
         }
     }
 

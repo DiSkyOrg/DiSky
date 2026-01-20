@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -8,12 +9,10 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.parser.ParserInstance;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
-import net.itsthesky.disky.DiSky;
-import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
-import net.itsthesky.disky.api.skript.WaiterEffect;
-import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.itsthesky.disky.api.events.SimpleDiSkyEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,99 +33,104 @@ import java.util.stream.Collectors;
         "\tsend \"Welcome %{_user}%!\" to event-channel"})
 @Since("4.0.0")
 @SuppressWarnings("ALL")
-public class RetrieveEventValue extends WaiterEffect<Object> {
+public class RetrieveEventValue extends AsyncEffect {
 
-	public static final HashMap<Class<? extends SimpleDiSkyEvent>, List<RetrieveValueInfo>> VALUES;
+    public static final HashMap<Class<? extends SimpleDiSkyEvent>, List<RetrieveValueInfo>> VALUES;
 
-	static {
-		VALUES = new HashMap<>();
-		Skript.registerEffect(
-				RetrieveEventValue.class,
-				"retrieve [the] [event[(-| )]]value %string% and store (it|the value) in %objects%"
-		);
-	}
+    static {
+        VALUES = new HashMap<>();
+        Skript.registerEffect(
+                RetrieveEventValue.class,
+                "retrieve [the] [event[(-| )]]value %string% and store (it|the value) in %objects%"
+        );
+    }
 
-	private RetrieveValueInfo<Object, ?, Object> valueInfo;
-	private String id;
+    private Expression<?> exprOutput;
+    private RetrieveValueInfo<Object, ?, Object> valueInfo;
+    private String id;
 
-	@Override
-	public boolean initEffect(Expression<?>[] exprs, int i, Kleenean kleenean, ParseResult parseResult) {
-		final String rawId;
-		try {
-			rawId = ((Expression<String>) exprs[0]).getSingle(null);
-		} catch (Exception ex) {
-			Skript.error("The provided event-value string MUST be a literal / constant, aka not a variable or a changeable value.");
-			return false;
-		}
-		final Class eventClass = ParserInstance.get().getCurrentEvents()[0];
-		final List<RetrieveValueInfo> valuesInfo = VALUES.getOrDefault(eventClass, new ArrayList<>());
+    @Override
+    public boolean init(Expression<?>[] exprs, int i, Kleenean kleenean, ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
 
-		final @Nullable RetrieveValueInfo valueInfo =
-				valuesInfo.stream()
-						.filter(value -> value.getCodeName().equalsIgnoreCase(rawId))
-						.findAny()
-						.orElse(null);
+        final String rawId;
+        try {
+            rawId = ((Expression<String>) exprs[0]).getSingle(null);
+        } catch (Exception ex) {
+            Skript.error("The provided event-value string MUST be a literal / constant, aka not a variable or a changeable value.");
+            return false;
+        }
+        final Class eventClass = ParserInstance.get().getCurrentEvents()[0];
+        final List<RetrieveValueInfo> valuesInfo = VALUES.getOrDefault(eventClass, new ArrayList<>());
 
-		if (valueInfo == null) {
-			Skript.error("Unknown event-value '"+rawId+"' for event '"+ParserInstance.get().getCurrentEventName()+"'. Found the following values: " +
-					(valuesInfo.isEmpty() ? "none" : valuesInfo
-							.stream()
-							.map(RetrieveValueInfo::getCodeName)
-							.collect(Collectors.joining(", "))));
-			return false;
-		}
+        final @Nullable RetrieveValueInfo valueInfo =
+                valuesInfo.stream()
+                        .filter(value -> value.getCodeName().equalsIgnoreCase(rawId))
+                        .findAny()
+                        .orElse(null);
 
-		this.valueInfo = valueInfo;
-		id = rawId;
+        if (valueInfo == null) {
+            Skript.error("Unknown event-value '" + rawId + "' for event '" + ParserInstance.get().getCurrentEventName() + "'. Found the following values: " +
+                    (valuesInfo.isEmpty() ? "none" : valuesInfo
+                            .stream()
+                            .map(RetrieveValueInfo::getCodeName)
+                            .collect(Collectors.joining(", "))));
+            return false;
+        }
 
-		return validateVariable(exprs[1], false, true);
-	}
+        this.valueInfo = valueInfo;
+        id = rawId;
 
-	@Override
-	public void runEffect(Event e) {
-		final SimpleDiSkyEvent event = (SimpleDiSkyEvent<?>) e;
-		valueInfo.getAction().apply(event).queue(entity -> {
-					restart(valueInfo.getConverter().apply(entity));
-				},
-				ex -> {
-					restart();
-					DiSkyRuntimeHandler.error((Exception) ex);
-				});
-	}
+        this.exprOutput = exprs[1];
+        if (!Changer.ChangerUtils.acceptsChange(exprOutput, Changer.ChangeMode.SET, Object.class)) {
+            Skript.error("The output expression must be a variable or a place where to store the retrieved value.");
+            return false;
+        }
 
-	@Override
-	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "retrieve event-value " + id + " and store it in " + variableAsString(e, debug);
-	}
+        return true;
+    }
 
-	public static class RetrieveValueInfo<B, T, S> {
+    @Override
+    public void execute(Event e) {
+        final SimpleDiSkyEvent event = (SimpleDiSkyEvent<?>) e;
+        final var value = valueInfo.getAction().apply(event).complete();
+        final var converted = valueInfo.getConverter().apply(value);
+        exprOutput.change(e, new Object[]{converted}, Changer.ChangeMode.SET);
+    }
 
-		private final Class<B> clazz;
-		private final String codeName;
-		private final Function<B, RestAction<T>> action;
-		private final Function<S, T> converter;
+    @Override
+    public @NotNull String toString(@Nullable Event e, boolean debug) {
+        return "retrieve event-value " + id + " and store it in " + exprOutput.toString(e, debug);
+    }
 
-		public RetrieveValueInfo(Class<B> clazz, String codeName, Function<B, RestAction<T>> action, Function<S, T> converter) {
-			this.clazz = clazz;
-			this.codeName = codeName;
-			this.action = action;
-			this.converter = converter;
-		}
+    public static class RetrieveValueInfo<B, T, S> {
 
-		public String getCodeName() {
-			return codeName;
-		}
+        private final Class<B> clazz;
+        private final String codeName;
+        private final Function<B, RestAction<T>> action;
+        private final Function<S, T> converter;
 
-		public Class<B> getClazz() {
-			return clazz;
-		}
+        public RetrieveValueInfo(Class<B> clazz, String codeName, Function<B, RestAction<T>> action, Function<S, T> converter) {
+            this.clazz = clazz;
+            this.codeName = codeName;
+            this.action = action;
+            this.converter = converter;
+        }
 
-		public Function<B, RestAction<T>> getAction() {
-			return action;
-		}
+        public String getCodeName() {
+            return codeName;
+        }
 
-		public Function<S, T> getConverter() {
-			return converter;
-		}
-	}
+        public Class<B> getClazz() {
+            return clazz;
+        }
+
+        public Function<B, RestAction<T>> getAction() {
+            return action;
+        }
+
+        public Function<S, T> getConverter() {
+            return converter;
+        }
+    }
 }

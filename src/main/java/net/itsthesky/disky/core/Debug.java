@@ -58,7 +58,7 @@ public final class Debug {
 
 	private static NodeInformation retrieveNode(Object from) {
 		if (from instanceof WaiterEffect)
-			return ((WaiterEffect) from).getNode();
+			return ((WaiterEffect) from).getNodeInfo();
 
 		try {
 			final Field[] fields = from.getClass().getDeclaredFields();

@@ -14,7 +14,7 @@ group = 'net.itsthesky'
 
 // Semantic Versioning
 def major = '4'
-def minor = '26'
+def minor = '27'
 def patch = '0'
 
 def channel = ''
@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     shadow 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
-    shadow 'com.github.SkriptLang:Skript:2.10.0'
+    shadow 'com.github.SkriptLang:Skript:2.14.0-pre2'
     // Jetbrains Annotations
     shadow 'org.jetbrains:annotations:23.0.0'
 
@@ -51,7 +51,8 @@ dependencies {
     implementation 'net.bytebuddy:byte-buddy-agent:1.14.10'
 
     // Lombok
-    implementation 'org.projectlombok:lombok:1.18.28'
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
 }
 
 shadowJar {
@@ -104,14 +105,12 @@ task removeClassPath {
 
 shadowJar.finalizedBy removeClassPath
 
-def targetJavaVersion = 17
+def targetJavaVersion = 21
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
+    toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
 }
 
 tasks.withType(JavaCompile).configureEach {

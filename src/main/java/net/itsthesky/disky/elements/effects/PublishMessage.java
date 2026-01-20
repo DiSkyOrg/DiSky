@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.util.AsyncEffect;
 import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
         "crosspost message with id \"000\" in channel with id \"123\""})
 @Since("4.0.0")
 @SeeAlso(Message.class)
-public class PublishMessage extends SpecificBotEffect {
+public class PublishMessage extends AsyncEffect {
 
     static {
         Skript.registerEffect(
@@ -36,20 +37,26 @@ public class PublishMessage extends SpecificBotEffect {
     private Expression<Message> exprMessage;
 
     @Override
-    public boolean initEffect(Expression @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
+    public boolean init(Expression @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
         exprMessage = (Expression<Message>) exprs[0];
         return true;
     }
 
     @Override
-    public void runEffect(@NotNull Event e, final Bot bot) {
-        Message message = exprMessage.getSingle(e);
-        message.crosspost().queue(
-                (v)-> restart(),
-                ex -> {
-                    DiSkyRuntimeHandler.error((Exception) ex);
-                    restart();
-                });
+    public void execute(@NotNull Event e) {
+        final var message = exprMessage.getSingle(e);
+        if (message == null) {
+            DiSkyRuntimeHandler.error(new NullPointerException("Message to publish is null."), getNode());
+            return;
+        }
+
+        try {
+            message.crosspost().complete();
+        } catch (Exception ex) {
+            DiSkyRuntimeHandler.error(ex, getNode());
+        }
     }
 
     @Override

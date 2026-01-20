@@ -4,6 +4,7 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.util.AsyncEffect;
 import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
@@ -24,6 +25,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
+import static net.itsthesky.disky.api.skript.EasyElement.parseList;
+import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
+
 @Name("Suppress Reaction")
 @Description({"Suppress one or more reactions of a message.",
 		"You can also specific the user who added the emote to remove it one time.",
@@ -32,7 +36,7 @@ import java.util.List;
 		"suppress reaction \"joy\" from event-message # Remove the reaction ADDED BY THE BOT"})
 @Since("4.1.1")
 @SeeAlso({Message.class, User.class})
-public class SuppressReaction extends SpecificBotEffect {
+public class SuppressReaction extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
@@ -46,7 +50,7 @@ public class SuppressReaction extends SpecificBotEffect {
 	private Expression<Message> exprMessage;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
+	public boolean init(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
 		exprEmote = (Expression<Emote>) expressions[0];
 		exprUser = (Expression<User>) expressions[1];
 		exprMessage = (Expression<Message>) expressions[2];
@@ -54,17 +58,17 @@ public class SuppressReaction extends SpecificBotEffect {
 	}
 
 	@Override
-	public void runEffect(@NotNull Event e, Bot bot) {
+	public void execute(@NotNull Event e) {
 		final Emote[] emotes = parseList(exprEmote, e, null);
 		final User user = parseSingle(exprUser, e, null);
 		final Message message = parseSingle(exprMessage, e, null);
-		if (anyNull(this, emotes, message)) {
-			restart();
-			return;
-		}
+
+        if (emotes == null || emotes.length == 0 || message == null) {
+            DiSkyRuntimeHandler.error(new NullPointerException("Cannot suppress reaction because the emote(s) or message is null."), getNode());
+            return;
+        }
 
 		final List<RestAction<Void>> actions = new LinkedList<>();
-
 		for (Emote emote : emotes) {
 			if (user == null)
 				actions.add(message.removeReaction(emote.getEmoji()));
@@ -72,10 +76,11 @@ public class SuppressReaction extends SpecificBotEffect {
 				actions.add(message.removeReaction(emote.getEmoji(), user));
 		}
 
-		RestAction.allOf(actions).queue(this::restart, ex -> {
-			restart();
-			DiSkyRuntimeHandler.error((Exception) ex);
-		});
+		try {
+            RestAction.allOf(actions).complete();
+        } catch (Exception ex) {
+            DiSkyRuntimeHandler.error(ex, getNode());
+        }
 	}
 
 	@Override

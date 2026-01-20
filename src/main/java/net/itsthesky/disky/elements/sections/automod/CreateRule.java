@@ -3,16 +3,20 @@ package net.itsthesky.disky.elements.sections.automod;
 import ch.njol.skript.Skript;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.itsthesky.disky.api.skript.SpecificBotEffect;
 import net.itsthesky.disky.core.Bot;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.managers.wrappers.AutoModRuleBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CreateRule extends SpecificBotEffect {
+import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
+
+public class CreateRule extends AsyncEffect {
 
 	static {
 		Skript.registerEffect(
@@ -25,23 +29,29 @@ public class CreateRule extends SpecificBotEffect {
 	private Expression<Guild> exprGuild;
 
 	@Override
-	public boolean initEffect(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
+	public boolean init(Expression[] expressions, int i, Kleenean kleenean, ParseResult parseResult) {
+        getParser().setHasDelayBefore(Kleenean.TRUE);
+
 		exprRule = (Expression<AutoModRuleBuilder>) expressions[0];
 		exprGuild = (Expression<Guild>) expressions[1];
 		return true;
 	}
 
 	@Override
-	public void runEffect(@NotNull Event e, @NotNull Bot bot) {
+	public void execute(@NotNull Event e) {
 		final AutoModRuleBuilder rule = parseSingle(exprRule, e);
 		final Guild guild = parseSingle(exprGuild, e);
 
-		if (anyNull(this, rule, guild)) {
-			restart();
-			return;
-		}
+        if (rule == null || guild == null) {
+            DiSkyRuntimeHandler.error(new NullPointerException("Cannot create automod rule: rule or guild is null."), getNode());
+            return;
+        }
 
-		guild.createAutoModRule(rule.build()).queue(modrule -> restart());
+		try {
+            guild.createAutoModRule(rule.build()).complete();
+        } catch (Exception ex) {
+            DiSkyRuntimeHandler.error(ex, getNode());
+        }
 	}
 
 	@Override
