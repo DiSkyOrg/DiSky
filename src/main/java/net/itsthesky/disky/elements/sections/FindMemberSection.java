@@ -7,7 +7,6 @@ import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
-import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.*;
@@ -20,19 +19,17 @@ import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
-import net.itsthesky.disky.DiSky;
-import net.itsthesky.disky.api.DiSkyRegistry;
-import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Name("Find Members")
 @Description({"Find member filter! It's a section that lets you filter by yourself the members you want to retrieve.",
@@ -45,7 +42,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
         "reply with \"I have found %size of {_members::*}% that has the role and is muted!\""})
 @Since("4.14.3")
 @SeeAlso({Member.class, Guild.class})
-public class FindMemberSection extends Section {
+public class FindMemberSection extends Section implements ReturnHandler<Member> {
+
+    public static @Nullable FindMemberSection instance;
 
     static {
         Skript.registerSection(
@@ -53,26 +52,17 @@ public class FindMemberSection extends Section {
                 "find [the] [discord] member[s] (in|from) [guild] %guild% and store (them|the members) in %~objects% with filter var[iable] %~objects%"
         );
 
-        if (DiSkyRegistry.unregisterElement(SyntaxRegistry.EXPRESSION, ch.njol.skript.effects.EffReturn.class)) {
-            DiSky.debug("Unregistered the original 'permissions' expression, to replace it with a new one.");
-        } else {
-            Skript.error("DiSky were unable to unregister the original 'permissions' expression, please report this error to the developer.");
-        }
-
         Skript.registerEffect(
                 EffReturn.class,
                 "return %objects%"
         );
     }
 
-    public static @Nullable FindMemberSection instance;
-
     private Expression<Guild> exprGuild;
     private Expression<Object> exprResult;
     private Expression<Object> exprValue;
-    private Trigger trigger;
 
-    private boolean iterationResult = false;
+    private ReturnableTrigger<Member> trigger;
 
     @Override
     public boolean init(Expression<?>[] expressions, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult, @NotNull SectionNode sectionNode, @NotNull List<TriggerItem> triggerItems) {
@@ -84,20 +74,32 @@ public class FindMemberSection extends Section {
                 || !Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Member[].class))
             return false;
 
-        AtomicBoolean delayed = new AtomicBoolean(false);
-        Runnable afterLoading = () -> delayed.set(!getParser().getHasDelayBefore().isFalse());
-
         instance = this;
-        trigger = loadCode(sectionNode, "find members",
-                afterLoading, getParser().getCurrentEvents());
+        trigger = loadReturnableSectionCode(sectionNode, "find members", getParser().getCurrentEvents());
         instance = null;
 
-        if (delayed.get()) {
-            Skript.error("Delays can't be used within a 'find member' section.");
-            return false;
-        }
+        // TODO: Be sure we don't have any delay within the section
+//        if (delayed.get()) {
+//            Skript.error("Delays can't be used within a 'find member' section.");
+//            return false;
+//        }
 
         return true;
+    }
+
+    @Override
+    public void returnValues(Event event, Expression<? extends Member> value) {
+
+    }
+
+    @Override
+    public boolean isSingleReturnValue() {
+        return false;
+    }
+
+    @Override
+    public @Nullable Class<? extends Member> returnValueType() {
+        return Member.class;
     }
 
     @Override
@@ -121,12 +123,10 @@ public class FindMemberSection extends Section {
             try {
 
                 List<Member> members = guild.findMembers(member -> {
-
-                    iterationResult = false;
-                    exprValue.change(e, new Member[] {member}, Changer.ChangeMode.SET);
+                    exprValue.change(e, new Member[]{member}, Changer.ChangeMode.SET);
 
                     TriggerItem.walk(trigger, e);
-                    return iterationResult;
+                    return false;
                 }).get();
 
                 exprResult.change(e, members.toArray(new Member[0]), Changer.ChangeMode.SET);
@@ -230,7 +230,7 @@ public class FindMemberSection extends Section {
 
             if (section != null) {
                 try {
-                    section.iterationResult = value.getSingle(event) != null && Boolean.TRUE.equals(value.getSingle(event));
+//                    section.iterationResult = value.getSingle(event) != null && Boolean.TRUE.equals(value.getSingle(event));
                 } catch (Exception e) {
                     Expression<?> converted = value.getConvertedExpression(Boolean.class);
                     if (converted == null) {
@@ -238,7 +238,7 @@ public class FindMemberSection extends Section {
                         return null;
                     }
 
-                    section.iterationResult = converted.getSingle(event) != null && Boolean.TRUE.equals(converted.getSingle(event));
+//                    section.iterationResult = converted.getSingle(event) != null && Boolean.TRUE.equals(converted.getSingle(event));
                 }
                 return null;
             }
