@@ -292,13 +292,13 @@ public class Types {
                         "The **ModalTopLevelComponent** type represents a top-level component in a modal.")
                 .eventExpression().register();
         new DiSkyType<>(Button.class, "button",
-                ActionComponent::getId,
+                ActionComponent::getCustomId,
                 null).documentation("Button",
                         "The **Button** type represents a button component in Discord. Buttons can be clicked to trigger interactions.",
                         ExprNewButton.class, ExprNewButtonsRow.class)
                 .eventExpression().register();
         new DiSkyType<>(SelectMenu.Builder.class, "dropdown",
-                SelectMenu.Builder::getId,
+                SelectMenu.Builder::getCustomId,
                 null).documentation("Dropdown",
                         "The **SelectMenu.Builder** type is used to build select menus in Discord. Select menus allow users to choose from a list of options.",
                         ExprNewDropdown.class)
@@ -310,7 +310,7 @@ public class Types {
                         ExprNewDropdownOption.class)
                 .eventExpression().register();
         new DiSkyType<>(TextInput.Builder.class, "textinput",
-                TextInput.Builder::getId,
+                TextInput.Builder::getCustomId,
                 null).documentation("Text Input",
                         "The **TextInput.Builder** type is used to build text input fields in modals.",
                         ExprNewInput.class)
