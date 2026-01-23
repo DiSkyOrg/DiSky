@@ -8,6 +8,7 @@ import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.components.ActionComponent;
 import net.dv8tion.jda.api.components.Component;
+import net.dv8tion.jda.api.components.MessageTopLevelComponentUnion;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.actionrow.ActionRowChildComponent;
 import net.dv8tion.jda.api.components.buttons.Button;
@@ -54,7 +55,7 @@ public class EditMessageComponent extends AsyncEffect {
             return;
 
         // First gather components rows
-        final List<ActionRow> rows = message.getActionRows();
+        final List<ActionRow> rows = message.getComponents().stream().map(MessageTopLevelComponentUnion::asActionRow).toList();
         final List<ActionRow> newRows = new ArrayList<>();
 
         // Then iterate over each row and edit the comp if found

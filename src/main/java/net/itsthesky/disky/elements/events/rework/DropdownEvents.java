@@ -50,7 +50,7 @@ public class DropdownEvents {
                 .value(Member.class, StringSelectInteractionEvent::getMember)
                 .value(User.class, StringSelectInteractionEvent::getUser)
                 .value(SelectMenu.Builder.class, evt -> evt.getComponent().createCopy())
-                .value(String.class, evt -> evt.getComponent().getId())
+                .value(String.class, evt -> evt.getComponent().getCustomId())
                 .value(ComponentInteraction.class, StringSelectInteractionEvent::getInteraction)
 
                 .listExpression("select[ed] value[s]", String.class,
@@ -77,7 +77,7 @@ public class DropdownEvents {
                 .value(Member.class, EntitySelectInteractionEvent::getMember)
                 .value(User.class, EntitySelectInteractionEvent::getUser)
                 .value(SelectMenu.Builder.class, evt -> evt.getComponent().createCopy())
-                .value(String.class, evt -> evt.getComponent().getId())
+                .value(String.class, evt -> evt.getComponent().getCustomId())
                 .value(ComponentInteraction.class, EntitySelectInteractionEvent::getInteraction)
 
                 .listExpression("select[ed] entit(y|ies)", Object.class,
