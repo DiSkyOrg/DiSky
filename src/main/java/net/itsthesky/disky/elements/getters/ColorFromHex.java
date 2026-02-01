@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class ColorFromHex extends SimpleExpression<Color> {
 
     static {
-        Skript.registerExpression(ColorFromHex.class, Color.class, ExpressionType.PROPERTY,
+        DiSkyRegistry.registerExpression(ColorFromHex.class, Color.class, ExpressionType.PROPERTY,
                 "[the] (hex|color) %string%");
     }
 

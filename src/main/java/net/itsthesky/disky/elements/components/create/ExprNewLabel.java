@@ -19,6 +19,7 @@ package net.itsthesky.disky.elements.components.create;
  */
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -36,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewLabel extends SimpleExpression<ModalTopLevelComponent> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 ExprNewLabel.class,
                 ModalTopLevelComponent.class,
                 ExpressionType.COMBINED,

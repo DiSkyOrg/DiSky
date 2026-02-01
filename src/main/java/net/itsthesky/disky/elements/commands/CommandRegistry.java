@@ -2,6 +2,7 @@ package net.itsthesky.disky.elements.commands;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.config.validate.SectionValidator;

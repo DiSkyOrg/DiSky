@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.structures.slash.elements;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.util.Timespan;
 import net.itsthesky.disky.api.skript.SimpleGetterExpression;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class ExprRemainingTime extends SimpleGetterExpression<Timespan, Event> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 ExprRemainingTime.class,
                 Timespan.class,
                 ExpressionType.COMBINED,

@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class LastDiSkyException extends SimpleExpression<String> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				LastDiSkyException.class,
 				String.class,
 				ExpressionType.SIMPLE,

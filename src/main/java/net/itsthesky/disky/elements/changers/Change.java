@@ -21,6 +21,7 @@ package net.itsthesky.disky.elements.changers;
  */
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.SkriptConfig;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.classes.Changer.ChangeMode;

@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -40,7 +41,7 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> implem
                                        String codeName,
                                        String property,
                                        boolean allowBot) {
-        Skript.registerExpression(clazz,
+        DiSkyRegistry.registerExpression(clazz,
                 type,
                 ExpressionType.COMBINED,
                 codeName + " (with|from) [the] "+property+" %string% "+ (allowBot ? "[(with|using) [the] [bot] [(named|with name)] %-bot%]" : ""));

@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.commands;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewMessageCommand extends SimpleExpression<CommandData> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				ExprNewMessageCommand.class,
 				CommandData.class,
 				ExpressionType.COMBINED,

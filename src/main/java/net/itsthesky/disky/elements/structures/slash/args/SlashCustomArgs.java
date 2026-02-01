@@ -19,6 +19,7 @@ package net.itsthesky.disky.elements.structures.slash.args;
  */
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.registrations.Classes;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;

@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.create;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public class ExprNewButton extends SimpleExpression<Button> {
     
     static {
-        Skript.registerExpression(ExprNewButton.class, Button.class, ExpressionType.SIMPLE,
+        DiSkyRegistry.registerExpression(ExprNewButton.class, Button.class, ExpressionType.SIMPLE,
                 "[a] new [(enabled|disabled)] %buttonstyle% [link] button [with (id|url)] %string% [(named|with label) %-string%][,] [with [emoji] %-emote%]",
                 "[a] new [disabled] premium button (with|using) sku [id] %string%");
     }

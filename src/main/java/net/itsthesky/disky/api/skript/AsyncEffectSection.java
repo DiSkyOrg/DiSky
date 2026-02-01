@@ -1,6 +1,7 @@
 package net.itsthesky.disky.api.skript;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.EffectSection;
 import ch.njol.skript.lang.Trigger;

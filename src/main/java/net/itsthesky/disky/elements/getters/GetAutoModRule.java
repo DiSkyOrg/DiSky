@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -29,7 +30,7 @@ public class GetAutoModRule extends SimpleExpression<AutoModRule>
         implements IAsyncGettableExpression<AutoModRule> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 GetAutoModRule.class,
                 AutoModRule.class,
                 ExpressionType.SIMPLE,

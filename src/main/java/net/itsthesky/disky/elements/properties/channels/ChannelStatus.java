@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.channels;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.skript.action.ActionProperty;

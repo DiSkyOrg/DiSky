@@ -1,6 +1,7 @@
 package net.itsthesky.disky.core;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import net.itsthesky.disky.DiSky;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;

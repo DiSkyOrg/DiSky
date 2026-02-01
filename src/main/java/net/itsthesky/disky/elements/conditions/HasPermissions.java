@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.conditions;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.conditions.CondPermission;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;

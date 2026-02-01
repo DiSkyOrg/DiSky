@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewField extends SimpleExpression<MessageEmbed.Field> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 ExprNewField.class,
                 MessageEmbed.Field.class,
                 ExpressionType.COMBINED,

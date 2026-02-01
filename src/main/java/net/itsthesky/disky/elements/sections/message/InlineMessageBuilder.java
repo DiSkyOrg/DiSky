@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.sections.message;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -39,7 +40,7 @@ import java.util.List;
 public class InlineMessageBuilder extends SimpleExpression<MessageCreateBuilder> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				InlineMessageBuilder.class,
 				MessageCreateBuilder.class,
 				ExpressionType.COMBINED,

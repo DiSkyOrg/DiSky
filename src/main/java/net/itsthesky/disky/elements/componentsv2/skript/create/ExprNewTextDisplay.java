@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.componentsv2.skript.create;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewTextDisplay extends SimpleExpression<TextDisplayBuilder> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 ExprNewTextDisplay.class,
                 TextDisplayBuilder.class,
                 ExpressionType.SIMPLE,

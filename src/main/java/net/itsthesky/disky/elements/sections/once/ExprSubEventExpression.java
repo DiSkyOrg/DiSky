@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.sections.once;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.NoDoc;
 import ch.njol.skript.expressions.base.EventValueExpression;
@@ -25,7 +26,7 @@ import java.util.stream.Stream;
 public class ExprSubEventExpression extends WrapperExpression<Object> {
 
     static {
-        Skript.registerExpression(ExprSubEventExpression.class, Object.class,
+        DiSkyRegistry.registerExpression(ExprSubEventExpression.class, Object.class,
                 ExpressionType.PROPERTY, "[the] outer event-%*classinfo%");// property so that it is parsed after most other expressions
     }
 

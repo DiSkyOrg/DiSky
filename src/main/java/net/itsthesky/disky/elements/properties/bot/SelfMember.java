@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.bot;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 public class SelfMember extends SimpleExpression<Member> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				SelfMember.class,
 				Member.class,
 				ExpressionType.PROPERTY,

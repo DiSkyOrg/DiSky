@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.structures.slash.elements;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -23,7 +24,7 @@ import java.util.List;
 public class ExprSlashArgument extends SimpleExpression<Object> {
 
     static {
-        Skript.registerExpression(ExprSlashArgument.class, Object.class, ExpressionType.SIMPLE,
+        DiSkyRegistry.registerExpression(ExprSlashArgument.class, Object.class, ExpressionType.SIMPLE,
                 "[][the] last arg[ument][s]",
                 "[][the] arg[ument][s](-| )<(\\d+)>", "[][the] <(\\d*1)st|(\\d*2)nd|(\\d*3)rd|(\\d*[4-90])th> arg[ument][s]",
                 "[][the] arg[ument][s]",

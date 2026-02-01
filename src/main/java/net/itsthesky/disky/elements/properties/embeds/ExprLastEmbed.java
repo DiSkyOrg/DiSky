@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprLastEmbed extends SimpleExpression<EmbedBuilder> {
 
     static {
-        Skript.registerExpression(ExprLastEmbed.class, EmbedBuilder.class, ExpressionType.SIMPLE,
+        DiSkyRegistry.registerExpression(ExprLastEmbed.class, EmbedBuilder.class, ExpressionType.SIMPLE,
                 "[the] [last] (made|created|generated) embed",
                 "[the] last embed"
         );

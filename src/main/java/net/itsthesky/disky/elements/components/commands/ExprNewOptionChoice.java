@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.commands;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public class ExprNewOptionChoice extends SimpleExpression<Command.Choice> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				ExprNewOptionChoice.class,
 				Command.Choice.class,
 				ExpressionType.COMBINED,

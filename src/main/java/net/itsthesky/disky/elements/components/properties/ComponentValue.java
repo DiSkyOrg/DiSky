@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.properties;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class ComponentValue extends SimpleExpression<Object> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				ComponentValue.class,
 				Object.class,
 				ExpressionType.COMBINED,

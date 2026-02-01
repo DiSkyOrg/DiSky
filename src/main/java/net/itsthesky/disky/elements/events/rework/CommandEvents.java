@@ -19,6 +19,7 @@ package net.itsthesky.disky.elements.events.rework;
  */
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -198,7 +199,7 @@ public class CommandEvents {
     public static class ArgValue extends SimpleGetterExpression<Object, Event> {
 
         static {
-            Skript.registerExpression(
+            DiSkyRegistry.registerExpression(
                     ArgValue.class,
                     Object.class,
                     ExpressionType.COMBINED,

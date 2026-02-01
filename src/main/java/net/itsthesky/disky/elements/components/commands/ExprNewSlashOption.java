@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.commands;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewSlashOption extends SimpleExpression<OptionData> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				ExprNewSlashOption.class,
 				OptionData.class,
 				ExpressionType.COMBINED,

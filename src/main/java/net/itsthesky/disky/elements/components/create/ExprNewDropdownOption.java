@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.create;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewDropdownOption extends SimpleExpression<SelectOption> {
     
     static {
-        Skript.registerExpression(ExprNewDropdownOption.class, SelectOption.class, ExpressionType.SIMPLE,
+        DiSkyRegistry.registerExpression(ExprNewDropdownOption.class, SelectOption.class, ExpressionType.SIMPLE,
                 "[a] new [default] [dropdown] option with value %string% (named|with label) %-string% [with description [%-string%]] [with [emoji] %-emote%]");
     }
 

@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.sections.once;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.SkriptParser;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprOuterExpression extends SimpleExpression<Object> {
 
     // static {
-    //     Skript.registerExpression(
+    //     DiSkyRegistry.registerExpression(
     //             ExprOuterExpression.class,
     //             Object.class,
     //             ExpressionType.COMBINED,

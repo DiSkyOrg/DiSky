@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.bot;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 public class ExprPresence extends SimpleExpression<Activity> {
 
 	static {
-		Skript.registerExpression(ExprPresence.class, Activity.class, ExpressionType.SIMPLE,
+		DiSkyRegistry.registerExpression(ExprPresence.class, Activity.class, ExpressionType.SIMPLE,
 				"listening [to] %string%",
 				"watching [to] %string%",
 				"playing [to] %string%",

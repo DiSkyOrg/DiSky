@@ -19,6 +19,7 @@ package net.itsthesky.disky.elements.componentsv2.skript.create;
  */
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExprNewMediaGallery extends SimpleExpression<MediaGalleryBuilder> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 ExprNewMediaGallery.class,
                 MediaGalleryBuilder.class,
                 ExpressionType.COMBINED,

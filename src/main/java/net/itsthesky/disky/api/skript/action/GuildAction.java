@@ -1,6 +1,7 @@
 package net.itsthesky.disky.api.skript.action;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,7 +15,7 @@ public abstract class GuildAction<T> extends AbstractNewAction<T, Guild> {
             Class entityClazz,
             String actionName
     ) {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 clazz,
                 entityClazz,
                 ExpressionType.SIMPLE,

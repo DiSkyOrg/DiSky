@@ -1,6 +1,7 @@
 package net.itsthesky.disky.api.skript.action;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -13,7 +14,7 @@ public abstract class ChannelAction<T> extends AbstractNewAction<T, TextChannel>
             Class entityClazz,
             String actionName
     ) {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 clazz,
                 entityClazz,
                 ExpressionType.SIMPLE,

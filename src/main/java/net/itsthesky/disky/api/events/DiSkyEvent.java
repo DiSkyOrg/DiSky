@@ -2,6 +2,7 @@ package net.itsthesky.disky.api.events;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Config;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SelfRegisteringSkriptEvent;

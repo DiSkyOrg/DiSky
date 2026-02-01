@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.forums;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.itsthesky.disky.api.ReflectionUtils;

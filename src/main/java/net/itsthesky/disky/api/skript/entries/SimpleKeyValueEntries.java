@@ -1,6 +1,7 @@
 package net.itsthesky.disky.api.skript.entries;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.entry.KeyValueEntryData;

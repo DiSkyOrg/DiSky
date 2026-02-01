@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.commands;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.util.SimpleLiteral;

@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.sections.automod;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -20,7 +21,7 @@ import java.time.Duration;
 public class NewRuleResponse extends SimpleExpression<AutoModResponse> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				NewRuleResponse.class,
 				AutoModResponse.class,
 				ExpressionType.COMBINED,

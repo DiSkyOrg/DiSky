@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.datastructs;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
@@ -29,7 +30,7 @@ import java.util.List;
 public class RoleDS extends ChainDataStructElement<Role, RoleDS.RoleWrapper, RoleDS.RoleStructure> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 RoleDS.class,
                 Role.class,
                 ExpressionType.SIMPLE,

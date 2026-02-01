@@ -1,12 +1,14 @@
 package net.itsthesky.disky.api.skript;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +30,7 @@ public abstract class ReturningSection<T> extends Section {
 			patterns[i] += " [and store (it|the result) in %-~objects%]";
 
 		Skript.registerSection(sectionClass, patterns);
-		Skript.registerExpression(expression, returnType, ExpressionType.SIMPLE, "[the] "+expression.getSimpleName()+" [builder]");
+		DiSkyRegistry.registerExpression(expression, returnType, ExpressionType.SIMPLE, "[the] "+expression.getSimpleName()+" [builder]");
 	}
 
 	public abstract T createNewValue(@NotNull Event event);

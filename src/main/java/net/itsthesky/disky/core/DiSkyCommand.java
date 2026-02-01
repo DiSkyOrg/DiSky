@@ -1,6 +1,7 @@
 package net.itsthesky.disky.core;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.util.Date;
 import net.itsthesky.disky.DiSky;

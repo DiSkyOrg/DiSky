@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.create;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -38,7 +39,7 @@ import java.util.List;
 public class ExprNewDropdown extends SimpleExpression<SelectMenu.Builder> {
 
 	static {
-		Skript.registerExpression(
+		DiSkyRegistry.registerExpression(
 				ExprNewDropdown.class,
 				SelectMenu.Builder.class,
 				ExpressionType.COMBINED,

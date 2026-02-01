@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.effects;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;

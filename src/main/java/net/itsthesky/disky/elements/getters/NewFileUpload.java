@@ -19,6 +19,7 @@ package net.itsthesky.disky.elements.getters;
  */
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
@@ -71,7 +72,7 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
         if (DiSky.isSkImageInstalled())
             patterns.add("[new] file (data|upload) from image %image% " + suffix);
 
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 NewFileUpload.class,
                 FileUpload.class,
                 ExpressionType.COMBINED,

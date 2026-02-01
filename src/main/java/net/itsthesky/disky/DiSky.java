@@ -1,6 +1,7 @@
 package net.itsthesky.disky;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.util.Version;
 import lombok.Getter;
 import net.dv8tion.jda.api.requests.RestAction;

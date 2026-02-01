@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.create;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.lang.Expression;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public class ExprNewButtonsRow extends SimpleExpression<ComponentRow> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 ExprNewButtonsRow.class,
                 ComponentRow.class,
                 ExpressionType.COMBINED,

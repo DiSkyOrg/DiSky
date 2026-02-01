@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class EmbedFromJSON extends SimpleExpression<EmbedBuilder> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 EmbedFromJSON.class,
                 EmbedBuilder.class,
                 ExpressionType.COMBINED,

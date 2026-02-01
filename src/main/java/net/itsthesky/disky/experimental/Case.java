@@ -1,6 +1,7 @@
 package net.itsthesky.disky.experimental;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
 import ch.njol.util.Kleenean;

@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.commands;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
@@ -33,7 +34,7 @@ public class ExprArgument extends SimpleExpression<Object> {
     public static List<Argument<?>> LAST_ARGUMENTS;
 
     static {
-        Skript.registerExpression(ExprArgument.class, Object.class, ExpressionType.SIMPLE,
+        DiSkyRegistry.registerExpression(ExprArgument.class, Object.class, ExpressionType.SIMPLE,
                 "[][the] last arg[ument][s]",
                 "[][the] arg[ument][s](-| )<(\\d+)>", "[][the] <(\\d*1)st|(\\d*2)nd|(\\d*3)rd|(\\d*[4-90])th> arg[ument][s]",
                 "[][the] arg[ument][s]",

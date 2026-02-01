@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.getters;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -46,7 +47,7 @@ import java.util.regex.Pattern;
 @SeeAlso({Guild.class, RichCustomEmoji.class})
 public class ExprEmoji extends SimpleExpression<Emote> implements IAsyncGettableExpression<Emote> {
     static {
-        Skript.registerExpression(ExprEmoji.class, Emote.class, ExpressionType.SIMPLE,
+        DiSkyRegistry.registerExpression(ExprEmoji.class, Emote.class, ExpressionType.SIMPLE,
                 "(emoji|emote|reaction)[s] %strings% [(from|in) %-guild%]");
     }
 

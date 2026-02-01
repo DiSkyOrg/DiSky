@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -49,7 +50,7 @@ public class PermissionsOf extends SimpleExpression<Object> implements IAsyncCha
             Skript.error("DiSky were unable to unregister the original 'permissions' expression, please report this error to the developer.");
         }
 
-        Skript.registerExpression(PermissionsOf.class,
+        DiSkyRegistry.registerExpression(PermissionsOf.class,
                 Object.class,
                 ExpressionType.PROPERTY,
                 "[(all [[of] the]|the)] [discord] permissions of %member/role/player% [in %-channel/guildchannel%]",

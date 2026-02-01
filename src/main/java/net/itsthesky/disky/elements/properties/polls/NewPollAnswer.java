@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.properties.polls;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class NewPollAnswer extends SimpleExpression<PollAnswerData> {
 
     static {
-        Skript.registerExpression(
+        DiSkyRegistry.registerExpression(
                 NewPollAnswer.class,
                 PollAnswerData.class,
                 ExpressionType.COMBINED,
