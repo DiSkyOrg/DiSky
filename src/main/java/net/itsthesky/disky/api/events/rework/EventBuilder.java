@@ -627,7 +627,7 @@ public class EventBuilder<T extends Event> {
                         .replace(" ", "_")
                         .replace("/", ""),
                 getName(),
-                new String[] {"4.28.0"},
+                new String[] {"4.26.0"},
                 getDescriptionLines(),
                 getPatterns(),
                 getExampleLines(),

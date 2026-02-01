@@ -4,7 +4,6 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.*;
-import ch.njol.skript.expressions.ExprSets;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.registrations.Classes;
 import com.google.gson.Gson;
@@ -19,11 +18,12 @@ import net.itsthesky.disky.api.datastruct.DataStructureEntry;
 import net.itsthesky.disky.api.datastruct.EasyDSRegistry;
 import net.itsthesky.disky.api.events.rework.EventBuilder;
 import net.itsthesky.disky.api.modules.DiSkyModule;
-import net.itsthesky.disky.elements.effects.RetrieveEventValue;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.registration.SyntaxInfo;
+import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,13 +31,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
  * Mostly copied from Skylyxx's DocBuilder, changed two/three things for module support
  */
 @Getter
+@SuppressWarnings({"unchecked", "rawtypes", "removal"})
 public class DocBuilder {
 
     private final DiSky instance;
@@ -48,148 +48,6 @@ public class DocBuilder {
         this.gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     }
 
-    public void generate(boolean includeTypesInEventValues, @Nullable String specificModule) {
-        getInstance().getLogger().info("Generating documentation...");
-
-        // Map of element class to generated/specified ID
-        final var ids = new HashMap<Class, String>();
-
-        final List<SimpleDocElement> effects = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Effect> doc : Skript.getEffects()) {
-            if (isFromDiSky(doc)) {
-                final var element = new SimpleDocElement(doc);
-                effects.add(element);
-                ids.put(doc.getElementClass(), element.getId());
-            }
-        }
-
-        final List<SimpleDocElement> conditions = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Condition> doc : Skript.getConditions()) {
-            if (isFromDiSky(doc)) {
-                final var element = new SimpleDocElement(doc);
-                conditions.add(element);
-                ids.put(doc.getElementClass(), element.getId());
-            }
-        }
-
-        final List<SimpleDocElement> sections = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Section> doc : Skript.getSections()) {
-            if (isFromDiSky(doc)) {
-                final var element = new SimpleDocElement(doc);
-                sections.add(element);
-                ids.put(doc.getElementClass(), element.getId());
-            }
-        }
-
-        final List<EventDocElement> events = new ArrayList<>();
-        for (final var evt : EventBuilder.REGISTERED_EVENTS) {
-            events.add(evt.toDocElement());
-        }
-
-        final List<ExpressionDocElement> expressions = new ArrayList<>();
-        for (Iterator<ExpressionInfo<?, ?>> it = Skript.getExpressions(); it.hasNext(); ) {
-            ExpressionInfo<?, ?> doc = it.next();
-            if (isFromDiSky(doc)) {
-                var element = new ExpressionDocElement(doc);
-                expressions.add(element);
-                ids.put(doc.getElementClass(), element.getId());
-            }
-        }
-
-        final List<DataStructureElement> dataStructures = new ArrayList<>();
-        for (final EasyDSRegistry.DataStructureEntry entry : EasyDSRegistry.REGISTERED_STRUCTS) {
-            final var dsElement = new DataStructureElement(entry);
-            dataStructures.add(dsElement);
-            ids.put(entry.clazz(), dsElement.getId());
-        }
-
-        final List<TypeDocElement> types = new ArrayList<>();
-        for (final ClassInfo<?> classInfo : Classes.getClassInfos()) {
-            boolean fromDiSky = isFromDiSky(classInfo);
-
-            var typeElement = new TypeDocElement(classInfo, ids, !fromDiSky);
-            types.add(typeElement);
-            ids.put(classInfo.getC(), typeElement.getId());
-            DiSky.debug("Adding type doc for class: " + classInfo.getC().getName() + "; id: " + typeElement.getId());
-        }
-
-        // Process see also references
-        effects.forEach(element -> element.ProcessSeeAlso(ids));
-        conditions.forEach(element -> element.ProcessSeeAlso(ids));
-        sections.forEach(element -> element.ProcessSeeAlso(ids));
-        expressions.forEach(element -> element.ProcessSeeAlso(ids));
-        dataStructures.forEach(element -> element.ProcessSeeAlso(ids));
-        // Types don't need processing as it's done in the constructor!
-
-        // Filter by module
-        if (specificModule != null) {
-            effects.removeIf(element -> !specificModule.equals(element.getModule()));
-            conditions.removeIf(element -> !specificModule.equals(element.getModule()));
-            sections.removeIf(element -> !specificModule.equals(element.getModule()));
-            events.removeIf(element -> !specificModule.equals(element.getRequiredPlugins()[0]));
-            expressions.removeIf(element -> !specificModule.equals(element.getModule()));
-        }
-
-        final DocDocument doc = new DocDocument(effects, conditions, sections, types, events, expressions, dataStructures);
-        final String json = gson.toJson(doc);
-        try {
-            final String fileName = specificModule == null ? "doc.json" : specificModule + ".json";
-            Files.write(new File(getInstance().getDataFolder(), fileName).toPath(), json.getBytes());
-        } catch (IOException e) {
-            getInstance().getLogger().severe("Could not write documentation to file!");
-            e.printStackTrace();
-        }
-        getInstance().getLogger().info("Successfully generated documentation!");
-    }
-
-    private boolean isFromDiSky(Object element) {
-        final SkriptAddon addon;
-        if (element instanceof SkriptEventInfo<?>)
-            addon = getAddon(((SkriptEventInfo<?>) element));
-        else if (element instanceof SyntaxElementInfo<?>)
-            addon = getAddon(((SyntaxElementInfo<?>) element));
-        else if (element instanceof ClassInfo<?>)
-            addon = getAddon(((ClassInfo<?>) element));
-        else
-            return false;
-        if (addon == null) {
-            final Class<?> clazz = getElementClass(element);
-            if (clazz == null)
-                return false;
-            for (DiSkyModule module : DiSky.getModuleManager().getModules()) {
-                final String modulePackage = module.getClass().getPackage().getName();
-                final String elementPackage = clazz.getPackage().getName();
-                if (elementPackage.contains(modulePackage))
-                    return true;
-            }
-        }
-        return addon != null && addon == DiSky.getAddonInstance();
-    }
-
-    public static boolean isFromModule(SyntaxElementInfo<?> info, DiSkyModule module) {
-        final String modulePackage = module.getClass().getPackage().getName();
-        final String elementPackage = info.getElementClass().getPackage().getName();
-        return elementPackage.contains(modulePackage);
-    }
-
-    public static boolean isFromModule(ClassInfo<?> info, DiSkyModule module) {
-        final String modulePackage = module.getClass().getPackage().getName();
-        final String elementPackage = info.getC().getPackage().getName();
-        return elementPackage.contains(modulePackage);
-    }
-
-    private Class<?> getElementClass(Object element) {
-        if (element instanceof SkriptEventInfo<?>)
-            return ((SkriptEventInfo<?>) element).getElementClass();
-        else if (element instanceof SyntaxElementInfo<?>)
-            return ((SyntaxElementInfo<?>) element).getElementClass();
-        else if (element instanceof ClassInfo<?>)
-            return ((ClassInfo<?>) element).getC();
-        else
-            return null;
-    }
-
-    @Nullable
     public static SkriptAddon getAddon(SkriptEventInfo<?> eventInfo) {
         return getAddon(eventInfo.originClassPath);
     }
@@ -208,35 +66,6 @@ public class DocBuilder {
     @Nullable
     public static SkriptAddon getAddon(SyntaxElementInfo<?> elementInfo) {
         return getAddon(elementInfo.getElementClass().getName());
-    }
-
-    @Getter
-    public static class DocDocument {
-
-        private final EventDocElement[] events;
-        private final TypeDocElement[] types;
-        private final SimpleDocElement[] conditions;
-        private final SimpleDocElement[] effects;
-        private final SimpleDocElement[] sections;
-        private final SimpleDocElement[] expressions;
-        private final DataStructureElement[] dataStructures;
-
-        public DocDocument(List<SimpleDocElement> effects,
-                           List<SimpleDocElement> conditions,
-                           List<SimpleDocElement> sections,
-                           List<TypeDocElement> types,
-                           List<EventDocElement> events,
-                           List<ExpressionDocElement> expressions,
-                           List<DataStructureElement> dataStructures) {
-            this.effects = effects.toArray(new SimpleDocElement[0]);
-            this.conditions = conditions.toArray(new SimpleDocElement[0]);
-            this.sections = sections.toArray(new SimpleDocElement[0]);
-            this.events = events.toArray(new EventDocElement[0]);
-            this.expressions = expressions.toArray(new SimpleDocElement[0]);
-            this.types = types.toArray(new TypeDocElement[0]);
-            this.dataStructures = dataStructures.toArray(new DataStructureElement[0]);
-        }
-
     }
 
     @Nullable
@@ -316,6 +145,182 @@ public class DocBuilder {
             time++;
         }
         return eventValues.toArray(new String[0]);
+    }
+
+    public void generate(boolean includeTypesInEventValues, @Nullable String specificModule) {
+        getInstance().getLogger().info("Generating documentation...");
+
+        // Map of element class to generated/specified ID
+        final var ids = new HashMap<Class, String>();
+
+        final List<SimpleDocElement> effects = new ArrayList<>();
+        for (final SyntaxElementInfo<? extends Effect> doc : getEffects()) {
+            final var element = new SimpleDocElement(doc);
+            effects.add(element);
+            ids.put(doc.getElementClass(), element.getId());
+        }
+
+        final List<SimpleDocElement> conditions = new ArrayList<>();
+        for (final SyntaxElementInfo<? extends Condition> doc : getConditions()) {
+
+            final var element = new SimpleDocElement(doc);
+            conditions.add(element);
+            ids.put(doc.getElementClass(), element.getId());
+        }
+
+        final List<SimpleDocElement> sections = new ArrayList<>();
+        for (final SyntaxElementInfo<? extends Section> doc : getSections()) {
+            final var element = new SimpleDocElement(doc);
+            sections.add(element);
+            ids.put(doc.getElementClass(), element.getId());
+        }
+
+        final List<EventDocElement> events = new ArrayList<>();
+        for (final var evt : EventBuilder.REGISTERED_EVENTS) {
+            events.add(evt.toDocElement());
+        }
+
+        final List<ExpressionDocElement> expressions = new ArrayList<>();
+        for (final Iterator<? extends ExpressionInfo<?, ?>> it = getExpressions(); it.hasNext(); ) {
+            final var doc = it.next();
+            var element = new ExpressionDocElement(doc);
+            expressions.add(element);
+            ids.put(doc.getElementClass(), element.getId());
+        }
+
+        final List<DataStructureElement> dataStructures = new ArrayList<>();
+        for (final EasyDSRegistry.DataStructureEntry entry : EasyDSRegistry.REGISTERED_STRUCTS) {
+            final var dsElement = new DataStructureElement(entry);
+            dataStructures.add(dsElement);
+            ids.put(entry.clazz(), dsElement.getId());
+        }
+
+        final List<TypeDocElement> types = new ArrayList<>();
+        for (final ClassInfo<?> classInfo : Classes.getClassInfos()) {
+            boolean fromDiSky = isFromDiSky(classInfo);
+
+            var typeElement = new TypeDocElement(classInfo, ids, !fromDiSky);
+            types.add(typeElement);
+            ids.put(classInfo.getC(), typeElement.getId());
+            DiSky.debug("Adding type doc for class: " + classInfo.getC().getName() + "; id: " + typeElement.getId());
+        }
+
+        // Process see also references
+        effects.forEach(element -> element.ProcessSeeAlso(ids));
+        conditions.forEach(element -> element.ProcessSeeAlso(ids));
+        sections.forEach(element -> element.ProcessSeeAlso(ids));
+        expressions.forEach(element -> element.ProcessSeeAlso(ids));
+        dataStructures.forEach(element -> element.ProcessSeeAlso(ids));
+        // Types don't need processing as it's done in the constructor!
+
+        // Filter by module
+        if (specificModule != null) {
+            effects.removeIf(element -> !specificModule.equals(element.getModule()));
+            conditions.removeIf(element -> !specificModule.equals(element.getModule()));
+            sections.removeIf(element -> !specificModule.equals(element.getModule()));
+            events.removeIf(element -> !specificModule.equals(element.getRequiredPlugins()[0]));
+            expressions.removeIf(element -> !specificModule.equals(element.getModule()));
+        }
+
+        final DocDocument doc = new DocDocument(effects, conditions, sections, types, events, expressions, dataStructures);
+        final String json = gson.toJson(doc);
+        try {
+            final String fileName = specificModule == null ? "docs.json" : specificModule + ".json";
+            Files.write(new File(getInstance().getDataFolder(), fileName).toPath(), json.getBytes());
+        } catch (IOException e) {
+            getInstance().getLogger().severe("Could not write documentation to file!");
+            e.printStackTrace();
+        }
+        getInstance().getLogger().info("Successfully generated documentation! (Got " + effects.size() + " effects, " + conditions.size() + " conditions, " + sections.size() + " sections, " + events.size() + " events, " + expressions.size() + " expressions and " + types.size() + " types)");
+    }
+
+    private Iterable<? extends SyntaxElementInfo<? extends Effect>> getEffects() {
+        return DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.EFFECT).stream()
+                .map(SyntaxElementInfo::<SyntaxElementInfo<Effect>, Effect>fromModern)
+                .toList();
+    }
+
+    private Iterable<? extends SyntaxElementInfo<? extends Condition>> getConditions() {
+        return DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.CONDITION).stream()
+                .map(SyntaxElementInfo::<SyntaxElementInfo<Condition>, Condition>fromModern)
+                .toList();
+    }
+
+    private Iterable<? extends SyntaxElementInfo<? extends Section>> getSections() {
+        return DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.SECTION).stream()
+                .map(SyntaxElementInfo::<SyntaxElementInfo<Section>, Section>fromModern)
+                .toList();
+    }
+
+    private Iterator<? extends ExpressionInfo<?, ?>> getExpressions() {
+        List<ExpressionInfo<?, ?>> list = new ArrayList<>();
+        for (SyntaxInfo.Expression<?, ?> info : DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.EXPRESSION))
+            list.add((ExpressionInfo<?, ?>) SyntaxElementInfo.fromModern(info));
+        return list.iterator();
+    }
+
+    private boolean isFromDiSky(Object element) {
+        final SkriptAddon addon;
+        if (element instanceof SkriptEventInfo<?>)
+            addon = getAddon(((SkriptEventInfo<?>) element));
+        else if (element instanceof SyntaxElementInfo<?>)
+            addon = getAddon(((SyntaxElementInfo<?>) element));
+        else if (element instanceof ClassInfo<?>)
+            addon = getAddon(((ClassInfo<?>) element));
+        else
+            return false;
+        if (addon == null) {
+            final Class<?> clazz = getElementClass(element);
+            if (clazz == null)
+                return false;
+            for (DiSkyModule module : DiSky.getModuleManager().getModules()) {
+                final String modulePackage = module.getClass().getPackage().getName();
+                final String elementPackage = clazz.getPackage().getName();
+                if (elementPackage.contains(modulePackage))
+                    return true;
+            }
+        }
+        return addon != null && addon == DiSky.getAddonInstance();
+    }
+
+    private Class<?> getElementClass(Object element) {
+        if (element instanceof SkriptEventInfo<?>)
+            return ((SkriptEventInfo<?>) element).getElementClass();
+        else if (element instanceof SyntaxElementInfo<?>)
+            return ((SyntaxElementInfo<?>) element).getElementClass();
+        else if (element instanceof ClassInfo<?>)
+            return ((ClassInfo<?>) element).getC();
+        else
+            return null;
+    }
+
+    @Getter
+    public static class DocDocument {
+
+        private final EventDocElement[] events;
+        private final TypeDocElement[] types;
+        private final SimpleDocElement[] conditions;
+        private final SimpleDocElement[] effects;
+        private final SimpleDocElement[] sections;
+        private final SimpleDocElement[] expressions;
+        private final DataStructureElement[] dataStructures;
+
+        public DocDocument(List<SimpleDocElement> effects,
+                           List<SimpleDocElement> conditions,
+                           List<SimpleDocElement> sections,
+                           List<TypeDocElement> types,
+                           List<EventDocElement> events,
+                           List<ExpressionDocElement> expressions,
+                           List<DataStructureElement> dataStructures) {
+            this.effects = effects.toArray(new SimpleDocElement[0]);
+            this.conditions = conditions.toArray(new SimpleDocElement[0]);
+            this.sections = sections.toArray(new SimpleDocElement[0]);
+            this.events = events.toArray(new EventDocElement[0]);
+            this.expressions = expressions.toArray(new SimpleDocElement[0]);
+            this.types = types.toArray(new TypeDocElement[0]);
+            this.dataStructures = dataStructures.toArray(new DataStructureElement[0]);
+        }
+
     }
 
     @Getter
@@ -446,10 +451,9 @@ public class DocBuilder {
         private final @Nullable String[] requiredPlugins;
         private final @Nullable String module;
         private final boolean showInDocs = true;
-
+        private final transient Class<?>[] rawSeeAlso;
         @Setter
         private String[] seeAlso;
-        private final transient Class<?>[] rawSeeAlso;
 
         public SimpleDocElement(SyntaxElementInfo<?> info) {
             this.originClass = info.getElementClass().getName().replace('.', '/');
@@ -524,14 +528,11 @@ public class DocBuilder {
         private final String creationExpressionPattern;
         private final String[] validationRules;
         private final boolean showInDocs = true;
-
+        private final DataStructureEntryDocElement[] entries;
         private transient Class<?>[] rawSeeAlso;
         private String[] seeAlso;
-
         private transient Class<?> returnType;
         private String returnTypeId;
-
-        private final DataStructureEntryDocElement[] entries;
 
         public DataStructureElement(EasyDSRegistry.DataStructureEntry entry) {
             this.originClass = entry.clazz().getName().replace('.', '/');
@@ -562,7 +563,8 @@ public class DocBuilder {
                 Object defaultValue = null;
                 try {
                     defaultValue = field.get(dummyDs);
-                } catch (IllegalAccessException ignored) {}
+                } catch (IllegalAccessException ignored) {
+                }
 
                 fields.add(new DataStructureEntryDocElement(field.getType(), defaultValue, fieldAnnotation));
             }
