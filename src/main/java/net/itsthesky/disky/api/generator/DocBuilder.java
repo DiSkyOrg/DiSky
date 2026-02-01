@@ -1,6 +1,7 @@
 package net.itsthesky.disky.api.generator;
 
 import ch.njol.skript.Skript;
+import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.SkriptAddon;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.*;
@@ -22,6 +23,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.docs.Origin;
 import org.skriptlang.skript.registration.SyntaxInfo;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
@@ -79,8 +81,17 @@ public class DocBuilder {
         return null;
     }
 
+    private static Class<?> extractClass(Object target) {
+        if (target instanceof SyntaxInfo<?> syntaxInfo)
+            return syntaxInfo.type();
+        else if (target instanceof SyntaxElementInfo<?> elementInfo)
+            return elementInfo.getElementClass();
+        else
+            return (Class<?>) target;
+    }
+
     private static String getAnnotationOr(Object target, Class<? extends Annotation> annotationClass, String defaultValue) {
-        final Class<?> clazz = target instanceof final SyntaxElementInfo<?> elementInfo ? elementInfo.getElementClass() : (Class<?>) target;
+        final Class<?> clazz = extractClass(target);
         if (!clazz.isAnnotationPresent(annotationClass))
             return defaultValue;
         final Annotation annotation = clazz.getAnnotation(annotationClass);
@@ -97,7 +108,7 @@ public class DocBuilder {
     }
 
     private static String[] getAnnotationOrs(Object target, Class<? extends Annotation> annotationClass, String[] defaultValue) {
-        final Class<?> clazz = target instanceof final SyntaxElementInfo<?> elementInfo ? elementInfo.getElementClass() : (Class<?>) target;
+        final Class<?> clazz = extractClass(target);
         if (!clazz.isAnnotationPresent(annotationClass))
             return defaultValue;
         final Annotation annotation = clazz.getAnnotation(annotationClass);
@@ -109,7 +120,7 @@ public class DocBuilder {
     }
 
     private static @Nullable Class<?>[] getAnnotationOrs(Object target, Class<? extends Annotation> annotationClass) {
-        final Class<?> clazz = target instanceof final SyntaxElementInfo<?> elementInfo ? elementInfo.getElementClass() : (Class<?>) target;
+        final Class<?> clazz = extractClass(target);
         if (!clazz.isAnnotationPresent(annotationClass))
             return null;
         final Annotation annotation = clazz.getAnnotation(annotationClass);
@@ -154,25 +165,24 @@ public class DocBuilder {
         final var ids = new HashMap<Class, String>();
 
         final List<SimpleDocElement> effects = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Effect> doc : getEffects()) {
+        for (final SyntaxInfo<?> doc : getEffects()) {
             final var element = new SimpleDocElement(doc);
             effects.add(element);
-            ids.put(doc.getElementClass(), element.getId());
+            ids.put(doc.type(), element.getId());
         }
 
         final List<SimpleDocElement> conditions = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Condition> doc : getConditions()) {
-
+        for (final SyntaxInfo<?> doc : getConditions()) {
             final var element = new SimpleDocElement(doc);
             conditions.add(element);
-            ids.put(doc.getElementClass(), element.getId());
+            ids.put(doc.type(), element.getId());
         }
 
         final List<SimpleDocElement> sections = new ArrayList<>();
-        for (final SyntaxElementInfo<? extends Section> doc : getSections()) {
+        for (final SyntaxInfo<?> doc : getSections()) {
             final var element = new SimpleDocElement(doc);
             sections.add(element);
-            ids.put(doc.getElementClass(), element.getId());
+            ids.put(doc.type(), element.getId());
         }
 
         final List<EventDocElement> events = new ArrayList<>();
@@ -181,11 +191,10 @@ public class DocBuilder {
         }
 
         final List<ExpressionDocElement> expressions = new ArrayList<>();
-        for (final Iterator<? extends ExpressionInfo<?, ?>> it = getExpressions(); it.hasNext(); ) {
-            final var doc = it.next();
+        for (final SyntaxInfo.Expression<?, ?> doc : getExpressions()) {
             var element = new ExpressionDocElement(doc);
             expressions.add(element);
-            ids.put(doc.getElementClass(), element.getId());
+            ids.put(doc.type(), element.getId());
         }
 
         final List<DataStructureElement> dataStructures = new ArrayList<>();
@@ -234,41 +243,63 @@ public class DocBuilder {
         getInstance().getLogger().info("Successfully generated documentation! (Got " + effects.size() + " effects, " + conditions.size() + " conditions, " + sections.size() + " sections, " + events.size() + " events, " + expressions.size() + " expressions and " + types.size() + " types)");
     }
 
-    private Iterable<? extends SyntaxElementInfo<? extends Effect>> getEffects() {
-        return DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.EFFECT).stream()
-                .map(SyntaxElementInfo::<SyntaxElementInfo<Effect>, Effect>fromModern)
+    private List<? extends SyntaxInfo<?>> getEffects() {
+        return Skript.instance().syntaxRegistry().syntaxes(SyntaxRegistry.EFFECT).stream()
+                .filter(this::isFromDiSky)
                 .toList();
     }
 
-    private Iterable<? extends SyntaxElementInfo<? extends Condition>> getConditions() {
-        return DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.CONDITION).stream()
-                .map(SyntaxElementInfo::<SyntaxElementInfo<Condition>, Condition>fromModern)
+    private List<? extends SyntaxInfo<?>> getConditions() {
+        return Skript.instance().syntaxRegistry().syntaxes(SyntaxRegistry.CONDITION).stream()
+                .filter(this::isFromDiSky)
                 .toList();
     }
 
-    private Iterable<? extends SyntaxElementInfo<? extends Section>> getSections() {
-        return DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.SECTION).stream()
-                .map(SyntaxElementInfo::<SyntaxElementInfo<Section>, Section>fromModern)
+    private List<? extends SyntaxInfo<?>> getSections() {
+        return Skript.instance().syntaxRegistry().syntaxes(SyntaxRegistry.SECTION).stream()
+                .filter(this::isFromDiSky)
                 .toList();
     }
 
-    private Iterator<? extends ExpressionInfo<?, ?>> getExpressions() {
-        List<ExpressionInfo<?, ?>> list = new ArrayList<>();
-        for (SyntaxInfo.Expression<?, ?> info : DiSky.getAddonInstance().syntaxRegistry().syntaxes(SyntaxRegistry.EXPRESSION))
-            list.add((ExpressionInfo<?, ?>) SyntaxElementInfo.fromModern(info));
-        return list.iterator();
+    private List<? extends SyntaxInfo.Expression<?, ?>> getExpressions() {
+        return Skript.instance().syntaxRegistry().syntaxes(SyntaxRegistry.EXPRESSION).stream()
+                .filter(this::isFromDiSky)
+                .toList();
     }
 
     private boolean isFromDiSky(Object element) {
-        final SkriptAddon addon;
-        if (element instanceof SkriptEventInfo<?>)
-            addon = getAddon(((SkriptEventInfo<?>) element));
-        else if (element instanceof SyntaxElementInfo<?>)
-            addon = getAddon(((SyntaxElementInfo<?>) element));
-        else if (element instanceof ClassInfo<?>)
-            addon = getAddon(((ClassInfo<?>) element));
-        else
+        // Modern API: check origin directly
+        if (element instanceof SyntaxInfo<?> syntaxInfo) {
+            final var origin = syntaxInfo.origin();
+            if (origin instanceof Origin.AddonOrigin addonOrigin) {
+                // Compare addon names since we can't easily compare between old and new API types
+                return "DiSky".equals(addonOrigin.addon().name());
+            }
+            // Fallback to class package check
+            final Class<?> clazz = syntaxInfo.type();
+            if (clazz.getName().startsWith("net.itsthesky.disky"))
+                return true;
+            for (DiSkyModule module : DiSky.getModuleManager().getModules()) {
+                final String modulePackage = module.getClass().getPackage().getName();
+                final String elementPackage = clazz.getPackage().getName();
+                if (elementPackage.contains(modulePackage))
+                    return true;
+            }
             return false;
+        }
+
+        // Legacy API: use old addon lookup
+        final SkriptAddon addon;
+        if (element instanceof SkriptEventInfo<?>) {
+            addon = getAddon(((SkriptEventInfo<?>) element));
+        } else if (element instanceof SyntaxElementInfo<?>) {
+            addon = getAddon(((SyntaxElementInfo<?>) element));
+        } else if (element instanceof ClassInfo<?>) {
+            addon = getAddon(((ClassInfo<?>) element));
+        } else {
+            return false;
+        }
+
         if (addon == null) {
             final Class<?> clazz = getElementClass(element);
             if (clazz == null)
@@ -284,7 +315,9 @@ public class DocBuilder {
     }
 
     private Class<?> getElementClass(Object element) {
-        if (element instanceof SkriptEventInfo<?>)
+        if (element instanceof SyntaxInfo<?> syntaxInfo)
+            return syntaxInfo.type();
+        else if (element instanceof SkriptEventInfo<?>)
             return ((SkriptEventInfo<?>) element).getElementClass();
         else if (element instanceof SyntaxElementInfo<?>)
             return ((SyntaxElementInfo<?>) element).getElementClass();
@@ -455,6 +488,21 @@ public class DocBuilder {
         @Setter
         private String[] seeAlso;
 
+        public SimpleDocElement(SyntaxInfo<?> info) {
+            this.originClass = info.type().getName().replace('.', '/');
+
+            this.id = getAnnotationOr(info, DocumentationId.class, info.type().getSimpleName());
+            this.name = getAnnotationOr(info, Name.class, null);
+            this.description = getAnnotationOrs(info, Description.class, null);
+            this.patterns = info.patterns().toArray(new String[0]);
+            this.examples = getAnnotationOrs(info, Examples.class, null);
+            var sinces = getAnnotationOrs(info, Since.class, null);
+            this.since = sinces == null ? null : String.join(", ", sinces);
+            this.requiredPlugins = getAnnotationOrs(info, RequiredPlugins.class, null);
+            this.module = getAnnotationOr(info, Module.class, null);
+            this.rawSeeAlso = getAnnotationOrs(info, SeeAlso.class);
+        }
+
         public SimpleDocElement(SyntaxElementInfo<?> info) {
             this.originClass = info.getElementClass().getName().replace('.', '/');
 
@@ -510,6 +558,11 @@ public class DocBuilder {
     public static class ExpressionDocElement extends SimpleDocElement {
 
         private final String returnType;
+
+        public ExpressionDocElement(SyntaxInfo.Expression<?, ?> info) {
+            super((SyntaxInfo<?>) info);
+            this.returnType = parseClassInfo(info.returnType());
+        }
 
         public ExpressionDocElement(ExpressionInfo<?, ?> info) {
             super(info);
