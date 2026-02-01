@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("Thread Owner")
 @Description("Get the owner (member) of a thread channel.")
 @Examples("set {_owner} to thread owner of event-thread")
-@Since("4.26.0")
+@Since("4.27.0")
 public class ThreadOwner extends SimplePropertyExpression<ThreadChannel, Member> {
 
 	static {

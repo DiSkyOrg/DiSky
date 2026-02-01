@@ -18,12 +18,27 @@ package net.itsthesky.disky.elements.properties.users;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.User;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+@Name("User Tag")
+@Description({
+        "Get the TAG of the primary guild of a user. This will return a bunch of character, up to 4.",
+        "May be null if the user has no primary guild/no selected tag"
+})
+@Examples({
+        "set {_tag} to user tag of event-user"
+})
+@Since("4.27.0")
+@SeeAlso({UserTagIconUrl.class})
 public class UserTag extends SimplePropertyExpression<User, String> {
 
     static {

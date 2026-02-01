@@ -18,10 +18,25 @@ package net.itsthesky.disky.elements.properties.users;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import net.dv8tion.jda.api.entities.User;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import org.jetbrains.annotations.Nullable;
 
+@Name("User Tag Icon/Badge URL")
+@Description({
+        "Get the Icon Tag URL of the primary guild of a user.",
+        "May be null if the user has no primary guild/no selected tag"
+})
+@Examples({
+        "set {_image} to user tag icon of event-user"
+})
+@Since("4.27.0")
+@SeeAlso({UserTag.class})
 public class UserTagIconUrl extends SimplePropertyExpression<User, String> {
 
     static {

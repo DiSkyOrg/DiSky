@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Thread Message Count")
 @Description("Get the approximate message count of a thread channel.")
-@Examples("set {_count} to message count of event-thread")
-@Since("4.26.0")
+@Examples("set {_count} to message count of event-threadchannel")
+@Since("4.27.0")
 public class ThreadMessageCount extends SimplePropertyExpression<ThreadChannel, Number> {
 
 	static {

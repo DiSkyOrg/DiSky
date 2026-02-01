@@ -1,5 +1,9 @@
 package net.itsthesky.disky.elements.conditions;
 
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -11,6 +15,13 @@ import net.itsthesky.disky.core.SkriptUtils;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Member Can Interact With Member(s)/Role(s)")
+@Description({"Check if a member can interact with a specific member or role."})
+@Examples({
+        "if event-member can interact with (member with id \"000\" in event-guild):",
+        "\treply with \"You can interact with this member!\"",
+})
+@Since("4.27.0")
 public class MemberCanInteract extends Condition {
 
     static {
