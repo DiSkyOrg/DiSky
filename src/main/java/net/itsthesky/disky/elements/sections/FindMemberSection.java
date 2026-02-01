@@ -2,7 +2,6 @@ package net.itsthesky.disky.elements.sections;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.classes.Changer;
-import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -11,11 +10,6 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.effects.Delay;
 import ch.njol.skript.lang.*;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.lang.function.FunctionEvent;
-import ch.njol.skript.lang.function.Functions;
-import ch.njol.skript.lang.function.ScriptFunction;
-import ch.njol.skript.log.RetainingLogHandler;
-import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.timings.SkriptTimings;
 import ch.njol.skript.variables.Variables;
 import ch.njol.util.Kleenean;
@@ -32,25 +26,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @Name("Find Members")
-@Description({"Find member filter! It's a section that lets you filter by yourself the members you want to retrieve.",
-        "Wants only members with a role, or specific nickname, that are not connected to a channel? You've got it!"})
-@Examples({"find members in event-guild and store them in {_members::*} with filter var {_m}:",
-        "\t# {_m} now contains the member to apply the filter to. For instance:",
-        "\t{_m} has discord role with id \"XXX\"",
-        "\t{_m} is muted",
-        "\treturn true",
-        "reply with \"I have found %size of {_members::*}% that has the role and is muted!\""})
+@Description({"Find member filter! It's a section that lets you filter by yourself the members you want to retrieve.", "Wants only members with a role, or specific nickname, that are not connected to a channel? You've got it!"})
+@Examples({"find members in event-guild and store them in {_members::*} with filter var {_m}:", "\t# {_m} now contains the member to apply the filter to. For instance:", "\t{_m} has discord role with id \"XXX\"", "\t{_m} is muted", "\treturn true", "reply with \"I have found %size of {_members::*}% that has the role and is muted!\""})
 @Since("4.14.3")
 @SeeAlso({Member.class, Guild.class})
 public class FindMemberSection extends Section implements ReturnHandler<Boolean> {
 
-    public static @Nullable FindMemberSection instance;
-
     static {
-        Skript.registerSection(
-                FindMemberSection.class,
-                "find [the] [discord] member[s] (in|from) [guild] %guild% and store (them|the members) in %~objects% with filter var[iable] %~objects%"
-        );
+        Skript.registerSection(FindMemberSection.class, "find [the] [discord] member[s] (in|from) [guild] %guild% and store (them|the members) in %~objects% with filter var[iable] %~objects%");
     }
 
     private Expression<Guild> exprGuild;
@@ -66,13 +49,10 @@ public class FindMemberSection extends Section implements ReturnHandler<Boolean>
         exprResult = (Expression<Object>) expressions[1];
         exprValue = (Expression<Object>) expressions[2];
 
-        if (!Changer.ChangerUtils.acceptsChange(exprValue, Changer.ChangeMode.SET, Member.class)
-                || !Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Member[].class))
+        if (!Changer.ChangerUtils.acceptsChange(exprValue, Changer.ChangeMode.SET, Member.class) || !Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Member[].class))
             return false;
 
-        instance = this;
         trigger = loadReturnableSectionCode(sectionNode, "find members", getParser().getCurrentEvents());
-        instance = null;
 
         // TODO: Be sure we don't have any delay within the section
 //        if (delayed.get()) {
@@ -101,12 +81,10 @@ public class FindMemberSection extends Section implements ReturnHandler<Boolean>
 
     @Override
     protected @Nullable TriggerItem walk(@NotNull Event e) {
-        if (trigger == null)
-            return null;
+        if (trigger == null) return null;
 
         final Guild guild = exprGuild.getSingle(e);
-        if (guild == null)
-            return getNext();
+        if (guild == null) return getNext();
 
         debug(e, true);
 
@@ -114,17 +92,13 @@ public class FindMemberSection extends Section implements ReturnHandler<Boolean>
         Object localVars = Variables.removeLocals(e);
 
         Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), () -> {
-            if (localVars != null)
-                Variables.setLocalVariables(e, localVars);
+            if (localVars != null) Variables.setLocalVariables(e, localVars);
 
             try {
-
                 List<Member> members = guild.findMembers(member -> {
-
                     iterationResult = false;
-                    exprValue.change(e, new Member[] {member}, Changer.ChangeMode.SET);
-
-                    TriggerItem.walk(trigger, e);
+                    exprValue.change(e, new Member[]{member}, Changer.ChangeMode.SET);
+                    trigger.execute(e);
                     return iterationResult;
                 }).get();
 
