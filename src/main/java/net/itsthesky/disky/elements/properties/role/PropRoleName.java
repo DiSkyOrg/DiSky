@@ -8,11 +8,11 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RoleName extends ActionProperty<Role, RoleAction, String> {
+public class PropRoleName extends ActionProperty<Role, RoleAction, String> {
 
     static {
         register(
-                RoleName.class,
+                PropRoleName.class,
                 String.class,
                 "role name",
                 "role/roleaction"

@@ -1,20 +1,36 @@
 package net.itsthesky.disky.elements.properties.role;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.util.Color;
-import net.itsthesky.disky.api.skript.action.ActionProperty;
-import net.itsthesky.disky.core.SkriptUtils;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
+import net.itsthesky.disky.api.generator.SeeAlso;
+import net.itsthesky.disky.api.skript.action.ActionProperty;
+import net.itsthesky.disky.core.SkriptUtils;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class RoleColor extends ActionProperty<Role, RoleAction, Color> {
+@Name("Role Color")
+@Description({
+        "Get or set the primary color of a role.",
+        "Setting this property will <strong>clear other role color-related properties</strong>, such as gradient, holographic, ..."
+})
+@Examples({
+        "set {_c} to role color of event-role",
+        "set role color of event-role to orange"
+})
+@Since({"4.0.0"})
+@SeeAlso(PropRoleColors.class)
+public class PropRoleColor extends ActionProperty<Role, RoleAction, Color> {
 
     static {
         register(
-                RoleColor.class,
+                PropRoleColor.class,
                 Color.class,
                 "role color",
                 "role/roleaction"
@@ -28,7 +44,7 @@ public class RoleColor extends ActionProperty<Role, RoleAction, Color> {
 
     @Override
     public Class<?> @NotNull [] acceptChange(Changer.ChangeMode mode) {
-        return mode.equals(Changer.ChangeMode.SET) ? new Class[] {Color.class} : new Class[0];
+        return mode.equals(Changer.ChangeMode.SET) ? new Class[]{Color.class} : new Class[0];
     }
 
     @Override
@@ -46,7 +62,7 @@ public class RoleColor extends ActionProperty<Role, RoleAction, Color> {
 
     @Override
     public Color get(Role role, boolean async) {
-        return SkriptUtils.convert(role.getColor());
+        return SkriptUtils.convert(role.getColors().getPrimary());
     }
 
     @Override
