@@ -11,6 +11,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
+
 public abstract class AbstractNewAction<T, E> extends SimpleExpression<T> {
 
     private Expression<E> exprGuild;
@@ -23,11 +25,13 @@ public abstract class AbstractNewAction<T, E> extends SimpleExpression<T> {
         final E guild = EasyElement.parseSingle(exprGuild, e, null);
         final @Nullable Bot bot = EasyElement.parseSingle(exprBot, e, null);
         if (EasyElement.anyNull(this, guild))
-            return (T[]) new Object[0];
+            return (T[]) Array.newInstance(getReturnType(), 0);
         final E parsedEntity = bot == null ? guild : BotChangers.convert(guild, bot);
         if (EasyElement.anyNull(this, parsedEntity))
-            return (T[]) new Object[0];
-        return (T[]) new Object[] {create(parsedEntity)};
+            return (T[]) Array.newInstance(getReturnType(), 0);
+        final T[] result = (T[]) Array.newInstance(getReturnType(), 1);
+        result[0] = create(parsedEntity);
+        return result;
     }
 
     @Override

@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.requests.RestAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +59,7 @@ public class DiSkyType<T> {
         this.classInfo = new DiSkyTypeWrapper<>(clazz, codeName)
                 .diskyType(this)
                 .user(user)
-                .supplier(isEnum ? clazz.getEnumConstants() : (T[]) new Object[0])
+                .supplier(isEnum ? clazz.getEnumConstants() : (T[]) Array.newInstance(clazz, 0))
                 .parser(new Parser<T>() {
                     @Override
                     public @NotNull T parse(final @NotNull String input, final @NotNull ParseContext context) {

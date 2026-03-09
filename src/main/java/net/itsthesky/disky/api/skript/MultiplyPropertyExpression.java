@@ -12,6 +12,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
+
 public abstract class MultiplyPropertyExpression<F, T> extends SimpleExpression<T> {
 
     public Expression<? extends F> expr;
@@ -39,7 +41,7 @@ public abstract class MultiplyPropertyExpression<F, T> extends SimpleExpression<
     @Override
     protected T @NotNull [] get(@NotNull Event e) {
         if (expr.getSingle(e) == null)
-            return (T[]) new Object[0];
+            return (T[]) Array.newInstance(getReturnType(), 0);
         return convert(expr.getSingle(e));
     }
 
