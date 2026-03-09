@@ -66,6 +66,7 @@ public class HasPermissions extends Condition {
 
     @Override
     public boolean check(Event event) {
+        final @Nullable GuildChannel channel = exprChannel == null ? null : exprChannel.getSingle(event);
         return exprEntities.check(event, rawEntity -> exprPerms.check(event, rawPermission -> {
             if (rawEntity == null || rawPermission == null)
                 return isNegated();
@@ -73,7 +74,6 @@ public class HasPermissions extends Condition {
             if (rawEntity instanceof Member member) {
                 final Permission permissions = (Permission) rawPermission;
 
-                final @Nullable GuildChannel channel = exprChannel == null ? null : exprChannel.getSingle(event);
                 if (channel == null)
                     return member.hasPermission(permissions);
                 else
