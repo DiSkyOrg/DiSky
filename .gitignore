@@ -116,3 +116,8 @@ run/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+
+buildgradle_diff.txt
+changed_files.txt
+changed_files_utf8.txt
+types_diff.txt

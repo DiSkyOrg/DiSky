@@ -17,12 +17,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
+
+import moe.kyokobot.libdave.NativeDaveFactory;
+import moe.kyokobot.libdave.jda.LDJDADaveSessionFactory;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 
 /**
  * Class that store every option defined by the user before its actual {@link Bot} creation.
  */
 @SuppressWarnings("unused")
 public class BotOptions {
+
+    private static final Logger LOGGER = Logger.getLogger("DiSky");
 
     /**
      * Base information
@@ -49,13 +56,29 @@ public class BotOptions {
     public BotOptions() {}
 
     public JDABuilder toBuilder() {
-        return JDABuilder
+        final JDABuilder builder = JDABuilder
                 .createDefault(getToken())
                 .setCompression(compression)
                 .setAutoReconnect(autoReconnect)
                 .enableIntents(Arrays.asList(getIntents()))
                 .enableCache(Arrays.asList(getFlags()))
                 .setMemberCachePolicy(policy);
+
+        try {
+            final NativeDaveFactory nativeDaveFactory = new NativeDaveFactory();
+            final LDJDADaveSessionFactory daveSessionFactory = new LDJDADaveSessionFactory(nativeDaveFactory);
+            builder.setAudioModuleConfig(new AudioModuleConfig().withDaveSessionFactory(daveSessionFactory));
+            LOGGER.info("[DiSky-DAVE] DAVE protocol (E2E voice encryption) initialized successfully.");
+        } catch (Exception e) {
+            LOGGER.severe("[DiSky-DAVE] Failed to initialize DAVE protocol: " + e.getMessage());
+            e.printStackTrace();
+        } catch (UnsatisfiedLinkError e) {
+            LOGGER.severe("[DiSky-DAVE] Native library not found for DAVE protocol: " + e.getMessage());
+            LOGGER.severe("[DiSky-DAVE] Voice connections may not work. Ensure the correct native libraries are available for your platform.");
+            e.printStackTrace();
+        }
+
+        return builder;
     }
 
     public void runReady(ReadyEvent event) {

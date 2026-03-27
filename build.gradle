@@ -41,7 +41,11 @@ dependencies {
 
     // Stable: net.dv8tion:JDA:5.2.3
     // Components V2: io.github.freya022:JDA:93b3e7abb2
-    implementation 'net.dv8tion:JDA:6.3.0'
+    implementation 'net.dv8tion:JDA:6.3.2'
+
+    // DAVE protocol (E2E voice encryption)
+    implementation 'moe.kyokobot.libdave:libdave-jda:1.0.14'
+    implementation 'com.sedmelluq:lava-common:2.0.1'
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'

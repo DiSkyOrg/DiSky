@@ -63,6 +63,7 @@ import net.dv8tion.jda.api.interactions.components.ComponentInteraction;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.attachmentupload.AttachmentUpload;
 import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.requests.restaction.ChannelAction;
 import net.dv8tion.jda.api.requests.restaction.RoleAction;
@@ -314,6 +315,12 @@ public class Types {
                 null).documentation("Text Input",
                         "The **TextInput.Builder** type is used to build text input fields in modals.",
                         ExprNewInput.class)
+                .eventExpression().register();
+        new DiSkyType<>(AttachmentUpload.Builder.class, "attachmentupload",
+                AttachmentUpload.Builder::getCustomId,
+                null).documentation("Attachment Upload",
+                        "The **AttachmentUpload.Builder** type is used to build file upload fields in modals.",
+                        ExprNewAttachmentUpload.class)
                 .eventExpression().register();
         DiSkyType.fromEnum(ButtonStyle.class, "buttonstyle", "buttonstyle")
                 .documentation("Button Style",

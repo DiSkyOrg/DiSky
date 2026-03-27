@@ -17,10 +17,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Modal Component Value / Values")
-@Description({"Get the current value(s) of a sent component, currently only working in modals with text input & select menus.",
-		"You have to precise what type of component you are trying to get, either 'textinput' or 'dropdown'."})
+@Description({"Get the current value(s) of a sent component, currently only working in modals with text input, select menus & file uploads.",
+		"You have to precise what type of component you are trying to get, either 'textinput', 'dropdown' or 'attachment'."})
 @Examples({"values of dropdown with id \"XXX\"",
-		"value of textinput with id \"XXX\""})
+		"value of textinput with id \"XXX\"",
+        "values of attachment with id \"XXX\""})
 public class ComponentValue extends SimpleExpression<Object> {
 
 	static {
@@ -28,7 +29,7 @@ public class ComponentValue extends SimpleExpression<Object> {
 				ComponentValue.class,
 				Object.class,
 				ExpressionType.COMBINED,
-				"[the] [current] value[s] of [the] (1¦text[( |-)]input|2¦drop[( |-)]down) [with [the] id] %string%"
+				"[the] [current] value[s] of [the] (1¦text[( |-)]input|2¦drop[( |-)]down|3¦(attachment|upload)) [with [the] id] %string%"
 		);
 	}
 
@@ -46,6 +47,10 @@ public class ComponentValue extends SimpleExpression<Object> {
 		final var mapping = event.getValue(id);
 		if (mapping == null)
 			return new String[0];
+
+        if (mark == 3) {
+            return mapping.getAsAttachmentList().toArray(new net.dv8tion.jda.api.entities.Message.Attachment[0]);
+        }
 
 		if (isSingle())
 			return new String[] { mapping.getAsString() };
@@ -70,16 +75,22 @@ public class ComponentValue extends SimpleExpression<Object> {
 
 	private Class<?> returnType;
 	private boolean isSingle;
+    private int mark;
 
-	@Override
 	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
 		if (!EasyElement.containsEvent(ComponentEvents.MODAL_INTERACTION_EVENT.getBukkitEventClass())) {
 			Skript.error("You can only get values of components in a modal receive event.");
 			return false;
 		}
 
-		returnType = parseResult.mark == 1 ? String.class : String[].class;
-		isSingle = parseResult.mark == 1;
+        mark = parseResult.mark;
+        if (mark == 3) {
+            returnType = net.dv8tion.jda.api.entities.Message.Attachment[].class;
+            isSingle = false;
+        } else {
+		    returnType = parseResult.mark == 1 ? String.class : String[].class;
+		    isSingle = parseResult.mark == 1;
+        }
 		exprId = (Expression<String>) exprs[0];
 		return true;
 	}

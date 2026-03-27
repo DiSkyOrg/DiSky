@@ -52,32 +52,19 @@ public class BotManager {
     }
 
     public void shutdown() {
-        // TODO: 04/03/2023 Better way to shutdown bots (JDA's awaitShutdown implementation)
-        /*this.bots.forEach(bot -> {
-            DiSky.debug("1. Running shut down bot " + bot.getName());
-            bot.getOptions().runShutdown(new ShutdownEvent(bot.getInstance(), OffsetDateTime.now(), 0));
-            DiSky.debug("2. Finished shut down bot " + bot.getName());
-        });
-        this.bots.forEach(bot -> {
-            DiSky.debug("3. Shutting down bot " + bot.getName());
-            bot.getInstance().shutdown();
-        });*/
-
         for (final Bot bot : bots) {
-            var thread = new Thread(() -> bot.getOptions().runShutdown(new ShutdownEvent(bot.getInstance(), OffsetDateTime.now(), 0)));
-            thread.start();
-            new Thread(() -> {
-                while (thread.isAlive()) {
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                bot.getInstance().shutdown();
-            }).start();
+            final JDA jda = bot.getInstance();
+            if (jda == null) continue;
+            try {
+                jda.getClass().getMethod("shutdownNow").invoke(jda);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        try {
+            Thread.sleep(2000);
+        } catch (Exception ignored) {}
+        bots.clear();
     }
 
     public boolean exist(@Nullable String name) {

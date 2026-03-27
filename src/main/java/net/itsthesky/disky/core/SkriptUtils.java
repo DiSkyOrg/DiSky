@@ -58,7 +58,11 @@ public final class SkriptUtils {
     }
 
     public static void sync(Runnable runnable) {
-        Bukkit.getScheduler().runTask(DiSky.getInstance(), runnable);
+        try {
+            Bukkit.getScheduler().runTask(DiSky.getInstance(), runnable);
+        } catch (Exception e) {
+            DiSky.debug("Failed to schedule sync task: " + e.getMessage());
+        }
     }
 
     public static void stopLog(RetainingLogHandler logger) {
@@ -138,7 +142,11 @@ public final class SkriptUtils {
     }
 
     public static void async(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), runnable);
+        try {
+            Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), runnable);
+        } catch (Exception e) {
+            DiSky.debug("Failed to schedule async task: " + e.getMessage());
+        }
     }
 
     ////
