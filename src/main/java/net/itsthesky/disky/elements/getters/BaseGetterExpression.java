@@ -20,6 +20,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
+
 @Name("Base Getter Expression")
 @Description({"Abstract base class for DiSky getter expressions.",
         "Provides common functionality for expressions that retrieve Discord entities by ID.",
@@ -70,12 +72,14 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> implem
         final String id = exprId.getSingle(e);
         final Bot bot = Bot.fromContext(exprBot, e);
         if (EasyElement.anyNull(this, id, bot))
-            return (T[]) new Object[0];
+            return (T[]) Array.newInstance(getReturnType(), 0);
 
         if (!SkriptUtils.validateSnowflake(id, node))
-            return (T[]) new Object[0];
+            return (T[]) Array.newInstance(getReturnType(), 0);
 
-        return (T[]) new Object[] {get(id, bot)};
+        final T[] result = (T[]) Array.newInstance(getReturnType(), 1);
+        result[0] = get(id, bot);
+        return result;
     }
 
     @Override
@@ -101,11 +105,13 @@ public abstract class BaseGetterExpression<T> extends SimpleExpression<T> implem
         final String id = exprId.getSingle(e);
         final Bot bot = Bot.fromContext(exprBot, e);
         if (EasyElement.anyNull(this, id, bot))
-            return (T[]) new Object[0];
+            return (T[]) Array.newInstance(getReturnType(), 0);
 
         if (!SkriptUtils.validateSnowflake(id, node))
-            return (T[]) new Object[0];
+            return (T[]) Array.newInstance(getReturnType(), 0);
 
-        return (T[]) new Object[] {getAsync(id, bot)};
+        final T[] result = (T[]) Array.newInstance(getReturnType(), 1);
+        result[0] = getAsync(id, bot);
+        return result;
     }
 }

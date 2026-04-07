@@ -13,6 +13,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
@@ -71,7 +72,9 @@ public abstract class ReturningSection<T> extends Section {
 
 		@Override
 		protected T @NotNull [] get(@NotNull Event e) {
-			return (T[]) new Object[] {section.getCurrentValue()};
+			final T[] result = (T[]) Array.newInstance(getReturnType(), 1);
+			result[0] = section.getCurrentValue();
+			return result;
 		}
 
 		@Override

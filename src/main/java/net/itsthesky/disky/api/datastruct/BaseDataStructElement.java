@@ -10,6 +10,7 @@ import net.itsthesky.disky.api.datastruct.base.DataStruct;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 public abstract class BaseDataStructElement<T, D extends DataStruct<T>> extends SectionExpression<T> {
@@ -30,8 +31,10 @@ public abstract class BaseDataStructElement<T, D extends DataStruct<T>> extends 
             return null;
 
         try {
-            final var result = DataStructureFactory.createDataStructure(getDataStructClass(), parseResult, event, null);
-            return (T[]) new Object[] {result};
+            final var structResult = DataStructureFactory.createDataStructure(getDataStructClass(), parseResult, event, null);
+            final T[] arr = (T[]) Array.newInstance(getReturnType(), 1);
+            arr[0] = (T) structResult;
+            return arr;
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

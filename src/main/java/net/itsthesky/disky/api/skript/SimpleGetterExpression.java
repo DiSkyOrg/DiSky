@@ -8,6 +8,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 public abstract class SimpleGetterExpression<T, E extends Event> extends SimpleExpression<T> {
@@ -27,7 +29,9 @@ public abstract class SimpleGetterExpression<T, E extends Event> extends SimpleE
 	@Override
 	@SuppressWarnings("unchecked")
 	protected T @NotNull [] get(@NotNull Event e) {
-		return (T[]) new Object[] {convert((E) e)};
+		T[] array = (T[]) Array.newInstance(getReturnType(), 1);
+		array[0] = convert((E) e);
+		return array;
 	}
 
 	@Override
