@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.effects.find;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.NoDoc;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.config.Node;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@NoDoc
 public class FindMembersWithRoles extends AsyncEffect {
 
     static {
@@ -35,14 +37,17 @@ public class FindMembersWithRoles extends AsyncEffect {
 
     @Override
     public boolean init(Expression<?> @NotNull [] expressions, int matchedPattern, @NotNull Kleenean isDelayed, SkriptParser.@NotNull ParseResult parseResult) {
-        getParser().setHasDelayBefore(Kleenean.TRUE);
+        Skript.error("This effect is deprecated and has been removed. Please refer to the 'members with role[s]' expression instead.");
+        return false;
 
-        exprRoles = (Expression<Role>) expressions[0];
-        exprResult = (Expression<Object>) expressions[1];
+        //getParser().setHasDelayBefore(Kleenean.TRUE);
 
-        node = getParser().getNode();
+        //exprRoles = (Expression<Role>) expressions[0];
+        //exprResult = (Expression<Object>) expressions[1];
 
-        return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Member[].class);
+        //node = getParser().getNode();
+
+        //return Changer.ChangerUtils.acceptsChange(exprResult, Changer.ChangeMode.SET, Member[].class);
     }
 
     @Override
