@@ -48,7 +48,7 @@ public class BotMemberIsInThread extends EasyPropertyCondition<Object> {
                 .filter(member -> member.getId().equalsIgnoreCase(id))
                 .findAny()
                 .orElse(null) != null;
-        return isNegated() != contains;
+        return contains;
     }
 
     @Override

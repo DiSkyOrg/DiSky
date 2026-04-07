@@ -51,7 +51,7 @@ public abstract class EasyPropertyCondition<T> extends Condition {
 
     @Override
     public boolean check(@NotNull Event e) {
-        return check(e, expr.getSingle(e));
+        return isNegated() != check(e, expr.getSingle(e));
     }
 
     public abstract boolean check(Event e, T entity);
