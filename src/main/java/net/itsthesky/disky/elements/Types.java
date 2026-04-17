@@ -378,7 +378,7 @@ public class Types {
                 Role::getName,
                 input -> DiSky.getManager().searchIfAnyPresent(bot -> bot.getInstance().getRoleById(input))
         ).eventExpression().register();
-        new DiSkyType<>(RoleColors.class, "rolecolors",
+        new DiSkyType<>(RoleColors.class, "rolecolor",
                 RoleColors::toString,
                 null
         ).eventExpression().register();

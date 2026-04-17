@@ -40,8 +40,6 @@ public class GuildEvents {
                 .value(Channel.class, AutoModExecutionEvent::getChannel, 0)
                 .value(AutoModResponse.class, AutoModExecutionEvent::getResponse, 0)
                 .value(AutoModExecutionEvent.class, event -> event, 0)
-                .value(String.class, AutoModExecutionEvent::getAlertMessageId, 0)
-                .value(String.class, AutoModExecutionEvent::getRuleId, 0)
                 .value(User.class, event -> event.getJDA().getUserById(event.getUserId()), 0)
                 .register();
 

@@ -332,6 +332,11 @@ public class EventBuilder<T extends Event> {
      * @return This builder
      */
     public <V> EventBuilder<T> value(Class<V> valueClass, Function<T, V> mapper, int time) {
+        if (valueRegistrations.stream().anyMatch(registration -> registration.getValueClass().equals(valueClass) && registration.getTime() == time)) {
+            DiSky.debug("WARNING: Duplicated event value for event '" + getName() + "': " + valueClass.getSimpleName() + " with time " + time);
+            return this;
+        }
+
         valueRegistrations.add(new EventValueRegistration<>(valueClass, mapper, time));
         return this;
     }
