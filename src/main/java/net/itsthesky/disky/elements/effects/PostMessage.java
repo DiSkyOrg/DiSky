@@ -11,8 +11,8 @@ import net.itsthesky.disky.api.generator.SeeAlso;
 import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
-import ch.njol.skript.util.AsyncEffect;
 import ch.njol.util.Kleenean;
+import net.itsthesky.disky.api.skript.DiSkyAsyncEffect;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
@@ -49,7 +49,7 @@ import static net.itsthesky.disky.api.skript.EasyElement.parseSingle;
 		"post last embed to thread channel with id \"000\" and store it in {_message}"})
 @Since("4.4.0")
 @SeeAlso({Message.class, Channel.class, GuildMessageChannel.class})
-public class PostMessage extends AsyncEffect {
+public class PostMessage extends DiSkyAsyncEffect {
 
 	private static final long MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB en bytes
 	private static final int REQUIRED_SAMPLE_RATE = 48000;

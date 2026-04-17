@@ -2,7 +2,6 @@ package net.itsthesky.disky.core;
 
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.Skript;
-import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
@@ -57,7 +56,19 @@ public final class SkriptUtils {
         return EasyElement.parseSingle(expression, e, defaultValue);
     }
 
+    /**
+     * When {@code true}, {@link #sync(Runnable)} and {@link #async(Runnable)} execute
+     * the given runnable inline on the calling thread instead of scheduling it through
+     * the Bukkit scheduler. Used by the DiSky test harness to make event dispatch
+     * deterministic. Defaults to {@code false}; production code should never enable this.
+     */
+    public static boolean TEST_MODE = false;
+
     public static void sync(Runnable runnable) {
+        if (TEST_MODE) {
+            runnable.run();
+            return;
+        }
         Bukkit.getScheduler().runTask(DiSky.getInstance(), runnable);
     }
 
@@ -138,6 +149,10 @@ public final class SkriptUtils {
     }
 
     public static void async(Runnable runnable) {
+        if (TEST_MODE) {
+            runnable.run();
+            return;
+        }
         Bukkit.getScheduler().runTaskAsynchronously(DiSky.getInstance(), runnable);
     }
 

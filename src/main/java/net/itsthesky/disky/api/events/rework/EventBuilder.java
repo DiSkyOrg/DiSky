@@ -60,6 +60,14 @@ import java.util.function.Predicate;
 public class EventBuilder<T extends Event> {
     public static final List<EventBuilder<?>> REGISTERED_EVENTS = new ArrayList<>();
 
+    /**
+     * All events that have been built and registered through {@link #register()}.
+     * Populated by {@link #register()} after {@link EventRegistryFactory#registerEvent(EventBuilder)} returns.
+     * Used by external integrations (e.g. the DiSky test harness) to look up the generated
+     * Bukkit event class for a given JDA event type at runtime.
+     */
+    public static final List<BuiltEvent<?>> BUILT_EVENTS = new ArrayList<>();
+
     private final Class<T> jdaEventClass;
     private final Class<?> originClass;
     private @Nullable EventCategory eventCategory;
@@ -455,7 +463,9 @@ public class EventBuilder<T extends Event> {
             throw new IllegalStateException("Event name and patterns must be set before registering.");
         REGISTERED_EVENTS.add(this);
 
-        return EventRegistryFactory.registerEvent(this);
+        BuiltEvent<T> built = EventRegistryFactory.registerEvent(this);
+        BUILT_EVENTS.add(built);
+        return built;
     }
 
     /**

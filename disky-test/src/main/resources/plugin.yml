@@ -1,0 +1,12 @@
+name: DiSkyTest
+version: '${version}'
+main: net.itsthesky.diskytest.DiSkyTest
+api-version: '1.13'
+depend: [Skript, DiSky]
+authors: [ItsTheSky]
+description: Test harness for DiSky — fake JDA, in-process loopback, Skript test DSL.
+commands:
+    diskytest:
+        description: DiSky test runner
+        permission: diskytest.admin
+        usage: /diskytest run [<filter>]

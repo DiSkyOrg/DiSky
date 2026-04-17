@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.core.MemberRemoveEventListener;
 import net.itsthesky.disky.core.ReactionListener;
+import net.itsthesky.disky.core.SkriptUtils;
 import net.itsthesky.disky.elements.commands.CommandListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
@@ -44,11 +45,13 @@ public class BotManager {
     }
 
     private void configureBot(Bot bot) {
-        bot.getInstance().addEventListener(new CommandListener());
-        bot.getInstance().addEventListener(new ReactionListener());
-        bot.getInstance().addEventListener(new MessageManager(bot));
-        bot.getInstance().addEventListener(new MemberRemoveEventListener());
         bot.getInstance().addEventListener(new CoreEventListener(bot));
+        if (!SkriptUtils.TEST_MODE){
+            bot.getInstance().addEventListener(new CommandListener());
+            bot.getInstance().addEventListener(new ReactionListener());
+            bot.getInstance().addEventListener(new MessageManager(bot));
+            bot.getInstance().addEventListener(new MemberRemoveEventListener());
+        }
     }
 
     public void shutdown() {

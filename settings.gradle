@@ -2,4 +2,9 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
 
+// The root project IS DiSky itself — no source moves required.
+// The DiSkyTest harness lives as a sibling subproject under disky-test/.
 rootProject.name = 'DiSky'
+
+include 'disky-test'
+project(':disky-test').projectDir = file('disky-test')
