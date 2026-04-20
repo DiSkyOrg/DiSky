@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.components.properties;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -17,70 +18,74 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Modal Component Value / Values")
-@Description({"Get the current value(s) of a sent component, currently only working in modals with text input & select menus.",
-		"You have to precise what type of component you are trying to get, either 'textinput' or 'dropdown'."})
-@Examples({"values of dropdown with id \"XXX\"",
-		"value of textinput with id \"XXX\""})
+@Description({"Get the current value(s) of a sent component, currently only working in modals with text input, select menus, checkbox groups and radio groups.",
+        "You have to precise what type of component you are trying to get, either 'textinput', 'dropdown', 'checkbox group' or 'radio group'.",})
+@Examples({
+        "set {_values} to value of textinput with id \"XXX\"",
+        "set {_options::*} to values of checkbox group with id \"my-checkbox\"",
+        "set {_opt} to value of radio group with id \"my-radio\"",
+        "set {_options::*} to values of dropdown with id \"my-dropdown\""
+})
+@Since("4.28.0")
 public class ComponentValue extends SimpleExpression<Object> {
 
-	static {
-		DiSkyRegistry.registerExpression(
-				ComponentValue.class,
-				Object.class,
-				ExpressionType.COMBINED,
-				"[the] [current] value[s] of [the] (1¦text[( |-)]input|2¦drop[( |-)]down) [with [the] id] %string%"
-		);
-	}
+    static {
+        DiSkyRegistry.registerExpression(
+                ComponentValue.class,
+                Object.class,
+                ExpressionType.COMBINED,
+                "[the] [current] value[s] of [the] (input:text[( |-)]input|drop:drop[( |-)]down|check:checkbox[ group]|radio:radio[ group]) [with [the] id] %string%"
+        );
+    }
 
-	private Expression<String> exprId;
+    private Expression<String> exprId;
+    private Class<?> returnType;
+    private boolean isSingle;
 
-	@Override
-	protected Object @NotNull [] get(@NotNull Event e) {
-		final String id = EasyElement.parseSingle(exprId, e, null);
-		if (EasyElement.anyNull(this, id))
-			return new String[0];
-		final var event = ComponentEvents.MODAL_INTERACTION_EVENT.getJDAEvent(e);
-		if (event == null)
-			return new String[0];
+    @Override
+    public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
+        if (!EasyElement.containsEvent(ComponentEvents.MODAL_INTERACTION_EVENT.getBukkitEventClass())) {
+            Skript.error("You can only get values of components in a modal receive event.");
+            return false;
+        }
 
-		final var mapping = event.getValue(id);
-		if (mapping == null)
-			return new String[0];
+        returnType = parseResult.hasTag("input") || parseResult.hasTag("radio") ? String.class : String[].class;
+        isSingle = parseResult.hasTag("input") || parseResult.hasTag("radio");
+        exprId = (Expression<String>) exprs[0];
+        return true;
+    }
 
-		if (isSingle())
-			return new String[] { mapping.getAsString() };
-		else
-			return mapping.getAsStringList().toArray(new String[0]);
-	}
+    @Override
+    protected Object @NotNull [] get(@NotNull Event e) {
+        final String id = EasyElement.parseSingle(exprId, e, null);
+        if (EasyElement.anyNull(this, id))
+            return new String[0];
+        final var event = ComponentEvents.MODAL_INTERACTION_EVENT.getJDAEvent(e);
+        if (event == null)
+            return new String[0];
 
-	@Override
-	public boolean isSingle() {
-		return isSingle;
-	}
+        final var mapping = event.getValue(id);
+        if (mapping == null)
+            return new String[0];
 
-	@Override
-	public @NotNull Class<?> getReturnType() {
-		return returnType;
-	}
+        if (isSingle())
+            return new String[]{mapping.getAsString()};
+        else
+            return mapping.getAsStringList().toArray(new String[0]);
+    }
 
-	@Override
-	public @NotNull String toString(@Nullable Event e, boolean debug) {
-		return "value of component with id " + exprId.toString(e, debug);
-	}
+    @Override
+    public boolean isSingle() {
+        return isSingle;
+    }
 
-	private Class<?> returnType;
-	private boolean isSingle;
+    @Override
+    public @NotNull Class<?> getReturnType() {
+        return returnType;
+    }
 
-	@Override
-	public boolean init(Expression<?> @NotNull [] exprs, int matchedPattern, @NotNull Kleenean isDelayed, @NotNull ParseResult parseResult) {
-		if (!EasyElement.containsEvent(ComponentEvents.MODAL_INTERACTION_EVENT.getBukkitEventClass())) {
-			Skript.error("You can only get values of components in a modal receive event.");
-			return false;
-		}
-
-		returnType = parseResult.mark == 1 ? String.class : String[].class;
-		isSingle = parseResult.mark == 1;
-		exprId = (Expression<String>) exprs[0];
-		return true;
-	}
+    @Override
+    public @NotNull String toString(@Nullable Event e, boolean debug) {
+        return "value of component with id " + exprId.toString(e, debug);
+    }
 }

@@ -1,6 +1,10 @@
 package net.itsthesky.disky.elements.components.properties;
 
 import ch.njol.skript.classes.Changer;
+import net.dv8tion.jda.api.components.checkboxgroup.CheckboxGroup;
+import net.dv8tion.jda.api.components.checkboxgroup.CheckboxGroupOption;
+import net.dv8tion.jda.api.components.radiogroup.RadioGroup;
+import net.dv8tion.jda.api.components.radiogroup.RadioGroupOption;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.itsthesky.disky.api.skript.EasyElement;
@@ -19,14 +23,16 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 				PropOptions.class,
 				Object.class,
 				"option[s] [mapping[s]]",
-				"slashcommand/subslashcommand/dropdown"
+				"slashcommand/subslashcommand/dropdown/checkboxgroup/radiogroup"
 		);
 	}
 
 	@Override
 	public Class<?> @NotNull [] acceptChange(@NotNull Changer.ChangeMode mode) {
 		if (EasyElement.equalAny(mode, Changer.ChangeMode.ADD))
-			return new Class[] {OptionData.class, SelectOption.class};
+			return new Class[] {OptionData.class,
+                    SelectOption.class,
+                    RadioGroupOption.class, CheckboxGroupOption.class};
 		return new Class[0];
 	}
 
@@ -47,7 +53,13 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 		} else if (entity instanceof StringSelectMenu.Builder) {
 			for (Object value : rawValues)
 				((StringSelectMenu.Builder) entity).addOptions((SelectOption) value);
-		}
+		} else if (entity instanceof RadioGroup.Builder) {
+            for (Object value : rawValues)
+                ((RadioGroup.Builder) entity).addOptions((RadioGroupOption) value);
+        } else if (entity instanceof CheckboxGroup.Builder) {
+            for (Object value : rawValues)
+                ((CheckboxGroup.Builder) entity).addOptions((CheckboxGroupOption) value);
+        }
 	}
 
 	@Override
@@ -61,6 +73,12 @@ public class PropOptions extends MultiplyPropertyExpression<Object, Object> {
 			return ((StringSelectMenu.Builder) entity).getOptions().toArray(new SelectOption[0]);
 		if (entity instanceof SlashCommandData)
 			return ((SlashCommandData) entity).getOptions().toArray(new OptionData[0]);
+        if (entity instanceof SubcommandData)
+            return ((SubcommandData) entity).getOptions().toArray(new OptionData[0]);
+        if (entity instanceof RadioGroup.Builder)
+            return ((RadioGroup.Builder) entity).getOptions().toArray(new RadioGroupOption[0]);
+        if (entity instanceof CheckboxGroup.Builder)
+            return ((CheckboxGroup.Builder) entity).getOptions().toArray(new CheckboxGroupOption[0]);
 		return new Object[0];
 	}
 

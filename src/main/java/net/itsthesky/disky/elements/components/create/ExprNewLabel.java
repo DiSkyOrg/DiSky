@@ -24,7 +24,9 @@ import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
 import net.dv8tion.jda.api.components.attachmentupload.AttachmentUpload;
+import net.dv8tion.jda.api.components.checkboxgroup.CheckboxGroup;
 import net.dv8tion.jda.api.components.label.LabelChildComponent;
+import net.dv8tion.jda.api.components.radiogroup.RadioGroup;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
@@ -105,9 +107,11 @@ public class ExprNewLabel extends SimpleExpression<ModalTopLevelComponent> {
         switch (component) {
             case final TextInput.Builder textBuilder -> child = textBuilder.build();
             case final SelectMenu.Builder selectBuilder -> child = selectBuilder.build();
-            case AttachmentUpload.Builder attachmentBuilder -> child = attachmentBuilder.build();
+            case final AttachmentUpload.Builder attachmentBuilder -> child = attachmentBuilder.build();
+            case final CheckboxGroup.Builder checkboxBuilder -> child = checkboxBuilder.build();
+            case final RadioGroup.Builder radioBuilder -> child = radioBuilder.build();
             case null, default -> {
-                DiSkyRuntimeHandler.error(new IllegalStateException("The component provided cannot fit into a label (only text inputs & select menus are allowed)"), node);
+                DiSkyRuntimeHandler.error(new IllegalStateException("The component provided cannot fit into a label (only text inputs, select menus, attachment upload, checkbox and radio group are allowed)"), node);
                 return new ModalTopLevelComponent[0];
             }
         }

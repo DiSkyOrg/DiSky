@@ -3,10 +3,13 @@ package net.itsthesky.disky.elements;
 import net.dv8tion.jda.api.components.ActionComponent;
 import net.dv8tion.jda.api.components.ModalTopLevelComponent;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.components.checkboxgroup.CheckboxGroup;
+import net.dv8tion.jda.api.components.checkboxgroup.CheckboxGroupOption;
+import net.dv8tion.jda.api.components.radiogroup.RadioGroup;
+import net.dv8tion.jda.api.components.radiogroup.RadioGroupOption;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.entities.automod.AutoModExecution;
 import net.dv8tion.jda.api.entities.sticker.GuildSticker;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonInteraction;
 import net.dv8tion.jda.api.requests.restaction.pagination.PinnedMessagePaginationAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.itsthesky.disky.DiSky;
@@ -16,7 +19,6 @@ import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.elements.commands.CommandEvent;
 import net.itsthesky.disky.elements.commands.CommandObject;
 import net.itsthesky.disky.elements.components.OpenModal;
-import net.itsthesky.disky.elements.components.commands.ExprNewOptionChoice;
 import net.itsthesky.disky.elements.components.core.ComponentRow;
 import net.itsthesky.disky.elements.components.create.*;
 import net.itsthesky.disky.elements.componentsv2.base.ContainerBuilder;
@@ -74,7 +76,6 @@ import org.skriptlang.skript.lang.converter.Converters;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 public class Types {
 
@@ -307,8 +308,34 @@ public class Types {
                 option -> option.toData().toString(),
                 null).documentation("Select Option",
                         "The **SelectOption** type represents an option in a **string** select menu.",
-                        ExprNewDropdownOption.class)
+                        ExprNewComponentOption.class)
                 .eventExpression().register();
+
+        new DiSkyType<>(RadioGroup.Builder.class, "radiogroup",
+                RadioGroup.Builder::getCustomId,
+                null).documentation("Radio Group",
+                        "The **RadioGroup.Builder** type is used to build radio groups in Discord. Radio groups allow users to choose from a list of options, but only one option can be selected at a time.",
+                        ExprNewComponentOption.class)
+                .eventExpression().register();
+        new DiSkyType<>(RadioGroupOption.class, "radiogroupoption",
+                option -> option.toData().toString(),
+                null).documentation("Radio Group Option",
+                        "The **RadioGroupOption** type represents an option in a radio group.",
+                        ExprNewComponentOption.class)
+                .eventExpression().register();
+        new DiSkyType<>(CheckboxGroup.Builder.class, "checkboxgroup",
+                CheckboxGroup.Builder::getCustomId,
+                null).documentation("Checkbox Group",
+                        "The **CheckboxGroup.Builder** type is used to build checkbox groups in Discord. Checkbox groups allow users to choose from a list of options, and multiple options can be selected at the same time.",
+                        ExprNewComponentOption.class)
+                .eventExpression().register();
+        new DiSkyType<>(CheckboxGroupOption.class, "checkboxgroupoption",
+                option -> option.toData().toString(),
+                null).documentation("Checkbox Group Option",
+                        "The **CheckboxGroupOption** type represents an option in a checkbox group.",
+                        ExprNewComponentOption.class)
+                .eventExpression().register();
+
         new DiSkyType<>(TextInput.Builder.class, "textinput",
                 TextInput.Builder::getCustomId,
                 null).documentation("Text Input",
