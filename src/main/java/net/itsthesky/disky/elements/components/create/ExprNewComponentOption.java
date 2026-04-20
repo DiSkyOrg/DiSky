@@ -14,7 +14,9 @@ import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.itsthesky.disky.api.emojis.Emote;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import net.itsthesky.disky.api.skript.EasyElement;
+import net.itsthesky.disky.elements.components.properties.PropOptions;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,8 +27,20 @@ import org.jetbrains.annotations.Nullable;
         "The value represent the returned string that this dropdown will return if this option is selected.",
         "The name / label is the actual shown name on the option.",
         "Description and emote are optional. They will be ignored for checkbox and radio options, as they are only supported in dropdowns."})
-@Examples("set {_btn} to new enabled danger button with id \"button-id\" named \"Hello world :p\"")
+@Examples({
+        """
+        set {_radio} to new radio group with id "test2"
+        add (new radio option with value "option1" named "Option 1") to options of {_radio}
+        add (new default radio option with value "option2" named "Option 2") to options of {_radio}
+        """,
+        """
+        set {_checks} to new checkbox group with id "test"
+        add (new checkbox option with value "option1" named "Option 1") to options of {_checks}
+        add (new default checkbox option with value "option2" named "Option 2") to options of {_checks}
+        """
+})
 @Since("4.28.0")
+@SeeAlso({PropOptions.class})
 public class ExprNewComponentOption extends SimpleExpression<Object> {
 
     static {

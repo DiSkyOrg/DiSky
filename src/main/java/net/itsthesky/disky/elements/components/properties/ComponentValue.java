@@ -34,7 +34,7 @@ public class ComponentValue extends SimpleExpression<Object> {
                 ComponentValue.class,
                 Object.class,
                 ExpressionType.COMBINED,
-                "[the] [current] value[s] of [the] (input:text[( |-)]input|drop:drop[( |-)]down|check:checkbox[ group]|radio:radio[ group]) [with [the] id] %string%"
+                "[the] [current] value[s] of [the] (input:text[ |-]input|drop:drop[ |-]down|check:checkbox[ group]|radio:radio[ group]) [with [the] id] %string%"
         );
     }
 
