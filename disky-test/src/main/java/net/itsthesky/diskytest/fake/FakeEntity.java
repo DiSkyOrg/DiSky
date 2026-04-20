@@ -1,5 +1,7 @@
 package net.itsthesky.diskytest.fake;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -72,6 +74,23 @@ public abstract class FakeEntity<I> implements InvocationHandler {
             }
         }
         collectInterfaces(clazz.getSuperclass(), acc);
+    }
+
+    /**
+     * If {@code value} is a JDA proxy whose invocation handler is a {@link FakeEntity},
+     * returns that handler. Otherwise returns {@code null}.
+     *
+     * <p>Used by the reflective factory to unwrap Skript variables (which hold
+     * JDA-interface proxies) back into their concrete fake implementations, so
+     * constructors that expect {@code FakeGuild}, {@code FakeUser}, etc. can be
+     * invoked with arguments coming from Skript.
+     */
+    public static @Nullable FakeEntity<?> unwrap(Object value) {
+        if (value == null) return null;
+        if (value instanceof FakeEntity<?> fe) return fe;
+        if (!Proxy.isProxyClass(value.getClass())) return null;
+        InvocationHandler handler = Proxy.getInvocationHandler(value);
+        return handler instanceof FakeEntity<?> fe ? fe : null;
     }
 
     /**

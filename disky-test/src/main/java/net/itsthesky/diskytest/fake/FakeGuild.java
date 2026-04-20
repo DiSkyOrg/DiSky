@@ -4,10 +4,13 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
+import net.dv8tion.jda.api.utils.cache.SnowflakeCacheView;
 import net.dv8tion.jda.internal.entities.GuildImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,6 +28,7 @@ public class FakeGuild extends FakeEntity<Guild> {
     private final FakeMember selfMember;
     private final Map<Long, FakeMember> members = new LinkedHashMap<>();
     private final Map<Long, FakeRole> roles = new LinkedHashMap<>();
+    private final Map<Long, FakeRichCustomEmoji> emotes = new LinkedHashMap<>();
     private final Map<Long, FakeTextChannel> textChannels = new LinkedHashMap<>();
 
     public FakeGuild(FakeJDA jda, String name, FakeMember selfMember) {
@@ -41,12 +45,15 @@ public class FakeGuild extends FakeEntity<Guild> {
     public void addFakeMember(FakeMember member) { members.put(member.getIdLong(), member); }
     public void addFakeRole(FakeRole role) { roles.put(role.getIdLong(), role); }
     public void addFakeTextChannel(FakeTextChannel channel) { textChannels.put(channel.getIdLong(), channel); }
+    public void addFakeEmoji(FakeRichCustomEmoji emoji) { emotes.put(emoji.getIdLong(), emoji); }
 
     public long getIdLong() { return id; }
     public String getId() { return Long.toUnsignedString(id); }
     @NotNull public String getName() { return name; }
 
     @NotNull public net.dv8tion.jda.api.JDA getJDA() { return jda.asProxy(); }
+
+    //region Members
 
     @NotNull
     public Member getSelfMember() { return selfMember.asProxy(); }
@@ -69,6 +76,8 @@ public class FakeGuild extends FakeEntity<Guild> {
         for (FakeMember m : members.values()) out.add(m.asProxy());
         return out;
     }
+
+    //endregion
 
     @NotNull
     public List<TextChannel> getTextChannels() {
@@ -97,4 +106,33 @@ public class FakeGuild extends FakeEntity<Guild> {
         FakeRole r = roles.get(roleId);
         return r == null ? null : r.asProxy();
     }
+
+    //region Emojis
+
+    public @Nullable RichCustomEmoji getEmojiById(@Nonnull String id) {
+        return getEmojiById(Long.parseUnsignedLong(id));
+    }
+
+    public @Nullable RichCustomEmoji getEmojiById(long id) {
+        FakeRichCustomEmoji e = emotes.get(id);
+        return e == null ? null : e.asProxy();
+    }
+
+    public @NotNull List<RichCustomEmoji> getEmojis() {
+        if (emotes.isEmpty()) return Collections.emptyList();
+        List<RichCustomEmoji> out = new ArrayList<>(emotes.size());
+        for (FakeRichCustomEmoji e : emotes.values()) out.add(e.asProxy());
+        return out;
+    }
+
+    public @NotNull List<RichCustomEmoji> getEmojisByName(@Nonnull String name, boolean ignoreCase) {
+        List<RichCustomEmoji> out = new ArrayList<>();
+        for (FakeRichCustomEmoji e : emotes.values()) {
+            if (e.getName().equalsIgnoreCase(name))
+                out.add(e.asProxy());
+        }
+        return out;
+    }
+
+    //endregion
 }

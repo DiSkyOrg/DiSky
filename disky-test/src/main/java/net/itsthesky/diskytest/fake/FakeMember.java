@@ -25,6 +25,9 @@ public class FakeMember extends FakeEntity<Member> {
         super(Member.class, allInterfacesOf(MemberImpl.class));
         this.guild = guild;
         this.user = user;
+
+        if (guild != null)
+            guild.addFakeMember(this);
     }
 
     public void setNickname(@Nullable String nickname) { this.nickname = nickname; }

@@ -4,12 +4,7 @@ import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.api.events.EventListener;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.managers.CoreEventListener;
-import net.itsthesky.diskytest.fake.FakeBot;
-import net.itsthesky.diskytest.fake.FakeGuild;
-import net.itsthesky.diskytest.fake.FakeJDA;
-import net.itsthesky.diskytest.fake.FakeMember;
-import net.itsthesky.diskytest.fake.FakeTextChannel;
-import net.itsthesky.diskytest.fake.FakeUser;
+import net.itsthesky.diskytest.fake.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,14 +62,12 @@ public class TestFixture {
         // Re-link selfMember.guild via reflection? Simpler: rebuild selfMember once guild exists.
         // Since FakeMember holds final fields, we replace it:
         FakeMember realSelfMember = new FakeMember(guild, selfUserView);
-        guild.addFakeMember(realSelfMember);
         fakeJDA.registerFakeGuild(guild);
 
         FakeTextChannel channel = new FakeTextChannel(guild, "general");
 
         FakeUser user = new FakeUser(fakeJDA, "TestUser", false);
         FakeMember member = new FakeMember(guild, user);
-        guild.addFakeMember(member);
 
         Bot bot = FakeBot.create(botName, fakeJDA);
         DiSky.getManager().addBot(bot);

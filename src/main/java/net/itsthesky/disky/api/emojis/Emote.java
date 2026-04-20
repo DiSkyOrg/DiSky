@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.emoji.*;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.itsthesky.disky.DiSky;
 import org.jetbrains.annotations.NotNull;
 
 public class Emote implements IMentionable {
@@ -78,6 +79,7 @@ public class Emote implements IMentionable {
     }
 
     public String getID() {
+        DiSky.getInstance().getLogger().warning("Getting ID of " + getName() + " (custom: " + isCustom() + ", animated: " + isAnimated() + ", custom id: " + (customEmoji != null ? customEmoji.getId() : "null") + ")");
         return isCustom() ? customEmoji.getId() : unicodeEmoji.getName();
     }
 

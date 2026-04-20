@@ -18,19 +18,35 @@ import java.util.Map;
  */
 public final class TestRunner {
 
+    // ── Visual constants ─────────────────────────────────────────────────────
+    private static final int  WIDTH      = 50;
+    private static final char H_BAR      = '─';
+    private static final char H_DOUBLE   = '═';
+    private static final String PASS_ICON = "&a✔";
+    private static final String FAIL_ICON = "&c✗";
+    private static final String ERR_ICON  = "&c!";
+
     private TestRunner() {}
+
+    // ── Public entry point ───────────────────────────────────────────────────
 
     public static List<TestResult> runAll(CommandSender out, String filter) {
         List<TestResult> results = new ArrayList<>();
         Map<String, EvtDiSkyTest> tests = TestRegistry.all();
 
         if (tests.isEmpty()) {
-            send(out, "&e[DiSkyTest] No tests registered. Drop .sk files in plugins/DiSkyTest/tests/.");
+            send(out, "&e  No tests registered. Drop .sk files in plugins/Skript/scripts/.");
             return results;
         }
 
         String f = filter == null ? null : filter.toLowerCase(Locale.ROOT);
-        send(out, "&7>>> &fDiSky Test Runner &7— discovered &b" + tests.size() + "&7 test(s)");
+
+        // ── Header ──────────────────────────────────────────────────────────
+        send(out, "&8" + repeat(H_DOUBLE, WIDTH));
+        send(out, "&f&l  DiSkyTest &r&7— &b" + tests.size() + "&7 test(s) discovered"
+                + (f != null ? "  &8[filter: &7" + f + "&8]" : ""));
+        send(out, "&8" + repeat(H_DOUBLE, WIDTH));
+        send(out, "");
 
         boolean previousTestMode = SkriptUtils.TEST_MODE;
         SkriptUtils.TEST_MODE = true;
@@ -39,6 +55,7 @@ public final class TestRunner {
                 if (f != null && !e.getKey().toLowerCase(Locale.ROOT).contains(f))
                     continue;
                 results.add(runOne(out, e.getKey(), e.getValue()));
+                send(out, "");
             }
         } finally {
             SkriptUtils.TEST_MODE = previousTestMode;
@@ -48,8 +65,13 @@ public final class TestRunner {
         return results;
     }
 
+    // ── Per-test rendering ───────────────────────────────────────────────────
+
     private static TestResult runOne(CommandSender out, String name, EvtDiSkyTest test) {
-        send(out, "&7>>> &fRunning: &b" + name);
+        // Header line:  ┌─ <name> ─────
+        String title = " &f&l" + name + " &8";
+        send(out, "&8┌" + repeat(H_BAR, 2) + title + repeat(H_BAR, Math.max(1, WIDTH - 4 - stripped(title))));
+
         TestFixture fixture = TestFixture.create(name);
         try {
             test.execute(fixture);
@@ -63,24 +85,87 @@ public final class TestRunner {
                 System.err.println("[DiSkyTest] cleanup failed for '" + name + "': " + t);
             }
         }
+
         TestResult res = fixture.toResult();
-        send(out, "    " + (res.isSuccess() ? "&a" : "&c") + res.summary());
+
+        // One line per assertion
+        for (AssertionRecord a : res.assertions()) {
+            String icon = a.passed() ? PASS_ICON : FAIL_ICON;
+            send(out, "&8│  " + icon + " &7" + a.expression());
+            if (!a.passed() && a.message() != null)
+                send(out, "&8│     &8└ &e" + a.message());
+        }
+
+        // Errors (exceptions)
+        for (String err : res.errors())
+            send(out, "&8│  " + ERR_ICON + " &c" + err);
+
+        // Footer line:  └─ PASS/FAIL (x/y) ─────
+        String verdict = res.isSuccess()
+                ? "&a PASS &7(" + res.assertions().size() + " assertion(s)) "
+                : "&c FAIL &7(" + res.passed() + "/" + res.assertions().size() + " assertion(s)) ";
+        send(out, "&8└" + repeat(H_BAR, 2) + verdict + "&8" + repeat(H_BAR, Math.max(1, WIDTH - 4 - stripped(verdict))));
+
         return res;
     }
 
+    // ── Summary block ────────────────────────────────────────────────────────
+
     private static void printSummary(CommandSender out, List<TestResult> results) {
-        int pass = 0, fail = 0, asserts = 0;
+        if (results.isEmpty()) return;
+
+        int pass   = (int) results.stream().filter(TestResult::isSuccess).count();
+        int fail   = results.size() - pass;
+        int total  = results.stream().mapToInt(r -> r.assertions().size()).sum();
+        int passed = results.stream().mapToInt(TestResult::passed).sum();
+
+        send(out, "&8" + repeat(H_DOUBLE, WIDTH));
+        send(out, "&f&l  Summary");
+        send(out, "&8" + repeat(H_BAR, WIDTH));
+        send(out, "  &7Tests      &f" + results.size()
+                + "  &a" + pass + " passed&7, &c" + fail + " failed");
+        send(out, "  &7Assertions &f" + total
+                + "  &a" + passed + " passed&7, &c" + (total - passed) + " failed");
+        send(out, "&8" + repeat(H_BAR, WIDTH));
+
+        // Per-test one-liner recap
         for (TestResult r : results) {
-            if (r.isSuccess()) pass++; else fail++;
-            asserts += r.assertions().size();
+            String icon = r.isSuccess() ? PASS_ICON : FAIL_ICON;
+            send(out, "  " + icon + " &7" + r.name()
+                    + " &8(" + r.passed() + "/" + r.assertions().size() + ")");
+            if (!r.isSuccess()) {
+                for (AssertionRecord a : r.assertions())
+                    if (!a.passed())
+                        send(out, "     &8└ &c" + a.expression()
+                                + (a.message() != null ? " &8— &e" + a.message() : ""));
+                for (String err : r.errors())
+                    send(out, "     &8! &c" + err);
+            }
         }
-        send(out, "&7>>> &fTotal: &b" + results.size() + "&7 tests, &b" + asserts
-                + "&7 assertions, &a" + pass + " PASS&7, &c" + fail + " FAIL");
+
+        send(out, "&8" + repeat(H_DOUBLE, WIDTH));
+        String overall = fail == 0 ? "&a&l  ALL TESTS PASSED" : "&c&l  " + fail + " TEST(S) FAILED";
+        send(out, overall);
+        send(out, "&8" + repeat(H_DOUBLE, WIDTH));
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    /** Repeats character {@code c} exactly {@code n} times. */
+    private static String repeat(char c, int n) {
+        if (n <= 0) return "";
+        return String.valueOf(c).repeat(n);
+    }
+
+    /**
+     * Approximates the visible length of a string after stripping {@code &X} color codes.
+     * Used to right-pad separator lines to {@link #WIDTH}.
+     */
+    private static int stripped(String s) {
+        return s.replaceAll("&[0-9a-fk-orA-FK-OR]", "").length();
     }
 
     private static void send(CommandSender out, String legacy) {
-        // Replace § color codes — Bukkit accepts them via &-style if pre-translated.
-        String translated = legacy.replace('&', '\u00A7');
-        out.sendMessage(translated);
+        out.sendMessage(legacy.replace('&', '\u00A7'));
     }
 }

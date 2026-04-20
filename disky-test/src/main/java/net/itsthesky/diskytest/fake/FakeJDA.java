@@ -76,9 +76,8 @@ public class FakeJDA extends FakeEntity<JDA> {
             try {
                 listener.onEvent(event);
             } catch (Throwable t) {
-                System.err.println("[FakeJDA] listener " + listener.getClass().getName()
-                        + " threw during dispatch: " + t);
-                t.printStackTrace();
+                throw new RuntimeException("Listener " + listener.getClass().getName()
+                        + " threw during dispatch of " + event.getClass().getSimpleName(), t);
             }
         }
     }

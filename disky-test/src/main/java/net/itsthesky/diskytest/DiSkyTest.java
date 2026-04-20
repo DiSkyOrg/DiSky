@@ -5,6 +5,7 @@ import ch.njol.skript.SkriptAddon;
 import net.itsthesky.diskytest.framework.TestRunner;
 import net.itsthesky.diskytest.skript.EffDiSkyAssert;
 import net.itsthesky.diskytest.skript.EvtDiSkyTest;
+import net.itsthesky.diskytest.skript.ExprNewFake;
 import net.itsthesky.diskytest.skript.SecWaitForEvent;
 import net.itsthesky.diskytest.skript.utilities.PropFakeHistory;
 import net.itsthesky.diskytest.skript.utilities.PropFakeLastMessage;
@@ -49,6 +50,7 @@ public class DiSkyTest extends JavaPlugin {
             Class.forName(SecWaitForEvent.class.getName());
             Class.forName(PropFakeLastMessage.class.getName());
             Class.forName(PropFakeHistory.class.getName());
+            Class.forName(ExprNewFake.class.getName());
 
             getLogger().info("DiSkyTest syntaxes registered.");
         } catch (Throwable t) {

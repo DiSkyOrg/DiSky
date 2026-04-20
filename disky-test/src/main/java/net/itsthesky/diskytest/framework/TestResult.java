@@ -19,14 +19,9 @@ public record TestResult(String name, List<AssertionRecord> assertions, List<Str
         return errors.isEmpty() && failed() == 0;
     }
 
+    /** One-line plain-text summary (no color codes). Used in logs/tests. */
     public String summary() {
-        if (isSuccess()) return "PASS  " + name + "  (" + assertions.size() + " assertion(s))";
-        StringBuilder sb = new StringBuilder("FAIL  ").append(name)
-                .append("  (").append(passed()).append('/').append(assertions.size())
-                .append(" assertion(s))");
-        for (AssertionRecord a : assertions)
-            if (!a.passed()) sb.append("\n    - ").append(a);
-        for (String err : errors) sb.append("\n    ! ").append(err);
-        return sb.toString();
+        String tag = isSuccess() ? "PASS" : "FAIL";
+        return tag + "  " + name + "  (" + passed() + "/" + assertions.size() + " assertion(s))";
     }
 }
