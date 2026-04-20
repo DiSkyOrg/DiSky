@@ -47,8 +47,13 @@ jobs:
           path: ./target
 
       - name: Rename JAR with version
-        run: mv target/*.jar "target/DiSky ${{ github.event.release.tag_name }}.jar"
-
+        run: |
+          TARGET="target/DiSky ${{ github.event.release.tag_name }}.jar"
+          for f in target/*.jar; do
+            if [ "$f" != "$TARGET" ]; then
+              mv "$f" "$TARGET"
+            fi
+          done
       - name: Upload to Modrinth
         uses: cloudnode-pro/modrinth-publish@v2
         with:
