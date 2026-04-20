@@ -19,6 +19,12 @@ package net.itsthesky.disky.elements.components.create;
  */
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import net.dv8tion.jda.api.components.attachmentupload.AttachmentUpload;
+import net.dv8tion.jda.api.components.label.LabelChildComponent;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
@@ -30,10 +36,36 @@ import net.dv8tion.jda.api.components.ModalTopLevelComponent;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.selections.SelectMenu;
 import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.itsthesky.disky.api.generator.SeeAlso;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
+@Name("New Model Label")
+@Description("Create a new label component for modals. Labels are components that can be used to display text and a child component (like a text input or a select menu or an attachment input) in a modal.")
+@Examples({
+        """
+        # Create a short text input
+        set {_input} to new short text input with id "title"
+        set placeholder of {_input} to "Enter a brief title..."
+        set minimum range of {_input} to 3
+        set maximum range of {_input} to 50
+        set required state of {_input} to true
+        
+        # Wrap in a label
+        set {_label} to new label "Feedback Title" with {_input}
+        
+        # Then adds it to the modal
+        add {_label} to rows of {_modal}
+        """,
+        """
+        set {_att} to new attachment upload builder with id "test" min size 3 and max size 10
+        set {_label} to new label "File?" with {_att}
+        add {_label} to rows of {_modal}
+        """
+})
+@Since("4.25.0")
+@SeeAlso({ExprNewAttachmentUpload.class, ExprNewInput.class, ExprNewDropdown.class, ExprNewModal.class})
 public class ExprNewLabel extends SimpleExpression<ModalTopLevelComponent> {
 
     static {
@@ -69,16 +101,18 @@ public class ExprNewLabel extends SimpleExpression<ModalTopLevelComponent> {
         if (!DiSkyRuntimeHandler.checkSet(node, label, exprLabel, component, exprComponent))
             return new ModalTopLevelComponent[0];
 
-        final Label lbl;
-        if (component instanceof final TextInput.Builder textBuilder)
-            lbl = Label.of(label, desc, textBuilder.build());
-        else if (component instanceof final SelectMenu.Builder selectBuilder)
-            lbl = Label.of(label, desc, selectBuilder.build());
-        else {
-            DiSkyRuntimeHandler.error(new IllegalStateException("The component provided cannot fit into a label (only text inputs & select menus are allowed)"), node);
-            return new ModalTopLevelComponent[0];
+        final LabelChildComponent child;
+        switch (component) {
+            case final TextInput.Builder textBuilder -> child = textBuilder.build();
+            case final SelectMenu.Builder selectBuilder -> child = selectBuilder.build();
+            case AttachmentUpload.Builder attachmentBuilder -> child = attachmentBuilder.build();
+            case null, default -> {
+                DiSkyRuntimeHandler.error(new IllegalStateException("The component provided cannot fit into a label (only text inputs & select menus are allowed)"), node);
+                return new ModalTopLevelComponent[0];
+            }
         }
 
+        final var lbl = Label.of(label, desc, child);
         return new ModalTopLevelComponent[] {lbl};
     }
 
