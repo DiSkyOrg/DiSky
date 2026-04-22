@@ -144,5 +144,22 @@ public class UserEvents {
                         UserUpdateGlobalNameEvent::getOldValue)
                 .value(User.class, UserUpdateGlobalNameEvent::getUser)
                 .register();
+
+        EventRegistryFactory.builder(UserUpdatePrimaryGuildEvent.class)
+                .name("User Primary Guild Update Event")
+                .patterns("[discord] user primary guild (change|update)")
+                .description("Fired when a user changes their primary guild.",
+                        "This event provides access to both the old and new primary guilds.",
+                        "The primary guild is the server that appears as the user's main server on their profile.")
+                .example("on user primary guild change:\n    broadcast \"%event-user% changed their primary guild from '%previous primary guild id%' to '%primary guild id%' (new tag: %new user tag%)\"")
+                .customTimedExpressions("primary guild id", String.class,
+                        e -> e.getNewPrimaryGuild() == null ? null : e.getNewPrimaryGuild().getId(),
+                        e -> e.getOldPrimaryGuild() == null ? null : e.getOldPrimaryGuild().getId())
+                .customTimedExpressions("user tag", String.class,
+                        e -> e.getNewPrimaryGuild() == null ? null : e.getNewPrimaryGuild().getTag(),
+                        e -> e.getOldPrimaryGuild() == null ? null : e.getOldPrimaryGuild().getTag())
+                .value(User.class, UserUpdatePrimaryGuildEvent::getUser)
+                .value(String.class, e -> e.getNewPrimaryGuild() == null ? null : e.getNewPrimaryGuild().getTag())
+                .register();
     }
 }
