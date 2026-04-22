@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * Used to execute condition through a specific event (init available)
  * @author Sky (SkirpLang team for the base code)
  */
+@Deprecated(forRemoval = true)
 public abstract class EasyPropertyCondition<T> extends Condition {
 
     private Expression<? extends T> expr;
