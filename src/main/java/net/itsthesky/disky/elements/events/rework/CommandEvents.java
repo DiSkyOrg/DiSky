@@ -88,7 +88,9 @@ public class CommandEvents {
 
                 .singleExpression("(execute|use)[d] [slash] command", String.class,
                         SlashCommandInteractionEvent::getFullCommandName)
-
+                .singleExpression("[the] [slash] command id", Long.class,
+                        SlashCommandInteractionEvent::getCommandIdLong)
+                
                 .register();
 
         SLASH_COOLDOWN_EVENT = EventRegistryFactory.builder(SlashCooldownEvent.class)
