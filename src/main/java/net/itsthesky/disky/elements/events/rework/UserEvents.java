@@ -24,6 +24,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.events.user.UserActivityEndEvent;
+import net.dv8tion.jda.api.events.user.UserActivityStartEvent;
 import net.dv8tion.jda.api.events.user.UserTypingEvent;
 import net.dv8tion.jda.api.events.user.update.*;
 import net.itsthesky.disky.api.events.rework.EventCategory;
@@ -50,6 +52,39 @@ public class UserEvents {
                 .value(User.class, UserUpdateActivityOrderEvent::getUser)
                 .value(Guild.class, UserUpdateActivityOrderEvent::getGuild)
                 .value(Member.class, UserUpdateActivityOrderEvent::getMember)
+                .register();
+
+        // User Activity Start Event
+        // Fired when a user starts an activity (game, music, stream, custom status...)
+        EventRegistryFactory.builder(UserActivityStartEvent.class)
+                .name("User Activity Start Event")
+                .patterns("[discord] user activity start[ed]")
+                .description("Fired when a user starts a new activity in a guild.",
+                        "Activities include playing games, listening to music, streaming, or custom status messages.",
+                        "This event requires the 'guild presences' intent and the 'activity' cache flag to be enabled.",
+                        "Note: when a stream's title changes, a start event is fired before an end event to replace the activity.")
+                .example("on user activity start:\n    broadcast \"%event-user% started %event-activity% in %event-guild%\"")
+                .value(Activity.class, UserActivityStartEvent::getNewActivity)
+                .value(User.class, UserActivityStartEvent::getUser)
+                .value(Member.class, UserActivityStartEvent::getMember)
+                .value(Guild.class, UserActivityStartEvent::getGuild)
+                .register();
+
+        // User Activity End Event
+        // Fired when a user stops an activity
+        EventRegistryFactory.builder(UserActivityEndEvent.class)
+                .name("User Activity End Event")
+                .patterns("[discord] user activity (end[ed]|stop[ped])")
+                .description("Fired when a user stops an activity in a guild.",
+                        "Activities include playing games, listening to music, streaming, or custom status messages.",
+                        "This event requires the 'guild presences' intent and the 'activity' cache flag to be enabled.",
+                        "Note: to check whether an activity actually concluded (vs. was replaced due to a property update),",
+                        "iterate the member's current activities and check if one with the same type still exists.")
+                .example("on user activity end:\n    broadcast \"%event-user% stopped %event-activity% in %event-guild%\"")
+                .value(Activity.class, UserActivityEndEvent::getOldActivity)
+                .value(User.class, UserActivityEndEvent::getUser)
+                .value(Member.class, UserActivityEndEvent::getMember)
+                .value(Guild.class, UserActivityEndEvent::getGuild)
                 .register();
 
         // User Avatar Update Event
