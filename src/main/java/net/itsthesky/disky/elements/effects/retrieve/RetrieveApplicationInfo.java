@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -15,6 +19,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Retrieve Application Info")
+@Description({"Retrieve the application info/meta of a specific bot and store it in a variable."})
+@Examples({"retrieve the application info of bot \"MyBot\" and store it in {_info}"})
+@Since("4.0.0")
 public class RetrieveApplicationInfo extends AsyncEffect {
 
     static {

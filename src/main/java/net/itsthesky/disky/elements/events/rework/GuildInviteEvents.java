@@ -45,7 +45,7 @@ public class GuildInviteEvents {
         EventRegistryFactory.builder(GuildInviteDeleteEvent.class)
                 .name("Invite Delete Event")
                 .patterns("[discord] guild invite delete")
-                .description("Fired when an invite is deleted from a guild. Can be used to get the invite code, the channel, the author and the guild.")
+                .description("Fired when an invite is deleted from a guild. Can be used to get the channel and the guild.")
                 .example("on guild invite delete:\n    broadcast \"Invite deleted from %event-channel% in %event-guild%\"")
                 .value(Channel.class, GuildInviteDeleteEvent::getChannel, 0)
                 .value(Guild.class, GuildInviteDeleteEvent::getGuild, 0)

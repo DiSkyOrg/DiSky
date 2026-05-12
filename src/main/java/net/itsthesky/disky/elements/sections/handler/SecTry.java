@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.sections.handler;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.*;
 import ch.njol.util.Kleenean;
@@ -13,6 +17,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@Name("Try/Catch Section")
+@Description({"Execute a block of code and catch any DiSky runtime exceptions that occur.",
+        "The `try` section runs its code; if any DiSky error is thrown, execution jumps to the `catch` section.",
+        "The caught exception is stored in the provided variable. Add `and stop` to the catch clause to halt further execution after handling the error."})
+@Examples({
+        "try:",
+        "    retrieve user with id \"invalid\" and store it in {_user}",
+        "catch {_err} and stop:",
+        "    reply with \"An error occurred: %{_err}%\""
+})
+@Since("4.8.0")
 public class SecTry extends Section {
 
     static {

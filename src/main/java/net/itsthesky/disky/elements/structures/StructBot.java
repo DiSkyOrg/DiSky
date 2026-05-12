@@ -1,6 +1,8 @@
 package net.itsthesky.disky.elements.structures;
 
 import ch.njol.skript.Skript;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.Literal;
@@ -233,10 +235,10 @@ public class StructBot extends Structure {
             try {
 
                 final EventListener listener = event -> {
-                    if (event instanceof net.dv8tion.jda.api.events.session.ReadyEvent)
-                        parsedEntity.runReady((net.dv8tion.jda.api.events.session.ReadyEvent) event);
-                    else if (event instanceof net.dv8tion.jda.api.events.guild.GuildReadyEvent)
-                        parsedEntity.runGuildReady((net.dv8tion.jda.api.events.guild.GuildReadyEvent) event);
+                    if (event instanceof ReadyEvent)
+                        parsedEntity.runReady((ReadyEvent) event);
+                    else if (event instanceof GuildReadyEvent)
+                        parsedEntity.runGuildReady((GuildReadyEvent) event);
 				/*else if (event instanceof net.dv8tion.jda.api.events.session.ShutdownEvent)
 					parsedEntity.runShutdown((net.dv8tion.jda.api.events.session.ShutdownEvent) event);*/
                 };

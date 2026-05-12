@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.properties.embeds;
 
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +18,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Embed To JSON")
+@Description("Convert an embed builder to its JSON string representation.")
+@Examples({"set {_json} to embed last embed as json"})
+@Since("4.0.0")
 public class EmbedToJSON extends SimpleExpression<String> {
 
     static {
@@ -54,6 +62,6 @@ public class EmbedToJSON extends SimpleExpression<String> {
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "embed from json " + exprJSON.toString(e, debug);
+        return "embed " + exprJSON.toString(e, debug) + " to json";
     }
 }

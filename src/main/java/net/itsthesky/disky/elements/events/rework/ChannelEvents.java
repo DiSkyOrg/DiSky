@@ -89,7 +89,7 @@ public class ChannelEvents {
                 .patterns("[discord] channel position (change|update)")
                 .description("Fired when a channel's position is changed.")
                 .example("on channel position change:\n    broadcast \"Channel %event-channel% position changed from %past channel position% to %current channel position%\"")
-                .customTimedExpressions("[chaannel] position", Integer.class,
+                .customTimedExpressions("[channel] position", Integer.class,
                         ChannelUpdatePositionEvent::getNewValue, ChannelUpdatePositionEvent::getOldValue)
                 .value(Guild.class, ChannelUpdatePositionEvent::getGuild)
                 .channelValues(ChannelUpdatePositionEvent::getChannel)
@@ -221,7 +221,7 @@ public class ChannelEvents {
         // Channel Update Archive Timestamp Event
         EventRegistryFactory.builder(ChannelUpdateArchiveTimestampEvent.class)
                 .name("Channel Archive Timestamp/Date Update Event")
-                .patterns("[discord] channel archive (timestam|date) (change|update)")
+                .patterns("[discord] channel archive (timestamp|date) (change|update)")
                 .description("Fired when a thread channel's archive timestamp is changed.")
                 .example("on channel archive timestamp change:\n    broadcast \"Channel %event-channel% archive timestamp changed from %past channel archive timestamp% to %current channel archive timestamp%\"")
                 .customTimedExpressions("[channel] archive (timestamp|date)", Date.class,

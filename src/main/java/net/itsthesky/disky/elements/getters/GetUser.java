@@ -21,7 +21,7 @@ public class GetUser extends BaseGetterExpression<User> {
 
     static {
         register(GetUser.class,
-                TextChannel.class,
+                User.class,
                 "user");
     }
 

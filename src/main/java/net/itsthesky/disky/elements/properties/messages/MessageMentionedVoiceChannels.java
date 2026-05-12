@@ -29,7 +29,7 @@ public class MessageMentionedVoiceChannels extends MultiplyPropertyExpression<Me
 
     @Override
     protected String getPropertyName() {
-        return "mentioned channels";
+        return "mentioned voice channels";
     }
 
     @Override

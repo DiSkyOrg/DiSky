@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.sections.automod;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
@@ -16,6 +20,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@Name("AutoMod Rule Responses")
+@Description({"Get or add responses/actions to an automod rule being created.",
+        "Must be used inside a 'create automod rule' section.",
+        "You can add new responses using 'add ... to responses of ...'."})
+@Examples({
+        "create a new automod rule and store it in {_rule}:",
+        "    add block message with reason \"Banned word\" to responses of {_rule}"
+})
+@Since("4.8.0")
 public class AutomodResponse extends MultiplyPropertyExpression<AutoModRuleBuilder, AutoModResponse> {
 
 	static {
@@ -71,7 +84,7 @@ public class AutomodResponse extends MultiplyPropertyExpression<AutoModRuleBuild
 
 	@Override
 	protected String getPropertyName() {
-		return "attachments";
+		return "responses";
 	}
 
 	@Override

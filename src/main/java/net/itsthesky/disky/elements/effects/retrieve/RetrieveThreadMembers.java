@@ -4,7 +4,9 @@ import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -23,6 +25,8 @@ import java.util.List;
 
 @Name("Retrieve Thread Members")
 @Description({"Retrieve every members (and cache them) from a specific thread."})
+@Examples({"retrieve all thread members from event-threadchannel and store them in {_members::*}"})
+@Since("4.0.0")
 public class RetrieveThreadMembers extends AsyncEffect {
 
     static {

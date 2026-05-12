@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.conditions;
 
 import ch.njol.skript.Skript;
+import net.dv8tion.jda.api.entities.Message;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -18,12 +19,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Message is From Guild")
-@Description({"Check either a message(related event come from a guild or from private messages.",
-"This condition work with every event where a message is sent / received."})
+@Description({"Check whether a message-related event comes from a guild or from private messages.",
+"This condition works with every event where a message is sent or received."})
 @Examples({"if event is from guild:",
 "if message come from private message:"})
 @Since("4.0.0")
-@SeeAlso(net.dv8tion.jda.api.entities.Message.class)
+@SeeAlso(Message.class)
 public class MessageOrigin extends Condition {
 
 	static {

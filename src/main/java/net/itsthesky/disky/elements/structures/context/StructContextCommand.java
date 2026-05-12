@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.structures.context;
 
 import ch.njol.skript.Skript;
+import net.dv8tion.jda.api.JDA;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
@@ -124,7 +125,7 @@ public class StructContextCommand extends Structure {
 
         // Register the command
         final var bot = DiSky.getManager().getBotByName(parsedCommand.getRawBot());
-        if (bot != null && bot.getInstance().getStatus() == net.dv8tion.jda.api.JDA.Status.CONNECTED) {
+        if (bot != null && bot.getInstance().getStatus() == JDA.Status.CONNECTED) {
             bot.getContextManager().registerCommand(parsedCommand);
         } else {
             BotReadyWaiter.WaitingContextCommands.computeIfAbsent(parsedCommand.getRawBot(), k -> new ArrayList<>()).add(parsedCommand);

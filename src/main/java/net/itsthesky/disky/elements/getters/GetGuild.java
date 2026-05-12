@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 
 @Name("Get Guild")
-@Description({"Get a guild from a guild using its unique ID.",
+@Description({"Get a guild using its unique ID.",
         "This expression cannot be changed."})
 @Examples("guild with id \"000\"")
 @Since("4.0.0")

@@ -29,7 +29,7 @@ public class MessageMentionedUsers extends MultiplyPropertyExpression<Message, U
 
     @Override
     protected String getPropertyName() {
-        return "mentioned uers";
+        return "mentioned users";
     }
 
     @Override

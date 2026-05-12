@@ -9,8 +9,8 @@ import net.itsthesky.disky.core.Bot;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.jetbrains.annotations.NotNull;
 
-@Name("Get Channel")
-@Description({"Get a channel from a guild using its unique ID.",
+@Name("Get Guild Channel")
+@Description({"Get a guild channel using its unique ID.",
         "Channels are global on discord, means different channels cannot have the same ID.",
         "This expression cannot be changed."})
 @Examples("guild channel with id \"000\"")
@@ -31,7 +31,7 @@ public class GetGuildChannel extends BaseGetterExpression<GuildChannel> {
 
     @Override
     public String getCodeName() {
-        return "channel";
+        return "guild channel";
     }
 
     @Override

@@ -29,7 +29,7 @@ public class ChannelMembers extends MultiplyPropertyExpression<VoiceChannel, Mem
 
     @Override
     protected String getPropertyName() {
-        return "threads";
+        return "voice members";
     }
 
     @Override

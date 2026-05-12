@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -15,6 +19,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Retrieve User")
+@Description({"Retrieve a Discord user using their unique ID.", "Unlike members, users are global across all guilds."})
+@Examples({"retrieve user with id \"000000000000000000\" and store it in {_user}"})
+@Since("4.0.0")
 public class RetrieveUser extends AsyncEffect {
 
     static {

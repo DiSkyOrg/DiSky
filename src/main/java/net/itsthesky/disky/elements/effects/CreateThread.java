@@ -54,7 +54,7 @@ public class CreateThread extends AsyncEffect {
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "create new role named " + exprName.toString(e, debug);
+        return "create new thread named " + exprName.toString(e, debug);
     }
 
     @Override

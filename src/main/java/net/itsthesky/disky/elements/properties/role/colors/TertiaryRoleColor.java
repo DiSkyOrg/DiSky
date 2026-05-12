@@ -32,7 +32,7 @@ public class TertiaryRoleColor extends SimplePropertyExpression<RoleColors, Colo
 
     @Override
     protected String getPropertyName() {
-        return "secondary role color";
+        return "tertiary role color";
     }
 
     @Override

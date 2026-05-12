@@ -1,5 +1,7 @@
 package net.itsthesky.disky.elements.structures.context;
 
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.itsthesky.disky.DiSky;
 import net.itsthesky.disky.core.Bot;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
@@ -138,7 +140,7 @@ public final class ContextCommandManager extends ListenerAdapter {
 
     // JDA Ready Event Handlers
     @Override
-    public void onReady(@NotNull net.dv8tion.jda.api.events.session.ReadyEvent event) {
+    public void onReady(@NotNull ReadyEvent event) {
         readyGlobal = true;
         DiSky.debug("Bot " + bot.getName() + " ready, registering global commands (" + waitingGlobalCommands.size() + ")");
         waitingGlobalCommands.forEach(Runnable::run);
@@ -146,7 +148,7 @@ public final class ContextCommandManager extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildReady(@NotNull net.dv8tion.jda.api.events.guild.GuildReadyEvent event) {
+    public void onGuildReady(@NotNull GuildReadyEvent event) {
         final String guildId = event.getGuild().getId();
         if (!waitingGuildCommands.containsKey(guildId)) {
             return;

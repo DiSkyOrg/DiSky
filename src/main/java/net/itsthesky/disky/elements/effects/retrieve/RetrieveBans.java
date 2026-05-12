@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -14,6 +18,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
+@Name("Retrieve Bans")
+@Description({"Retrieve all bans from a guild and store them in a variable."})
+@Examples({"retrieve all bans from event-guild and store them in {_bans::*}"})
+@Since("4.0.0")
 public class RetrieveBans extends AsyncEffect {
 
     // Guild.Ban

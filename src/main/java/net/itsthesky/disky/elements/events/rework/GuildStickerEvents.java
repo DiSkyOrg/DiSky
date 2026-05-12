@@ -63,7 +63,7 @@ public class GuildStickerEvents {
                 .name("Guild Sticker Remove")
                 .patterns("[discord] guild sticker remove[d]")
                 .description("Fired when someone or something removes a sticker from a guild")
-                .example("on guild sticker remove:\n    broadcast \"%event-user% removed %event-sticker% from %event-guild%\"")
+                .example("on guild sticker remove:\n    broadcast \"Sticker %event-sticker% was removed from %event-guild%\"")
                 .value(Guild.class, GuildStickerRemovedEvent::getGuild, 0)
                 .value(GuildSticker.class, GuildStickerRemovedEvent::getSticker)
                 .singleExpression("sticker id", String.class, event -> event.getSticker().getId())

@@ -14,11 +14,11 @@ import org.jetbrains.annotations.Nullable;
 import java.time.OffsetDateTime;
 
 @Name("Member Boost Date")
-@Description("Get the date when a member started boosting the server. Returns null if the member is not boosting.")
+@Description({"Get the date when a member started boosting the server. Returns null if the member is not boosting.",
+        "This expression cannot be changed."})
 @Examples({
         "set {_time} to boost date of event-member",
-        "send \"Member has been boosting since: %boost date of {_member}%\"",
-        "This expression cannot be changed."
+        "send \"Member has been boosting since: %boost date of {_member}%\""
 })
 @Since("4.0.0")
 @SeeAlso(Member.class)

@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.find;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -18,6 +22,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@Name("Find Members With Nickname")
+@Description({"Find all members in a guild whose effective name (nickname or username) matches the given string.",
+        "Add `ignoring case` to perform a case-insensitive search."})
+@Examples({"find members with nickname \"Steve\" in event-guild and store them in {_members::*}",
+        "find members with nickname \"steve\" ignoring case in event-guild and store them in {_members::*}"})
+@Since("4.9.0")
 public class FindMembersWithNickname extends AsyncEffect {
 
     static {

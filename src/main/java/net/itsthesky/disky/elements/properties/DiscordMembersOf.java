@@ -20,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
 "For Audio Channels it returns the currently connected members of the channel.",
 "For threads & posts, it returns the members who are in the thread. " +
         "You can add or remove a member in this case."})
-@Examples({"members of event-channel",
-        "members of voice channel with id \"0000\"",
-"add event-member to discord members of thread channel with id \"000\""})
+@Examples({"discord members of event-channel",
+        "discord members of voice channel with id \"0000\"",
+        "add event-member to discord members of thread channel with id \"000\""})
 public class DiscordMembersOf extends MultiplyPropertyExpression<Object, Member> implements IAsyncGettableExpression<Member> {
 
     static {

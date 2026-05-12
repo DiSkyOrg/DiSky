@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
         "This expression is here to get a sticker from its name.",
         "If you success to get a sticker's ID, use the retrieve sticker effect instead!",
         "This expression cannot be changed"})
-@Examples({"sticker with named \"meliodas\" from event-guild"})
+@Examples({"sticker named \"meliodas\" from event-guild"})
 @Since("4.9.0")
 @SeeAlso({Guild.class, GuildSticker.class, Sticker.class})
 public class GetSticker extends SimpleExpression<Sticker> implements IAsyncGettableExpression<Sticker> {

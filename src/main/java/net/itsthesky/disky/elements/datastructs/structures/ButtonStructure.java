@@ -2,7 +2,7 @@ package net.itsthesky.disky.elements.datastructs.structures;
 
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Since;
-import jdk.jfr.Name;
+import ch.njol.skript.doc.Name;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.itsthesky.disky.api.datastruct.DataStructure;
 import net.itsthesky.disky.api.datastruct.DataStructureEntry;

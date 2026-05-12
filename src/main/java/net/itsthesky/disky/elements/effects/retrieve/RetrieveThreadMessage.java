@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -15,6 +19,12 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Retrieve Thread Message")
+@Description({"Retrieve the start message or parent (original) message of a thread channel.",
+        "Use `retrieve start message` to get the message that opened the thread, or `retrieve original message` to get the parent channel's message."})
+@Examples({"retrieve start message from event-threadchannel and store it in {_msg}",
+        "retrieve original message from event-threadchannel and store it in {_parent}"})
+@Since("4.0.0")
 public class RetrieveThreadMessage extends AsyncEffect {
 
     static {

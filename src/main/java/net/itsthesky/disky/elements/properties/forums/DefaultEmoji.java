@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Name("Default Forum Emoji")
 @Description({"Represent the default emoji of a forum channel.",
-"It's the mote that is added automatically once a new post is created.",
+"It's the emote that is added automatically once a new post is created.",
 "Can return none and can be changed."})
 @Examples("set default emoji of event-forumchannel to reaction \"smile\"")
 public class DefaultEmoji extends SimplePropertyExpression<ForumChannel, Emote>

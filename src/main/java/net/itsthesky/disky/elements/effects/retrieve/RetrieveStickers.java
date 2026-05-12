@@ -4,7 +4,9 @@ import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -20,6 +22,8 @@ import java.util.List;
 
 @Name("Retrieve Stickers")
 @Description({"Retrieve every stickers (and cache them) from a specific guild."})
+@Examples({"retrieve all stickers from event-guild and store them in {_stickers::*}"})
+@Since("4.0.0")
 public class RetrieveStickers extends AsyncEffect {
 
     static {
