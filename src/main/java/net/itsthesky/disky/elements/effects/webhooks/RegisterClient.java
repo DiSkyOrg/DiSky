@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.webhooks;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -14,6 +18,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Register Webhook Client")
+@Description({"Register a new webhook client using a bot and a webhook URL.", "The client can then be used to post messages to the webhook without using the bot's account."})
+@Examples({"register new webhook client in bot \"MyBot\" named \"my-hook\" with url \"https://discord.com/api/webhooks/...\""})
+@Since("4.0.0")
 public class RegisterClient extends Effect {
 
     static {

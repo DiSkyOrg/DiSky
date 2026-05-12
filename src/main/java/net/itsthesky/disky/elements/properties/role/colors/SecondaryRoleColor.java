@@ -11,7 +11,7 @@ import net.itsthesky.disky.core.SkriptUtils;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Secondary Role Color")
-@Description("Returns the primary color of a role's colors.")
+@Description("Returns the secondary color of a role's colors.")
 @Since("4.28.0")
 @SeeAlso({PrimaryRoleColor.class, TertiaryRoleColor.class})
 public class SecondaryRoleColor extends SimplePropertyExpression<RoleColors, Color> {

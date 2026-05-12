@@ -15,9 +15,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Name("Used Argument")
-@Description({"Return the plain formatter of the discord command's argument",
-        "You should however use (arg-1) for example which will return the argument value directly.",
-        "This is intended to be for test purpose only, and therefore only return a String formatted containing every used arguments."})
+@Description({"Return the raw string of all arguments used in a discord command, concatenated together.",
+        "For accessing individual argument values, prefer using `arg-1`, `arg-2`, etc. (see the Discord Command Argument expression).",
+        "Only usable inside a discord command trigger section."})
+@ch.njol.skript.doc.Examples({"send \"You typed: %used argument%\" to event-channel"})
+@ch.njol.skript.doc.Since("4.0.0")
 public class UsedArgument extends SimpleExpression<String> {
 
     static {

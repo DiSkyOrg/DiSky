@@ -6,6 +6,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -21,6 +22,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@Name("Retrieve Pinned Messages")
+@Description({"Retrieve all pinned messages in a channel and store them in a variable."})
+@Examples({"retrieve pinned messages from event-channel and store them in {_pins::*}", "retrieve last 5 pinned messages from event-channel and store them in {_pins::*}"})
+@Since("4.0.0")
 public class RetrievePinnedMessages extends AsyncEffect {
 
     static {

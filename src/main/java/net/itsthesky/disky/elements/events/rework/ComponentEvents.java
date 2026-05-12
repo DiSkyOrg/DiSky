@@ -46,7 +46,7 @@ public class ComponentEvents {
 
         EventRegistryFactory.builder(ButtonInteractionEvent.class)
                 .name("Button Click")
-                .description("Fired when any button sent by the button is clicked.",
+                .description("Fired when any button sent by the bot is clicked.",
                         "You can use the `clicked id` to get the clicked button id.",
                         "",
                         "!!! info \"Modal can be shown in this interaction!\"")
@@ -79,7 +79,7 @@ public class ComponentEvents {
                         "!!! warning \"Modal can NOT be shown in this interaction!\"")
                 .patterns("modal (click[ed]|receive[d])")
                 .example("on modal received:\n" +
-                        "    reply with hidden \"You clicked the button with id '%received modal%'!\" # This will defer the interaction!")
+                        "    reply with hidden \"You submitted the modal with id '%received modal%'!\"")
 
                 .implementInteraction(evt -> evt)
 

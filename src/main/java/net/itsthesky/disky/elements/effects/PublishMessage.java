@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 @Name("Publish/Crosspost Message")
 @Description("Publish/Crosspost a message from a news channel to all following guilds. Only works in news channels.")
 @Examples({"publish event-message",
-        "crosspost message with id \"000\" in channel with id \"123\""})
+        "crosspost {_msg}"})
 @Since("4.0.0")
 @SeeAlso(Message.class)
 public class PublishMessage extends AsyncEffect {

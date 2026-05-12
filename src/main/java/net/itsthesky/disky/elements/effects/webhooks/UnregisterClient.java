@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.webhooks;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.config.Node;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Effect;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
@@ -13,6 +17,10 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Name("Unregister Webhook Client")
+@Description({"Unregister a previously registered webhook client by name."})
+@Examples({"unregister webhook client named \"my-hook\""})
+@Since("4.0.0")
 public class UnregisterClient extends Effect {
 
     static {

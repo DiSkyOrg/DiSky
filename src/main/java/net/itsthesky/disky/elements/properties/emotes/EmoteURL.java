@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Get the URL of this emote.",
         "Only emote have image URL, emoji are from Discord and will therefore return none here."
 })
-@Examples({"emote url of event-emote",
+@Examples({"emote image url of event-emote",
         "emote image of reaction \"disky\" # Custom emoji only"})
 public class EmoteURL extends SimplePropertyExpression<Emote, String> {
 

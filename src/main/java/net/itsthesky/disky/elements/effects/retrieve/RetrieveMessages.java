@@ -6,6 +6,7 @@ import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -25,6 +26,7 @@ import java.util.List;
 "You can retrieve up to 100 last messages, others will be ignored.",
 "Don't forget to use 'purge' effect to delete a lot of messages the most enhanced way ever."})
 @Examples("retrieve last 30 messages from event-channel and store them in {_msg::*}")
+@Since("4.0.0")
 public class RetrieveMessages extends AsyncEffect {
 
     static {

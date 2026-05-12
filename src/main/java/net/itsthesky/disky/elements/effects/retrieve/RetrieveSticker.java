@@ -4,7 +4,9 @@ import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -21,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 @Name("Retrieve Sticker")
 @Description({"Retrieve a sticker from a guild using its per-guild name.",
         "This will return a sticker from the guild, not a global one."})
+@Examples({"retrieve sticker with id \"000\" from event-guild and store it in {_sticker}"})
+@Since("4.0.0")
 public class RetrieveSticker extends AsyncEffect {
 
     static {

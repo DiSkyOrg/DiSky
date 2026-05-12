@@ -3,6 +3,10 @@ package net.itsthesky.disky.elements.effects.retrieve;
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.util.AsyncEffect;
@@ -18,6 +22,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Name("Retrieve Emotes")
+@Description({"Retrieve all custom emotes/emojis from a guild and store them in a variable."})
+@Examples({"retrieve all emotes from event-guild and store them in {_emotes::*}"})
+@Since("4.0.0")
 public class RetrieveEmotes extends AsyncEffect {
 
     static {

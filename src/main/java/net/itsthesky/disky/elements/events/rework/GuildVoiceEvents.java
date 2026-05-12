@@ -42,10 +42,12 @@ public class GuildVoiceEvents {
                 .register();
 
         EventRegistryFactory.builder(GuildVoiceGuildMuteEvent.class)
-                .name("Guild Voice Mute Event")
-                .patterns("[discord] guild [voice] mute[d]")
-                .description("Fired when a member is muted or unmuted by the guild. Can be used to track moderation actions in voice channels.")
-                .example("on guild voice mute:\n    if event-boolean is true:\n        broadcast \"%event-member% was muted in %event-guild%\"\n    else:\n        broadcast \"%event-member% was unmuted in %event-guild%\"")
+                .name("Guild Voice Server Mute Event")
+                .patterns("[discord] guild [voice] server mute[d]")
+                .description("Fired when a member is server-muted or server-unmuted by a guild moderator.",
+                        "Unlike the Guild Voice Mute Event, this ONLY fires for guild-initiated (server) mutes, not self-mutes.",
+                        "Use `event-boolean` to check whether the member is now server-muted (true) or server-unmuted (false).")
+                .example("on guild voice server mute:\n    if event-boolean is true:\n        broadcast \"%event-member% was server-muted in %event-guild%\"\n    else:\n        broadcast \"%event-member% was server-unmuted in %event-guild%\"")
                 .value(Boolean.class, GuildVoiceGuildMuteEvent::isGuildMuted, 0)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)
@@ -55,8 +57,10 @@ public class GuildVoiceEvents {
         EventRegistryFactory.builder(GuildVoiceMuteEvent.class)
                 .name("Guild Voice Mute Event")
                 .patterns("[discord] guild [voice] mute[d]")
-                .description("Fired when a member is muted or unmuted by the guild. Can be used to track moderation actions in voice channels.")
-                .example("on guild voice mute:\n    if event-boolean is true:\n        broadcast \"%event-member% was muted in %event-guild%\"\n    else:\n        broadcast \"%event-member% was unmuted in %event-guild%\"")
+                .description("Fired when a member's mute status changes for any reason (self-mute or server-mute).",
+                        "Use `event-boolean` to check whether the member is now muted (true) or unmuted (false).",
+                        "To listen only to server-initiated mutes, use the Guild Voice Server Mute Event instead.")
+                .example("on guild voice mute:\n    if event-boolean is true:\n        broadcast \"%event-member% is now muted in %event-guild%\"\n    else:\n        broadcast \"%event-member% is now unmuted in %event-guild%\"")
                 .value(Boolean.class, GuildVoiceMuteEvent::isMuted, 0)
                 .value(Member.class, GenericGuildVoiceEvent::getMember, 0)
                 .value(Guild.class, GenericGuildVoiceEvent::getGuild, 0)

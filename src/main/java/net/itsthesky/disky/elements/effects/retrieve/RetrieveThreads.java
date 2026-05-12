@@ -4,7 +4,9 @@ import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.skript.util.AsyncEffect;
@@ -26,6 +28,8 @@ import java.util.List;
 @Name("Retrieve Threads")
 @Description({"Retrieve every threads (and cache them) from a specific guild.",
         "This effect will only get back the ACTIVE thread, and will pass on the archived ones."})
+@Examples({"retrieve all threads from event-guild and store them in {_threads::*}"})
+@Since("4.0.0")
 public class RetrieveThreads extends AsyncEffect {
 
     static {

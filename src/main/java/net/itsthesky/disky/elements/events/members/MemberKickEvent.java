@@ -2,6 +2,10 @@ package net.itsthesky.disky.elements.events.members;
 
 import ch.njol.skript.Skript;
 import net.itsthesky.disky.api.DiSkyRegistry;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser;
@@ -15,9 +19,12 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author ItsTheSky
- */
+@Name("Member Kick Event")
+@Description({"Fired when a member is kicked from a guild.",
+        "Provides access to the kicked user, the guild, the bot, and the member who performed the kick."})
+@Examples({"on member kicked:",
+        "    broadcast \"%event-user% was kicked from %event-guild%\""})
+@Since("4.0.0")
 public class MemberKickEvent extends SkriptEvent {
 
     static {

@@ -51,6 +51,6 @@ public class ChannelNSFW extends ActionProperty<GuildChannel, ChannelAction, Boo
 
     @Override
     public @NotNull String toString(@Nullable Event e, boolean debug) {
-        return "channel topic";
+        return "channel nsfw";
     }
 }
