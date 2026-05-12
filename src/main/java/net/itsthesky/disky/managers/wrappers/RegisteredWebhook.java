@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.WebhookClient;
 
 /**
- * Pair a {@link net.dv8tion.jda.api.entities.WebhookClient webhooks client} with a {@link Bot bot}
+ * Pair a {@link WebhookClient webhooks client} with a {@link Bot bot}
  */
 public class RegisteredWebhook {
 

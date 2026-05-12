@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents an effect section that runs asynchronously.
- * Made by Sky, inspired by Skript's {@link ch.njol.skript.util.AsyncEffect} & {@link ch.njol.skript.lang.EffectSection}
+ * Made by Sky, inspired by Skript's {@link ch.njol.skript.util.AsyncEffect} & {@link EffectSection}
  */
 public abstract class AsyncEffectSection extends EffectSection {
 

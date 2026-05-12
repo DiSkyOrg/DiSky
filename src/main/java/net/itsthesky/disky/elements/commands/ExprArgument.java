@@ -1,6 +1,8 @@
 package net.itsthesky.disky.elements.commands;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.doc.Description;
@@ -30,12 +32,12 @@ import java.util.List;
 @Description({"Works same as Skript's command argument. You can specify the argument number or the argument type (in case there's only one user or member for example) to get the selected value.",
         "Only usable inside a discord command trigger section.",
         "Use 'arg-1', 'arg-2', etc. for positional access; 'user-argument', 'member-argument', etc. for type-based access."})
-@ch.njol.skript.doc.Examples({"# discord command move <member> <voicechannel>:",
+@Examples({"# discord command move <member> <voicechannel>:",
         "#     trigger:",
         "#         move arg-1 to arg-2",
         "set {_target} to user-argument",
         "set {_channel} to arg-2"})
-@ch.njol.skript.doc.Since("4.0.0")
+@Since("4.0.0")
 public class ExprArgument extends SimpleExpression<Object> {
 
     public static List<Argument<?>> LAST_ARGUMENTS;

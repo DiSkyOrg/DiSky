@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -201,7 +202,7 @@ public class NewFileUpload extends SimpleExpression<FileUpload> {
                     DiSkyRuntimeHandler.error(new IllegalArgumentException("File path cannot be blank"), node, false);
                     return new FileUpload[0];
                 }
-                final var file = new java.io.File(filePath);
+                final var file = new File(filePath);
                 if (!file.exists() || !file.isFile()) {
                     DiSkyRuntimeHandler.error(new IllegalArgumentException("File does not exist: " + filePath), node, false);
                     return new FileUpload[0];

@@ -1,6 +1,8 @@
 package net.itsthesky.disky.elements.effects.retrieve;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.classes.Changer;
 import ch.njol.skript.doc.Description;
@@ -19,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 @Name("Retrieve Profile")
 @Description({"Retrieve the profile of the specified user.",
         "A profile contains mainly the banner of the user; returns the accent color if no banner is set."})
-@ch.njol.skript.doc.Examples({"retrieve profile with id \"000\" from event-user and store it in {_profile}"})
-@ch.njol.skript.doc.Since("4.0.0")
+@Examples({"retrieve profile with id \"000\" from event-user and store it in {_profile}"})
+@Since("4.0.0")
 public class RetrieveProfile extends AsyncEffect {
 
     static {

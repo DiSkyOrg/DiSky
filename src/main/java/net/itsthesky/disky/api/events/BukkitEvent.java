@@ -1,12 +1,13 @@
 package net.itsthesky.disky.api.events;
 
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Made by Blitz, minor edit by Sky for DiSky
  */
-public class BukkitEvent extends org.bukkit.event.Event {
+public class BukkitEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
 

@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleDiSkyEvent<D extends net.dv8tion.jda.api.events.Event> extends BukkitEvent {
+public class SimpleDiSkyEvent<D extends Event> extends BukkitEvent {
 
     private D JDAEvent;
     private GuildAuditLogEntryCreateEvent logEvent;

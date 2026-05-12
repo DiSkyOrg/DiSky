@@ -1,6 +1,7 @@
 package net.itsthesky.disky.elements.conditions;
 
 import ch.njol.skript.Skript;
+import net.dv8tion.jda.api.entities.Message;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 @Examples({"if event is from guild:",
 "if message come from private message:"})
 @Since("4.0.0")
-@SeeAlso(net.dv8tion.jda.api.entities.Message.class)
+@SeeAlso(Message.class)
 public class MessageOrigin extends Condition {
 
 	static {

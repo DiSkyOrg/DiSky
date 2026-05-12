@@ -1,6 +1,8 @@
 package net.itsthesky.disky.elements.commands.values;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Since;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Name;
@@ -18,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
 @Description({"Return the raw string of all arguments used in a discord command, concatenated together.",
         "For accessing individual argument values, prefer using `arg-1`, `arg-2`, etc. (see the Discord Command Argument expression).",
         "Only usable inside a discord command trigger section."})
-@ch.njol.skript.doc.Examples({"send \"You typed: %used argument%\" to event-channel"})
-@ch.njol.skript.doc.Since("4.0.0")
+@Examples({"send \"You typed: %used argument%\" to event-channel"})
+@Since("4.0.0")
 public class UsedArgument extends SimpleExpression<String> {
 
     static {
