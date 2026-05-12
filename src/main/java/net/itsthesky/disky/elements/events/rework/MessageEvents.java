@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.itsthesky.disky.DiSky;
+import net.itsthesky.disky.api.events.rework.BuiltEvent;
 import net.itsthesky.disky.api.events.rework.EventCategory;
 import net.itsthesky.disky.api.events.rework.EventRegistryFactory;
 import net.itsthesky.disky.managers.MessageManager;
@@ -19,8 +20,10 @@ import net.itsthesky.disky.managers.MessageManager;
 })
 public class MessageEvents {
 
+    public static final BuiltEvent<MessageReceivedEvent> MESSAGE_RECEIVED_EVENT;
+
     static {
-        EventRegistryFactory.builder(MessageReceivedEvent.class)
+        MESSAGE_RECEIVED_EVENT = EventRegistryFactory.builder(MessageReceivedEvent.class)
                 .name("Message Receive")
                 .patterns("message receive[d]")
                 .description("Fired when any bot receive an actual message.",
