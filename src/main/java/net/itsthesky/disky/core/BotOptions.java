@@ -55,7 +55,8 @@ public class BotOptions {
                 .setAutoReconnect(autoReconnect)
                 .enableIntents(Arrays.asList(getIntents()))
                 .enableCache(Arrays.asList(getFlags()))
-                .setMemberCachePolicy(policy);
+                .setMemberCachePolicy(policy)
+                .setAudioModuleConfig(DaveSupport.audioModuleConfig());
     }
 
     public void runReady(ReadyEvent event) {

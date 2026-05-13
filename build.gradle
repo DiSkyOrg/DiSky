@@ -28,6 +28,11 @@ repositories {
     maven { url = 'https://maven.enginehub.org/repo/' }
     maven { url = 'https://m2.dv8tion.net/releases' }
     maven { url = 'https://repo.skriptlang.org/releases' }
+    maven { url = 'https://maven.lavalink.dev/snapshots' }
+}
+
+ext {
+    libdaveVersion = 'ce725965e'
 }
 
 dependencies {
@@ -39,6 +44,21 @@ dependencies {
     // Stable: net.dv8tion:JDA:5.2.3
     // Components V2: io.github.freya022:JDA:93b3e7abb2
     implementation 'net.dv8tion:JDA:6.4.1'
+
+    // DAVE (Discord Audio & Video E2EE — required by Discord starting 2026-03-01)
+    // KyokoBot's libdave-jvm = JNI bindings around discord/libdave (C++).
+    // Bumping version: see https://maven.lavalink.dev/snapshots/moe/kyokobot/libdave/adapter-jda/maven-metadata.xml
+    implementation "moe.kyokobot.libdave:api:${libdaveVersion}"
+    implementation "moe.kyokobot.libdave:impl-jni:${libdaveVersion}"
+    implementation "moe.kyokobot.libdave:adapter-jda:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-linux-x86-64:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-linux-aarch64:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-linux-musl-x86-64:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-linux-musl-aarch64:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-win-x86-64:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-win-aarch64:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-darwin-x86-64:${libdaveVersion}"
+    runtimeOnly "moe.kyokobot.libdave:natives-darwin-arm64:${libdaveVersion}"
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'
@@ -53,7 +73,11 @@ dependencies {
 }
 
 shadowJar {
-    minimize()
+    minimize {
+        // libdave-jvm classes are only invoked reflectively/via dynamic dispatch from JDA,
+        // and the native loader (impl-jni) discovers resources at runtime; keep them all.
+        exclude(dependency('moe.kyokobot.libdave:.*:.*'))
+    }
 
     setArchiveFileName('DiSky ' + version + '.jar')
 
