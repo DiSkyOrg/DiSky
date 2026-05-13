@@ -57,7 +57,13 @@ public final class DynamicElements {
 
                     if (async) rest.complete();
                     else rest.queue();
-                }
+                },
+                new ReflectClassFactory.Documentation(
+                        "Thread Channel Locked",
+                        "Whether a thread channel is locked. When a thread is locked, only moderators can send messages in it.",
+                        "if {_thread} is locked:\n    reply with \"This thread is locked!\"",
+                        "4.14.0"
+                )
         );
 
         SkriptStateRegistry.register(
@@ -70,7 +76,13 @@ public final class DynamicElements {
 
                     if (async) rest.complete();
                     else rest.queue();
-                }
+                },
+                new ReflectClassFactory.Documentation(
+                        "Thread Channel Archived",
+                        "Whether a thread channel is archived. Archived threads are hidden from the channel list by default and no longer receive new messages unless un-archived.",
+                        "if {_thread} is archived:\n    reply with \"This thread is archived!\"",
+                        "4.14.0"
+                )
         );
 
         SkriptStateRegistry.register(
@@ -83,7 +95,13 @@ public final class DynamicElements {
 
                     if (async) rest.complete();
                     else rest.queue();
-                }
+                },
+                new ReflectClassFactory.Documentation(
+                        "Thread Channel Pinned",
+                        "Whether a thread channel is pinned in its parent forum channel. Pinned threads appear at the top of the forum channel's thread list.",
+                        "if {_thread} is pinned:\n    reply with \"This thread is pinned!\"",
+                        "4.14.0"
+                )
         );
 
         SkriptStateRegistry.register(
@@ -96,7 +114,13 @@ public final class DynamicElements {
 
                     if (async) rest.complete();
                     else rest.queue();
-                }
+                },
+                new ReflectClassFactory.Documentation(
+                        "Thread Channel Invitable",
+                        "Whether non-moderator members can add other members to this private thread. This only applies to private threads.",
+                        "if {_thread} is invitable:\n    reply with \"Members can invite others to this thread.\"",
+                        "4.14.0"
+                )
         );
 
     }

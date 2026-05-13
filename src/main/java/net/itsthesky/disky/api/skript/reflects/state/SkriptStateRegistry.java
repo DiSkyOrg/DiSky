@@ -1,13 +1,20 @@
 package net.itsthesky.disky.api.skript.reflects.state;
 
 import ch.njol.skript.classes.Changer;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Examples;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Condition;
 import net.itsthesky.disky.api.DiSkyRegistry;
 import net.itsthesky.disky.api.skript.INodeHolder;
+import net.itsthesky.disky.api.skript.reflects.ReflectClassFactory;
 import net.itsthesky.disky.elements.sections.handler.DiSkyRuntimeHandler;
 import net.itsthesky.disky.managers.ConfigManager;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
@@ -42,32 +49,53 @@ public final class SkriptStateRegistry {
             String stateName,
             Function<T, Boolean> getter, StateSetter<T> setter
     ) {
+        register(typeClass, typeName, stateName, getter, setter, null);
+    }
+
+    public static <T> void register(
+            Class<T> typeClass, String typeName,
+            String stateName,
+            Function<T, Boolean> getter, StateSetter<T> setter,
+            @Nullable ReflectClassFactory.Documentation documentation
+    ) {
 
         // Condition
-        final Class<?> conditionClass = new ByteBuddy()
+        DynamicType.Builder<?> condBuilder = new ByteBuddy()
                 .redefine(DiSkyStateCondition.class)
                 .name("net.itsthesky.disky.api.skript.reflects.state.CondState_" + COUNT.incrementAndGet())
 
                 .method(named("check")).intercept(MethodDelegation.to(new CheckMethod<>(getter)))
-                .method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(stateName + " state")))
+                .method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(stateName + " state")));
 
-                .make()
-                .load(typeClass.getClassLoader())
-                .getLoaded();
+        if (documentation != null) {
+            condBuilder = condBuilder
+                    .annotateType(AnnotationDescription.Builder.ofType(Name.class).define("value", documentation.getName()).build())
+                    .annotateType(AnnotationDescription.Builder.ofType(Description.class).defineArray("value", documentation.getDescription()).build())
+                    .annotateType(AnnotationDescription.Builder.ofType(Examples.class).defineArray("value", documentation.getExamples()).build())
+                    .annotateType(AnnotationDescription.Builder.ofType(Since.class).defineArray("value", documentation.getSince()).build());
+        }
+
+        final Class<?> conditionClass = condBuilder.make().load(typeClass.getClassLoader()).getLoaded();
         DiSkyRegistry.registerPropertyCondition((Class<? extends Condition>) conditionClass, stateName, typeName);
 
         // Property
-        final Class<?> propertyClass = new ByteBuddy()
+        DynamicType.Builder<?> propBuilder = new ByteBuddy()
                 .redefine(DiSkyStateProperty.class)
                 .name("net.itsthesky.disky.api.skript.reflects.state.PropState_" + COUNT.incrementAndGet())
 
                 .method(named("convert")).intercept(MethodDelegation.to(new CheckMethod<>(getter)))
                 .method(named("getPropertyName")).intercept(MethodDelegation.to(new PropertyNameMethodInterceptor(stateName + " state")))
-                .method(named("change0")).intercept(MethodDelegation.to(new ChangeMethod<>(setter)))
+                .method(named("change0")).intercept(MethodDelegation.to(new ChangeMethod<>(setter)));
 
-                .make()
-                .load(typeClass.getClassLoader())
-                .getLoaded();
+        if (documentation != null) {
+            propBuilder = propBuilder
+                    .annotateType(AnnotationDescription.Builder.ofType(Name.class).define("value", documentation.getName() + " State").build())
+                    .annotateType(AnnotationDescription.Builder.ofType(Description.class).defineArray("value", documentation.getDescription()).build())
+                    .annotateType(AnnotationDescription.Builder.ofType(Examples.class).defineArray("value", documentation.getExamples()).build())
+                    .annotateType(AnnotationDescription.Builder.ofType(Since.class).defineArray("value", documentation.getSince()).build());
+        }
+
+        final Class<?> propertyClass = propBuilder.make().load(typeClass.getClassLoader()).getLoaded();
 
         DiSkyRegistry.registerProperty(
                 (Class<? extends SimplePropertyExpression<Object, Boolean>>) propertyClass,
