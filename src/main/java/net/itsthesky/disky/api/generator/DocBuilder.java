@@ -264,7 +264,14 @@ public class DocBuilder {
     private List<? extends SyntaxInfo.Expression<?, ?>> getExpressions() {
         return Skript.instance().syntaxRegistry().syntaxes(SyntaxRegistry.EXPRESSION).stream()
                 .filter(this::isFromDiSky)
+                .filter(info -> !isEventReflectExpression(info.type()))
                 .toList();
+    }
+
+    private boolean isEventReflectExpression(Class<?> clazz) {
+        final String name = clazz.getName();
+        return name.startsWith("net.itsthesky.disky.elements.reflects.ReflectGetterExpression_")
+                || name.startsWith("net.itsthesky.disky.elements.reflects.MultipleReflectGetterExpression_");
     }
 
     private boolean isFromDiSky(Object element) {
