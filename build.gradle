@@ -48,6 +48,8 @@ dependencies {
     // DAVE (Discord Audio & Video E2EE — required by Discord starting 2026-03-01)
     // KyokoBot's libdave-jvm = JNI bindings around discord/libdave (C++).
     // Bumping version: see https://maven.lavalink.dev/snapshots/moe/kyokobot/libdave/adapter-jda/maven-metadata.xml
+    // NB: pas de natives macOS — la CI darwin de libdave s'est arrêtée à 'b114ba0bd',
+    // et 'adapter-jda' n'existe pas à cette version. Aucune version commune : macOS non supporté.
     implementation "moe.kyokobot.libdave:api:${libdaveVersion}"
     implementation "moe.kyokobot.libdave:impl-jni:${libdaveVersion}"
     implementation "moe.kyokobot.libdave:adapter-jda:${libdaveVersion}"
@@ -57,8 +59,6 @@ dependencies {
     runtimeOnly "moe.kyokobot.libdave:natives-linux-musl-aarch64:${libdaveVersion}"
     runtimeOnly "moe.kyokobot.libdave:natives-win-x86-64:${libdaveVersion}"
     runtimeOnly "moe.kyokobot.libdave:natives-win-aarch64:${libdaveVersion}"
-    runtimeOnly "moe.kyokobot.libdave:natives-darwin-x86-64:${libdaveVersion}"
-    runtimeOnly "moe.kyokobot.libdave:natives-darwin-arm64:${libdaveVersion}"
 
     // bStats
     implementation 'org.bstats:bstats-bukkit:3.0.2'
