@@ -3,6 +3,7 @@ package net.itsthesky.disky.elements.properties.members;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Member;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
         "loop activities of event-member:",
         "\tbroadcast \"%activity text of loop-value% (%activity type of loop-value%)\""
 })
+@Since("4.29.0")
 public class MemberActivities extends MultipleMemberProperty<Activity> {
 
     static {
