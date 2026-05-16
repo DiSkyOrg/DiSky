@@ -275,6 +275,13 @@ public class DocBuilder {
     }
 
     private boolean isFromDiSky(Object element) {
+        // DiSky's own types are always registered through DiSkyTypeWrapper.
+        // The legacy addon lookup below can't catch them: their underlying class is a JDA
+        // class (e.g. net.dv8tion.jda...), and their parser/serializer may resolve to no
+        // legacy addon, which would wrongly flag them as belonging to Skript.
+        if (element instanceof DiSkyType.DiSkyTypeWrapper)
+            return true;
+
         // Modern API: check origin directly
         if (element instanceof SyntaxInfo<?> syntaxInfo) {
             final var origin = syntaxInfo.origin();
