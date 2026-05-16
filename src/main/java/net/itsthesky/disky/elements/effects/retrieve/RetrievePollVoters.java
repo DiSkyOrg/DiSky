@@ -40,7 +40,7 @@ import java.util.List;
         "    retrieve poll voters of loop-value of {_msg} and store them in {_voters::*}",
         "    broadcast \"Answer '%answer text of loop-value%': %size of {_voters::*}% voters\""
 })
-@Since("INSERT VERSION")
+@Since("4.29.0")
 public class RetrievePollVoters extends AsyncEffect {
 
     static {
