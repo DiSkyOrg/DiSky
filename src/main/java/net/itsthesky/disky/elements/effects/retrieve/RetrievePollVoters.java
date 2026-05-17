@@ -84,7 +84,7 @@ public class RetrievePollVoters extends AsyncEffect {
             answerId = answer.getId();
             if (answerId < 1) {
                 DiSkyRuntimeHandler.error(new IllegalStateException(
-                        "This poll answer has no Discord-assigned ID yet. It was built locally (via 'new poll answer with content ...') and the ID is only assigned once the poll is sent. To retrieve voters, fetch the answer from a sent poll first (via 'poll answers of <pollMessage>')."));
+                        "This poll answer has no Discord-assigned ID yet. It was built locally (via 'new poll answer with content ...') and the ID is only assigned once the poll is sent. To retrieve voters, fetch the answer from a sent poll first (via 'poll answers of <pollMessage>')."), getNode());
                 return;
             }
         } else {
@@ -102,18 +102,18 @@ public class RetrievePollVoters extends AsyncEffect {
                     raw = Long.parseLong(((String) answerRaw).trim());
                 } catch (NumberFormatException ex) {
                     DiSkyRuntimeHandler.error(new IllegalArgumentException(
-                            "Poll answer ID must be a number (got string: '" + answerRaw + "')."));
+                            "Poll answer ID must be a number (got string: '" + answerRaw + "')."), getNode());
                     return;
                 }
             } else {
                 DiSkyRuntimeHandler.error(new IllegalArgumentException(
                         "Poll answer ID must be a number or numeric string. Got: "
-                                + answerRaw.getClass().getSimpleName()));
+                                + answerRaw.getClass().getSimpleName()), getNode());
                 return;
             }
             if (raw < 1) {
                 DiSkyRuntimeHandler.error(new IllegalArgumentException(
-                        "Poll answer IDs are 1-indexed (first answer is 1). Got: " + raw));
+                        "Poll answer IDs are 1-indexed (first answer is 1). Got: " + raw), getNode());
                 return;
             }
             answerId = raw;
@@ -125,7 +125,7 @@ public class RetrievePollVoters extends AsyncEffect {
                 .getChannelById(MessageChannel.class, message.getChannelId());
         if (channel == null) {
             DiSkyRuntimeHandler.error(new IllegalStateException(
-                    "Bot '" + bot.getName() + "' has no access to channel " + message.getChannelId() + "."));
+                    "Bot '" + bot.getName() + "' has no access to channel " + message.getChannelId() + "."), getNode());
             return;
         }
 
@@ -134,7 +134,7 @@ public class RetrievePollVoters extends AsyncEffect {
             final List<User> result = channel.retrievePollVotersById(message.getId(), answerId).complete();
             voters = result.toArray(new User[0]);
         } catch (Exception ex) {
-            DiSkyRuntimeHandler.error(ex);
+            DiSkyRuntimeHandler.error(ex, getNode());
             return;
         }
 
